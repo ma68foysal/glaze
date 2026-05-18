@@ -1,0 +1,356 @@
+{%- liquid
+  assign sid = 'FeatureRich-' | append: section.id
+  assign bullets = section.blocks | where: 'type', 'bullet'
+-%}
+
+<style>
+  #{{ sid }} {
+    --c-bg: {{ section.settings.bg_color }};
+    --c-fg: {{ section.settings.text_color }};
+    --c-muted: {{ section.settings.muted_color }};
+    --c-accent: {{ section.settings.accent_color }};
+    --c-title: {{ section.settings.title_color }};
+    --c-border: {{ section.settings.border_color }};
+    --pt: {{ section.settings.padding_top }}px;
+    --pb: {{ section.settings.padding_bottom }}px;
+    --max-w: {{ section.settings.max_width }}px;
+    --side-pad: {{ section.settings.side_padding }}px;
+    --r: {{ section.settings.media_radius }}px;
+    --font-d: {{ section.settings.font_display | default: "var(--g-display-font, sans-serif)" }};
+    --font-b: {{ section.settings.font_body | default: "var(--g-body-font, sans-serif)" }};
+
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-b);
+    padding: var(--pt) 0 var(--pb);
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  @media (max-width: 749px) {
+    #{{ sid }} {
+      --side-pad: 16px;
+      --pt: {{ section.settings.padding_top | times: 0.55 | round }}px;
+      --pb: {{ section.settings.padding_bottom | times: 0.55 | round }}px;
+    }
+  }
+
+  #{{ sid }} .fr__container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--side-pad);
+  }
+  #{{ sid }} .fr__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: center;
+  }
+  @media (min-width: 750px) {
+    #{{ sid }} .fr__grid { grid-template-columns: 1fr 1fr; gap: clamp(40px, 5vw, 64px); }
+    #{{ sid }} .fr--reverse .fr__media { order: 2; }
+  }
+
+  #{{ sid }} .fr__media {
+    position: relative;
+    border-radius: var(--r);
+    overflow: hidden;
+    background: {{ section.settings.media_bg }};
+    aspect-ratio: {{ section.settings.media_aspect }};
+  }
+  #{{ sid }} .fr__media img,
+  #{{ sid }} .fr__media video,
+  #{{ sid }} .fr__media iframe {
+    width: 100%; height: 100%; object-fit: cover; display: block; border: 0;
+  }
+
+  #{{ sid }} .fr__content { display: flex; flex-direction: column; gap: 14px; }
+  #{{ sid }} .fr__eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: {{ section.settings.eyebrow_size }}px;
+    font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: var(--c-accent);
+  }
+  #{{ sid }} .fr__heading {
+    font-family: var(--font-d);
+    font-size: clamp({{ section.settings.heading_size_min }}px, {{ section.settings.heading_size_vw }}vw, {{ section.settings.heading_size_max }}px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--c-title);
+    margin: 0;
+  }
+  #{{ sid }} .fr__heading em {
+    font-style: italic;
+    color: var(--c-accent);
+    font-weight: 700;
+  }
+  #{{ sid }} .fr__text {
+    font-size: {{ section.settings.text_size }}px;
+    line-height: 1.65;
+    color: {{ section.settings.text_color_body }};
+  }
+  #{{ sid }} .fr__text p { margin: 0 0 12px; }
+  #{{ sid }} .fr__text p:last-child { margin-bottom: 0; }
+  #{{ sid }} .fr__text strong { color: var(--c-title); font-weight: 700; }
+
+  #{{ sid }} .fr__bullets {
+    list-style: none; padding: 0; margin: 12px 0 0;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  #{{ sid }} .fr__bullet {
+    padding-left: 18px;
+    position: relative;
+    font-size: {{ section.settings.bullet_size }}px;
+    color: {{ section.settings.text_color_body }};
+    line-height: 1.6;
+  }
+  #{{ sid }} .fr__bullet::before {
+    content: '';
+    position: absolute; left: 0; top: 8px;
+    width: 8px; height: 8px;
+    background: var(--c-accent);
+    border-radius: 50%;
+  }
+  #{{ sid }} .fr__bullet-title {
+    display: block;
+    color: var(--c-title);
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  #{{ sid }} .fr__cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    align-self: flex-start;
+    margin-top: 8px;
+    padding: {{ section.settings.btn_padding_y }}px {{ section.settings.btn_padding_x }}px;
+    background: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_color }};
+    border-radius: {{ section.settings.btn_radius }}px;
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: {{ section.settings.btn_size }}px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: background 0.25s ease, transform 0.25s ease;
+  }
+  #{{ sid }} .fr__cta:hover { background: {{ section.settings.btn_hover_bg }}; transform: translateY(-1px); }
+
+  /* Video play button overlay */
+  #{{ sid }} .fr__play {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2; pointer-events: none;
+  }
+  #{{ sid }} .fr__play-btn {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    color: #1a1a1a;
+    display: inline-flex; align-items: center; justify-content: center;
+    pointer-events: auto;
+    cursor: pointer;
+    border: 0;
+    transition: transform 0.25s ease, background 0.25s ease;
+  }
+  #{{ sid }} .fr__play-btn:hover { transform: scale(1.06); background: #fff; }
+  #{{ sid }} .fr__play-btn svg { width: 22px; height: 22px; margin-left: 3px; }
+  #{{ sid }} .fr--playing .fr__play { display: none; }
+
+  /* Reveal */
+  #{{ sid }} .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  #{{ sid }} .reveal.visible { opacity: 1; transform: translateY(0); }
+  #{{ sid }} .reveal-d1 { transition-delay: 0.1s; }
+  #{{ sid }} .reveal-d2 { transition-delay: 0.2s; }
+</style>
+
+<section id="{{ sid }}" aria-label="{{ section.settings.aria_label | default: section.settings.heading | escape }}">
+  <div class="fr__container">
+    <div class="fr__grid fr{% if section.settings.media_side == 'right' %} fr--reverse{% endif %}">
+
+      {%- comment -%} ============ MEDIA ============ {%- endcomment -%}
+      {%- assign img_alt_raw = section.settings.image.alt | default: section.settings.heading -%}
+      {%- assign img_alt = img_alt_raw | escape -%}
+      {%- assign iframe_title = section.settings.heading | escape -%}
+      <div class="fr__media reveal" data-fr-media>
+        {%- case section.settings.media_type -%}
+          {%- when 'video' -%}
+            {%- if section.settings.video != blank -%}
+              {{ section.settings.video | video_tag: image_size: '1600x', autoplay: section.settings.video_autoplay, loop: section.settings.video_loop, muted: true, controls: false, class: 'fr__video' }}
+              {%- unless section.settings.video_autoplay -%}
+                <div class="fr__play"><button type="button" class="fr__play-btn" data-fr-play aria-label="Play video"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button></div>
+              {%- endunless -%}
+            {%- elsif section.settings.image != blank -%}
+              {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', widths: '400,700,1000,1400', sizes: '(min-width: 750px) 50vw, 100vw', alt: img_alt }}
+            {%- endif -%}
+          {%- when 'video_url' -%}
+            {%- if section.settings.video_url != blank -%}
+              {%- assign vid_id = section.settings.video_url.id -%}
+              {%- if section.settings.video_url.type == 'youtube' -%}
+                <iframe src="https://www.youtube.com/embed/{{ vid_id }}?autoplay={% if section.settings.video_autoplay %}1{% else %}0{% endif %}&mute=1&loop=1&playlist={{ vid_id }}&controls=0&modestbranding=1&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen frameborder="0" title="{{ iframe_title }}"></iframe>
+              {%- else -%}
+                <iframe src="https://player.vimeo.com/video/{{ vid_id }}?autoplay={% if section.settings.video_autoplay %}1{% else %}0{% endif %}&muted=1&loop=1&controls=0&background=1" allow="autoplay; encrypted-media" allowfullscreen frameborder="0" title="{{ iframe_title }}"></iframe>
+              {%- endif -%}
+            {%- elsif section.settings.image != blank -%}
+              {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', widths: '400,700,1000,1400', sizes: '(min-width: 750px) 50vw, 100vw', alt: img_alt }}
+            {%- endif -%}
+          {%- else -%}
+            {%- if section.settings.image != blank -%}
+              {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', widths: '400,700,1000,1400', sizes: '(min-width: 750px) 50vw, 100vw', alt: img_alt }}
+            {%- else -%}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+        {%- endcase -%}
+      </div>
+
+      {%- comment -%} ============ CONTENT ============ {%- endcomment -%}
+      <div class="fr__content">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="fr__eyebrow reveal">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="fr__heading reveal reveal-d1">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="fr__text reveal reveal-d2">{{ section.settings.text }}</div>
+        {%- endif -%}
+
+        {%- if bullets.size > 0 -%}
+          <ul class="fr__bullets reveal reveal-d2">
+            {%- for b in bullets -%}
+              <li class="fr__bullet">
+                {%- if b.settings.title != blank -%}
+                  <span class="fr__bullet-title">{{ b.settings.title }}</span>
+                {%- endif -%}
+                {{ b.settings.text }}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if section.settings.btn_label != blank -%}
+          <a href="{{ section.settings.btn_link | default: '#' }}" class="fr__cta reveal reveal-d2">{{ section.settings.btn_label }}</a>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById('{{ sid }}');
+    if (!root) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    root.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+    var playBtn = root.querySelector('[data-fr-play]');
+    if (playBtn) {
+      playBtn.addEventListener('click', function () {
+        var media = root.querySelector('[data-fr-media]');
+        var video = media && media.querySelector('video');
+        if (video) { video.play(); video.setAttribute('controls', ''); }
+        if (media) media.classList.add('fr--playing');
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Feature rich",
+  "tag": "section",
+  "class": "section section--master-feature",
+  "settings": [
+    { "type": "header", "content": "Media" },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Shopify hosted video" },
+        { "value": "video_url", "label": "Video URL (YouTube / Vimeo)" }
+      ],
+      "default": "image"
+    },
+    { "type": "image_picker", "id": "image", "label": "Image (or video poster fallback)" },
+    { "type": "video", "id": "video", "label": "Shopify-hosted video" },
+    { "type": "video_url", "id": "video_url", "label": "Video URL", "accept": ["youtube", "vimeo"] },
+    { "type": "checkbox", "id": "video_autoplay", "label": "Autoplay video (muted)", "default": true },
+    { "type": "checkbox", "id": "video_loop", "label": "Loop video", "default": true },
+    {
+      "type": "select",
+      "id": "media_side",
+      "label": "Media side (desktop)",
+      "options": [
+        { "value": "left",  "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    { "type": "text", "id": "media_aspect", "label": "Media aspect ratio", "default": "4 / 5", "info": "e.g. '1 / 1', '4 / 5', '16 / 9'." },
+    { "type": "range", "id": "media_radius", "label": "Media radius", "min": 0, "max": 40, "step": 1, "unit": "px", "default": 16 },
+    { "type": "color", "id": "media_bg", "label": "Media background", "default": "#f5d8d5" },
+
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "You're Not Imagining It: Your Lashes Are Getting Shorter" },
+    { "type": "richtext", "id": "text", "label": "Body text", "default": "<p>Lash extensions, harsh mascaras and the natural ageing process all weaken your lashes over time. <strong>Most women lose 30% of their lash density</strong> by their late 30s without realising it.</p><p>That's where Luxe comes in. A nightly serum that brings the bounce, length and fullness back to your natural lash line in 4 weeks.</p>" },
+    { "type": "text", "id": "aria_label", "label": "ARIA label" },
+
+    { "type": "header", "content": "Bullets (optional, via blocks)" },
+    { "type": "range", "id": "bullet_size", "label": "Bullet font size", "min": 13, "max": 18, "step": 1, "unit": "px", "default": 15 },
+
+    { "type": "header", "content": "Button (optional)" },
+    { "type": "text", "id": "btn_label", "label": "Button label" },
+    { "type": "url", "id": "btn_link", "label": "Button link" },
+    { "type": "color", "id": "btn_bg", "label": "Button bg", "default": "#1a1a1a" },
+    { "type": "color", "id": "btn_color", "label": "Button text", "default": "#ffffff" },
+    { "type": "color", "id": "btn_hover_bg", "label": "Button hover bg", "default": "#000000" },
+    { "type": "range", "id": "btn_size", "label": "Button font size", "min": 11, "max": 16, "step": 1, "unit": "px", "default": 13 },
+    { "type": "range", "id": "btn_padding_y", "label": "Button vertical padding", "min": 8, "max": 24, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "btn_padding_x", "label": "Button horizontal padding", "min": 14, "max": 48, "step": 2, "unit": "px", "default": 28 },
+    { "type": "range", "id": "btn_radius", "label": "Button radius", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 100 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
+    { "type": "color", "id": "text_color", "label": "Text base", "default": "#1a1a1a" },
+    { "type": "color", "id": "text_color_body", "label": "Body text", "default": "#555555" },
+    { "type": "color", "id": "title_color", "label": "Heading color", "default": "#1a1a1a" },
+    { "type": "color", "id": "muted_color", "label": "Muted", "default": "#7a7a7a" },
+    { "type": "color", "id": "accent_color", "label": "Accent (eyebrow / bullet dot)", "default": "#e8a5a0" },
+    { "type": "color", "id": "border_color", "label": "Border", "default": "rgba(0,0,0,0.08)" },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "eyebrow_size", "label": "Eyebrow size", "min": 10, "max": 16, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "heading_size_min", "label": "Heading min", "min": 22, "max": 40, "step": 1, "unit": "px", "default": 26 },
+    { "type": "range", "id": "heading_size_vw", "label": "Heading fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
+    { "type": "range", "id": "heading_size_max", "label": "Heading max", "min": 30, "max": 64, "step": 1, "unit": "px", "default": 40 },
+    { "type": "range", "id": "text_size", "label": "Body size", "min": 13, "max": 20, "step": 1, "unit": "px", "default": 15 },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 1000, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "type": "bullet",
+      "name": "Bullet",
+      "limit": 8,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Bullet title (optional bold lead-in)" },
+        { "type": "text", "id": "text", "label": "Bullet text", "default": "Strengthens lashes from the root" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature rich"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:shopify.dev)",
+      "Bash(sed -n '545,565p' sections/footer-sleek.liquid)",
+      "Bash(sed -n '130,148p' sections/marquee-sleek.liquid)",
+      "Bash(node -e \"['templates/index.json','templates/product.json','sections/header-group.json','sections/footer-group.json'].forEach\\(f=>{try{JSON.parse\\(require\\('fs'\\).readFileSync\\(f,'utf8'\\)\\);console.log\\('OK',f\\)}catch\\(e\\){console.log\\('FAIL',f,e.message\\)}}\\)\")",
+      "Bash(node -e \"['templates/page.contact.json','locales/en.default.json','locales/en.default.schema.json','config/settings_schema.json'].forEach\\(f=>{try{JSON.parse\\(require\\('fs'\\).readFileSync\\(f,'utf8'\\)\\);console.log\\('OK',f\\)}catch\\(e\\){console.log\\('FAIL',f,e.message\\)}}\\)\")",
+      "Bash(node -e \"['locales/en.default.json','locales/en.default.schema.json'].forEach\\(f=>{try{JSON.parse\\(require\\('fs'\\).readFileSync\\(f,'utf8'\\)\\);console.log\\('OK',f\\)}catch\\(e\\){console.log\\('FAIL',f,e.message\\)}}\\)\")",
+      "Bash(node -e \"const fs=require\\('fs'\\);const files=['locales/en.default.json','locales/en.default.schema.json','templates/index.json','templates/product.json','templates/page.contact.json','sections/header-group.json','sections/footer-group.json','config/settings_schema.json'];files.forEach\\(f=>{try{JSON.parse\\(fs.readFileSync\\(f,'utf8'\\)\\);console.log\\('OK',f\\)}catch\\(e\\){console.log\\('FAIL',f,e.message\\)}}\\);\")"
+    ]
+  }
+}

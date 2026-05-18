@@ -1,0 +1,156 @@
+{%- liquid
+  assign sid = 'FaqMaster-' | append: section.id
+  assign qs = section.blocks | where: 'type', 'qa'
+-%}
+
+<style>
+  #{{ sid }} {
+    --c-bg: {{ section.settings.bg_color }};
+    --c-fg: {{ section.settings.text_color }};
+    --c-muted: {{ section.settings.muted_color }};
+    --c-title: {{ section.settings.title_color }};
+    --c-accent: {{ section.settings.accent_color }};
+    --c-border: {{ section.settings.border_color }};
+    --c-card: {{ section.settings.card_bg }};
+    --pt: {{ section.settings.padding_top }}px;
+    --pb: {{ section.settings.padding_bottom }}px;
+    --max-w: {{ section.settings.max_width }}px;
+    --side-pad: {{ section.settings.side_padding }}px;
+    --r: {{ section.settings.card_radius }}px;
+    --font-d: {{ section.settings.font_display | default: "var(--g-display-font, sans-serif)" }};
+    --font-b: {{ section.settings.font_body | default: "var(--g-body-font, sans-serif)" }};
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-b);
+    padding: var(--pt) 0 var(--pb);
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  @media (max-width: 749px) { #{{ sid }} { --side-pad: 16px; --pt: {{ section.settings.padding_top | times: 0.6 | round }}px; --pb: {{ section.settings.padding_bottom | times: 0.6 | round }}px; } }
+
+  #{{ sid }} .fm__container { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--side-pad); }
+  #{{ sid }} .fm__head { text-align: center; margin-bottom: clamp(28px, 4vw, 48px); }
+  #{{ sid }} .fm__heading {
+    font-family: var(--font-d);
+    font-size: clamp({{ section.settings.heading_size_min }}px, {{ section.settings.heading_size_vw }}vw, {{ section.settings.heading_size_max }}px);
+    font-weight: 600;
+    color: var(--c-title);
+    margin: 0;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  #{{ sid }} .fm__list { display: flex; flex-direction: column; gap: 10px; }
+  #{{ sid }} .fm__item {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+  #{{ sid }} .fm__summary {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-d);
+    font-size: {{ section.settings.q_size }}px;
+    font-weight: 600;
+    color: var(--c-title);
+  }
+  #{{ sid }} .fm__summary::-webkit-details-marker { display: none; }
+  #{{ sid }} .fm__summary::after {
+    content: '';
+    width: 12px; height: 12px;
+    border-right: 2px solid var(--c-muted);
+    border-bottom: 2px solid var(--c-muted);
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+  #{{ sid }} .fm__item[open] .fm__summary::after { transform: rotate(-135deg); }
+  #{{ sid }} .fm__body {
+    padding: 0 20px 18px;
+    font-size: {{ section.settings.a_size }}px;
+    color: {{ section.settings.body_color }};
+    line-height: 1.65;
+  }
+  #{{ sid }} .fm__body p:first-child { margin-top: 0; }
+  #{{ sid }} .fm__body p:last-child { margin-bottom: 0; }
+</style>
+
+<section id="{{ sid }}" aria-label="{{ section.settings.aria_label | default: section.settings.heading | escape }}">
+  <div class="fm__container">
+    {%- if section.settings.heading != blank -%}
+      <div class="fm__head"><h2 class="fm__heading">{{ section.settings.heading }}</h2></div>
+    {%- endif -%}
+    {%- if qs.size > 0 -%}
+      <div class="fm__list">
+        {%- for q in qs -%}
+          <details class="fm__item" {{ q.shopify_attributes }}>
+            <summary class="fm__summary">{{ q.settings.question }}</summary>
+            <div class="fm__body">{{ q.settings.answer }}</div>
+          </details>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "class": "section section--master-faq",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Still got questions?" },
+    { "type": "text", "id": "aria_label", "label": "ARIA label", "default": "Frequently asked questions" },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
+    { "type": "color", "id": "card_bg", "label": "Card bg", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1a1a1a" },
+    { "type": "color", "id": "title_color", "label": "Heading", "default": "#1a1a1a" },
+    { "type": "color", "id": "body_color", "label": "Answer body", "default": "#555555" },
+    { "type": "color", "id": "muted_color", "label": "Muted / chevron", "default": "#7a7a7a" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#e8a5a0" },
+    { "type": "color", "id": "border_color", "label": "Card border", "default": "rgba(0,0,0,0.08)" },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "heading_size_min", "label": "Heading min", "min": 22, "max": 36, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "heading_size_vw", "label": "Heading fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
+    { "type": "range", "id": "heading_size_max", "label": "Heading max", "min": 28, "max": 48, "step": 1, "unit": "px", "default": 32 },
+    { "type": "range", "id": "q_size", "label": "Question size", "min": 13, "max": 22, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "a_size", "label": "Answer size", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 24, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 700, "max": 1200, "step": 20, "unit": "px", "default": 860 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "type": "qa",
+      "name": "Question",
+      "limit": 12,
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "What are the ingredients?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Plant-derived peptides, hyaluronic acid and biotin form the base. Vegan, cruelty-free and dermatologist-tested.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "blocks": [
+        { "type": "qa", "settings": { "question": "What are the ingredients?" } },
+        { "type": "qa", "settings": { "question": "Does it really work?", "answer": "<p>In our 4-week clinical study with 97 women, 88% reported visibly longer lashes after 28 days of nightly use.</p>" } },
+        { "type": "qa", "settings": { "question": "How is Luxe different from other lash serums?", "answer": "<p>It uses peptide complexes, not prostaglandin analogues. That means no irritation, no eye-color change and no side effects.</p>" } },
+        { "type": "qa", "settings": { "question": "Can I use it with lash extensions?", "answer": "<p>Yes. Apply at the lash root, avoiding the bonded area, and you'll keep your extensions while strengthening your natural lashes.</p>" } },
+        { "type": "qa", "settings": { "question": "When should I use it?", "answer": "<p>Nightly before sleep. Make-up-free, after cleanser, before any moisturisers.</p>" } },
+        { "type": "qa", "settings": { "question": "How does the guarantee work?", "answer": "<p>30-day money-back guarantee. If you don't see results, email us and we'll refund you in full — keep the bottle.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

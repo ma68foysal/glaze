@@ -1,11 +1,11 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Skeleton",
-    "theme_version": "0.1.0",
-    "theme_author": "Shopify",
-    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
-    "theme_support_url": "https://support.shopify.com/"
+    "theme_name": "Glaze",
+    "theme_version": "1.0.0",
+    "theme_author": "Themestudio",
+    "theme_documentation_url": "https://themestudio.store/pages/glaze",
+    "theme_support_url": "https://themestudio.store/pages/contact"
   },
   {
     "name": "t:general.typography",
@@ -16,9 +16,15 @@
       },
       {
         "type": "font_picker",
+        "id": "type_heading_font",
+        "default": "assistant_n7",
+        "label": "t:general.heading_font"
+      },
+      {
+        "type": "font_picker",
         "id": "type_primary_font",
-        "default": "work_sans_n4",
-        "label": "t:general.primary"
+        "default": "dm_sans_n4",
+        "label": "t:general.body_font"
       }
     ]
   },
@@ -77,6 +83,51 @@
         "unit": "px",
         "label": "t:labels.input_corner_radius",
         "default": 4
+      }
+    ]
+  },
+  {
+    "name": "t:general.motion",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_smooth_scroll",
+        "label": "t:labels.enable_smooth_scroll",
+        "info": "t:labels.enable_smooth_scroll_info",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "t:general.social",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "t:labels.share_image",
+        "info": "t:labels.share_image_info"
+      }
+    ]
+  },
+  {
+    "name": "t:general.cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "t:labels.cart_type",
+        "options": [
+          { "value": "page",   "label": "t:options.cart_type.page" },
+          { "value": "drawer", "label": "t:options.cart_type.drawer" }
+        ],
+        "default": "page",
+        "info": "t:labels.cart_type_info"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_cart_note",
+        "label": "t:labels.show_cart_note",
+        "default": true
       }
     ]
   }

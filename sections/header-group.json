@@ -1,22 +1,152 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "type": "header",
   "name": "t:general.header",
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "blocks": {
+        "menu_cards": {
+          "type": "menu_cards",
+          "settings": {
+            "menu_handle": "home",
+            "card_1_image": "shopify://shop_images/Frame_593.webp",
+            "card_1_title": "Wildpeak",
+            "card_1_sub": "Clothing",
+            "card_1_link": "",
+            "card_2_image": "shopify://shop_images/Frame_593.webp",
+            "card_2_title": "orange",
+            "card_2_sub": "saddfsf",
+            "card_2_link": "shopify://blogs/news/meet-the-designer",
+            "card_3_title": "",
+            "card_3_sub": "",
+            "card_3_link": "",
+            "card_4_title": "",
+            "card_4_sub": "",
+            "card_4_link": "",
+            "card_5_title": "",
+            "card_5_sub": "",
+            "card_5_link": "",
+            "card_6_title": "",
+            "card_6_sub": "",
+            "card_6_link": ""
+          }
+        },
+        "menu_columns": {
+          "type": "menu_columns",
+          "settings": {
+            "menu_handle": "contact",
+            "feature_1_title": "Best Sellers",
+            "feature_1_link": "",
+            "feature_2_title": "New Arrivals",
+            "feature_2_link": "",
+            "feature_3_title": "Bundles",
+            "feature_3_link": "",
+            "feature_4_title": "Trending",
+            "feature_4_link": "",
+            "feature_5_title": "",
+            "feature_5_link": "",
+            "feature_6_title": "",
+            "feature_6_link": "",
+            "col_1_title": "Skincare",
+            "col_1_menu": "main-menu",
+            "col_2_title": "Makeup",
+            "col_2_menu": "main-menu",
+            "trend_title": "Trend This Week",
+            "trend_collection": "mens"
+          }
+        },
+        "menu_dropdown": {
+          "type": "menu_dropdown",
+          "settings": {
+            "menu_handle": "Pages",
+            "item_1_title": "",
+            "item_1_link": "",
+            "item_1_submenu": "main-menu",
+            "item_2_title": "",
+            "item_2_link": "",
+            "item_2_submenu": "",
+            "item_3_title": "",
+            "item_3_link": "",
+            "item_3_submenu": "",
+            "item_4_title": "",
+            "item_4_link": "",
+            "item_4_submenu": "main-menu",
+            "item_5_title": "",
+            "item_5_link": "",
+            "item_5_submenu": "main-menu",
+            "item_6_title": "",
+            "item_6_link": "",
+            "item_6_submenu": "",
+            "item_7_title": "",
+            "item_7_link": "",
+            "item_8_title": "",
+            "item_8_link": ""
+          }
+        },
+        "ann_1": {
+          "type": "announcement",
+          "settings": {
+            "text": "100% CLEAN, NON-IRRITATING",
+            "link": ""
+          }
+        },
+        "ann_2": {
+          "type": "announcement",
+          "settings": {
+            "text": "NO ANIMAL TESTING",
+            "link": ""
+          }
+        },
+        "ann_3": {
+          "type": "announcement",
+          "settings": {
+            "text": "FREE SHIPPING ON ALL U.S. ORDERS $200+",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "menu_cards",
+        "menu_columns",
+        "menu_dropdown",
+        "ann_1",
+        "ann_2",
+        "ann_3"
+      ],
+      "settings": {
+        "logo_width": 120,
+        "menu": "main-menu",
+        "nav_font_size": 15,
+        "header_bg": "#ffffff",
+        "header_fg": "#1a1a1a",
+        "accent_color": "#1a1a1a",
+        "border_color": "#eeeeee",
+        "mega_bg": "#ffffff",
+        "show_search": true,
+        "show_account": true,
+        "icon_size": 22,
+        "enable_sticky": true,
+        "padding_top": 18,
+        "padding_bottom": 18,
+        "ann_bg": "#000000",
+        "ann_fg": "#ffffff",
+        "ann_font_size": 13,
+        "ann_padding": 10,
+        "ann_speed": 40,
+        "ann_direction": "left",
+        "show_country_selector": true,
+        "country_label": "United States (USD $)",
+        "show_social_mobile": true,
+        "social_facebook": "",
+        "social_x": "",
+        "social_instagram": "",
+        "social_tiktok": "",
+        "social_pinterest": "",
+        "social_youtube": ""
+      }
     }
   },
   "order": [
     "header"
-  ],
+  ]
 }

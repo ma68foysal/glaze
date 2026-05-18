@@ -1,0 +1,100 @@
+{%- doc -%}
+  Pickup availability for the current product variant.
+
+  Renders server-side from `current_variant.store_availabilities`. When the
+  selected variant changes via JS, main-product.liquid emits a custom event
+  `mp:variant-change` with the new variant id; this snippet's small client
+  script fetches the section template at the variant-specific URL and
+  swaps the inner HTML so pickup info stays accurate without a full reload.
+
+  @param {variant} current_variant - The currently selected variant
+  @param {section} section - Used for the section_id parameter in the refetch URL
+{%- enddoc -%}
+
+{%- if current_variant -%}
+  <pickup-availability
+    class="mp__pickup"
+    data-product-handle="{{ product.handle }}"
+    data-variant-id="{{ current_variant.id }}"
+    data-section-id="{{ section.id }}"
+  >
+    {%- if current_variant.store_availabilities.size > 0 -%}
+      {%- assign first_available = current_variant.store_availabilities | where: 'available' | first -%}
+
+      {%- if first_available -%}
+        <p class="mp__pickup-status">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" width="14" height="14">
+            <path d="M16.7 6.3a1 1 0 0 1 0 1.4l-7 7a1 1 0 0 1-1.4 0l-3-3a1 1 0 0 1 1.4-1.4L9 12.6l6.3-6.3a1 1 0 0 1 1.4 0z"/>
+          </svg>
+          <span>
+            <strong>{{ 'product.pickup_available_at' | t: location: first_available.location.name }}</strong>
+            {%- if first_available.pick_up_time -%}
+              <br><small>{{ first_available.pick_up_time }}</small>
+            {%- endif -%}
+          </span>
+        </p>
+      {%- else -%}
+        <p class="mp__pickup-status mp__pickup-status--unavailable">
+          {{ 'product.pickup_unavailable' | t }}
+        </p>
+      {%- endif -%}
+
+      {%- if current_variant.store_availabilities.size > 1 -%}
+        <details class="mp__pickup-details">
+          <summary>{{ 'product.pickup_check_others' | t: count: current_variant.store_availabilities.size }}</summary>
+          <ul>
+            {%- for availability in current_variant.store_availabilities -%}
+              <li>
+                <strong>{{ availability.location.name }}</strong>
+                <span>
+                  {%- if availability.available -%}
+                    {{ 'product.pickup_in_stock' | t }}
+                    {%- if availability.pick_up_time -%} · {{ availability.pick_up_time }}{%- endif -%}
+                  {%- else -%}
+                    {{ 'product.pickup_out_of_stock' | t }}
+                  {%- endif -%}
+                </span>
+                {%- if availability.location.address -%}
+                  <address>
+                    {{ availability.location.address.address1 }}{% if availability.location.address.address2 != blank %}, {{ availability.location.address.address2 }}{% endif %},
+                    {{ availability.location.address.city }} {{ availability.location.address.zip }}
+                  </address>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </details>
+      {%- endif -%}
+    {%- endif -%}
+  </pickup-availability>
+
+  <script>
+    (function () {
+      if (window.customElements && customElements.get('pickup-availability')) return;
+      class PickupAvailability extends HTMLElement {
+        constructor() {
+          super();
+          this.handle = this.dataset.productHandle;
+          this.sectionId = this.dataset.sectionId;
+          this.addEventListener('mp:variant-change', this.onVariantChange.bind(this));
+          document.addEventListener('mp:variant-change', this.onVariantChange.bind(this));
+        }
+        onVariantChange(e) {
+          var variantId = (e && e.detail && e.detail.variantId) || this.dataset.variantId;
+          if (!variantId || !this.handle) return;
+          var url = '/products/' + this.handle + '?variant=' + variantId
+                  + '&section_id=' + this.sectionId;
+          var self = this;
+          fetch(url, { headers: { 'Accept': 'text/html' } })
+            .then(function (r) { return r.text(); })
+            .then(function (html) {
+              var doc = new DOMParser().parseFromString(html, 'text/html');
+              var fresh = doc.querySelector('pickup-availability');
+              if (fresh) self.innerHTML = fresh.innerHTML;
+            }).catch(function () {});
+        }
+      }
+      customElements.define('pickup-availability', PickupAvailability);
+    })();
+  </script>
+{%- endif -%}

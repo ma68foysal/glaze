@@ -1,0 +1,230 @@
+{%- liquid
+  assign sid = 'BeforeAfter-' | append: section.id
+  assign weeks = section.blocks | where: 'type', 'week'
+-%}
+
+<style>
+  #{{ sid }} {
+    --c-bg: {{ section.settings.bg_color }};
+    --c-fg: {{ section.settings.text_color }};
+    --c-muted: {{ section.settings.muted_color }};
+    --c-title: {{ section.settings.title_color }};
+    --c-accent: {{ section.settings.accent_color }};
+    --c-overlay: {{ section.settings.label_bg }};
+    --c-overlay-text: {{ section.settings.label_color }};
+    --pt: {{ section.settings.padding_top }}px;
+    --pb: {{ section.settings.padding_bottom }}px;
+    --max-w: {{ section.settings.max_width }}px;
+    --side-pad: {{ section.settings.side_padding }}px;
+    --r: {{ section.settings.media_radius }}px;
+    --font-d: {{ section.settings.font_display | default: "var(--g-display-font, sans-serif)" }};
+    --font-b: {{ section.settings.font_body | default: "var(--g-body-font, sans-serif)" }};
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-b);
+    padding: var(--pt) 0 var(--pb);
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  @media (max-width: 749px) { #{{ sid }} { --side-pad: 16px; --pt: {{ section.settings.padding_top | times: 0.55 | round }}px; --pb: {{ section.settings.padding_bottom | times: 0.55 | round }}px; } }
+
+  #{{ sid }} .ba__container { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--side-pad); }
+  #{{ sid }} .ba__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: center;
+  }
+  @media (min-width: 750px) { #{{ sid }} .ba__grid { grid-template-columns: 1fr 1fr; gap: clamp(40px, 5vw, 64px); } }
+
+  #{{ sid }} .ba__content { display: flex; flex-direction: column; gap: 14px; }
+  #{{ sid }} .ba__eyebrow {
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: var(--c-accent);
+  }
+  #{{ sid }} .ba__heading {
+    font-family: var(--font-d);
+    font-size: clamp({{ section.settings.heading_size_min }}px, {{ section.settings.heading_size_vw }}vw, {{ section.settings.heading_size_max }}px);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--c-title);
+    margin: 0;
+  }
+  #{{ sid }} .ba__weeks { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-direction: column; gap: 14px; }
+  #{{ sid }} .ba__week {
+    font-size: {{ section.settings.week_size }}px;
+    line-height: 1.55;
+    color: {{ section.settings.body_color }};
+  }
+  #{{ sid }} .ba__week-title {
+    display: inline-block;
+    color: var(--c-title);
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  #{{ sid }} .ba__cta {
+    align-self: flex-start; margin-top: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    background: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_color }};
+    border-radius: 100px;
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: background 0.25s ease;
+  }
+  #{{ sid }} .ba__cta:hover { background: {{ section.settings.btn_hover_bg }}; }
+
+  #{{ sid }} .ba__media {
+    position: relative;
+    border-radius: var(--r);
+    overflow: hidden;
+    aspect-ratio: {{ section.settings.media_aspect }};
+    background: {{ section.settings.media_bg }};
+  }
+  #{{ sid }} .ba__media img, #{{ sid }} .ba__media video {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  #{{ sid }} .ba__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  #{{ sid }} .ba__label {
+    position: absolute;
+    left: {{ section.settings.label_offset }}px;
+    padding: 6px 14px;
+    background: var(--c-overlay);
+    color: var(--c-overlay-text);
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: {{ section.settings.label_size }}px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 4px;
+  }
+  #{{ sid }} .ba__label--before { top: {{ section.settings.label_offset }}px; }
+  #{{ sid }} .ba__label--after  { bottom: {{ section.settings.label_offset }}px; }
+</style>
+
+<section id="{{ sid }}" aria-label="{{ section.settings.aria_label | default: section.settings.heading | escape }}">
+  <div class="ba__container">
+    <div class="ba__grid">
+
+      <div class="ba__content">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="ba__eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="ba__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if weeks.size > 0 -%}
+          <ul class="ba__weeks">
+            {%- for w in weeks -%}
+              <li class="ba__week">
+                <span class="ba__week-title">{{ w.settings.title }}:</span>{{ w.settings.text }}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+        {%- if section.settings.btn_label != blank -%}
+          <a href="{{ section.settings.btn_link | default: '#' }}" class="ba__cta">{{ section.settings.btn_label }}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="ba__media">
+        {%- if section.settings.image != blank -%}
+          {%- assign ba_alt = section.settings.heading | escape -%}
+          {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', widths: '400,700,1000,1400', sizes: '(min-width: 750px) 50vw, 100vw', alt: ba_alt }}
+        {%- else -%}
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+        {%- if section.settings.show_labels -%}
+          <div class="ba__overlay" aria-hidden="true">
+            <span class="ba__label ba__label--before">{{ section.settings.before_label | default: 'Before' }}</span>
+            <span class="ba__label ba__label--after">{{ section.settings.after_label | default: 'After' }}</span>
+          </div>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Before and after",
+  "tag": "section",
+  "class": "section section--master-ba",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What To Expect, Week by Week" },
+    { "type": "text", "id": "aria_label", "label": "ARIA label" },
+    { "type": "text", "id": "btn_label", "label": "Button label" },
+    { "type": "url", "id": "btn_link", "label": "Button link" },
+
+    { "type": "header", "content": "Media" },
+    { "type": "image_picker", "id": "image", "label": "Before / after image" },
+    { "type": "text", "id": "media_aspect", "label": "Aspect ratio", "default": "4 / 5" },
+    { "type": "range", "id": "media_radius", "label": "Media radius", "min": 0, "max": 32, "step": 1, "unit": "px", "default": 16 },
+    { "type": "color", "id": "media_bg", "label": "Media bg fallback", "default": "#f5d8d5" },
+    { "type": "checkbox", "id": "show_labels", "label": "Show Before / After labels", "default": true },
+    { "type": "text", "id": "before_label", "label": "Before label", "default": "Before" },
+    { "type": "text", "id": "after_label", "label": "After label", "default": "After" },
+    { "type": "color", "id": "label_bg", "label": "Label bg", "default": "#1a1a1a" },
+    { "type": "color", "id": "label_color", "label": "Label text", "default": "#ffffff" },
+    { "type": "range", "id": "label_size", "label": "Label font size", "min": 10, "max": 18, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "label_offset", "label": "Label offset (from edge)", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 16 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1a1a1a" },
+    { "type": "color", "id": "title_color", "label": "Heading color", "default": "#1a1a1a" },
+    { "type": "color", "id": "muted_color", "label": "Muted", "default": "#7a7a7a" },
+    { "type": "color", "id": "body_color", "label": "Body color", "default": "#555555" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#e8a5a0" },
+    { "type": "color", "id": "btn_bg", "label": "Button bg", "default": "#1a1a1a" },
+    { "type": "color", "id": "btn_color", "label": "Button text", "default": "#ffffff" },
+    { "type": "color", "id": "btn_hover_bg", "label": "Button hover bg", "default": "#000000" },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "heading_size_min", "label": "Heading min", "min": 22, "max": 40, "step": 1, "unit": "px", "default": 26 },
+    { "type": "range", "id": "heading_size_vw", "label": "Heading fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
+    { "type": "range", "id": "heading_size_max", "label": "Heading max", "min": 30, "max": 56, "step": 1, "unit": "px", "default": 36 },
+    { "type": "range", "id": "week_size", "label": "Week text size", "min": 13, "max": 18, "step": 1, "unit": "px", "default": 14 },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 1000, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "type": "week",
+      "name": "Week milestone",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Week label", "default": "Week 1" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Lashes feel softer and stronger as the conditioning peptides take effect." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before and after",
+      "blocks": [
+        { "type": "week", "settings": { "title": "Week 1", "text": "You'll start seeing noticeably stronger lashes as our peptide complex strengthens your natural fibers." } },
+        { "type": "week", "settings": { "title": "Week 2", "text": "A more dense, fuller lash line forms as new growth pushes through. No flaking, no irritation." } },
+        { "type": "week", "settings": { "title": "Week 3", "text": "You can see clear length gains: 1-2mm longer lashes naturally. No mascara needed for a 'done' look." } },
+        { "type": "week", "settings": { "title": "Week 4", "text": "33 results: noticeably longer lashes with full density. Maintain with a 3-times-a-week routine from here." } },
+        { "type": "week", "settings": { "title": "Important", "text": "Results require daily use until you see results, then once-every-two-days maintenance for the rest of the year." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

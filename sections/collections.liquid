@@ -1,81 +1,195 @@
-{% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
+{%- liquid
+  assign section_id = 'collections-' | append: section.id
+  assign heading = section.settings.heading
+  assign columns_desktop = section.settings.columns_desktop
+  assign show_description = section.settings.show_description
+  assign bg_color = section.settings.bg_color
+  assign text_color = section.settings.text_color
+-%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
-
-<h1>{{ 'collections.title' | t }}</h1>
-
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
+<section
+  id="{{ section_id }}"
+  class="glaze-collections full-width"
+  style="
+    --bg: {{ bg_color }};
+    --fg: {{ text_color }};
+    --cols-d: {{ columns_desktop }};
+  "
 >
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
+  <div class="glaze-collections__inner">
+    <header class="glaze-collections__header">
+      <h1 class="glaze-collections__title">{{ heading | default: 'collections.title' | t | escape }}</h1>
+    </header>
 
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
-
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
-</div>
+    {%- if collections.size > 0 -%}
+      <ul class="glaze-collections__grid" role="list">
+        {%- for collection in collections -%}
+          <li class="glaze-ccard">
+            <a class="glaze-ccard__link" href="{{ collection.url }}" aria-label="{{ collection.title | escape }}">
+              <div class="glaze-ccard__media">
+                {%- if collection.featured_image -%}
+                  {{ collection.featured_image | image_url: width: 800 | image_tag:
+                      loading: 'lazy',
+                      sizes: '(min-width: 1080px) 30vw, (min-width: 720px) 45vw, 90vw',
+                      widths: '300, 450, 600, 800',
+                      alt: collection.featured_image.alt | default: collection.title | escape
+                  }}
+                {%- else -%}
+                  <span class="glaze-ccard__placeholder" aria-hidden="true">{{ collection.title | slice: 0 | upcase }}</span>
+                {%- endif -%}
+              </div>
+              <div class="glaze-ccard__body">
+                <h2 class="glaze-ccard__title">{{ collection.title | escape }}</h2>
+                {%- if show_description and collection.description != blank -%}
+                  <p class="glaze-ccard__description">{{ collection.description | strip_html | truncatewords: 18 }}</p>
+                {%- endif -%}
+                <span class="glaze-ccard__count">{{ 'collection.product_count' | t: count: collection.products_count }}</span>
+              </div>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+      <p class="glaze-collections__empty">{{ 'collections.empty' | t }}</p>
+    {%- endif -%}
+  </div>
+</section>
 
 {% stylesheet %}
-  .collections {
+  .glaze-collections {
+    background: var(--bg, var(--g-cream));
+    color: var(--fg, var(--g-ink));
+    font-family: var(--g-body-font);
+    padding: 64px 24px 96px;
+  }
+  .glaze-collections__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .glaze-collections__header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .glaze-collections__title {
+    font-family: var(--g-display-font);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 600;
+    margin: 0;
+  }
+  .glaze-collections__grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
-  .collections--compact {
-    --collection-card-size: 160px;
+  @media (min-width: 720px) {
+    .glaze-collections__grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
   }
-  .collections--full {
-    --collection-card-size: 280px;
+  @media (min-width: 1080px) {
+    .glaze-collections__grid { grid-template-columns: repeat(var(--cols-d, 3), 1fr); gap: 24px; }
   }
-  .collection-card {
-    display: flex;
-    flex-direction: column;
+  .glaze-ccard__link {
+    display: block;
+    color: var(--g-ink);
+    text-decoration: none;
+  }
+  .glaze-ccard__link:focus-visible { outline: 2px solid var(--g-rose); outline-offset: 4px; border-radius: var(--g-radius-md); }
+  .glaze-ccard__media {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--g-radius-md);
+    overflow: hidden;
+    background: var(--g-cream-warm);
+    position: relative;
+  }
+  .glaze-ccard__media img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .glaze-ccard__link:hover .glaze-ccard__media img { transform: scale(1.04); }
+  .glaze-ccard__placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--g-display-font);
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--g-rose);
+  }
+  .glaze-ccard__body {
+    padding: 12px 4px 0;
+    display: grid;
+    gap: 4px;
+  }
+  .glaze-ccard__title {
+    font-family: var(--g-display-font);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .glaze-ccard__description {
+    margin: 0;
+    color: var(--g-muted-strong);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .glaze-ccard__count {
+    color: var(--g-muted);
+    font-size: 12px;
+  }
+  .glaze-collections__empty {
+    text-align: center;
+    color: var(--g-muted);
+    padding: 64px 24px;
   }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.collections_grid",
+  "tag": "section",
+  "class": "section-collections",
   "settings": [
     {
-      "type": "select",
-      "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
-      "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
-      ],
-      "default": "collections--full"
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.collections.heading",
+      "default": "Shop our collections"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "t:sections.collections.show_description",
+      "default": true
     },
     {
       "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 10
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "t:sections.collections.columns_desktop",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "t:sections.collections.colors_header"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "t:sections.collections.bg_color",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.collections.text_color",
+      "default": "#1a1a1a"
     }
   ],
   "presets": [{ "name": "t:general.collections_grid" }]

@@ -1,37 +1,444 @@
-{% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
+{%- liquid
+  assign section_id = 'cart-' | append: section.id
+  assign show_notes = section.settings.show_notes
+  assign notes_label = section.settings.notes_label
+  assign continue_label = section.settings.continue_label
+  assign continue_link = section.settings.continue_link
+  assign bg_color = section.settings.bg_color
+  assign text_color = section.settings.text_color
+-%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
-{% endcomment %}
+<section
+  id="{{ section_id }}"
+  class="glaze-cart full-width"
+  style="--bg: {{ bg_color }}; --fg: {{ text_color }};"
+>
+  <div class="glaze-cart__inner">
+    <header class="glaze-cart__header">
+      <h1 class="glaze-cart__heading">{{ 'cart.title' | t }}</h1>
+      {%- unless cart.item_count == 0 -%}
+        <p class="glaze-cart__count">{{ 'cart.item_count' | t: count: cart.item_count }}</p>
+      {%- endunless -%}
+    </header>
 
-<h1>{{ 'cart.title' | t }}</h1>
+    {%- if cart.item_count == 0 -%}
+      <div class="glaze-cart__empty">
+        <p class="glaze-cart__empty-text">{{ 'cart.empty' | t }}</p>
+        <a class="glaze-btn glaze-btn--solid" href="{{ continue_link | default: routes.all_products_collection_url }}">
+          {{ continue_label | escape }}
+        </a>
+      </div>
+    {%- else -%}
+      <form action="{{ routes.cart_url }}" method="post" novalidate class="glaze-cart__form" id="{{ section_id }}-form">
+        <ul class="glaze-cart__items" role="list">
+          {%- for item in cart.items -%}
+            <li class="glaze-cart__item" data-key="{{ item.key }}">
+              <a class="glaze-cart__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+                {%- if item.image -%}
+                  {{ item.image | image_url: width: 240 | image_tag:
+                      loading: 'lazy',
+                      sizes: '120px',
+                      widths: '120, 180, 240',
+                      alt: item.image.alt | default: item.product.title | escape
+                  }}
+                {%- endif -%}
+              </a>
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+              <div class="glaze-cart__body">
+                <a class="glaze-cart__title" href="{{ item.url }}">{{ item.product.title | escape }}</a>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+                {%- unless item.product.has_only_default_variant -%}
+                  <p class="glaze-cart__options">{{ item.variant.title | escape }}</p>
+                {%- endunless -%}
+
+                {%- if item.selling_plan_allocation -%}
+                  <p class="glaze-cart__selling-plan">{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>
+                {%- endif -%}
+
+                {%- for property in item.properties -%}
+                  {%- assign first_char = property.first | slice: 0 -%}
+                  {%- if first_char != '_' and property.last != blank -%}
+                    <p class="glaze-cart__property">
+                      <span>{{ property.first | escape }}:</span>
+                      {% if property.last contains '/uploads/' %}
+                        <a href="{{ property.last }}" target="_blank" rel="noopener">{{ property.last | split: '/' | last | escape }}</a>
+                      {% else %}
+                        {{ property.last | escape }}
+                      {% endif %}
+                    </p>
+                  {%- endif -%}
+                {%- endfor -%}
+
+                {%- if item.line_level_discount_allocations.size > 0 -%}
+                  <ul class="glaze-cart__discounts" aria-label="{{ 'cart.discounts_aria' | t }}">
+                    {%- for discount in item.line_level_discount_allocations -%}
+                      <li>{{ discount.discount_application.title | escape }} (-{{ discount.amount | money }})</li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+
+                <div class="glaze-cart__row">
+                  <div class="glaze-cart__qty">
+                    <label for="updates_{{ item.key }}" class="visually-hidden">
+                      {{ 'cart.qty_label' | t: title: item.product.title }}
+                    </label>
+                    <button type="button" class="glaze-cart__qty-btn" aria-label="{{ 'cart.qty_decrease' | t }}" data-qty-step="-1" data-target="updates_{{ item.key }}">−</button>
+                    <input
+                      type="number"
+                      id="updates_{{ item.key }}"
+                      name="updates[{{ item.key }}]"
+                      value="{{ item.quantity }}"
+                      min="0"
+                      inputmode="numeric"
+                      pattern="[0-9]*"
+                      data-qty-input
+                    >
+                    <button type="button" class="glaze-cart__qty-btn" aria-label="{{ 'cart.qty_increase' | t }}" data-qty-step="1" data-target="updates_{{ item.key }}">+</button>
+                  </div>
+
+                  <div class="glaze-cart__prices">
+                    {%- if item.original_line_price != item.final_line_price -%}
+                      <s class="glaze-cart__compare">{{ item.original_line_price | money }}</s>
+                      <span class="glaze-cart__price">{{ item.final_line_price | money }}</span>
+                    {%- else -%}
+                      <span class="glaze-cart__price">{{ item.final_line_price | money }}</span>
+                    {%- endif -%}
+                    {%- if item.unit_price_measurement -%}
+                      <span class="glaze-cart__unit">
+                        {{ item.unit_price | money }}/{% if item.unit_price_measurement.reference_value != 1 %}{{ item.unit_price_measurement.reference_value }}{% endif %}{{ item.unit_price_measurement.reference_unit }}
+                      </span>
+                    {%- endif -%}
+                  </div>
+                </div>
+
+                <a class="glaze-cart__remove" href="{{ item.url_to_remove }}" aria-label="{{ 'cart.remove_aria' | t: title: item.product.title }}">
+                  {{ 'cart.remove' | t }}
+                </a>
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          <ul class="glaze-cart__cart-discounts" aria-label="{{ 'cart.cart_discounts_aria' | t }}">
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <li>{{ discount.title | escape }} (-{{ discount.total_allocated_amount | money }})</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if show_notes -%}
+          <div class="glaze-cart__notes">
+            <label for="{{ section_id }}-notes">{{ notes_label | escape }}</label>
+            <textarea
+              id="{{ section_id }}-notes"
+              name="note"
+              rows="3"
+            >{{ cart.note }}</textarea>
+          </div>
+        {%- endif -%}
+
+        <div class="glaze-cart__summary">
+          <div class="glaze-cart__subtotal-row">
+            <span>{{ 'cart.subtotal' | t }}</span>
+            <span class="glaze-cart__subtotal">{{ cart.total_price | money_with_currency }}</span>
+          </div>
+
+          <p class="glaze-cart__tax-note">
+            {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+              {{ 'cart.tax_and_shipping_at_checkout_html' | t: link: shop.shipping_policy.url }}
+            {%- elsif cart.taxes_included -%}
+              {{ 'cart.tax_included_shipping_at_checkout' | t }}
+            {%- elsif shop.shipping_policy.body != blank -%}
+              {{ 'cart.tax_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+            {%- else -%}
+              {{ 'cart.tax_and_shipping_at_checkout' | t }}
+            {%- endif -%}
+          </p>
+
+          <div class="glaze-cart__actions">
+            <button type="submit" name="update" class="glaze-btn glaze-btn--ghost">{{ 'cart.update' | t }}</button>
+            <button type="submit" name="checkout" class="glaze-btn glaze-btn--solid">{{ 'cart.checkout' | t }}</button>
+          </div>
+
+          {%- if additional_checkout_buttons -%}
+            <div class="glaze-cart__additional" aria-label="{{ 'cart.additional_checkout' | t }}">
+              {{ content_for_additional_checkout_buttons }}
+            </div>
+          {%- endif -%}
+        </div>
+      </form>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section = document.getElementById('{{ section_id }}');
+    if (!section) return;
+    section.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-qty-step]');
+      if (!btn) return;
+      var step = parseInt(btn.getAttribute('data-qty-step'), 10);
+      var input = document.getElementById(btn.getAttribute('data-target'));
+      if (!input) return;
+      var next = Math.max(0, (parseInt(input.value, 10) || 0) + step);
+      input.value = next;
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  .glaze-cart {
+    background: var(--bg, var(--g-cream));
+    color: var(--fg, var(--g-ink));
+    font-family: var(--g-body-font);
+    padding: 64px 24px 96px;
+  }
+  .glaze-cart__inner {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .glaze-cart__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .glaze-cart__heading {
+    font-family: var(--g-display-font);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 600;
+    margin: 0;
+  }
+  .glaze-cart__count {
+    margin: 0;
+    color: var(--g-muted);
+    font-size: 14px;
+  }
+  .glaze-cart__empty {
+    text-align: center;
+    background: var(--g-card-bg);
+    border-radius: var(--g-radius-lg);
+    padding: 64px 24px;
+    display: grid;
+    gap: 24px;
+    justify-items: center;
+  }
+  .glaze-cart__empty-text { font-size: 18px; margin: 0; }
+  .glaze-cart__items { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 16px; }
+  .glaze-cart__item {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 16px;
+    padding: 16px;
+    background: var(--g-card-bg);
+    border-radius: var(--g-radius-md);
+  }
+  @media (min-width: 720px) {
+    .glaze-cart__item { grid-template-columns: 120px 1fr; gap: 20px; padding: 20px; }
+  }
+  .glaze-cart__media {
+    aspect-ratio: 1 / 1;
+    border-radius: var(--g-radius-md);
+    overflow: hidden;
+    background: var(--g-cream-warm);
+    display: block;
+  }
+  .glaze-cart__media img { width: 100%; height: 100%; object-fit: cover; }
+  .glaze-cart__body { display: grid; gap: 6px; }
+  .glaze-cart__title {
+    font-family: var(--g-display-font);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fg);
+    text-decoration: none;
+    line-height: 1.3;
+  }
+  .glaze-cart__title:hover { text-decoration: underline; }
+  .glaze-cart__options,
+  .glaze-cart__selling-plan,
+  .glaze-cart__property,
+  .glaze-cart__unit,
+  .glaze-cart__discounts,
+  .glaze-cart__cart-discounts {
+    font-size: 13px;
+    color: var(--g-muted);
+    margin: 0;
+  }
+  .glaze-cart__discounts,
+  .glaze-cart__cart-discounts {
+    list-style: none;
+    padding: 0;
+    color: var(--g-success-fg);
+  }
+  .glaze-cart__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .glaze-cart__qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-pill);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .glaze-cart__qty-btn {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    font: inherit;
+    font-size: 18px;
+    width: var(--g-touch);
+    height: var(--g-touch);
+    color: var(--g-ink);
+    cursor: pointer;
+  }
+  .glaze-cart__qty-btn:focus-visible { outline: 2px solid var(--g-rose); outline-offset: -4px; }
+  .glaze-cart__qty input {
+    width: 44px;
+    height: var(--g-touch);
+    border: 0;
+    background: transparent;
+    text-align: center;
+    font: inherit;
+    color: var(--g-ink);
+    -moz-appearance: textfield;
+  }
+  .glaze-cart__qty input::-webkit-outer-spin-button,
+  .glaze-cart__qty input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .glaze-cart__prices {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .glaze-cart__price { font-weight: 600; font-size: 15px; }
+  .glaze-cart__compare { color: var(--g-muted); font-size: 13px; }
+  .glaze-cart__remove {
+    align-self: start;
+    font-size: 13px;
+    color: var(--g-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    width: max-content;
+    min-height: var(--g-touch);
+    display: inline-flex;
+    align-items: center;
+  }
+  .glaze-cart__remove:hover { color: var(--g-ink); }
+  .glaze-cart__notes {
+    margin: 24px 0;
+    display: grid;
+    gap: 8px;
+  }
+  .glaze-cart__notes label {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .glaze-cart__notes textarea {
+    width: 100%;
+    font: inherit;
+    background: var(--g-card-bg);
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-md);
+    padding: 12px 14px;
+    resize: vertical;
+    min-height: 80px;
+  }
+  .glaze-cart__notes textarea:focus { outline: 2px solid var(--g-rose); outline-offset: 2px; }
+  .glaze-cart__summary {
+    background: var(--g-card-bg);
+    border-radius: var(--g-radius-lg);
+    padding: 24px;
+    display: grid;
+    gap: 16px;
+  }
+  .glaze-cart__subtotal-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .glaze-cart__subtotal {
+    font-family: var(--g-display-font);
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .glaze-cart__tax-note {
+    margin: 0;
+    color: var(--g-muted);
+    font-size: 13px;
+  }
+  .glaze-cart__tax-note a { color: inherit; text-underline-offset: 3px; }
+  .glaze-cart__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .glaze-cart__actions button { flex: 1 1 auto; min-width: 160px; }
+  .glaze-cart__additional {
+    display: grid;
+    gap: 8px;
+  }
+  /* .glaze-btn family + .visually-hidden live in assets/base.css */
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.cart",
-  "settings": []
+  "tag": "section",
+  "class": "section-cart",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_notes",
+      "label": "t:sections.cart.show_notes",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "notes_label",
+      "label": "t:sections.cart.notes_label",
+      "default": "Add a note to your order"
+    },
+    {
+      "type": "text",
+      "id": "continue_label",
+      "label": "t:sections.cart.continue_label",
+      "default": "Continue shopping"
+    },
+    {
+      "type": "url",
+      "id": "continue_link",
+      "label": "t:sections.cart.continue_link"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.cart.colors_header"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "t:sections.cart.bg_color",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.cart.text_color",
+      "default": "#1a1a1a"
+    }
+  ]
 }
 {% endschema %}

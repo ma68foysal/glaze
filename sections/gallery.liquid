@@ -1,0 +1,132 @@
+{%- liquid
+  assign sid = 'Gallery-' | append: section.id
+  assign shots = section.blocks | where: 'type', 'shot'
+-%}
+
+<style>
+  #{{ sid }} {
+    --c-bg: {{ section.settings.bg_color }};
+    --c-fg: {{ section.settings.text_color }};
+    --c-title: {{ section.settings.title_color }};
+    --c-accent: {{ section.settings.accent_color }};
+    --pt: {{ section.settings.padding_top }}px;
+    --pb: {{ section.settings.padding_bottom }}px;
+    --max-w: {{ section.settings.max_width }}px;
+    --side-pad: {{ section.settings.side_padding }}px;
+    --r: {{ section.settings.shot_radius }}px;
+    --font-d: {{ section.settings.font_display | default: "var(--g-display-font, sans-serif)" }};
+    --font-b: {{ section.settings.font_body | default: "var(--g-body-font, sans-serif)" }};
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-b);
+    padding: var(--pt) 0 var(--pb);
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  @media (max-width: 749px) { #{{ sid }} { --side-pad: 16px; --pt: {{ section.settings.padding_top | times: 0.6 | round }}px; --pb: {{ section.settings.padding_bottom | times: 0.6 | round }}px; } }
+
+  #{{ sid }} .gm__container { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--side-pad); }
+  #{{ sid }} .gm__head { text-align: center; margin-bottom: clamp(24px, 4vw, 40px); }
+  #{{ sid }} .gm__heading {
+    font-family: var(--font-d);
+    font-size: clamp({{ section.settings.heading_size_min }}px, {{ section.settings.heading_size_vw }}vw, {{ section.settings.heading_size_max }}px);
+    font-weight: 600;
+    color: var(--c-title);
+    line-height: 1.2; margin: 0; letter-spacing: -0.01em;
+  }
+  #{{ sid }} .gm__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (min-width: 750px) {
+    #{{ sid }} .gm__grid { grid-template-columns: repeat({{ section.settings.columns }}, 1fr); gap: 14px; }
+  }
+
+  #{{ sid }} .gm__shot {
+    aspect-ratio: {{ section.settings.shot_aspect }};
+    border-radius: var(--r);
+    overflow: hidden;
+    background: {{ section.settings.media_bg }};
+  }
+  #{{ sid }} .gm__shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+</style>
+
+<section id="{{ sid }}" aria-label="{{ section.settings.aria_label | default: section.settings.heading | escape }}">
+  <div class="gm__container">
+    {%- if section.settings.heading != blank -%}
+      <div class="gm__head"><h2 class="gm__heading">{{ section.settings.heading }}</h2></div>
+    {%- endif -%}
+    {%- if shots.size > 0 -%}
+      <div class="gm__grid">
+        {%- for s in shots -%}
+          <div class="gm__shot" {{ s.shopify_attributes }}>
+            {%- if s.settings.image != blank -%}
+              {%- assign shot_alt = s.settings.alt | escape -%}
+              {{ s.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '200,300,400,600', sizes: '(min-width: 750px) 20vw, 50vw', alt: shot_alt }}
+            {%- else -%}
+              {%- assign ph_idx = forloop.index0 | modulo: 6 | plus: 1 -%}
+              {%- assign ph_name = 'product-' | append: ph_idx -%}
+              {{ ph_name | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Gallery",
+  "tag": "section",
+  "class": "section section--master-gallery",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "See The Difference In Just 4 Weeks" },
+    { "type": "text", "id": "aria_label", "label": "ARIA label", "default": "Customer results" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 3, "max": 6, "step": 1, "default": 5 },
+    { "type": "text", "id": "shot_aspect", "label": "Image aspect ratio", "default": "1 / 1" },
+    { "type": "range", "id": "shot_radius", "label": "Image radius", "min": 0, "max": 24, "step": 1, "unit": "px", "default": 8 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 1000, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1a1a1a" },
+    { "type": "color", "id": "title_color", "label": "Heading", "default": "#1a1a1a" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#e8a5a0" },
+    { "type": "color", "id": "media_bg", "label": "Media fallback", "default": "#f5d8d5" },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "heading_size_min", "label": "Heading min", "min": 22, "max": 36, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "heading_size_vw", "label": "Heading fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
+    { "type": "range", "id": "heading_size_max", "label": "Heading max", "min": 28, "max": 48, "step": 1, "unit": "px", "default": 32 }
+  ],
+  "blocks": [
+    {
+      "type": "shot",
+      "name": "Result image",
+      "limit": 10,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "alt", "label": "Alt text", "default": "Customer result" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gallery",
+      "blocks": [
+        { "type": "shot" },
+        { "type": "shot" },
+        { "type": "shot" },
+        { "type": "shot" },
+        { "type": "shot" }
+      ]
+    }
+  ]
+}
+{% endschema %}

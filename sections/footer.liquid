@@ -1,56 +1,982 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+{%- liquid
+  assign section_id = 'sleek-footer-' | append: section.id
+-%}
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+<style>
+  /* ============================================================
+     Footer Sleek — scoped styles (sf- prefix)
+     ============================================================ */
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
-  </div>
-</footer>
+  #{{ section_id }} {
+    --sf-bg: {{ section.settings.bg_color }};
+    --sf-fg: {{ section.settings.text_color }};
+    --sf-muted: {{ section.settings.muted_color }};
+    --sf-border: {{ section.settings.border_color }};
 
-{% stylesheet %}
-  footer {
+    --sf-news-title-c: {{ section.settings.news_title_color }};
+    --sf-news-title-s: {{ section.settings.news_title_size }}px;
+    --sf-news-title-w: {{ section.settings.news_title_weight }};
+    --sf-news-sub-c: {{ section.settings.news_sub_color }};
+    --sf-news-sub-s: {{ section.settings.news_sub_size }}px;
+
+    --sf-input-bg: {{ section.settings.input_bg }};
+    --sf-input-c: {{ section.settings.input_color }};
+    --sf-input-placeholder: {{ section.settings.input_placeholder_color }};
+    --sf-arrow-bg: {{ section.settings.arrow_bg }};
+    --sf-arrow-fg: {{ section.settings.arrow_fg }};
+
+    --sf-col-title-c: {{ section.settings.col_title_color }};
+    --sf-col-title-s: {{ section.settings.col_title_size }}px;
+    --sf-col-title-w: {{ section.settings.col_title_weight }};
+    --sf-link-c: {{ section.settings.link_color }};
+    --sf-link-s: {{ section.settings.link_size }}px;
+
+    --sf-about-desc-c: {{ section.settings.about_desc_color }};
+    --sf-about-desc-s: {{ section.settings.about_desc_size }}px;
+    --sf-about-btn-c: {{ section.settings.about_btn_color }};
+    --sf-about-btn-s: {{ section.settings.about_btn_size }}px;
+
+    --sf-bottom-c: {{ section.settings.bottom_color }};
+    --sf-bottom-s: {{ section.settings.bottom_size }}px;
+    --sf-icon-c: {{ section.settings.icon_color }};
+    --sf-icon-size: {{ section.settings.icon_size }}px;
+
+    --sf-pad-top: {{ section.settings.padding_top }}px;
+    --sf-pad-bottom: {{ section.settings.padding_bottom }}px;
+
+    display: block;
+    background: var(--sf-bg);
+    color: var(--sf-fg);
+    padding: var(--sf-pad-top) 0 var(--sf-pad-bottom);
+    border-top: 1px solid var(--sf-border);
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after { box-sizing: border-box; }
+
+  #{{ section_id }} a { color: inherit; text-decoration: none; }
+
+  .sf-wrap {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* -------- Top: newsletter + blocks -------- */
+  .sf-top {
+    display: grid;
+    grid-template-columns: 1.4fr repeat({{ section.blocks.size | at_least: 1 }}, 1fr);
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 60px;
+  }
+
+  /* Newsletter */
+  .sf-news-title {
+    margin: 0 0 14px;
+    color: var(--sf-news-title-c);
+    font-size: var(--sf-news-title-s);
+    font-weight: var(--sf-news-title-w);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  .sf-news-sub {
+    margin: 0 0 20px;
+    color: var(--sf-news-sub-c);
+    font-size: var(--sf-news-sub-s);
+    line-height: 1.5;
+  }
+
+  .sf-form {
+    position: relative;
+    max-width: 460px;
+  }
+
+  .sf-input {
+    width: 100%;
+    padding: 16px 56px 16px 22px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--sf-input-bg);
+    color: var(--sf-input-c);
+    font: inherit;
+    outline: none;
+  }
+
+  .sf-input::placeholder { color: var(--sf-input-placeholder); }
+  .sf-input:focus { box-shadow: 0 0 0 2px var(--sf-fg); }
+
+  .sf-submit {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--sf-arrow-bg);
+    color: var(--sf-arrow-fg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+  }
+
+  .sf-submit:hover { transform: translateY(-50%) scale(1.08); }
+  .sf-submit svg { width: 14px; height: 14px; }
+
+  .sf-terms {
+    margin: 14px 0 0;
+    color: var(--sf-muted);
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 460px;
+  }
+
+  .sf-terms a { text-decoration: underline; }
+
+  /* Block columns */
+  .sf-col-title {
+    margin: 0 0 18px;
+    color: var(--sf-col-title-c);
+    font-size: var(--sf-col-title-s);
+    font-weight: var(--sf-col-title-w);
+    line-height: 1.2;
+  }
+
+  .sf-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .sf-links a,
+  .sf-about-desc {
+    color: var(--sf-link-c);
+    font-size: var(--sf-link-s);
+  }
+
+  .sf-links a { transition: opacity 0.2s ease; }
+  .sf-links a:hover { opacity: 0.7; }
+
+  .sf-about-desc {
+    margin: 0 0 18px;
+    color: var(--sf-about-desc-c);
+    font-size: var(--sf-about-desc-s);
+    line-height: 1.5;
+  }
+
+  .sf-about-btn {
+    display: inline-block;
+    color: var(--sf-about-btn-c);
+    font-size: var(--sf-about-btn-s);
+    font-weight: 600;
+    border-bottom: 1.5px solid currentColor;
+    padding-bottom: 2px;
+    transition: opacity 0.2s ease;
+  }
+
+  .sf-about-btn:hover { opacity: 0.7; }
+
+  /* Column head — title always visible; icon + click behavior only on mobile.
+     Element is a <button> for a11y; reset default button styling so it inherits column layout. */
+  button.sf-col-head {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    width: 100%;
+    padding: 0;
+  }
+  button.sf-col-head:focus-visible {
+    outline: 2px solid var(--sf-link-c);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+  .sf-col-head {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    margin-top: 2rem;
+    gap: 16px;
+    cursor: default;
   }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
+
+  .sf-col-icon { display: none; }
+
+  /* -------- Bottom bar -------- */
+  .sf-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+    padding-top: 24px;
+    border-top: 1px solid var(--sf-border);
   }
-  footer .footer__links,
-  footer .footer__payment {
+
+  .sf-bottom-left,
+  .sf-bottom-right {
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 16px;
+    color: var(--sf-bottom-c);
+    font-size: var(--sf-bottom-s);
   }
-{% endstylesheet %}
+
+  .sf-bottom-right { align-items: flex-end; }
+
+  .sf-currency {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sf-currency-flag {
+    width: 20px;
+    height: 14px;
+    border-radius: 2px;
+    overflow: hidden;
+    display: inline-flex;
+  }
+
+  .sf-currency-flag-inner {
+    background: linear-gradient(#b22234 33%, #fff 33%, #fff 66%, #3c3b6e 66%);
+    width: 100%;
+    height: 100%;
+  }
+
+  .sf-copy {
+    color: var(--sf-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .sf-copy a { text-decoration: underline; }
+
+  .sf-legal {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .sf-legal a { transition: opacity 0.2s ease; }
+  .sf-legal a:hover { opacity: 0.7; }
+
+  /* Social icons */
+  .sf-social {
+    display: inline-flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .sf-social a {
+    display: inline-flex;
+    width: var(--sf-icon-size);
+    height: var(--sf-icon-size);
+    align-items: center;
+    justify-content: center;
+    color: var(--sf-icon-c);
+    transition: opacity 0.2s ease;
+  }
+
+  .sf-social a:hover { opacity: 0.6; }
+  .sf-social svg { width: 100%; height: 100%; }
+
+  /* Payment icons */
+  .sf-payments {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .sf-payment {
+    display: inline-block;
+    height: 22px;
+    width: 34px;
+    background: var(--sf-muted);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 8px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 22px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    overflow: hidden;
+  }
+
+  .sf-payment svg { width: 100%; height: 100%; display: block; }
+
+  /* -------- Responsive -------- */
+  @media screen and (max-width: 989px) {
+    .sf-top {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .sf-wrap { padding: 0 20px; }
+
+    .sf-top { gap: 24px; margin-bottom: 32px; }
+
+    .sf-news-title { font-size: 26px; }
+
+    /* Convert block columns into accordions */
+    .sf-col {
+      border-top: 1px solid var(--sf-border);
+      padding-top: 16px;
+    }
+
+    .sf-col-head {
+      cursor: pointer;
+      padding: 0 0 4px;
+    }
+
+    .sf-col-head .sf-col-title { margin: 0; }
+
+    .sf-col-icon {
+      display: block;
+      width: 16px;
+      height: 16px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .sf-col-icon::before,
+    .sf-col-icon::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+      top: 50%;
+      left: 0;
+    }
+
+    .sf-col-icon::before {
+      width: 100%;
+      height: 1.5px;
+      transform: translateY(-50%);
+    }
+
+    .sf-col-icon::after {
+      width: 1.5px;
+      height: 100%;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      transition: transform 0.25s ease;
+    }
+
+    .sf-col[data-open="true"] .sf-col-icon::after {
+      transform: translateX(-50%) scaleY(0);
+    }
+
+    .sf-col-body {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.3s ease;
+      padding-top: 0;
+    }
+
+    .sf-col[data-open="true"] .sf-col-body {
+      max-height: 600px;
+      opacity: 1;
+      padding-top: 14px;
+    }
+
+    /* Bottom stacks, everything left-aligned */
+    .sf-bottom {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .sf-bottom-left, .sf-bottom-right {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .sf-legal { gap: 18px; }
+    .sf-social { gap: 18px; }
+  }
+</style>
+
+<div id="{{ section_id }}" class="sleek-footer">
+  <div class="sf-wrap">
+
+    <div class="sf-top">
+
+      <div class="sf-news">
+        {%- if section.settings.news_title != blank -%}
+          <h2 class="sf-news-title">{{ section.settings.news_title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.news_sub != blank -%}
+          <p class="sf-news-sub">{{ section.settings.news_sub }}</p>
+        {%- endif -%}
+
+        {%- form 'customer', class: 'sf-form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <input
+            type="email"
+            name="contact[email]"
+            class="sf-input"
+            aria-label="Email"
+            placeholder="{{ section.settings.input_placeholder | default: 'Email' }}"
+            required
+          >
+          <button type="submit" class="sf-submit" aria-label="Subscribe">
+            <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          {%- if form.posted_successfully? -%}
+            <p class="sf-form-success">{{ 'general.newsletter_form.confirmation' | t | default: 'Thanks for subscribing!' }}</p>
+          {%- endif -%}
+          {%- if form.errors -%}
+            <p class="sf-form-error">{{ form.errors.messages.email }}</p>
+          {%- endif -%}
+        {%- endform -%}
+
+        {%- if section.settings.terms_text != blank -%}
+          <p class="sf-terms">{{ section.settings.terms_text }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- for block in section.blocks -%}
+        <div class="sf-col" data-open="false" {{ block.shopify_attributes }}>
+          {%- case block.type -%}
+            {%- when 'menu' -%}
+              <button type="button" class="sf-col-head" data-sf-col-toggle aria-expanded="false">
+                <h3 class="sf-col-title">{{ block.settings.title | default: 'Menu' }}</h3>
+                <span class="sf-col-icon" aria-hidden="true"></span>
+              </button>
+              <div class="sf-col-body">
+                <ul class="sf-links">
+                  {%- if block.settings.menu != blank -%}
+                    {%- for link in linklists[block.settings.menu].links -%}
+                      <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                    {%- endfor -%}
+                  {%- endif -%}
+                </ul>
+              </div>
+
+            {%- when 'about' -%}
+              <button type="button" class="sf-col-head" data-sf-col-toggle aria-expanded="false">
+                <h3 class="sf-col-title">{{ block.settings.title | default: 'About' }}</h3>
+                <span class="sf-col-icon" aria-hidden="true"></span>
+              </button>
+              <div class="sf-col-body">
+                {%- if block.settings.description != blank -%}
+                  <p class="sf-about-desc">{{ block.settings.description }}</p>
+                {%- endif -%}
+                {%- if block.settings.btn_label != blank -%}
+                  <a href="{{ block.settings.btn_link | default: '#' }}" class="sf-about-btn">{{ block.settings.btn_label }}</a>
+                {%- endif -%}
+              </div>
+          {%- endcase -%}
+        </div>
+      {%- endfor -%}
+
+    </div>
+
+    <div class="sf-bottom">
+      <div class="sf-bottom-left">
+        {%- if section.settings.show_currency -%}
+          <div class="sf-currency">
+            <span class="sf-currency-flag" aria-hidden="true"><span class="sf-currency-flag-inner"></span></span>
+            <span>{{ section.settings.currency_label | default: 'United States (USD $)' }}</span>
+            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        {%- endif -%}
+        <p class="sf-copy">
+          © {{ 'now' | date: '%Y' }} {{ shop.name | upcase }}.
+          {%- if section.settings.show_powered -%}
+            <a href="https://www.shopify.com" target="_blank" rel="noopener">Powered by Shopify</a>
+          {%- endif -%}
+        </p>
+      </div>
+
+      <div class="sf-bottom-right">
+        {%- if section.settings.legal_menu != blank -%}
+          <nav class="sf-legal" aria-label="Legal">
+            {%- for link in linklists[section.settings.legal_menu].links -%}
+              <a href="{{ link.url }}">{{ link.title }}</a>
+            {%- endfor -%}
+          </nav>
+        {%- endif -%}
+
+        {%- if section.settings.show_social -%}
+          <div class="sf-social">
+            {%- if section.settings.social_facebook != blank -%}
+              <a href="{{ section.settings.social_facebook }}" aria-label="Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-8H16l.5-3h-3V8c0-.9.3-1.5 1.6-1.5H17V3.8c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4V10H8v3h2.6v8h2.9z"/></svg></a>
+            {%- endif -%}
+            {%- if section.settings.social_x != blank -%}
+              <a href="{{ section.settings.social_x }}" aria-label="X" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-6.5 7.4L21.5 21h-5.9l-4.6-6-5.3 6h-3l7-7.9L3 3h6l4.2 5.5L17.5 3zm-1 16h1.7L7.5 4.8H5.7L16.5 19z"/></svg></a>
+            {%- endif -%}
+            {%- if section.settings.social_instagram != blank -%}
+              <a href="{{ section.settings.social_instagram }}" aria-label="Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+            {%- endif -%}
+            {%- if section.settings.social_tiktok != blank -%}
+              <a href="{{ section.settings.social_tiktok }}" aria-label="TikTok" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3h3c0 2.3 1.8 4.3 4 4.6v3a7.5 7.5 0 0 1-4-1.2v5.9a6 6 0 1 1-6-6c.3 0 .7 0 1 .1v3.1a3 3 0 1 0 2 2.8V3z"/></svg></a>
+            {%- endif -%}
+            {%- if section.settings.social_pinterest != blank -%}
+              <a href="{{ section.settings.social_pinterest }}" aria-label="Pinterest" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2 0-2.9l1.3-5.4s-.3-.7-.3-1.6c0-1.5.9-2.6 2-2.6.9 0 1.4.7 1.4 1.5 0 .9-.6 2.3-.9 3.6-.3 1 .6 1.9 1.6 1.9 2 0 3.5-2.1 3.5-5 0-2.6-1.9-4.4-4.6-4.4a4.7 4.7 0 0 0-5 4.8c0 1 .3 2 .8 2.5a.3.3 0 0 1 .1.3l-.3 1.1c-.1.2-.2.3-.4.2-1.4-.7-2.3-2.7-2.3-4.4 0-3.6 2.6-6.8 7.4-6.8 3.9 0 6.9 2.8 6.9 6.4 0 3.9-2.4 7-5.8 7-1.1 0-2.2-.6-2.5-1.3l-.7 2.6c-.3 1-1 2.3-1.5 3.1A10 10 0 1 0 12 2z"/></svg></a>
+            {%- endif -%}
+            {%- if section.settings.social_youtube != blank -%}
+              <a href="{{ section.settings.social_youtube }}" aria-label="YouTube" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.5 12 4.5 12 4.5s-7 0-8.9.6A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.8a3 3 0 0 0 2.1 2.1c1.9.6 8.9.6 8.9.6s7 0 8.9-.6a3 3 0 0 0 2.1-2.1c.4-1.6.5-3.2.5-4.8s-.1-3.2-.5-4.8zM10 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.show_payments -%}
+          <div class="sf-payments">
+            {%- for type in shop.enabled_payment_types -%}
+              <span class="sf-payment" aria-label="{{ type }}">{{ type | payment_type_svg_tag: class: 'icon-payment' }}</span>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('{{ section_id }}');
+    if (!root) return;
+
+    // Accordion toggles (active behavior is mobile-only — the CSS
+    // collapses the body below 749px; on desktop clicking is a no-op visually)
+    function toggleCol(el) {
+      var col = el.closest('.sf-col');
+      if (!col) return;
+      var open = col.getAttribute('data-open') === 'true';
+      var next = open ? 'false' : 'true';
+      col.setAttribute('data-open', next);
+      el.setAttribute('aria-expanded', next);
+    }
+
+    root.querySelectorAll('[data-sf-col-toggle]').forEach(function (el) {
+      el.addEventListener('click', function () { toggleCol(el); });
+      // <button> handles Enter/Space natively, so no extra keydown handler needed.
+    });
+  })();
+</script>
 
 {% schema %}
 {
-  "name": "t:general.footer",
+  "name": "Footer",
+  "class": "section-footer-sleek",
+  "tag": "footer",
+  "max_blocks": 5,
   "settings": [
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "news_title",
+      "label": "Title",
+      "default": "Subscribe to get 10% OFF"
+    },
+    {
+      "type": "color",
+      "id": "news_title_color",
+      "label": "Title color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "news_title_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "news_title_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Title weight",
+      "default": 700
+    },
+    {
+      "type": "text",
+      "id": "news_sub",
+      "label": "Subtitle",
+      "default": "Subscribe for store updates and discounts."
+    },
+    {
+      "type": "color",
+      "id": "news_sub_color",
+      "label": "Subtitle color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "news_sub_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle size",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Email input"
+    },
+    {
+      "type": "text",
+      "id": "input_placeholder",
+      "label": "Placeholder",
+      "default": "Email"
+    },
+    {
+      "type": "color",
+      "id": "input_bg",
+      "label": "Input background",
+      "default": "#f2f2f2"
+    },
+    {
+      "type": "color",
+      "id": "input_color",
+      "label": "Input text",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "input_placeholder_color",
+      "label": "Placeholder color",
+      "default": "#8a8a8a"
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg",
+      "label": "Arrow background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "arrow_fg",
+      "label": "Arrow icon",
+      "default": "#ffffff"
+    },
+    {
+      "type": "richtext",
+      "id": "terms_text",
+      "label": "Terms / privacy text",
+      "default": "<p>By subscribing you agree to the <a href=\"/policies/terms-of-service\">Terms of Use</a> & <a href=\"/policies/privacy-policy\">Privacy Policy.</a></p>"
+    },
+    {
+      "type": "header",
+      "content": "Menu columns"
+    },
+    {
+      "type": "color",
+      "id": "col_title_color",
+      "label": "Column title color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "col_title_size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Column title size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "col_title_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Column title weight",
+      "default": 600
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "link_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Link size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "About column"
+    },
+    {
+      "type": "color",
+      "id": "about_desc_color",
+      "label": "Description color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "about_desc_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "about_btn_color",
+      "label": "Learn more color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "about_btn_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Learn more size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Bottom bar"
     },
     {
       "type": "checkbox",
-      "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
+      "id": "show_currency",
+      "label": "Show currency selector",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "currency_label",
+      "label": "Currency label",
+      "default": "United States (USD $)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_powered",
+      "label": "Show \"Powered by Shopify\"",
+      "default": true
+    },
+    {
+      "type": "link_list",
+      "id": "legal_menu",
+      "label": "Legal menu",
+      "info": "e.g. Privacy Policy, Terms of Service"
+    },
+    {
+      "type": "color",
+      "id": "bottom_color",
+      "label": "Bottom text/link color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "bottom_size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Bottom text size",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Social icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social icons",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 18
+    },
+    {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "social_x",
+      "label": "X (Twitter) URL"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "social_tiktok",
+      "label": "TikTok URL"
+    },
+    {
+      "type": "url",
+      "id": "social_pinterest",
+      "label": "Pinterest URL"
+    },
+    {
+      "type": "url",
+      "id": "social_youtube",
+      "label": "YouTube URL"
+    },
+    {
+      "type": "header",
+      "content": "Payments"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payments",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Default text",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted text",
+      "default": "#888888"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Column title",
+          "default": "Shop"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer"
+        }
+      ]
+    },
+    {
+      "type": "about",
+      "name": "About column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "About"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "We only carry designs we believe in ethically and aesthetically — original, authentic pieces that are made to last."
+        },
+        {
+          "type": "text",
+          "id": "btn_label",
+          "label": "Button label",
+          "default": "Learn More"
+        },
+        {
+          "type": "url",
+          "id": "btn_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        { "type": "menu", "settings": { "title": "Shop" } },
+        { "type": "menu", "settings": { "title": "Customer care" } },
+        { "type": "about" }
+      ]
     }
   ]
 }

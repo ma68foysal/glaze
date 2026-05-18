@@ -1,20 +1,978 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
-      "settings": {}
+    "slideshow_sleek_x7W6aQ": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_RLe74U": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/slide-show-2-min.webp",
+            "layout": "overlay",
+            "image_side": "left",
+            "mobile_stack": "image-first",
+            "eyebrow": "Blend Beauty In You",
+            "heading": "Get the skin you want to feel",
+            "sub": "",
+            "button_label": "Shop Now",
+            "button_link": "",
+            "content_v_position": "middle",
+            "content_h_align": "right",
+            "content_width": 460,
+            "bg_color": "#f2dcd4",
+            "text_color": "#1a1a1a",
+            "button_bg": "#111111",
+            "button_fg": "#ffffff",
+            "overlay_type": "none",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        },
+        "slide_XWBVFT": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/slide-show-1-min.webp",
+            "layout": "split",
+            "image_side": "left",
+            "mobile_stack": "image-first",
+            "eyebrow": "Blend Beauty In You",
+            "heading": "Get the skin you want to feel",
+            "sub": "",
+            "button_label": "Shop Now",
+            "button_link": "",
+            "content_v_position": "middle",
+            "content_h_align": "left",
+            "content_width": 460,
+            "bg_color": "#e8c8c0",
+            "text_color": "#1a1a1a",
+            "button_bg": "#111111",
+            "button_fg": "#ffffff",
+            "overlay_type": "none",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        },
+        "slide_7AXGEF": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/slide-show-3-min.webp",
+            "layout": "overlay",
+            "image_side": "right",
+            "mobile_stack": "image-first",
+            "eyebrow": "Blend Beauty In You",
+            "heading": "Get the skin you want to feel",
+            "sub": "",
+            "button_label": "Shop Now",
+            "button_link": "",
+            "content_v_position": "middle",
+            "content_h_align": "left",
+            "content_width": 460,
+            "bg_color": "#d89a80",
+            "text_color": "#1a1a1a",
+            "button_bg": "#111111",
+            "button_fg": "#ffffff",
+            "overlay_type": "none",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        }
+      },
+      "block_order": [
+        "slide_RLe74U",
+        "slide_XWBVFT",
+        "slide_7AXGEF"
+      ],
+      "name": "Slideshow",
+      "settings": {
+        "height_desktop": 620,
+        "height_mobile": 560,
+        "corner_radius": 14,
+        "peek": 96,
+        "slide_gap": 16,
+        "content_gap": 18,
+        "section_padding": 20,
+        "autoplay": true,
+        "speed": 6,
+        "show_dots": true,
+        "show_arrows": false,
+        "dot_color": "#d4d4d4",
+        "dot_active_color": "#111111"
+      }
+    },
+    "featured_product_sleek_w7prWB": {
+      "type": "featured-product",
+      "blocks": {
+        "tab_pddiiP": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "What's hot",
+            "collection": "sleek"
+          }
+        },
+        "tab_UFkE9x": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Best sellers",
+            "collection": "sleek"
+          }
+        },
+        "tab_V33fHR": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Sale",
+            "collection": "sleek"
+          }
+        }
+      },
+      "block_order": [
+        "tab_pddiiP",
+        "tab_UFkE9x",
+        "tab_V33fHR"
+      ],
+      "name": "Featured product",
+      "settings": {
+        "show_shop_all": true,
+        "shop_all_label": "Shop All Products",
+        "shop_all_link": "shopify://collections/frontpage",
+        "columns_desktop": 3,
+        "products_per_tab": 6,
+        "card_radius": 12,
+        "choose_options_label": "Choose Options",
+        "atc_label": "Add To Cart",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "muted_color": "#a0a0a0",
+        "card_bg": "#f4f4f4",
+        "tab_active_color": "#111111",
+        "tab_inactive_color": "#b3b3b3",
+        "tab_font_size": 22,
+        "title_color": "#111111",
+        "title_font_size": 15,
+        "type_color": "#7a7a7a",
+        "type_font_size": 12,
+        "price_color": "#1a1a1a",
+        "compare_color": "#888888",
+        "price_font_size": 14,
+        "sale_bg": "#e23b3b",
+        "sale_fg": "#ffffff",
+        "new_bg": "#2f9e4f",
+        "new_fg": "#ffffff",
+        "hot_bg": "#4a37d1",
+        "hot_fg": "#ffffff",
+        "badge_font_size": 11,
+        "btn_bg": "#ffffff",
+        "btn_fg": "#111111",
+        "btn_hover_bg": "#111111",
+        "btn_hover_fg": "#ffffff",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "highlight_text_image_sleek_AKKafm": {
+      "type": "highlight-text-image",
+      "blocks": {
+        "text_YM84tm": {
+          "type": "text",
+          "settings": {
+            "text": "Make your skin",
+            "style": "normal",
+            "color": ""
+          }
+        },
+        "image_d6dXLR": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/text-with-image-1-min.avif",
+            "alt": "",
+            "shape": "pill",
+            "width": 140,
+            "height": 68,
+            "custom_radius": 16,
+            "image_bg": ""
+          }
+        },
+        "text_LxzjME": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "and",
+            "style": "normal",
+            "color": ""
+          }
+        },
+        "text_nGiP3Y": {
+          "type": "text",
+          "settings": {
+            "text": "feel nourished",
+            "style": "normal",
+            "color": ""
+          }
+        },
+        "image_WtFG7h": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/text-with-image-2-min.webp",
+            "alt": "",
+            "shape": "pill",
+            "width": 160,
+            "height": 68,
+            "custom_radius": 16,
+            "image_bg": ""
+          }
+        },
+        "text_DCRNGT": {
+          "type": "text",
+          "settings": {
+            "text": "and glowing",
+            "style": "normal",
+            "color": ""
+          }
+        },
+        "image_Rr8Hq6": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/text-with-image-3-min.avif",
+            "alt": "",
+            "shape": "pill",
+            "width": 140,
+            "height": 68,
+            "custom_radius": 16,
+            "image_bg": ""
+          }
+        }
+      },
+      "block_order": [
+        "text_YM84tm",
+        "image_d6dXLR",
+        "text_LxzjME",
+        "text_nGiP3Y",
+        "image_WtFG7h",
+        "text_DCRNGT",
+        "image_Rr8Hq6"
+      ],
+      "name": "Highlight text and image",
+      "settings": {
+        "text_align": "center",
+        "max_width": 1100,
+        "item_gap": 12,
+        "font_size_desktop": 64,
+        "font_size_mobile": 32,
+        "font_weight": 600,
+        "line_height": 1.3,
+        "letter_spacing": -1,
+        "bg_color": "#ffffff",
+        "text_color": "#111111",
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "side_padding": 40
+      }
+    },
+    "collection_list_sleek_cTyQ8H": {
+      "type": "collection-list",
+      "blocks": {
+        "collection_qnYMJp": {
+          "type": "collection",
+          "settings": {
+            "collection": "mens",
+            "image": "shopify://shop_images/c1.webp",
+            "title": "Moisturisers",
+            "count_text": "",
+            "link": ""
+          }
+        },
+        "collection_ntyWDm": {
+          "type": "collection",
+          "settings": {
+            "collection": "frontpage",
+            "image": "shopify://shop_images/c4.webp",
+            "title": "",
+            "count_text": "",
+            "link": ""
+          }
+        },
+        "collection_JRDLAY": {
+          "type": "collection",
+          "settings": {
+            "collection": "womens",
+            "image": "shopify://shop_images/c2.webp",
+            "title": "Serums",
+            "count_text": "",
+            "link": ""
+          }
+        },
+        "collection_VGxX8Q": {
+          "type": "collection",
+          "settings": {
+            "collection": "mens",
+            "image": "shopify://shop_images/c1.webp",
+            "title": "Moisturisers",
+            "count_text": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_qnYMJp",
+        "collection_ntyWDm",
+        "collection_JRDLAY",
+        "collection_VGxX8Q"
+      ],
+      "name": "Collection list",
+      "settings": {
+        "eyebrow": "Nourish Your Skin",
+        "title": "Clean beauty that delivers real results",
+        "description": "Every formula we make is thoughtfully developed — effective, skin-safe and a genuine pleasure to use.",
+        "cards_per_view": 3,
+        "card_gap": 20,
+        "card_radius": 14,
+        "bg_color": "#f2ebe5",
+        "text_color": "#1a1a1a",
+        "eyebrow_color": "#1a1a1a",
+        "eyebrow_size": 14,
+        "title_color": "#111111",
+        "title_size": 44,
+        "title_weight": 600,
+        "desc_color": "#3a3a3a",
+        "desc_size": 15,
+        "card_bg": "#ffffff",
+        "card_title_color": "#111111",
+        "card_title_size": 18,
+        "card_count_color": "#777777",
+        "card_count_size": 13,
+        "btn_bg": "#f2f2f2",
+        "btn_fg": "#111111",
+        "btn_hover_bg": "#111111",
+        "btn_hover_fg": "#ffffff",
+        "nav_bg": "rgba(0,0,0,0)",
+        "nav_fg": "#111111",
+        "nav_hover_bg": "#111111",
+        "nav_hover_fg": "#ffffff",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "product_bundle_sleek_CM3gnJ": {
+      "type": "product-bundle",
+      "blocks": {
+        "product_M8i8mc": {
+          "type": "product",
+          "settings": {
+            "product": "rejuvenating-night-oil",
+            "title_override": "Rejuvenating Night Oil",
+            "dot_x": 42,
+            "dot_y": 65
+          }
+        },
+        "product_X7YqC6": {
+          "type": "product",
+          "settings": {
+            "product": "dream-bio-retinol",
+            "title_override": "Dream Bio Retinol",
+            "dot_x": 70,
+            "dot_y": 45
+          }
+        },
+        "product_DYgrUY": {
+          "type": "product",
+          "settings": {
+            "product": "protective-day-oil",
+            "title_override": "",
+            "dot_x": 20,
+            "dot_y": 38
+          }
+        }
+      },
+      "block_order": [
+        "product_M8i8mc",
+        "product_X7YqC6",
+        "product_DYgrUY"
+      ],
+      "name": "Product bundle",
+      "settings": {
+        "image": "shopify://shop_images/product-bundle-min.webp",
+        "media_radius": 16,
+        "eyebrow": "Shop Skincare Set",
+        "title": "Build your complete daily skin ritual",
+        "btn_label": "Add All To Cart",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "eyebrow_color": "#1a1a1a",
+        "eyebrow_size": 14,
+        "title_color": "#111111",
+        "title_size": 42,
+        "title_weight": 600,
+        "dot_bg": "#ffffff",
+        "dot_fg": "#1a1a1a",
+        "dot_size": 32,
+        "item_bg": "#ffffff",
+        "item_image_bg": "#f4f4f4",
+        "num_bg": "#ffffff",
+        "num_fg": "#1a1a1a",
+        "item_title_color": "#111111",
+        "item_title_size": 15,
+        "price_color": "#111111",
+        "compare_color": "#999999",
+        "variant_color": "#555555",
+        "btn_bg": "#111111",
+        "btn_fg": "#ffffff",
+        "btn_hover_bg": "#333333",
+        "btn_hover_fg": "#ffffff",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "featured_press_sleek_XWhbnq": {
+      "type": "featured-press",
+      "blocks": {
+        "press_9wwXw9": {
+          "type": "press",
+          "settings": {
+            "logo": "shopify://shop_images/press-item-1.avif",
+            "alt": "",
+            "quote": "\"An edit of skincare that genuinely performs. Clean, considered and worth every penny.\"",
+            "link": ""
+          }
+        },
+        "press_zUDCNK": {
+          "type": "press",
+          "settings": {
+            "logo": "shopify://shop_images/press-item-2.avif",
+            "alt": "",
+            "quote": "\"Thoughtfully formulated products with results-driven ingredients. A brand to watch.\"",
+            "link": ""
+          }
+        },
+        "press_8CqWh8": {
+          "type": "press",
+          "settings": {
+            "logo": "shopify://shop_images/press-item-3.webp",
+            "alt": "",
+            "quote": "\"Looking to simplify your skincare without compromising on quality? This is where to start.\"",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "press_9wwXw9",
+        "press_zUDCNK",
+        "press_8CqWh8"
+      ],
+      "name": "Featured press",
+      "settings": {
+        "title": "As Seen In",
+        "title_color": "#111111",
+        "title_size": 40,
+        "title_weight": 600,
+        "columns_desktop": 3,
+        "gap": 40,
+        "logo_max_height": 54,
+        "quote_color": "#1a1a1a",
+        "quote_size": 15,
+        "quote_weight": 400,
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "border_color": "#e6e6e6",
+        "border_width": 1,
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
+    },
+    "features_sleek_xphNB6": {
+      "type": "features",
+      "blocks": {
+        "feature_H7xchU": {
+          "type": "feature",
+          "settings": {
+            "title": "Free Shipping",
+            "link": ""
+          }
+        },
+        "feature_9MxFaB": {
+          "type": "feature",
+          "settings": {
+            "title": "30-Day Money-Back Guarantee",
+            "link": ""
+          }
+        },
+        "feature_ba7EtB": {
+          "type": "feature",
+          "settings": {
+            "title": "Buy Now Pay Later",
+            "link": ""
+          }
+        },
+        "feature_UqW4k9": {
+          "type": "feature",
+          "settings": {
+            "title": "Day Live Support",
+            "link": ""
+          }
+        },
+        "feature_WfKycX": {
+          "type": "feature",
+          "settings": {
+            "title": "Easy Returns",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "feature_H7xchU",
+        "feature_9MxFaB",
+        "feature_ba7EtB",
+        "feature_UqW4k9",
+        "feature_WfKycX"
+      ],
+      "name": "Features",
+      "settings": {
+        "align": "center",
+        "gap": 12,
+        "bg_color": "#ffffff",
+        "pill_bg": "#ffffff",
+        "pill_border_color": "#e6e6e6",
+        "pill_border_width": 1,
+        "pill_radius": 40,
+        "pill_padding_y": 10,
+        "pill_padding_x": 18,
+        "icon_size": 28,
+        "icon_bg": "#f2f2f2",
+        "icon_color": "#111111",
+        "title_color": "#1a1a1a",
+        "title_size": 15,
+        "title_size_mobile": 14,
+        "title_weight": 500,
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "sticky_collections_sleek_H8XPUd": {
+      "type": "sticky-collections",
+      "blocks": {
+        "collection_MfnXLf": {
+          "type": "collection",
+          "settings": {
+            "collection": "sleek",
+            "title_override": "Sale 30% off",
+            "products_count": 8
+          }
+        },
+        "collection_ck67AF": {
+          "type": "collection",
+          "settings": {
+            "collection": "sleek",
+            "title_override": "Travel & Minis",
+            "products_count": 8
+          }
+        },
+        "collection_ae6yKd": {
+          "type": "collection",
+          "settings": {
+            "collection": "sleek",
+            "title_override": "Under 29$",
+            "products_count": 8
+          }
+        }
+      },
+      "block_order": [
+        "collection_MfnXLf",
+        "collection_ck67AF",
+        "collection_ae6yKd"
+      ],
+      "name": "Sticky collections",
+      "settings": {
+        "head_title": "Your routine. Your rules.Shop what works for you.",
+        "head_title_color": "#111111",
+        "head_title_size": 36,
+        "head_title_weight": 600,
+        "head_desc": "",
+        "head_desc_color": "#444444",
+        "head_desc_size": 15,
+        "head_link_label": "Shop All Products",
+        "head_link_url": "",
+        "head_link_color": "#111111",
+        "head_link_size": 14,
+        "head_align": "center",
+        "image": "shopify://shop_images/image-card.webp",
+        "image_content_position": "top",
+        "image_radius": 16,
+        "eyebrow": "Formulated With Care",
+        "eyebrow_color": "#ffffff",
+        "eyebrow_size": 14,
+        "image_title": "Built for every skin type",
+        "image_title_color": "#ffffff",
+        "image_title_size": 34,
+        "image_title_weight": 600,
+        "btn_label": "Shop All Products",
+        "btn_link": "",
+        "image_btn_bg": "#ffffff",
+        "image_btn_fg": "#111111",
+        "sticky_offset": 80,
+        "coll_gap": 56,
+        "coll_title_color": "#111111",
+        "coll_title_size": 26,
+        "coll_title_weight": 600,
+        "nav_bg": "#ffffff",
+        "nav_fg": "#111111",
+        "nav_hover_bg": "#111111",
+        "nav_hover_fg": "#ffffff",
+        "choose_options_label": "Choose Options",
+        "atc_label": "Add To Cart",
+        "card_bg": "#f4f4f4",
+        "card_radius": 12,
+        "card_title_color": "#111111",
+        "card_title_size": 14,
+        "type_color": "#7a7a7a",
+        "type_size": 12,
+        "price_color": "#1a1a1a",
+        "compare_color": "#888888",
+        "price_size": 13,
+        "sale_bg": "#e23b3b",
+        "sale_fg": "#ffffff",
+        "new_bg": "#2f9e4f",
+        "new_fg": "#ffffff",
+        "hot_bg": "#4a37d1",
+        "hot_fg": "#ffffff",
+        "badge_size": 11,
+        "btn_bg": "#ffffff",
+        "btn_fg": "#111111",
+        "btn_hover_bg": "#111111",
+        "btn_hover_fg": "#ffffff",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "image_with_text_sleek_3hQB3m": {
+      "type": "image-with-text",
+      "name": "Image with text",
+      "settings": {
+        "image": "shopify://shop_images/image-with-text-min.webp",
+        "image_side": "right",
+        "eyebrow": "Gentle And Considered",
+        "title": "Skincare that respects your skin",
+        "description": "We formulate without compromise — no harsh chemicals, no unnecessary fillers. Just clean, effective ingredients your skin can trust every day.",
+        "btn_label": "Shop Now",
+        "btn_link": "",
+        "radius": 20,
+        "min_height": 520,
+        "text_gap": 16,
+        "bg_color": "#ffffff",
+        "content_bg": "#e9dccb",
+        "eyebrow_color": "#1a1a1a",
+        "eyebrow_size": 14,
+        "title_color": "#111111",
+        "title_size": 52,
+        "title_weight": 600,
+        "desc_color": "#333333",
+        "desc_size": 15,
+        "btn_bg": "#111111",
+        "btn_fg": "#ffffff",
+        "btn_hover_bg": "#333333",
+        "btn_hover_fg": "#ffffff",
+        "btn_size": 14,
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "side_padding": 40
+      }
+    },
+    "marquee_sleek_f8tiN3": {
+      "type": "marquee",
+      "blocks": {
+        "item_tRy3x9": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/scrolling-2.avif",
+            "text": "Toxin-Free Formulas",
+            "link": ""
+          }
+        },
+        "item_baYJfF": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/scrolling-3.webp",
+            "text": "Skin Transformation",
+            "link": ""
+          }
+        },
+        "item_BqJ3ce": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/scrolling-4.webp",
+            "text": "Made With Intention",
+            "link": ""
+          }
+        },
+        "item_EnykLy": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/scrolling-1.avif",
+            "text": "New Season Arrivals",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_tRy3x9",
+        "item_baYJfF",
+        "item_BqJ3ce",
+        "item_EnykLy"
+      ],
+      "name": "Marquee",
+      "settings": {
+        "direction": "left",
+        "speed": 40,
+        "text_color": "#111111",
+        "text_size": 40,
+        "text_size_mobile": 22,
+        "text_weight": 500,
+        "image_size": 72,
+        "image_size_mobile": 46,
+        "image_radius": 80,
+        "gap": 60,
+        "gap_mobile": 24,
+        "padding_top": 24,
+        "padding_bottom": 24,
+        "bg_color": "#ffffff",
+        "border_top_width": 1,
+        "border_top_color": "#e6e6e6",
+        "border_bottom_width": 1,
+        "border_bottom_color": "#e6e6e6"
+      }
+    },
+    "shoppable_tabs_sleek_PwcPDF": {
+      "type": "shoppable-tabs",
+      "blocks": {
+        "tab_Tdjqi3": {
+          "type": "tab",
+          "settings": {
+            "tab_title": "Sensitive Skin",
+            "tab_description": "<p>We're careful about every ingredient that goes in — and just as careful about what we keep out. No irritants, no unnecessary fragrance, no compromise on your skin's comfort.</p>",
+            "collection": "sleek",
+            "products_count": 4
+          }
+        },
+        "tab_fWDbfL": {
+          "type": "tab",
+          "settings": {
+            "tab_title": "Dry Skin",
+            "tab_description": "<p>Deep, lasting hydration that works beneath the surface. Our dry skin range is formulated to restore your skin's natural moisture barrier and keep it protected throughout the day.</p>",
+            "collection": "sleek",
+            "products_count": 4
+          }
+        },
+        "tab_ePiWkU": {
+          "type": "tab",
+          "settings": {
+            "tab_title": "Organic Formulas",
+            "tab_description": "<p>Where it's possible to use certified organic ingredients without affecting efficacy, we do. Because what's good for your skin should also be good for the planet.</p>",
+            "collection": "sleek",
+            "products_count": 4
+          }
+        },
+        "tab_PkLXwH": {
+          "type": "tab",
+          "settings": {
+            "tab_title": "Prestige Skincare",
+            "tab_description": "<p>Professional-grade ingredients. Accessible price points. Our premium range delivers results you'd expect from a high-end skin clinic, without the clinic price tag.</p>",
+            "collection": "sleek",
+            "products_count": 4
+          }
+        }
+      },
+      "block_order": [
+        "tab_Tdjqi3",
+        "tab_fWDbfL",
+        "tab_ePiWkU",
+        "tab_PkLXwH"
+      ],
+      "name": "Shoppable tabs",
+      "settings": {
+        "eyebrow": "Photos & Results",
+        "eyebrow_color": "#1a1a1a",
+        "eyebrow_size": 14,
+        "eyebrow_weight": 500,
+        "title": "Real skin. Real products. Real difference.",
+        "title_color": "#111111",
+        "title_size": 38,
+        "title_weight": 600,
+        "tab_title_color": "#111111",
+        "tab_title_inactive_color": "#a0a0a0",
+        "tab_title_size": 18,
+        "tab_title_weight": 600,
+        "tab_desc_color": "#3a3a3a",
+        "tab_desc_size": 14,
+        "tab_accent_color": "#111111",
+        "sticky_offset": 80,
+        "card_radius": 16,
+        "product_bar_bg": "#ffffff",
+        "product_thumb_size": 54,
+        "product_title_color": "#111111",
+        "product_title_size": 14,
+        "product_price_color": "#e23b3b",
+        "product_compare_color": "#8a8a8a",
+        "product_price_size": 13,
+        "bag_bg": "#f2f2f2",
+        "bag_fg": "#111111",
+        "bag_hover_bg": "#111111",
+        "bag_hover_fg": "#ffffff",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "faq_sleek_JcNjzx": {
+      "type": "faq-grid",
+      "blocks": {
+        "faq_MDpDEJ": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>Standard orders are dispatched within 1–2 business days. Domestic delivery typically arrives within 3–5 business days. Express options are available at checkout for faster delivery.</p>",
+            "open_by_default": false
+          }
+        },
+        "faq_LEzXnV": {
+          "type": "faq",
+          "settings": {
+            "question": "Does my order arrive in gift-ready packaging?",
+            "answer": "<p>Yes. Every order is packaged with care — clean, minimal and presentation-ready. Perfect for gifting or treating yourself.</p>",
+            "open_by_default": true
+          }
+        },
+        "faq_jm7ABH": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you ship internationally?",
+            "answer": "<p>Yes, we ship worldwide. International delivery times vary by destination and are calculated at checkout. All orders are fully tracked from dispatch to doorstep.</p>",
+            "open_by_default": false
+          }
+        },
+        "faq_xWCNpW": {
+          "type": "faq",
+          "settings": {
+            "question": "What payment methods do you accept?",
+            "answer": "<p>Shipping usually takes 3-7 business days, depending on your location. Expedited shipping options are available for faster delivery.</p>",
+            "open_by_default": false
+          }
+        }
+      },
+      "block_order": [
+        "faq_MDpDEJ",
+        "faq_LEzXnV",
+        "faq_jm7ABH",
+        "faq_xWCNpW"
+      ],
+      "name": "FAQ grid",
+      "settings": {
+        "title": "We've got answers.",
+        "title_color": "#111111",
+        "title_size": 38,
+        "title_weight": 600,
+        "description": "<p>Every product we make is designed to work and feel great. Got a question? We've probably already answered it — and if not, we're always here.</p>",
+        "desc_color": "#1a1a1a",
+        "desc_size": 15,
+        "btn_label": "See More Answers",
+        "btn_link": "",
+        "btn_bg": "#111111",
+        "btn_fg": "#ffffff",
+        "btn_hover_bg": "#333333",
+        "btn_hover_fg": "#ffffff",
+        "image": "shopify://shop_images/image_806_1_6b4cd02f-1a3e-49ac-b41c-f5075a23047e.webp",
+        "image_radius": 0,
+        "item_bg": "#ffffff",
+        "item_border_color": "#e8e2d8",
+        "item_radius": 14,
+        "item_gap": 10,
+        "question_color": "#111111",
+        "question_size": 16,
+        "question_weight": 600,
+        "icon_color": "#111111",
+        "answer_color": "#3a3a3a",
+        "answer_size": 14,
+        "bg_color": "#efe9de",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "about_sleek_rmM4PF": {
+      "type": "about",
+      "blocks": {
+        "card_4NHQw4": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/card-1.webp",
+            "bg_color": "#ebebeb",
+            "title": "News, tips, reviews",
+            "btn_label": "View Our Blog",
+            "link": ""
+          }
+        },
+        "card_4M3wA3": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/image-card-5-min.webp",
+            "bg_color": "#c9b49a",
+            "title": "Stores near you",
+            "btn_label": "Find A Store",
+            "link": ""
+          }
+        },
+        "card_4AgeeW": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/img-card2.webp",
+            "bg_color": "#e9cbcb",
+            "title": "On the gram",
+            "btn_label": "@Glossy_store",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "card_4NHQw4",
+        "card_4M3wA3",
+        "card_4AgeeW"
+      ],
+      "name": "About",
+      "settings": {
+        "title": "Skincare that fits every season, every mood, every version of you.",
+        "title_color": "#111111",
+        "title_size": 34,
+        "title_weight": 600,
+        "link_label": "About Us",
+        "link_url": "shopify://pages/about-us",
+        "link_color": "#111111",
+        "link_size": 14,
+        "columns_desktop": 3,
+        "card_gap": 20,
+        "card_radius": 12,
+        "card_title_color": "#111111",
+        "card_title_size": 22,
+        "card_title_weight": 600,
+        "btn_bg": "#111111",
+        "btn_fg": "#ffffff",
+        "btn_hover_bg": "#333333",
+        "btn_hover_fg": "#ffffff",
+        "bg_color": "#ffffff",
+        "padding_top": 72,
+        "padding_bottom": 72
+      }
     }
   },
   "order": [
-    "main"
+    "slideshow_sleek_x7W6aQ",
+    "featured_product_sleek_w7prWB",
+    "highlight_text_image_sleek_AKKafm",
+    "collection_list_sleek_cTyQ8H",
+    "product_bundle_sleek_CM3gnJ",
+    "featured_press_sleek_XWhbnq",
+    "features_sleek_xphNB6",
+    "sticky_collections_sleek_H8XPUd",
+    "image_with_text_sleek_3hQB3m",
+    "marquee_sleek_f8tiN3",
+    "shoppable_tabs_sleek_PwcPDF",
+    "faq_sleek_JcNjzx",
+    "about_sleek_rmM4PF"
   ]
 }

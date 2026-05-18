@@ -1,0 +1,384 @@
+{%- liquid
+  assign section_id = 'sleek-mq-' | append: section.id
+  assign direction = section.settings.direction
+  assign speed = section.settings.speed
+-%}
+
+<style>
+  /* ============================================================
+     Marquee Sleek — scoped styles (mq- prefix)
+     ============================================================ */
+
+  #{{ section_id }} {
+    --mq-bg: {{ section.settings.bg_color }};
+    --mq-text-c: {{ section.settings.text_color }};
+    --mq-text-s: {{ section.settings.text_size }}px;
+    --mq-text-w: {{ section.settings.text_weight }};
+    --mq-img-size: {{ section.settings.image_size }}px;
+    --mq-img-radius: {{ section.settings.image_radius }}px;
+    --mq-gap: {{ section.settings.gap }}px;
+    --mq-border-top-w: {{ section.settings.border_top_width }}px;
+    --mq-border-top-c: {{ section.settings.border_top_color }};
+    --mq-border-bottom-w: {{ section.settings.border_bottom_width }}px;
+    --mq-border-bottom-c: {{ section.settings.border_bottom_color }};
+    --mq-pad-top: {{ section.settings.padding_top }}px;
+    --mq-pad-bottom: {{ section.settings.padding_bottom }}px;
+
+    display: block;
+    background: var(--mq-bg);
+    border-top: var(--mq-border-top-w) solid var(--mq-border-top-c);
+    border-bottom: var(--mq-border-bottom-w) solid var(--mq-border-bottom-c);
+    padding: var(--mq-pad-top) 0 var(--mq-pad-bottom);
+    overflow: hidden;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after { box-sizing: border-box; }
+
+  .mq-viewport {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .mq-track {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    gap: var(--mq-gap);
+    padding-right: var(--mq-gap);
+    animation-name: sleek-mq-scroll;
+    animation-duration: {{ speed }}s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: {% if direction == 'right' %}reverse{% else %}normal{% endif %};
+    will-change: transform;
+  }
+
+  .mq-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes sleek-mq-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .mq-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+    color: var(--mq-text-c);
+    font-size: var(--mq-text-s);
+    font-weight: var(--mq-text-w);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .mq-image {
+    width: var(--mq-img-size);
+    height: var(--mq-img-size);
+    border-radius: var(--mq-img-radius);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #eee;
+  }
+
+  .mq-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .mq-text { white-space: nowrap; }
+
+  /* -------- Responsive -------- */
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} {
+      --mq-img-size: {{ section.settings.image_size_mobile }}px;
+      --mq-text-s: {{ section.settings.text_size_mobile }}px;
+      --mq-gap: {{ section.settings.gap_mobile }}px;
+    }
+    .mq-item { gap: 10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mq-track { animation: none; }
+  }
+</style>
+
+<div id="{{ section_id }}" class="sleek-mq" data-sleek-mq>
+  <div class="mq-viewport">
+    <div class="mq-track" data-mq-track>
+      {%- comment -%} Render blocks twice for seamless infinite loop {%- endcomment -%}
+      {%- for i in (1..2) -%}
+        {%- for block in section.blocks -%}
+          {%- capture inner -%}
+            {%- if block.settings.image != blank -%}
+              <span class="mq-image">
+                {{ block.settings.image | image_url: width: 200 | image_tag: loading: 'lazy', alt: block.settings.text, widths: '80,120,160,200' }}
+              </span>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <span class="mq-text">{{ block.settings.text }}</span>
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}" class="mq-item" {% if i == 1 %}{{ block.shopify_attributes }}{% else %}aria-hidden="true" tabindex="-1"{% endif %}>{{ inner }}</a>
+          {%- else -%}
+            <div class="mq-item" {% if i == 1 %}{{ block.shopify_attributes }}{% else %}aria-hidden="true"{% endif %}>{{ inner }}</div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Marquee",
+  "class": "section-marquee-sleek",
+  "tag": "section",
+  "max_blocks": 20,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Direction",
+      "options": [
+        { "value": "left", "label": "Left (→)" },
+        { "value": "right", "label": "Right (←)" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 10,
+      "max": 120,
+      "step": 2,
+      "unit": "s",
+      "label": "Scroll duration",
+      "info": "Lower = faster. Higher = slower.",
+      "default": 40
+    },
+    {
+      "type": "paragraph",
+      "content": "Marquee pauses automatically on hover. Also respects the user's reduced-motion preference."
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 14,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Size (desktop)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "min": 12,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "label": "Size (mobile)",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "text_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Weight",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "min": 30,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "label": "Size (desktop)",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "image_size_mobile",
+      "min": 24,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Size (mobile)",
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Radius",
+      "info": "Set to half the image size for a perfect circle.",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 10,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between items (desktop)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between items (mobile)",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Section colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Top border"
+    },
+    {
+      "type": "range",
+      "id": "border_top_width",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Thickness",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_top_color",
+      "label": "Color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "header",
+      "content": "Bottom border"
+    },
+    {
+      "type": "range",
+      "id": "border_bottom_width",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Thickness",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_bottom_color",
+      "label": "Color",
+      "default": "#e6e6e6"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "New Season Essential"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee",
+      "blocks": [
+        { "type": "item", "settings": { "text": "Rescue Your Skin" } },
+        { "type": "item", "settings": { "text": "Made with love" } },
+        { "type": "item", "settings": { "text": "New Season Essential" } },
+        { "type": "item", "settings": { "text": "Clean Ingredients" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

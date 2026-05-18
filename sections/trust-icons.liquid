@@ -1,0 +1,127 @@
+{%- liquid
+  assign sid = 'TrustIcons-' | append: section.id
+  assign items = section.blocks | where: 'type', 'item'
+-%}
+
+<style>
+  #{{ sid }} {
+    --c-bg: {{ section.settings.bg_color }};
+    --c-fg: {{ section.settings.text_color }};
+    --c-accent: {{ section.settings.accent_color }};
+    --pt: {{ section.settings.padding_top }}px;
+    --pb: {{ section.settings.padding_bottom }}px;
+    --max-w: {{ section.settings.max_width }}px;
+    --side-pad: {{ section.settings.side_padding }}px;
+    --font-d: {{ section.settings.font_display | default: "var(--g-display-font, sans-serif)" }};
+    --font-b: {{ section.settings.font_body | default: "var(--g-body-font, sans-serif)" }};
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-b);
+    padding: var(--pt) 0 var(--pb);
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  @media (max-width: 749px) { #{{ sid }} { --side-pad: 16px; --pt: {{ section.settings.padding_top | times: 0.6 | round }}px; --pb: {{ section.settings.padding_bottom | times: 0.6 | round }}px; } }
+
+  #{{ sid }} .ti__container { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--side-pad); }
+  #{{ sid }} .ti__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(20px, 3vw, 32px);
+    text-align: center;
+  }
+  @media (min-width: 750px) { #{{ sid }} .ti__grid { grid-template-columns: repeat({{ section.settings.columns }}, 1fr); } }
+
+  #{{ sid }} .ti__item {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  #{{ sid }} .ti__icon {
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    border-radius: 50%;
+    background: {{ section.settings.icon_bg }};
+    color: var(--c-accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #{{ sid }} .ti__icon img { width: 60%; height: 60%; object-fit: contain; }
+  #{{ sid }} .ti__icon-emoji { font-size: {{ section.settings.icon_size | times: 0.5 | round }}px; line-height: 1; }
+  #{{ sid }} .ti__label {
+    font-family: var(--font-b);
+    font-size: {{ section.settings.label_size }}px;
+    color: {{ section.settings.label_color }};
+    line-height: 1.4;
+    max-width: 18ch;
+  }
+</style>
+
+<section id="{{ sid }}" aria-label="{{ section.settings.aria_label | default: 'Product highlights' | escape }}">
+  <div class="ti__container">
+    {%- if items.size > 0 -%}
+      <div class="ti__grid">
+        {%- for b in items -%}
+          <div class="ti__item" {{ b.shopify_attributes }}>
+            <div class="ti__icon" aria-hidden="true">
+              {%- if b.settings.icon != blank -%}
+                {%- assign icon_alt = b.settings.label | escape -%}
+                {{ b.settings.icon | image_url: width: 120 | image_tag: loading: 'lazy', alt: icon_alt }}
+              {%- elsif b.settings.emoji != blank -%}
+                <span class="ti__icon-emoji">{{ b.settings.emoji }}</span>
+              {%- endif -%}
+            </div>
+            <div class="ti__label">{{ b.settings.label }}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trust icons",
+  "tag": "section",
+  "class": "section section--master-trust",
+  "settings": [
+    { "type": "text", "id": "aria_label", "label": "ARIA label", "default": "Product highlights" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "range", "id": "icon_size", "label": "Icon size", "min": 32, "max": 96, "step": 2, "unit": "px", "default": 56 },
+    { "type": "range", "id": "label_size", "label": "Label size", "min": 11, "max": 18, "step": 1, "unit": "px", "default": 13 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 800, "max": 1600, "step": 20, "unit": "px", "default": 1100 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1a1a1a" },
+    { "type": "color", "id": "label_color", "label": "Label color", "default": "#1a1a1a" },
+    { "type": "color", "id": "accent_color", "label": "Icon accent", "default": "#e8a5a0" },
+    { "type": "color", "id": "icon_bg", "label": "Icon bubble bg", "default": "#ffffff" }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Icon item",
+      "limit": 8,
+      "settings": [
+        { "type": "image_picker", "id": "icon", "label": "Icon (recommended: 60×60 PNG/SVG)" },
+        { "type": "text", "id": "emoji", "label": "Emoji fallback", "default": "✨" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Visible results" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust icons",
+      "blocks": [
+        { "type": "item", "settings": { "emoji": "👁",   "label": "Visible results in 4 weeks" } },
+        { "type": "item", "settings": { "emoji": "🌿",   "label": "Zero side effects" } },
+        { "type": "item", "settings": { "emoji": "💰",   "label": "Less than the price of a salon visit" } },
+        { "type": "item", "settings": { "emoji": "⏱",   "label": "30-second daily application" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,20 +1,873 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
-      "type": "product",
-      "settings": {}
+      "type": "main-product",
+      "blocks": {
+        "feat_1": {
+          "type": "feature",
+          "settings": {
+            "text": "Visible results in 4 weeks — guaranteed"
+          }
+        },
+        "feat_2": {
+          "type": "feature",
+          "settings": {
+            "text": "Zero side effects, dermatologically tested"
+          }
+        },
+        "feat_3": {
+          "type": "feature",
+          "settings": {
+            "text": "Less than the price of one salon visit"
+          }
+        },
+        "feat_4": {
+          "type": "feature",
+          "settings": {
+            "text": "30-second nightly application"
+          }
+        },
+        "trust_1": {
+          "type": "trust",
+          "settings": {
+            "text": "Vegan"
+          }
+        },
+        "trust_2": {
+          "type": "trust",
+          "settings": {
+            "text": "Cruelty-Free"
+          }
+        },
+        "trust_3": {
+          "type": "trust",
+          "settings": {
+            "text": "Made in USA"
+          }
+        }
+      },
+      "block_order": [
+        "feat_1",
+        "feat_2",
+        "feat_3",
+        "feat_4",
+        "trust_1",
+        "trust_2",
+        "trust_3"
+      ],
+      "settings": {
+        "padding_top": 40,
+        "padding_bottom": 60,
+        "max_width": 1200,
+        "side_padding": 40,
+        "radius_md": 12,
+        "radius_lg": 24,
+        "thumb_size": 76,
+        "bg_color": "#fbe9e8",
+        "card_bg": "#ffffff",
+        "text_color": "#1a1a1a",
+        "muted_color": "#7a7a7a",
+        "title_color": "#1a1a1a",
+        "accent_color": "#e8a5a0",
+        "accent_text_color": "#ffffff",
+        "accent_dim_color": "#fae6e4",
+        "border_color": "#00000014",
+        "star_color": "#f59e0b",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "title_size_min": 26,
+        "title_size_vw": 3,
+        "title_size_max": 36,
+        "feature_size": 14,
+        "feature_color": "#444444",
+        "title_fallback": "Luxe Eyelash Growth Serum",
+        "show_rating": true,
+        "rating_value": "4.9",
+        "review_count": "1,827",
+        "rating_size": 13,
+        "variant_label": "Choose your option",
+        "variant_name_size": 15,
+        "variant_price_size": 16,
+        "show_subscription": true,
+        "atc_label": "Add to Cart",
+        "sold_out_label": "Sold out",
+        "shipping_note": "Free shipping on all U.S. orders",
+        "atc_bg": "#1a1a1a",
+        "atc_color": "#ffffff",
+        "atc_hover_bg": "#000000",
+        "atc_size": 14,
+        "atc_padding_y": 18,
+        "atc_padding_x": 24,
+        "atc_radius": 100,
+        "show_verified": true,
+        "verified_avatar": "shopify://shop_images/Progetto_senza_titolo_47.webp",
+        "verified_name": "Louise S.",
+        "verified_meta": "Verified Buyer · Sydney",
+        "verified_text": "I cannot tell you how much I love this serum! Healthier, longer, fuller lashes — exactly what I was hoping for.",
+        "show_payment_icons": true,
+        "trust_bg": "#fae6e4",
+        "trust_color": "#1a1a1a",
+        "detail_label_size": 15,
+        "details_1_title": "Ingredients & Safety",
+        "details_1_body": "<p>Vegan, cruelty-free, dermatologically tested. Full ingredient list available in pack.</p>",
+        "details_2_title": "How To Use",
+        "details_2_body": "<p>Apply once daily along the upper lash line, like an eyeliner. Visible results in 4 weeks.</p>",
+        "details_3_title": "Refund & Returns",
+        "details_3_body": "<p>30-day money-back guarantee. No questions asked.</p>",
+        "details_4_title": "Shipping & Guarantee",
+        "details_4_body": "<p>Free shipping on US orders over $30. Ships within 24 hours.</p>"
+      }
+    },
+    "trust_icons": {
+      "type": "trust-icons",
+      "blocks": {
+        "ti_1": {
+          "type": "item",
+          "settings": {
+            "icon": "shopify://shop_images/Drawing_3_300x_300x_61a10059-a5b2-44fa-bd81-4db6c7c1d4e9.avif",
+            "emoji": "👁",
+            "label": "Visible results in 4 weeks"
+          }
+        },
+        "ti_2": {
+          "type": "item",
+          "settings": {
+            "icon": "shopify://shop_images/Drawing_1_300x_300x_83b82f01-4bc7-4c6e-b6c1-d740ac50c932.avif",
+            "emoji": "🌿",
+            "label": "Zero side effects"
+          }
+        },
+        "ti_3": {
+          "type": "item",
+          "settings": {
+            "icon": "shopify://shop_images/Light_Work_Rosehip_toner_01.webp",
+            "emoji": "💰",
+            "label": "Less than the price of a salon visit"
+          }
+        },
+        "ti_4": {
+          "type": "item",
+          "settings": {
+            "icon": "shopify://shop_images/Drawing_2_300x_300x_95aef1b5-9e76-481a-8585-4ea61bce9f1c.avif",
+            "emoji": "⏱",
+            "label": "30-second daily application"
+          }
+        }
+      },
+      "block_order": [
+        "ti_1",
+        "ti_2",
+        "ti_3",
+        "ti_4"
+      ],
+      "settings": {
+        "aria_label": "Product highlights",
+        "columns": 4,
+        "icon_size": 56,
+        "label_size": 13,
+        "padding_top": 56,
+        "padding_bottom": 56,
+        "max_width": 1100,
+        "side_padding": 40,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "label_color": "#1a1a1a",
+        "accent_color": "#e8a5a0",
+        "icon_bg": "#ffffff",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif"
+      }
+    },
+    "feature_problem": {
+      "type": "feature-rich",
+      "settings": {
+        "media_type": "image",
+        "image": "shopify://shop_images/FLORA-Eyelash_Serum_Application-eeb32682_600x600_3d48bf96-5d34-492f-bc45-3fab6c4d1f91.webp",
+        "video_url": "",
+        "video_autoplay": true,
+        "video_loop": true,
+        "media_side": "right",
+        "media_aspect": "4 / 5",
+        "media_radius": 16,
+        "media_bg": "#f5d8d5",
+        "eyebrow": "",
+        "heading": "You're Not Imagining It: Your Lashes Are Getting Shorter",
+        "text": "<p>Lash extensions, harsh mascaras and the natural ageing process all weaken your lashes over time. You can lose up to <strong>30% of your natural density</strong> by your late 30s without realising it.</p><p>Luxe is built around peptides and biotin to reverse that. A nightly serum that brings the bounce, length and fullness back to your natural lash line in 4 weeks.</p><p><strong>There's a smarter way.</strong></p>",
+        "aria_label": "",
+        "bullet_size": 15,
+        "btn_label": "",
+        "btn_link": "",
+        "btn_bg": "#1a1a1a",
+        "btn_color": "#ffffff",
+        "btn_hover_bg": "#000000",
+        "btn_size": 13,
+        "btn_padding_y": 14,
+        "btn_padding_x": 28,
+        "btn_radius": 100,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "text_color_body": "#555555",
+        "title_color": "#1a1a1a",
+        "muted_color": "#7a7a7a",
+        "accent_color": "#e8a5a0",
+        "border_color": "#00000014",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "eyebrow_size": 12,
+        "heading_size_min": 26,
+        "heading_size_vw": 3,
+        "heading_size_max": 40,
+        "text_size": 15,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "max_width": 1200,
+        "side_padding": 40
+      }
+    },
+    "feature_results": {
+      "type": "feature-rich",
+      "blocks": {
+        "b1": {
+          "type": "bullet",
+          "settings": {
+            "title": "Tripeptide-1",
+            "text": "Helps promote thicker, stronger-looking lashes"
+          }
+        },
+        "b2": {
+          "type": "bullet",
+          "settings": {
+            "title": "Panax Ginseng Extract",
+            "text": "A clinically studied ingredient that helps nurture the appearance of longer-looking lashes"
+          }
+        },
+        "b3": {
+          "type": "bullet",
+          "settings": {
+            "title": "Rosemary Extract",
+            "text": "We use high-quality rosemary extract to boost follicular health and promote the appearance of fuller, lusher lashes"
+          }
+        },
+        "b4": {
+          "type": "bullet",
+          "settings": {
+            "title": "Biotin + Allantoin",
+            "text": "Fortifies keratin structure so new lashes are flexible, not brittle"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ],
+      "settings": {
+        "media_type": "image",
+        "image": "shopify://shop_images/FLORA-Luxe_Eyelash_Application-5bddf331_300x_93527537-8058-4773-9c85-961266be3776.avif",
+        "video_url": "",
+        "video_autoplay": true,
+        "video_loop": true,
+        "media_side": "left",
+        "media_aspect": "4 / 5",
+        "media_radius": 16,
+        "media_bg": "#f5d8d5",
+        "eyebrow": "",
+        "heading": "How 97,000+ Women Are Growing Visibly Longer Lashes, In Just 10 Seconds a Night",
+        "text": "",
+        "aria_label": "",
+        "bullet_size": 15,
+        "btn_label": "",
+        "btn_link": "",
+        "btn_bg": "#1a1a1a",
+        "btn_color": "#ffffff",
+        "btn_hover_bg": "#000000",
+        "btn_size": 13,
+        "btn_padding_y": 14,
+        "btn_padding_x": 28,
+        "btn_radius": 100,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "text_color_body": "#555555",
+        "title_color": "#1a1a1a",
+        "muted_color": "#7a7a7a",
+        "accent_color": "#e8a5a0",
+        "border_color": "#00000014",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "eyebrow_size": 12,
+        "heading_size_min": 26,
+        "heading_size_vw": 3,
+        "heading_size_max": 40,
+        "text_size": 15,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "max_width": 1200,
+        "side_padding": 40
+      }
+    },
+    "before_after": {
+      "type": "before-after",
+      "blocks": {
+        "w1": {
+          "type": "week",
+          "settings": {
+            "title": "Week 1",
+            "text": "You'll start to see noticeably stronger lashes as the peptide complex begins to take effect — no flaking, no irritation, just better-looking lashes day by day."
+          }
+        },
+        "w2": {
+          "type": "week",
+          "settings": {
+            "title": "Week 2",
+            "text": "A denser, fuller lash line forms as new lash growth pushes through. You can see the natural lift on your lash line — no mascara needed for the 'done' look."
+          }
+        },
+        "w3": {
+          "type": "week",
+          "settings": {
+            "title": "Week 3",
+            "text": "You can see clear length gains — 1-2mm longer lashes naturally. Many users report their natural lashes now look like they've had extensions added."
+          }
+        },
+        "w4": {
+          "type": "week",
+          "settings": {
+            "title": "Week 4",
+            "text": "33+ user results show measurable lash density and strength gains. Maintain results by once-every-two-days use until the end of the cycle."
+          }
+        },
+        "w5": {
+          "type": "week",
+          "settings": {
+            "title": "Important",
+            "text": "Results require consistent daily use, which is why patience is key. But once you see results, they will hold for the rest of the year."
+          }
+        }
+      },
+      "block_order": [
+        "w1",
+        "w2",
+        "w3",
+        "w4",
+        "w5"
+      ],
+      "settings": {
+        "eyebrow": "",
+        "heading": "What To Expect, Week by Week",
+        "aria_label": "",
+        "btn_label": "",
+        "btn_link": "",
+        "image": "shopify://shop_images/5_optimized_500x_600x600_ae5391b2-16f8-4afd-91f5-66f665d5d387.webp",
+        "media_aspect": "4 / 5",
+        "media_radius": 16,
+        "media_bg": "#f5d8d5",
+        "show_labels": true,
+        "before_label": "BEFORE",
+        "after_label": "AFTER",
+        "label_bg": "#1a1a1a",
+        "label_color": "#ffffff",
+        "label_size": 12,
+        "label_offset": 16,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "title_color": "#1a1a1a",
+        "muted_color": "#7a7a7a",
+        "body_color": "#555555",
+        "accent_color": "#e8a5a0",
+        "btn_bg": "#1a1a1a",
+        "btn_color": "#ffffff",
+        "btn_hover_bg": "#000000",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "heading_size_min": 26,
+        "heading_size_vw": 3,
+        "heading_size_max": 36,
+        "week_size": 14,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "max_width": 1200,
+        "side_padding": 40
+      }
+    },
+    "quote_1": {
+      "type": "quote",
+      "settings": {
+        "quote": "I bought this with a lot of hesitation, but to my surprise it worked really well. Best results I've had. I've had I rarely use mascara now.",
+        "author": "Emma D.",
+        "author_meta": "Verified Buyer",
+        "aria_label": "",
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "quote_color": "#1a1a1a",
+        "muted_color": "#7a7a7a",
+        "accent_color": "#e8a5a0",
+        "avatar_text_color": "#ffffff",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "quote_size_min": 24,
+        "quote_size_vw": 3,
+        "quote_size_max": 34,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "max_width": 900,
+        "side_padding": 40
+      }
+    },
+    "feature_question": {
+      "type": "feature-rich",
+      "settings": {
+        "media_type": "video",
+        "video": "shopify://files/videos/80ed154a393949c5a6842a2e72658910.mp4",
+        "video_url": "",
+        "video_autoplay": true,
+        "video_loop": true,
+        "media_side": "left",
+        "media_aspect": "4 / 5",
+        "media_radius": 16,
+        "media_bg": "#f5d8d5",
+        "eyebrow": "",
+        "heading": "But Will It Actually Work For Me?",
+        "text": "<p>We get it. You're skeptical when other serums have promised the world and delivered nothing. Here's why Luxe is different:</p><p><strong>Our clinical study tested Luxe on 97 women across 4 different ethnicities, skin types and lash types.</strong> Every participant then logged the results week by week.</p><p><strong>The result?</strong> 88% reported visibly longer lashes. 76% reported less fall-out. 100% reported zero side effects.</p><p><strong>What if I'm in the 12%?</strong> Our 30-day money-back guarantee covers you. If Luxe doesn't deliver, your money back. No questions, no friction designed for you. We can stand behind a real product.</p>",
+        "aria_label": "",
+        "bullet_size": 15,
+        "btn_label": "",
+        "btn_link": "",
+        "btn_bg": "#1a1a1a",
+        "btn_color": "#ffffff",
+        "btn_hover_bg": "#000000",
+        "btn_size": 13,
+        "btn_padding_y": 14,
+        "btn_padding_x": 28,
+        "btn_radius": 100,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "text_color_body": "#555555",
+        "title_color": "#1a1a1a",
+        "muted_color": "#7a7a7a",
+        "accent_color": "#e8a5a0",
+        "border_color": "#00000014",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "eyebrow_size": 12,
+        "heading_size_min": 26,
+        "heading_size_vw": 3,
+        "heading_size_max": 40,
+        "text_size": 15,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "max_width": 1200,
+        "side_padding": 40
+      }
+    },
+    "steps": {
+      "type": "steps",
+      "blocks": {
+        "s1": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/FLORA-Image-dbc898e9_600x600_7b8eb6fd-7e99-4eec-90e5-32825f284f37.webp",
+            "index": "",
+            "title": "Remove Makeup",
+            "text": "Wipe off any eye makeup with a soft cleanser."
+          }
+        },
+        "s2": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/FLORA-Luxe_Eyelash_Application-5bddf331_300x_93527537-8058-4773-9c85-961266be3776.avif",
+            "index": "",
+            "title": "Apply One Thin Line",
+            "text": "Just one thin line along the upper lash line — like an eyeliner. One coat, no double-dipping."
+          }
+        },
+        "s3": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/FLORA-Peaceful_Bedroom_Scene-05f7724c_300x_e8d5e7d0-ecda-466f-a5ca-c9c67180bfe1.avif",
+            "index": "",
+            "title": "Go To Sleep",
+            "text": "The serum works overnight while you rest."
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "settings": {
+        "eyebrow": "Method of application",
+        "heading": "Works Even If You've Never Tried a Lash Serum Before",
+        "sub": "You don't need any special skills. No salon appointments. No complicated routines.",
+        "aria_label": "",
+        "columns": 3,
+        "media_aspect": "1 / 1",
+        "card_radius": 16,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "max_width": 1200,
+        "side_padding": 40,
+        "bg_color": "#fbe9e8",
+        "card_bg": "#ffffff",
+        "media_bg": "#f5d8d5",
+        "text_color": "#1a1a1a",
+        "title_color": "#1a1a1a",
+        "body_color": "#666666",
+        "muted_color": "#7a7a7a",
+        "accent_color": "#e8a5a0",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "heading_size_min": 24,
+        "heading_size_vw": 3,
+        "heading_size_max": 32,
+        "title_size": 17,
+        "text_size": 13
+      }
+    },
+    "feature_safe": {
+      "type": "feature-rich",
+      "settings": {
+        "media_type": "image",
+        "image": "shopify://shop_images/3rd_Image_800x_aa099ab4-5a4d-46d_600x600_84a51882-b828-4d98-a449-02e8ef8506a6.webp",
+        "video_url": "",
+        "video_autoplay": true,
+        "video_loop": true,
+        "media_side": "right",
+        "media_aspect": "4 / 5",
+        "media_radius": 16,
+        "media_bg": "#f5d8d5",
+        "eyebrow": "",
+        "heading": "Dermatologically tested with zero reported injuries across 97,000+ uses",
+        "text": "<p>We know the feeling. Will it damage my lashes? The answer is no.</p><p>Our formula uses the same hypoallergenic vitamins you'd find in nourishing eye creams, combined with a peptide complex that supports your natural strength without harsh actives.</p><p>It's also dermatologist-tested, 100% vegan and cruelty-free. Safe for sensitive eyes, contact lens wearers and lash extensions — works without altering structure of natural hairs.</p>",
+        "aria_label": "",
+        "bullet_size": 15,
+        "btn_label": "",
+        "btn_link": "",
+        "btn_bg": "#1a1a1a",
+        "btn_color": "#ffffff",
+        "btn_hover_bg": "#000000",
+        "btn_size": 13,
+        "btn_padding_y": 14,
+        "btn_padding_x": 28,
+        "btn_radius": 100,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "text_color_body": "#555555",
+        "title_color": "#1a1a1a",
+        "muted_color": "#7a7a7a",
+        "accent_color": "#e8a5a0",
+        "border_color": "#00000014",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "eyebrow_size": 12,
+        "heading_size_min": 26,
+        "heading_size_vw": 3,
+        "heading_size_max": 40,
+        "text_size": 15,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "max_width": 1200,
+        "side_padding": 40
+      }
+    },
+    "gallery": {
+      "type": "gallery",
+      "blocks": {
+        "g1": {
+          "type": "shot",
+          "settings": {
+            "image": "shopify://shop_images/2_optimized_600x_600x_4706aeba-4e97-401f-8e7e-224d7cb510a4.webp",
+            "alt": "Customer result"
+          }
+        },
+        "g2": {
+          "type": "shot",
+          "settings": {
+            "image": "shopify://shop_images/1_optimized_600x_600x_4b269924-f3c4-48da-8f7b-b3b328674efb.jpg",
+            "alt": "Customer result"
+          }
+        },
+        "g3": {
+          "type": "shot",
+          "settings": {
+            "image": "shopify://shop_images/4_optimized_600x_600x_bfc62d7f-f0c2-4e03-a9cd-faecd4625229.webp",
+            "alt": "Customer result"
+          }
+        },
+        "g4": {
+          "type": "shot",
+          "settings": {
+            "image": "shopify://shop_images/3_optimized_600x_600x_82d37b21-2577-4d0a-b1d6-4815ebb745b8.webp",
+            "alt": "Customer result"
+          }
+        },
+        "g5": {
+          "type": "shot",
+          "settings": {
+            "image": "shopify://shop_images/5_optimized_500x_600x600_ae5391b2-16f8-4afd-91f5-66f665d5d387.webp",
+            "alt": "Customer result"
+          }
+        }
+      },
+      "block_order": [
+        "g1",
+        "g2",
+        "g3",
+        "g4",
+        "g5"
+      ],
+      "settings": {
+        "heading": "See The Difference In Just 4 Weeks",
+        "aria_label": "Customer results",
+        "columns": 5,
+        "shot_aspect": "1 / 1",
+        "shot_radius": 8,
+        "padding_top": 12,
+        "padding_bottom": 80,
+        "max_width": 1200,
+        "side_padding": 40,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "title_color": "#1a1a1a",
+        "accent_color": "#e8a5a0",
+        "media_bg": "#f5d8d5",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "heading_size_min": 24,
+        "heading_size_vw": 3,
+        "heading_size_max": 32
+      }
+    },
+    "press": {
+      "type": "press-logos",
+      "blocks": {
+        "p1": {
+          "type": "logo",
+          "settings": {
+            "name": "Closer",
+            "link": ""
+          }
+        },
+        "p2": {
+          "type": "logo",
+          "settings": {
+            "name": "GLAMA",
+            "link": ""
+          }
+        },
+        "p3": {
+          "type": "logo",
+          "settings": {
+            "name": "LUXE+co.",
+            "link": ""
+          }
+        },
+        "p4": {
+          "type": "logo",
+          "settings": {
+            "name": "InStyle",
+            "link": ""
+          }
+        },
+        "p5": {
+          "type": "logo",
+          "settings": {
+            "name": "FINELLE",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5"
+      ],
+      "settings": {
+        "eyebrow": "As featured in",
+        "aria_label": "As featured in",
+        "logo_height": 22,
+        "logo_opacity": 70,
+        "logo_filter": "none",
+        "fallback_font": "serif",
+        "fallback_text_size": 18,
+        "fallback_text_color": "#1a1a1a",
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "eyebrow_color": "#7a7a7a",
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "max_width": 1100,
+        "side_padding": 40
+      }
+    },
+    "feature_guarantee": {
+      "type": "feature-rich",
+      "settings": {
+        "media_type": "image",
+        "image": "shopify://shop_images/FLORA-Makeup_Removal_Routine-eeeed5c1_300x_854f7912-fbbe-42dd-82b6-a814bef05a5a.avif",
+        "video_url": "",
+        "video_autoplay": true,
+        "video_loop": true,
+        "media_side": "left",
+        "media_aspect": "4 / 5",
+        "media_radius": 16,
+        "media_bg": "#f5d8d5",
+        "eyebrow": "",
+        "heading": "30-day money-back guarantee",
+        "text": "<p>Try it for 4 full weeks. If you're not totally obsessed with your Luxe lashes, we'll refund every cent.</p><p><strong>The proof is in the numbers:</strong></p><p>· 97,000+ orders placed since 2022<br/>· 4.9 average rating across 1,800+ reviews<br/>· 88% see results after 28 nights<br/>· 100% pure peptide complex</p><p>But if for any reason you're not completely satisfied, whether the cap isn't dramatic enough, the application felt too complex or you simply changed your mind, you have 30 days to claim a full refund.</p><p>Drop us a line — no need to send the bottle back, no awkward questions. We answer within 24 hours.</p>",
+        "aria_label": "",
+        "bullet_size": 15,
+        "btn_label": "",
+        "btn_link": "",
+        "btn_bg": "#1a1a1a",
+        "btn_color": "#ffffff",
+        "btn_hover_bg": "#000000",
+        "btn_size": 13,
+        "btn_padding_y": 14,
+        "btn_padding_x": 28,
+        "btn_radius": 100,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "text_color_body": "#555555",
+        "title_color": "#1a1a1a",
+        "muted_color": "#7a7a7a",
+        "accent_color": "#e8a5a0",
+        "border_color": "#00000014",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "eyebrow_size": 12,
+        "heading_size_min": 26,
+        "heading_size_vw": 3,
+        "heading_size_max": 40,
+        "text_size": 15,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "max_width": 1200,
+        "side_padding": 40
+      }
+    },
+    "complementary_recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "intent": "complementary",
+        "heading": "Pairs well with",
+        "limit": 4,
+        "columns_desktop": 4,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "card_bg": "#ffffff"
+      }
+    },
+    "related_recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "intent": "related",
+        "heading": "You may also like",
+        "limit": 4,
+        "columns_desktop": 4,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "card_bg": "#ffffff"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": {
+          "type": "qa",
+          "settings": {
+            "question": "What are the ingredients?",
+            "answer": "<p>Plant-derived peptides, hyaluronic acid, biotin, panthenol and rosemary extract. Vegan and cruelty-free.</p>"
+          }
+        },
+        "q2": {
+          "type": "qa",
+          "settings": {
+            "question": "Does it really work?",
+            "answer": "<p>In our 4-week clinical study with 97 women, 88% reported visibly longer lashes after 28 days of nightly use. Real results, not Photoshop.</p>"
+          }
+        },
+        "q3": {
+          "type": "qa",
+          "settings": {
+            "question": "How is Luxe different from other lash serums?",
+            "answer": "<p>It uses peptide complexes, not prostaglandin analogues. That means no irritation, no eye-color change and no other side effects.</p>"
+          }
+        },
+        "q4": {
+          "type": "qa",
+          "settings": {
+            "question": "Can I use it with lash extensions?",
+            "answer": "<p>Yes. Apply at the lash root, avoiding the bonded area, and you'll keep your extensions while strengthening your natural lashes.</p>"
+          }
+        },
+        "q5": {
+          "type": "qa",
+          "settings": {
+            "question": "When should I use it?",
+            "answer": "<p>Nightly before sleep — clean, dry, makeup-free lashes.</p>"
+          }
+        },
+        "q6": {
+          "type": "qa",
+          "settings": {
+            "question": "How does the guarantee work?",
+            "answer": "<p>30-day money-back guarantee. Email us, keep the bottle, get a full refund — no friction.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6"
+      ],
+      "settings": {
+        "heading": "Still got questions?",
+        "aria_label": "Frequently asked questions",
+        "bg_color": "#fbe9e8",
+        "card_bg": "#ffffff",
+        "text_color": "#1a1a1a",
+        "title_color": "#1a1a1a",
+        "body_color": "#555555",
+        "muted_color": "#7a7a7a",
+        "accent_color": "#e8a5a0",
+        "border_color": "#00000014",
+        "font_display": "'Syne', sans-serif",
+        "font_body": "'DM Sans', sans-serif",
+        "heading_size_min": 24,
+        "heading_size_vw": 3,
+        "heading_size_max": 32,
+        "q_size": 15,
+        "a_size": 14,
+        "card_radius": 12,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "max_width": 860,
+        "side_padding": 40
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "trust_icons",
+    "feature_problem",
+    "feature_results",
+    "before_after",
+    "quote_1",
+    "feature_question",
+    "steps",
+    "feature_safe",
+    "gallery",
+    "press",
+    "feature_guarantee",
+    "complementary_recommendations",
+    "related_recommendations",
+    "faq"
   ]
 }

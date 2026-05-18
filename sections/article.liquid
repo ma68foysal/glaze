@@ -1,68 +1,336 @@
-{% comment %}
-  This section is used in the article template to render the article page, which
-  displays the full content of the blog post and can optionally include a
-  comments section for customers (not shown in this example).
+{%- liquid
+  assign section_id = 'article-' | append: section.id
+  assign show_image = section.settings.show_image
+  assign show_author = section.settings.show_author
+  assign show_share = section.settings.show_share
+  assign bg_color = section.settings.bg_color
+  assign text_color = section.settings.text_color
+-%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/article
-{% endcomment %}
+<article
+  id="{{ section_id }}"
+  class="glaze-article full-width"
+  style="--bg: {{ bg_color }}; --fg: {{ text_color }};"
+>
+  <div class="glaze-article__inner">
+    <header class="glaze-article__header">
+      <a class="glaze-article__back" href="{{ blog.url }}">← {{ blog.title | escape }}</a>
+      <h1 class="glaze-article__title">{{ article.title | escape }}</h1>
+      {%- assign date = article.published_at | time_tag: format: 'date' -%}
+      <p class="glaze-article__meta">
+        {%- if show_author -%}
+          {{ 'blog.article_metadata_html' | t: date: date, author: article.author }}
+        {%- else -%}
+          {{ date }}
+        {%- endif -%}
+        {%- if article.tags.size > 0 -%}
+          · {{ article.tags | join: ', ' | escape }}
+        {%- endif -%}
+      </p>
+    </header>
 
-{% if article.image %}
-  {{ article.image | image_url: width: 1000 | image_tag }}
-{% endif %}
+    {%- if show_image and article.image -%}
+      <div class="glaze-article__hero">
+        {{ article.image | image_url: width: 1800 | image_tag:
+            loading: 'eager',
+            fetchpriority: 'high',
+            sizes: '(min-width: 1080px) 1024px, 95vw',
+            widths: '600, 900, 1200, 1600, 1800',
+            alt: article.image.alt | default: article.title | escape
+        }}
+      </div>
+    {%- endif -%}
 
-<h1>{{ article.title }}</h1>
+    <div class="glaze-article__content rte">{{ article.content }}</div>
 
-{% assign date = article.published_at | time_tag: format: 'date' %}
-<p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
+    {%- if show_share -%}
+      <div class="glaze-article__share">
+        <span class="glaze-article__share-label">{{ 'blog.share' | t }}</span>
+        <a class="glaze-article__share-link" href="https://twitter.com/intent/tweet?url={{ shop.url | append: article.url }}&text={{ article.title | url_encode }}" rel="noopener" target="_blank">Twitter</a>
+        <a class="glaze-article__share-link" href="https://www.facebook.com/sharer.php?u={{ shop.url | append: article.url }}" rel="noopener" target="_blank">Facebook</a>
+        <a class="glaze-article__share-link" href="https://pinterest.com/pin/create/button/?url={{ shop.url | append: article.url }}&description={{ article.title | url_encode }}{% if article.image %}&media={{ article.image | image_url: width: 1200 | prepend: 'https:' }}{% endif %}" rel="noopener" target="_blank">Pinterest</a>
+      </div>
+    {%- endif -%}
 
-{{ article.content }}
+    {%- if blog.comments_enabled? -%}
+      <section class="glaze-article__comments" aria-labelledby="{{ section_id }}-comments-heading">
+        <h2 id="{{ section_id }}-comments-heading" class="glaze-article__comments-heading">
+          {{ 'blog.article_comments' | t }} ({{ article.comments_count }})
+        </h2>
 
-{% if blog.comments_enabled? %}
-  <h2>{{ 'blog.article_comments' | t }}</h2>
+        <div id="comments">
+          {%- paginate article.comments by 10 -%}
+            {%- if article.comments.size > 0 -%}
+              <ul class="glaze-article__comments-list" role="list">
+                {%- for comment in article.comments -%}
+                  <li class="glaze-article__comment">
+                    <p class="glaze-article__comment-meta">
+                      <strong>{{ comment.author | escape }}</strong>
+                      <span>· {{ comment.created_at | time_tag: format: 'date' }}</span>
+                    </p>
+                    <p class="glaze-article__comment-body">{{ comment.content }}</p>
+                  </li>
+                {%- endfor -%}
+              </ul>
 
-  <div id="comments">
-    {% paginate article.comments by 10 %}
-      {% for comment in article.comments %}
-        <div>
-          <p>{{ comment.author }}</p>
-          <p>
-            {{- comment.created_at | time_tag: format: 'date' -}}
-          </p>
-          <p>{{ comment.content }}</p>
+              {%- if paginate.pages > 1 -%}
+                <nav class="glaze-article__pagination" aria-label="{{ 'collection.pagination_aria' | t }}">
+                  {{ paginate | default_pagination: anchor: 'comments' }}
+                </nav>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endpaginate -%}
         </div>
-      {% endfor %}
 
-      {{ paginate | default_pagination: anchor: 'comments' }}
-    {% endpaginate %}
+        {%- form 'new_comment', article, class: 'glaze-article__comment-form' -%}
+          <h3 class="glaze-article__comment-form-heading">{{ 'blog.comment_form_title' | t }}</h3>
+
+          {%- if form.posted_successfully? -%}
+            <p class="glaze-article__comment-success" role="status">{{ 'blog.comment_success' | t }}</p>
+          {%- endif -%}
+
+          {%- if form.errors -%}
+            <div class="glaze-article__comment-errors" role="alert" tabindex="-1">
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+
+          <div class="glaze-article__comment-row">
+            <div class="glaze-article__comment-field">
+              <label for="{{ section_id }}-comment-author">{{ 'blog.comment_form_name' | t }} <span aria-hidden="true">*</span></label>
+              <input type="text" id="{{ section_id }}-comment-author" name="comment[author]" value="{{ form.author }}" autocomplete="name" required aria-required="true">
+            </div>
+            <div class="glaze-article__comment-field">
+              <label for="{{ section_id }}-comment-email">{{ 'blog.comment_form_email' | t }} <span aria-hidden="true">*</span></label>
+              <input type="email" id="{{ section_id }}-comment-email" name="comment[email]" value="{{ form.email }}" autocomplete="email" required aria-required="true">
+            </div>
+          </div>
+
+          <div class="glaze-article__comment-field">
+            <label for="{{ section_id }}-comment-body">{{ 'blog.comment_form_body' | t }} <span aria-hidden="true">*</span></label>
+            <textarea id="{{ section_id }}-comment-body" name="comment[body]" rows="6" required aria-required="true">{{ form.body }}</textarea>
+          </div>
+
+          <button type="submit" class="glaze-btn glaze-btn--solid">{{ 'blog.comment_form_submit' | t }}</button>
+        {%- endform -%}
+      </section>
+    {%- endif -%}
   </div>
+</article>
 
-  {% form 'new_comment', article %}
-    <h2>{{ 'blog.comment_form_title' | t }}</h2>
-
-    {{ form.errors | default_errors }}
-
-    <div>
-      <label for="author">{{ 'blog.comment_form_name' | t }}</label>
-      <input type="text" name="comment[author]" id="author" value="{{ form.author }}" required>
-    </div>
-
-    <div>
-      <label for="email">{{ 'blog.comment_form_email' | t }}</label>
-      <input type="email" name="comment[email]" id="email" value="{{ form.email }}" required>
-    </div>
-
-    <div>
-      <label for="body">{{ 'blog.comment_form_body' | t }}</label>
-      <textarea name="comment[body]" id="body" required>{{ form.body }}</textarea>
-    </div>
-
-    <input type="submit" value="{{ 'blog.comment_form_submit' | t }}">
-  {% endform %}
-{% endif %}
+{% stylesheet %}
+  .glaze-article {
+    background: var(--bg, var(--g-cream));
+    color: var(--fg, var(--g-ink));
+    font-family: var(--g-body-font);
+    padding: 48px 24px 96px;
+  }
+  .glaze-article__inner {
+    max-width: 768px;
+    margin: 0 auto;
+  }
+  .glaze-article__back {
+    color: var(--g-muted);
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--g-touch);
+  }
+  .glaze-article__back:hover { color: var(--g-ink); text-decoration: underline; }
+  .glaze-article__title {
+    font-family: var(--g-display-font);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 600;
+    line-height: 1.15;
+    margin: 8px 0 16px;
+  }
+  .glaze-article__meta {
+    font-size: 13px;
+    color: var(--g-muted);
+    margin: 0 0 32px;
+  }
+  .glaze-article__hero {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--g-radius-lg);
+    background: var(--g-cream-warm);
+    margin-bottom: 32px;
+  }
+  .glaze-article__hero img { width: 100%; height: 100%; object-fit: cover; }
+  .glaze-article__content { font-size: 17px; line-height: 1.7; color: var(--g-ink); }
+  .glaze-article__content > * + * { margin-top: 1.2em; }
+  .glaze-article__content h2,
+  .glaze-article__content h3 {
+    font-family: var(--g-display-font);
+    margin-top: 2em;
+    color: var(--g-ink);
+  }
+  .glaze-article__content h2 { font-size: 26px; }
+  .glaze-article__content h3 { font-size: 20px; }
+  .glaze-article__content a { color: var(--g-ink); text-underline-offset: 3px; }
+  .glaze-article__content img { border-radius: var(--g-radius-md); margin: 1.6em 0; }
+  .glaze-article__content blockquote {
+    border-left: 3px solid var(--g-rose);
+    padding-left: 16px;
+    font-style: italic;
+    color: var(--g-muted-strong);
+    margin: 1.6em 0;
+  }
+  .glaze-article__share {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 40px 0;
+    padding: 16px 0;
+    border-top: 1px solid var(--g-line);
+    border-bottom: 1px solid var(--g-line);
+    font-size: 13px;
+  }
+  .glaze-article__share-label { color: var(--g-muted); }
+  .glaze-article__share-link {
+    color: var(--g-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    min-height: var(--g-touch);
+    display: inline-flex;
+    align-items: center;
+  }
+  .glaze-article__comments { margin-top: 56px; }
+  .glaze-article__comments-heading {
+    font-family: var(--g-display-font);
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 24px;
+  }
+  .glaze-article__comments-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px;
+    display: grid;
+    gap: 16px;
+  }
+  .glaze-article__comment {
+    background: var(--g-card-bg);
+    border-radius: var(--g-radius-md);
+    padding: 16px;
+  }
+  .glaze-article__comment-meta {
+    margin: 0 0 6px;
+    font-size: 13px;
+    color: var(--g-muted);
+  }
+  .glaze-article__comment-meta strong { color: var(--g-ink); }
+  .glaze-article__comment-body { margin: 0; line-height: 1.55; }
+  .glaze-article__comment-form {
+    background: var(--g-card-bg);
+    border-radius: var(--g-radius-lg);
+    padding: 24px;
+    display: grid;
+    gap: 14px;
+  }
+  .glaze-article__comment-form-heading {
+    font-family: var(--g-display-font);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .glaze-article__comment-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  @media (min-width: 600px) {
+    .glaze-article__comment-row { grid-template-columns: 1fr 1fr; }
+  }
+  .glaze-article__comment-field { display: grid; gap: 6px; }
+  .glaze-article__comment-field label { font-size: 13px; font-weight: 500; }
+  .glaze-article__comment-field input,
+  .glaze-article__comment-field textarea {
+    font: inherit;
+    color: var(--g-ink);
+    background: var(--bg);
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-md);
+    padding: 10px 14px;
+    min-height: var(--g-touch);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .glaze-article__comment-field textarea {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+  }
+  .glaze-article__comment-field input:focus,
+  .glaze-article__comment-field textarea:focus {
+    outline: 2px solid var(--g-rose);
+    outline-offset: 2px;
+  }
+  .glaze-article__comment-success {
+    color: var(--g-success-fg);
+    background: var(--g-success-bg);
+    border-radius: var(--g-radius-md);
+    padding: 10px 14px;
+    margin: 0;
+  }
+  .glaze-article__comment-errors {
+    color: var(--g-error-fg);
+    background: var(--g-error-bg);
+    border-radius: var(--g-radius-md);
+    padding: 10px 14px;
+    margin: 0;
+  }
+  .glaze-article__pagination {
+    margin: 16px 0 32px;
+    display: flex;
+    justify-content: center;
+  }
+  /* .pagination internals + .glaze-btn family live in assets/base.css */
+  .glaze-btn { justify-self: start; }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.article",
-  "settings": []
+  "tag": "section",
+  "class": "section-article",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "t:sections.article.show_image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "t:sections.article.show_author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share",
+      "label": "t:sections.article.show_share",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.article.colors_header"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "t:sections.article.bg_color",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.article.text_color",
+      "default": "#1a1a1a"
+    }
+  ]
 }
 {% endschema %}

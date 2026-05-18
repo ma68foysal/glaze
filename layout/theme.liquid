@@ -5,32 +5,110 @@
     {% render 'css-variables' %}
 
     {% comment %}
+      Preconnect to Shopify's image CDN so product / collection / slideshow images
+      negotiate TLS in parallel with the rest of the page download.
+    {% endcomment %}
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+    {% comment %}
       Font preloading:
       1. Preconnect to font CDN for faster connection
       2. Preload only the critical font variant (base weight)
       3. Additional variants load on-demand via @font-face
     {% endcomment %}
-    {% unless settings.type_primary_font.system? %}
+    {% if settings.type_primary_font.system? == false or settings.type_heading_font.system? == false %}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {% endif %}
 
-      {% comment %} Preload the base font variant for initial page render {% endcomment %}
+    {% comment %} Preload the base body + heading variants for initial render {% endcomment %}
+    {% unless settings.type_primary_font.system? %}
       {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+    {% endunless %}
+    {% unless settings.type_heading_font.system? %}
+      {{ settings.type_heading_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
     {% endunless %}
 
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
 
+    {% comment %}
+      Global Glaze design-system styles (buttons, product cards, pagination, RTE prose, form fields).
+      Loads once theme-wide so individual sections don't re-emit duplicated rules.
+    {% endcomment %}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
+
+    {%- comment -%}
+      Globals for glaze-cart.js (and any other JS that fetches Shopify cart endpoints).
+      Routes are localized per-storefront; cart strings are themable via locales.
+    {%- endcomment -%}
+    <script>
+      window.routes = {
+        cart_url: '{{ routes.cart_url }}',
+        cart_add_url: '{{ routes.cart_add_url }}',
+        cart_change_url: '{{ routes.cart_change_url }}',
+        cart_update_url: '{{ routes.cart_update_url }}'
+      };
+      window.cartStrings = {
+        error: {{ 'cart.error' | t | json }},
+        addError: {{ 'cart.add_error' | t | json }}
+      };
+    </script>
 
     {{ content_for_header }}
   </head>
 
   <body>
+    <a class="skip-to-content" href="#main-content">{{ 'general.skip_to_content' | t }}</a>
+
     {% sections 'header-group' %}
 
-    {{ content_for_layout }}
+    <main id="main-content" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
 
     {% sections 'footer-group' %}
+
+    {%- if settings.cart_type == 'drawer' -%}
+      {% section 'cart-drawer' %}
+      <script src="{{ 'glaze-cart.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+
+    {%- if settings.enable_smooth_scroll -%}
+      {%- comment -%}
+        Lenis smooth scroll. MIT-licensed (https://github.com/darkroomengineering/lenis),
+        self-hosted in assets/ so it ships from the Shopify CDN. Module script auto-defers.
+        Respects prefers-reduced-motion. Auto-pauses while the header search dialog or
+        the mobile drawer is open so the overlay doesn't fight momentum scroll.
+        Merchants can disable via Theme settings > Motion.
+      {%- endcomment -%}
+      <script type="module">
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          import('{{ "lenis-min.js" | asset_url }}').then(({ default: Lenis }) => {
+            const lenis = new Lenis({
+              duration: 1.1,
+              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+              smoothWheel: true,
+              syncTouch: false
+            });
+            function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+            requestAnimationFrame(raf);
+
+            // Pause/resume around modals + drawers
+            function refreshLockedState() {
+              const hasOpen = document.querySelector('predictive-search[open], .sleek-drawer.is-open, dialog[open]');
+              if (hasOpen) { lenis.stop(); } else { lenis.start(); }
+            }
+            const mo = new MutationObserver(refreshLockedState);
+            mo.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['open', 'class'] });
+
+            // Expose for debugging / custom scroll-to calls
+            window.lenis = lenis;
+          }).catch(() => {});
+        }
+      </script>
+    {%- endif -%}
   </body>
 </html>

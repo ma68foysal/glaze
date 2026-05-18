@@ -1,0 +1,200 @@
+{%- liquid
+  assign sid = 'Steps-' | append: section.id
+  assign steps = section.blocks | where: 'type', 'step'
+-%}
+
+<style>
+  #{{ sid }} {
+    --c-bg: {{ section.settings.bg_color }};
+    --c-fg: {{ section.settings.text_color }};
+    --c-muted: {{ section.settings.muted_color }};
+    --c-title: {{ section.settings.title_color }};
+    --c-accent: {{ section.settings.accent_color }};
+    --c-card: {{ section.settings.card_bg }};
+    --pt: {{ section.settings.padding_top }}px;
+    --pb: {{ section.settings.padding_bottom }}px;
+    --max-w: {{ section.settings.max_width }}px;
+    --side-pad: {{ section.settings.side_padding }}px;
+    --r: {{ section.settings.card_radius }}px;
+    --font-d: {{ section.settings.font_display | default: "var(--g-display-font, sans-serif)" }};
+    --font-b: {{ section.settings.font_body | default: "var(--g-body-font, sans-serif)" }};
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-b);
+    padding: var(--pt) 0 var(--pb);
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  @media (max-width: 749px) { #{{ sid }} { --side-pad: 16px; --pt: {{ section.settings.padding_top | times: 0.55 | round }}px; --pb: {{ section.settings.padding_bottom | times: 0.55 | round }}px; } }
+
+  #{{ sid }} .sm__container { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--side-pad); }
+  #{{ sid }} .sm__head { text-align: center; margin-bottom: clamp(28px, 4vw, 48px); }
+  #{{ sid }} .sm__eyebrow {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--c-accent); margin-bottom: 10px;
+  }
+  #{{ sid }} .sm__heading {
+    font-family: var(--font-d);
+    font-size: clamp({{ section.settings.heading_size_min }}px, {{ section.settings.heading_size_vw }}vw, {{ section.settings.heading_size_max }}px);
+    font-weight: 600;
+    color: var(--c-title);
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  #{{ sid }} .sm__sub {
+    margin-top: 12px; font-size: 14px; color: var(--c-muted);
+  }
+  #{{ sid }} .sm__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  @media (min-width: 750px) { #{{ sid }} .sm__grid { grid-template-columns: repeat({{ section.settings.columns }}, 1fr); gap: 28px; } }
+
+  #{{ sid }} .sm__card {
+    background: var(--c-card);
+    border-radius: var(--r);
+    overflow: hidden;
+    text-align: center;
+    display: flex; flex-direction: column;
+  }
+  #{{ sid }} .sm__media {
+    aspect-ratio: {{ section.settings.media_aspect }};
+    background: {{ section.settings.media_bg }};
+    overflow: hidden;
+  }
+  #{{ sid }} .sm__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #{{ sid }} .sm__body {
+    padding: clamp(16px, 2vw, 24px);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  #{{ sid }} .sm__index {
+    font-family: var(--font-d);
+    font-weight: 700;
+    color: var(--c-accent);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+  }
+  #{{ sid }} .sm__title {
+    font-family: var(--font-d);
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 700;
+    color: var(--c-title);
+    margin: 0;
+    line-height: 1.3;
+  }
+  #{{ sid }} .sm__text {
+    font-size: {{ section.settings.text_size }}px;
+    color: {{ section.settings.body_color }};
+    line-height: 1.55;
+    margin: 6px 0 0;
+  }
+</style>
+
+<section id="{{ sid }}" aria-label="{{ section.settings.aria_label | default: section.settings.heading | escape }}">
+  <div class="sm__container">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+      <div class="sm__head">
+        {%- if section.settings.eyebrow != blank -%}
+          <div class="sm__eyebrow">{{ section.settings.eyebrow }}</div>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="sm__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.sub != blank -%}
+          <p class="sm__sub">{{ section.settings.sub }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if steps.size > 0 -%}
+      <div class="sm__grid">
+        {%- for s in steps -%}
+          <div class="sm__card" {{ s.shopify_attributes }}>
+            <div class="sm__media">
+              {%- if s.settings.image != blank -%}
+                {%- assign step_alt = s.settings.title | escape -%}
+                {{ s.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '300,500,800', sizes: '(min-width: 750px) 33vw, 100vw', alt: step_alt }}
+              {%- else -%}
+                {%- assign ph_idx = forloop.index0 | modulo: 6 | plus: 1 -%}
+                {%- assign ph_name = 'product-' | append: ph_idx -%}
+                {{ ph_name | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+            <div class="sm__body">
+              <div class="sm__index">{{ s.settings.index | default: forloop.index | prepend: '0' | slice: -2, 2 }}.</div>
+              <h3 class="sm__title">{{ s.settings.title }}</h3>
+              {%- if s.settings.text != blank -%}
+                <p class="sm__text">{{ s.settings.text }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Steps",
+  "tag": "section",
+  "class": "section section--master-steps",
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Method of application" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Works Even If You've Never Tried a Lash Serum Before" },
+    { "type": "text", "id": "sub", "label": "Sub-text", "default": "You don't need any special skills. No salon appointments. No complicated routines." },
+    { "type": "text", "id": "aria_label", "label": "ARIA label" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "text", "id": "media_aspect", "label": "Card media aspect", "default": "1 / 1" },
+    { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 32, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 1000, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
+    { "type": "color", "id": "card_bg", "label": "Card bg", "default": "#ffffff" },
+    { "type": "color", "id": "media_bg", "label": "Card media fallback bg", "default": "#f5d8d5" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1a1a1a" },
+    { "type": "color", "id": "title_color", "label": "Title", "default": "#1a1a1a" },
+    { "type": "color", "id": "body_color", "label": "Body", "default": "#666666" },
+    { "type": "color", "id": "muted_color", "label": "Muted", "default": "#7a7a7a" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#e8a5a0" },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "heading_size_min", "label": "Heading min", "min": 22, "max": 40, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "heading_size_vw", "label": "Heading fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
+    { "type": "range", "id": "heading_size_max", "label": "Heading max", "min": 28, "max": 56, "step": 1, "unit": "px", "default": 32 },
+    { "type": "range", "id": "title_size", "label": "Card title size", "min": 14, "max": 22, "step": 1, "unit": "px", "default": 17 },
+    { "type": "range", "id": "text_size", "label": "Card text size", "min": 12, "max": 16, "step": 1, "unit": "px", "default": 13 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "limit": 6,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "index", "label": "Step number (leave blank for auto)" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Remove Makeup" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Wipe off any eye makeup with a soft cleanser." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Steps",
+      "blocks": [
+        { "type": "step", "settings": { "title": "Remove Makeup", "text": "Wipe off any eye makeup with a soft cleanser." } },
+        { "type": "step", "settings": { "title": "Apply One Thin Line", "text": "Like an eyeliner along the upper lash line. One coat, no double-dipping." } },
+        { "type": "step", "settings": { "title": "Go To Sleep", "text": "Let it work overnight. Wake up to slightly stronger lashes." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

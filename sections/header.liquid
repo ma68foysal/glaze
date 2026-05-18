@@ -1,76 +1,2438 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+{%- liquid
+    assign section_id = 'sleek-header-' | append: section.id
+    assign sticky = section.settings.enable_sticky
+    assign ann_speed = section.settings.ann_speed
+    assign ann_direction = section.settings.ann_direction
+    assign logo_width = section.settings.logo_width
+    assign nav_font_size = section.settings.nav_font_size
+    assign icon_size = section.settings.icon_size
+    assign padding_top = section.settings.padding_top
+    assign padding_bottom = section.settings.padding_bottom
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
+    assign announcement_blocks = section.blocks | where: 'type', 'announcement'
+    assign card_blocks = section.blocks | where: 'type', 'menu_cards'
+    assign column_blocks = section.blocks | where: 'type', 'menu_columns'
+    assign dropdown_blocks = section.blocks | where: 'type', 'menu_dropdown'
+  -%}
+
+  <style>
+    /* ============================================================
+       Sleek Header — scoped styles
+       ============================================================ */
+
+    #{{ section_id }} {
+      --sleek-bg: {{ section.settings.header_bg }};
+      --sleek-fg: {{ section.settings.header_fg }};
+      --sleek-accent: {{ section.settings.accent_color }};
+      --sleek-border: {{ section.settings.border_color }};
+      --sleek-mega-bg: {{ section.settings.mega_bg }};
+      --sleek-nav-size: {{ nav_font_size }}px;
+      --sleek-icon-size: {{ icon_size }}px;
+      --sleek-logo-width: {{ logo_width }}px;
+      --sleek-pad-top: {{ padding_top }}px;
+      --sleek-pad-bottom: {{ padding_bottom }}px;
+      --sleek-ann-bg: {{ section.settings.ann_bg }};
+      --sleek-ann-fg: {{ section.settings.ann_fg }};
+      --sleek-ann-size: {{ section.settings.ann_font_size }}px;
+      --sleek-ann-pad: {{ section.settings.ann_padding }}px;
+      --sleek-per-slide: 2;
+      display: block;
+      position: relative;
+      width: 100%;
+      z-index: 100;
+      font-family: inherit;
+    }
+
+    #{{ section_id }} *,
+    #{{ section_id }} *::before,
+    #{{ section_id }} *::after {
+      box-sizing: border-box;
+    }
+
+    .shopify-section.section-sleek-header,
+    .section-sleek-header {
+      margin: 0 !important;
+      padding: 0 !important;
+      position: relative;
+      z-index: 100;
+      overflow: visible;
+    }
+
+    #{{ section_id }} a { text-decoration: none; color: inherit; }
+    #{{ section_id }} button { background: none; border: 0; cursor: pointer; font: inherit; color: inherit; padding: 0; }
+    #{{ section_id }} ul { list-style: none; padding: 0; margin: 0; }
+
+    /* -------- Announcement bar -------- */
+    .sleek-announcement {
+      background: var(--sleek-ann-bg);
+      color: var(--sleek-ann-fg);
+      padding: var(--sleek-ann-pad) 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .sleek-ann-track {
+      display: flex;
+      gap: 60px;
+      width: max-content;
+      animation: sleek-ann-slide {{ ann_speed }}s linear infinite;
+      animation-direction: {% if ann_direction == 'right' %}reverse{% else %}normal{% endif %};
+    }
+
+    .sleek-ann-track:hover { animation-play-state: paused; }
+
+    .sleek-ann-item {
+      font-size: var(--sleek-ann-size);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+      padding: 0 30px;
+    }
+
+    .sleek-ann-item a { color: inherit; }
+
+    @keyframes sleek-ann-slide {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* -------- Header shell -------- */
+    .sleek-header {
+      background: var(--sleek-bg);
+      color: var(--sleek-fg);
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      position: relative;
+      z-index: 90;
+    }
+
+    .sleek-header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: var(--sleek-pad-top) 40px var(--sleek-pad-bottom);
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .sleek-logo {
+      justify-self: start;
+      display: inline-flex;
+      align-items: center;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--sleek-fg);
+    }
+
+    .sleek-logo img { max-width: var(--sleek-logo-width); width: 100%; height: auto; display: block; }
+    .sleek-logo-dark { display: none; }
+    #{{ section_id }}.is-stuck .sleek-logo.has-dark-logo .sleek-logo-default { display: none; }
+    #{{ section_id }}.is-stuck .sleek-logo.has-dark-logo .sleek-logo-dark { display: block; }
+
+    .sleek-logo-text { font-size: 26px; font-family: 'Georgia', 'Times New Roman', serif; font-style: italic; }
+
+    /* -------- Navigation -------- */
+    .sleek-nav {
+      justify-self: center;
+    }
+
+    .sleek-nav > ul {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    /* padding-bottom + matching negative margin-bottom extends nav-item's hover
+       box downward (closing the gap between the link and the mega/dropdown panel)
+       without changing the visual layout. */
+    .sleek-nav-item {
+      position: static;
+      list-style: none;
+      padding-bottom: 18px;
+      margin-bottom: -18px;
+    }
+    /* Simple dropdowns anchor directly under their parent. Mega menus keep static so
+       they can span the full header width. */
+    .sleek-nav-item.has-dropdown { position: relative; }
+
+    .sleek-nav-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: var(--sleek-nav-size);
+      font-weight: 500;
+      padding: 8px 0;
+      color: var(--sleek-fg);
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .sleek-nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 2px;
+      width: 0;
+      height: 1.5px;
+      background: currentColor;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sleek-nav-item:hover > .sleek-nav-link::after,
+    .sleek-nav-link.is-active::after { width: 100%; }
+
+    .sleek-chevron {
+      width: 10px;
+      height: 10px;
+      transition: transform 0.25s ease;
+    }
+
+    .sleek-nav-item:hover .sleek-chevron { transform: rotate(180deg); }
+
+    /* -------- Right icons -------- */
+    .sleek-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      justify-self: end;
+    }
+
+    .sleek-icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      color: var(--sleek-fg);
+      transition: opacity 0.2s ease;
+    }
+
+    .sleek-icon-btn:hover { opacity: 0.65; }
+    .sleek-icon-btn svg { width: var(--sleek-icon-size); height: var(--sleek-icon-size); }
+
+    .sleek-cart-count {
+      position: absolute;
+      top: -4px;
+      right: -6px;
+      background: var(--sleek-accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    /* -------- Hamburger (mobile) -------- */
+    .sleek-hamburger {
+      display: none;
+      width: 28px;
+      height: 22px;
+      position: relative;
+      justify-self: start;
+    }
+
+    .sleek-hamburger span {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 1.5px;
+      background: currentColor;
+      transition: transform 0.3s ease, opacity 0.2s ease;
+    }
+
+    .sleek-hamburger span:nth-child(1) { top: 4px; }
+    .sleek-hamburger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .sleek-hamburger span:nth-child(3) { bottom: 4px; }
+
+    /* -------- Mega menu: shared shell -------- */
+    .sleek-mega {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      background: var(--sleek-mega-bg);
+      color: #1a1a1a;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      border-top: 1px solid var(--sleek-border);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-12px);
+      transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.3s ease;
+      pointer-events: none;
+      z-index: 80;
+    }
+
+    /* Invisible hover bridge — extends mega's hover area upward to meet
+       the nav-item's padding-bottom, killing the dead zone between trigger
+       and panel. */
+    .sleek-mega::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: transparent;
+    }
+
+    .sleek-nav-item:hover .sleek-mega,
+    .sleek-nav-item:focus-within .sleek-mega,
+    .sleek-nav-item.is-open .sleek-mega {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .sleek-mega-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    /* -------- Mega: card grid (Presets-style) -------- */
+    .sleek-mega-cards {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+    }
+
+    .sleek-card {
+      display: flex;
+      flex-direction: column;
+      background: #f4f4f4;
+      border-radius: 14px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .sleek-nav-item:hover .sleek-card,
+    .sleek-nav-item:focus-within .sleek-card,
+    .sleek-nav-item.is-open .sleek-card {
+      animation: sleek-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .sleek-card:nth-child(1) { animation-delay: 0.05s; }
+    .sleek-card:nth-child(2) { animation-delay: 0.12s; }
+    .sleek-card:nth-child(3) { animation-delay: 0.19s; }
+    .sleek-card:nth-child(4) { animation-delay: 0.26s; }
+    .sleek-card:nth-child(5) { animation-delay: 0.33s; }
+    .sleek-card:nth-child(6) { animation-delay: 0.40s; }
+
+    @keyframes sleek-card-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sleek-card:hover { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08); }
+    .sleek-card:hover .sleek-card-img img { transform: scale(1.04); }
+
+    .sleek-card-img {
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      background: #eee;
+    }
+
+    .sleek-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .sleek-card-body {
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sleek-card-title { font-size: 18px; font-weight: 600; margin: 0 0 2px; }
+    .sleek-card-sub { font-size: 13px; color: #7a7a7a; margin: 0; }
+
+    .sleek-card-arrow {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .sleek-card:hover .sleek-card-arrow { transform: translate(2px, -2px); background: var(--sleek-accent); color: #fff; }
+    .sleek-card-arrow svg { width: 14px; height: 14px; }
+
+    /* -------- Mega: columns (Shop-style) -------- */
+    .sleek-mega-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1.6fr;
+      gap: 48px;
+    }
+
+    .sleek-col { opacity: 0; transform: translateY(10px); }
+
+    .sleek-nav-item:hover .sleek-col,
+    .sleek-nav-item:focus-within .sleek-col,
+    .sleek-nav-item.is-open .sleek-col {
+      animation: sleek-card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .sleek-col:nth-child(1) { animation-delay: 0.05s; }
+    .sleek-col:nth-child(2) { animation-delay: 0.12s; }
+    .sleek-col:nth-child(3) { animation-delay: 0.19s; }
+    .sleek-col:nth-child(4) { animation-delay: 0.26s; }
+
+    .sleek-col-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 16px;
+      color: #1a1a1a;
+    }
+
+    .sleek-col-links { display: flex; flex-direction: column; gap: 10px; }
+
+    .sleek-col-link {
+      position: relative;
+      display: inline-block;
+      width: fit-content;
+      font-size: 15px;
+      color: #444;
+      padding: 2px 0;
+      transition: color 0.2s ease;
+    }
+
+    .sleek-col-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 1px;
+      background: currentColor;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sleek-col-link:hover { color: #000; }
+    .sleek-col-link:hover::after { width: 100%; }
+
+    .sleek-col-link.is-feature { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
+
+    /* -------- Mega: product slider -------- */
+    .sleek-pslider-wrap { position: relative; }
+
+    .sleek-pslider-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .sleek-pslider-title { font-size: 18px; font-weight: 600; margin: 0; }
+
+    .sleek-pslider-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .sleek-pslider-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      transition: background 0.2s ease;
+    }
+
+    .sleek-pslider-btn:hover { background: rgba(0, 0, 0, 0.06); }
+    .sleek-pslider-btn svg { width: 14px; height: 14px; }
+    .sleek-pslider-btn[disabled] { opacity: 0.3; cursor: default; }
+
+    .sleek-pslider-count { min-width: 28px; text-align: center; }
+
+    .sleek-pslider-viewport { overflow: hidden; }
+
+    .sleek-pslider-track {
+      display: flex;
+      gap: 14px;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .sleek-pcard {
+      flex: 0 0 calc((100% - (var(--sleek-per-slide) - 1) * 14px) / var(--sleek-per-slide));
+      background: #f4f4f4;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .sleek-pcard:hover { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); }
+
+    .sleek-pcard-img {
+      aspect-ratio: 1 / 1;
+      background: #ececec;
+      overflow: hidden;
+    }
+
+    .sleek-pcard-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .sleek-pcard:hover .sleek-pcard-img img { transform: scale(1.04); }
+
+    .sleek-pcard-badges {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .sleek-pcard-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: #e23b3b;
+      color: #fff;
+      letter-spacing: 0.03em;
+    }
+
+    .sleek-pcard-badge.is-new { background: #2f9e4f; }
+    .sleek-pcard-badge.is-hot { background: #4a37d1; }
+
+    .sleek-pcard-body { padding: 12px 14px 14px; }
+    .sleek-pcard-type { font-size: 12px; color: #8a8a8a; margin: 0 0 2px; }
+    .sleek-pcard-title { font-size: 14px; font-weight: 500; margin: 0 0 6px; color: #1a1a1a; line-height: 1.3; }
+
+    .sleek-pcard-price { font-size: 14px; font-weight: 600; color: #e23b3b; }
+    .sleek-pcard-compare { font-size: 13px; color: #888; text-decoration: line-through; margin-left: 6px; font-weight: 400; }
+
+    /* -------- Mega: simple dropdown (Pages-style) -------- */
+    .sleek-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translate(-50%, -8px);
+      min-width: 240px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12);
+      padding: 18px 10px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.25s ease;
+      pointer-events: none;
+      z-index: 80;
+    }
+    .sleek-dropdown::before {
+      content: '';
+      position: absolute;
+      top: -28px;
+      left: -20px;
+      right: -20px;
+      height: 32px;
+      background: transparent;
+    }
+
+    .sleek-nav-item.has-dropdown:hover .sleek-dropdown,
+    .sleek-nav-item.has-dropdown.is-open .sleek-dropdown,
+    .sleek-nav-item.has-dropdown:focus-within .sleek-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, 0);
+      pointer-events: auto;
+    }
+
+    .sleek-dropdown-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 18px;
+      font-size: 15px;
+      color: #333;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .sleek-dropdown-item:hover { background: #f4f4f4; color: #000; }
+
+    .sleek-dropdown-item-link {
+      position: relative;
+      display: inline-block;
+    }
+
+    .sleek-dropdown-item-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0;
+      height: 1px;
+      background: currentColor;
+      transition: width 0.3s ease;
+    }
+
+    .sleek-dropdown-item:hover .sleek-dropdown-item-link::after { width: 100%; }
+
+    .sleek-dropdown-caret { width: 10px; height: 10px; color: #555; }
+
+    .sleek-subdropdown {
+      position: absolute;
+      top: -18px;
+      left: calc(100% + 8px);
+      min-width: 220px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12);
+      padding: 18px 10px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-6px);
+      transition: opacity 0.25s ease, transform 0.3s ease, visibility 0.25s ease;
+      pointer-events: none;
+    }
+
+    .sleek-dropdown-item.has-sub:hover > .sleek-subdropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    /* -------- Sticky behaviour -------- */
+    #{{ section_id }}.is-sticky {
+      position: sticky;
+      top: 0;
+    }
+
+    #{{ section_id }}.is-stuck .sleek-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--sleek-bg);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+      animation: sleek-stick-in 0.3s ease;
+    }
+
+    #{{ section_id }}.is-stuck .sleek-announcement { display: none; }
+
+    @keyframes sleek-stick-in {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
+
+    /* -------- Mobile drawer -------- */
+    .sleek-drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 120;
+    }
+
+    .sleek-drawer-overlay.is-open { opacity: 1; visibility: visible; }
+
+    .sleek-drawer {
+      position: fixed;
+      top: 10px;
+      bottom: 10px;
+      left: 10px;
+      width: calc(100% - 20px);
+      max-width: 440px;
+      background: #fff;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-110%);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 130;
+      overflow: hidden;
+    }
+
+    .sleek-drawer.is-open { transform: translateX(0); }
+
+    .sleek-drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      flex-shrink: 0;
+    }
+
+    .sleek-drawer-logo { font-size: 24px; font-weight: 700; font-family: 'Georgia', serif; font-style: italic; }
+    .sleek-drawer-close { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; }
+    .sleek-drawer-close svg { width: 100%; height: 100%; }
+
+    .sleek-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .sleek-drawer-panel {
+      position: absolute;
+      inset: 0;
+      padding: 0 24px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      background: #fff;
+    }
+
+    .sleek-drawer-panel.is-active { transform: translateX(0); }
+    .sleek-drawer-panel.is-root { transform: translateX(0); }
+    .sleek-drawer-panel.is-root.is-pushed { transform: translateX(-100%); }
+
+    .sleek-drawer-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      color: #777;
+      padding: 6px 0;
+      margin-bottom: 8px;
+    }
+
+    .sleek-drawer-back svg { width: 12px; height: 12px; }
+
+    .sleek-drawer-divider { border-top: 1px solid #eee; margin: 14px 0; }
+
+    .sleek-drawer-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+
+    .sleek-drawer-link svg { width: 12px; height: 12px; color: #888; }
+
+    .sleek-drawer-footer {
+      padding: 20px 24px 28px;
+      border-top: 1px solid #eee;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .sleek-country {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .sleek-country-flag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(#b22234 33%, #fff 33%, #fff 66%, #3c3b6e 66%);
+      overflow: hidden;
+      font-size: 0;
+    }
+
+    .sleek-drawer-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      display: block;
+    }
+
+    .sleek-drawer-social {
+      display: inline-flex;
+      gap: 20px;
+    }
+
+    .sleek-drawer-social a {
+      display: inline-flex;
+      width: 22px;
+      height: 22px;
+      align-items: center;
+      justify-content: center;
+      color: #1a1a1a;
+    }
+
+    .sleek-drawer-social svg { width: 100%; height: 100%; }
+
+    /* -------- Mobile card grid (Presets drawer) -------- */
+    .sleek-drawer-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding-bottom: 20px;
+    }
+
+    .sleek-drawer-card {
+      background: #f4f4f4;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .sleek-drawer-card-img { aspect-ratio: 1 / 1; }
+    .sleek-drawer-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .sleek-drawer-card-body { padding: 12px 14px 14px; }
+    .sleek-drawer-card-title { font-size: 16px; font-weight: 600; margin: 0; }
+    .sleek-drawer-card-sub { font-size: 13px; color: #7a7a7a; margin: 2px 0 0; }
+
+    .sleek-drawer-trend { font-size: 18px; font-weight: 600; margin: 20px 0 12px; }
+
+    .sleek-drawer-pslider {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 14px;
+      scrollbar-width: none;
+    }
+
+    .sleek-drawer-pslider::-webkit-scrollbar { display: none; }
+
+    .sleek-drawer-pcard {
+      flex: 0 0 70%;
+      background: #f4f4f4;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* -------- Responsive -------- */
+    @media screen and (max-width: 989px) {
+      .sleek-header-inner {
+        grid-template-columns: auto 1fr auto;
+        padding: 16px 16px;
+        gap: 16px;
+      }
+
+      .sleek-hamburger { display: block; }
+      .sleek-nav { display: none; }
+      .sleek-logo { justify-self: center; }
+      .sleek-actions { gap: 14px; }
+
+      /* Search icon stays visible on mobile so search is reachable without opening the drawer */
+      .sleek-icon-btn.is-account { display: none; }
+    }
+
+    /* ---------- Predictive search modal ---------- */
+    .sleek-icon-btn:focus-visible,
+    .sleek-search-toggle:focus-visible {
+      outline: 2px solid var(--sleek-accent);
+      outline-offset: 3px;
+      border-radius: 8px;
+    }
+
+    .sf-search-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 1000;
+    }
+    predictive-search[open] .sf-search-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sf-search-dialog {
+      position: fixed;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%) translateY(-12px);
+      width: min(720px, calc(100vw - 24px));
+      max-height: calc(100vh - 24px);
+      margin: 12px 0;
+      background: var(--sleek-bg);
+      color: var(--sleek-fg);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    predictive-search[open] .sf-search-dialog {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .sf-search-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--sleek-border);
+    }
+    .sf-search-form { flex: 1; display: flex; align-items: center; gap: 8px; }
+    .sf-search-input {
+      flex: 1;
+      font: inherit;
+      font-size: 16px;
+      background: transparent;
+      border: 0;
+      color: var(--sleek-fg);
+      padding: 8px 4px;
+      min-height: 36px;
+    }
+    .sf-search-input::placeholder { color: var(--sleek-muted, #888); }
+    .sf-search-input:focus { outline: none; }
+    .sf-search-form:focus-within { outline: 2px solid var(--sleek-accent); outline-offset: 4px; border-radius: 8px; }
+    .sf-search-submit, .sf-search-close {
+      width: 40px; height: 40px;
+      border: 0; background: transparent;
+      color: var(--sleek-fg);
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .sf-search-submit:hover, .sf-search-close:hover { background: rgba(0,0,0,0.05); }
+    .sf-search-submit svg, .sf-search-close svg { width: 18px; height: 18px; }
+    .sf-search-submit:focus-visible, .sf-search-close:focus-visible {
+      outline: 2px solid var(--sleek-accent); outline-offset: 2px;
+    }
+
+    .sf-search-results {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 6px 18px;
+      min-height: 120px;
+    }
+    .sf-search-state { text-align: center; color: var(--sleek-fg); opacity: 0.7; padding: 36px 16px; font-size: 14px; margin: 0; }
+
+    .sf-search-group { padding: 8px 12px 4px; }
+    .sf-search-group-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      color: var(--sleek-fg);
+      opacity: 0.55;
+      margin: 0 0 6px;
+    }
+    .sf-search-list { list-style: none; padding: 0; margin: 0; }
+    .sf-search-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      color: var(--sleek-fg);
+      text-decoration: none;
+      border-radius: 10px;
+      min-height: 44px;
+    }
+    .sf-search-link:hover { background: rgba(0,0,0,0.05); }
+    .sf-search-link:focus-visible {
+      background: rgba(0,0,0,0.05);
+      outline: 2px solid var(--sleek-accent);
+      outline-offset: -2px;
+    }
+    .sf-search-link[aria-current="true"] { background: rgba(0,0,0,0.05); }
+    .sf-search-thumb {
+      width: 44px; height: 44px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+    .sf-search-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .sf-search-meta { flex: 1; min-width: 0; }
+    .sf-search-title {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sf-search-sub {
+      display: block;
+      font-size: 12px;
+      color: var(--sleek-fg);
+      opacity: 0.6;
+    }
+    .sf-search-viewall {
+      display: block;
+      margin: 10px 12px 0;
+      padding: 12px 14px;
+      background: var(--sleek-fg);
+      color: var(--sleek-bg);
+      border-radius: 10px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 600;
+      min-height: 44px;
+      box-sizing: border-box;
+    }
+    .sf-search-viewall:focus-visible { outline: 2px solid var(--sleek-accent); outline-offset: 2px; }
+
+    /* Visually hidden helper for the dialog */
+    predictive-search .visually-hidden {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 600px) {
+      .sf-search-dialog { width: calc(100vw - 16px); margin: 8px 0; border-radius: 14px; }
+      .sf-search-input { font-size: 16px; } /* prevents iOS zoom on focus */
+    }
+
+    @media screen and (min-width: 990px) {
+      .sleek-drawer-overlay,
+      .sleek-drawer { display: none; }
+    }
+
+    @media screen and (max-width: 768px) {
+      .sleek-actions { gap: 12px; }
+      #{{ section_id }} { --sleek-ann-size: 11px; }
+      .sleek-ann-track { gap: 40px; }
+    }
+  </style>
+
+  <div id="{{ section_id }}" class="sleek-header-wrapper{% if sticky %} is-sticky{% endif %}" data-sleek-header>
+    {%- if announcement_blocks.size > 0 -%}
+      <div class="sleek-announcement" role="region" aria-label="Announcements">
+        <div class="sleek-ann-track">
+          {%- for i in (1..2) -%}
+            {%- for block in announcement_blocks -%}
+              <div class="sleek-ann-item" {{ block.shopify_attributes }}>
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+                {%- else -%}
+                  {{ block.settings.text }}
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <header class="sleek-header" role="banner">
+      <div class="sleek-header-inner">
+        <button type="button" class="sleek-hamburger" aria-label="Open menu" data-sleek-open-drawer>
+          <span></span><span></span><span></span>
+        </button>
+
+        <a href="{{ routes.root_url }}" class="sleek-logo{% if section.settings.logo_dark != blank %} has-dark-logo{% endif %}" aria-label="{{ shop.name }}">
+          {%- if section.settings.logo != blank -%}
+            {{
+              section.settings.logo
+              | image_url: width: 600
+              | image_tag: class: 'sleek-logo-default', loading: 'eager', alt: shop.name, widths: '120,240,360,480,600'
+            }}
+          {%- endif -%}
+          {%- if section.settings.logo_dark != blank -%}
+            {{
+              section.settings.logo_dark
+              | image_url: width: 600
+              | image_tag: class: 'sleek-logo-dark', loading: 'eager', alt: shop.name, widths: '120,240,360,480,600'
+            }}
+          {%- endif -%}
+          {%- if section.settings.logo == blank and section.settings.logo_dark == blank -%}
+            <span class="sleek-logo-text">{{ shop.name }}</span>
+          {%- endif -%}
+        </a>
+
+        <nav class="sleek-nav" aria-label="Main">
+          <ul>
+            {%- if section.settings.menu != blank -%}
+              {%- for link in section.settings.menu.links -%}
+                {%- assign link_title_dc = link.title | downcase | strip -%}
+
+                {%- assign card_block = null -%}
+                {%- for b in card_blocks -%}
+                  {%- assign handle = b.settings.menu_handle | downcase | strip -%}
+                  {%- if handle == link_title_dc -%}
+                    {%- assign card_block = b -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+
+                {%- assign column_block = null -%}
+                {%- for b in column_blocks -%}
+                  {%- assign handle = b.settings.menu_handle | downcase | strip -%}
+                  {%- if handle == link_title_dc -%}
+                    {%- assign column_block = b -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+
+                {%- assign dropdown_block = null -%}
+                {%- for b in dropdown_blocks -%}
+                  {%- assign handle = b.settings.menu_handle | downcase | strip -%}
+                  {%- if handle == link_title_dc -%}
+                    {%- assign dropdown_block = b -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+
+                {%- if card_block -%}
+                  <li class="sleek-nav-item has-mega has-cards">
+                    <a
+                      href="{{ link.url }}"
+                      class="sleek-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
+                    >
+                      {{ link.title }}
+                      <svg class="sleek-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                        <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                    <div class="sleek-mega">
+                      <div class="sleek-mega-inner">
+                        <div class="sleek-mega-cards">
+                          {%- for i in (1..6) -%}
+                            {%- assign title_key = 'card_' | append: i | append: '_title' -%}
+                            {%- assign sub_key = 'card_' | append: i | append: '_sub' -%}
+                            {%- assign img_key = 'card_' | append: i | append: '_image' -%}
+                            {%- assign link_key = 'card_' | append: i | append: '_link' -%}
+                            {%- assign title = card_block.settings[title_key] -%}
+                            {%- assign sub = card_block.settings[sub_key] -%}
+                            {%- assign img = card_block.settings[img_key] -%}
+                            {%- assign c_link = card_block.settings[link_key] -%}
+                            {%- if title != blank or img != blank -%}
+                              <a href="{{ c_link | default: '#' }}" class="sleek-card">
+                                <div class="sleek-card-img">
+                                  {%- if img != blank -%}
+                                    {{
+                                      img
+                                      | image_url: width: 500
+                                      | image_tag: loading: 'lazy', alt: title, widths: '200,300,500'
+                                    }}
+                                  {%- endif -%}
+                                </div>
+                                <div class="sleek-card-body">
+                                  <div>
+                                    <p class="sleek-card-title">{{ title }}</p>
+                                    {%- if sub != blank -%}
+                                      <p class="sleek-card-sub">{{ sub }}</p>
+                                    {%- endif -%}
+                                  </div>
+                                  <span class="sleek-card-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 14 14" fill="none">
+                                      <path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                  </span>
+                                </div>
+                              </a>
+                            {%- endif -%}
+                          {%- endfor -%}
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+
+                {%- elsif column_block -%}
+                  <li class="sleek-nav-item has-mega has-columns">
+                    <a
+                      href="{{ link.url }}"
+                      class="sleek-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
+                    >
+                      {{ link.title }}
+                      <svg class="sleek-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                        <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                    <div class="sleek-mega">
+                      <div class="sleek-mega-inner">
+                        <div class="sleek-mega-columns">
+                          <div class="sleek-col">
+                            <ul class="sleek-col-links">
+                              {%- for i in (1..6) -%}
+                                {%- assign fl_t_key = 'feature_' | append: i | append: '_title' -%}
+                                {%- assign fl_l_key = 'feature_' | append: i | append: '_link' -%}
+                                {%- assign fl_title = column_block.settings[fl_t_key] -%}
+                                {%- assign fl_link = column_block.settings[fl_l_key] -%}
+                                {%- if fl_title != blank -%}
+                                  <li>
+                                    <a href="{{ fl_link | default: '#' }}" class="sleek-col-link is-feature">
+                                      {{- fl_title -}}
+                                    </a>
+                                  </li>
+                                {%- endif -%}
+                              {%- endfor -%}
+                            </ul>
+                          </div>
+
+                          {%- for col_idx in (1..2) -%}
+                            {%- assign col_t_key = 'col_' | append: col_idx | append: '_title' -%}
+                            {%- assign col_m_key = 'col_' | append: col_idx | append: '_menu' -%}
+                            {%- assign col_title = column_block.settings[col_t_key] -%}
+                            {%- if col_title != blank -%}
+                              <div class="sleek-col">
+                                <h3 class="sleek-col-title">{{ col_title }}</h3>
+                                <ul class="sleek-col-links">
+                                  {%- assign col_menu = column_block.settings[col_m_key] -%}
+                                  {%- if col_menu != blank -%}
+                                    {%- for sub_link in linklists[col_menu].links -%}
+                                      <li>
+                                        <a href="{{ sub_link.url }}" class="sleek-col-link">{{ sub_link.title }}</a>
+                                      </li>
+                                    {%- endfor -%}
+                                  {%- endif -%}
+                                </ul>
+                              </div>
+                            {%- endif -%}
+                          {%- endfor -%}
+
+                          {%- assign trend_collection = column_block.settings.trend_collection -%}
+                          {%- if trend_collection != blank -%}
+                            <div class="sleek-col">
+                              {%- assign per_slide = column_block.settings.products_per_slide | default: 2 -%}
+                              <div class="sleek-pslider-wrap" data-pslider data-per-page="{{ per_slide }}" style="--sleek-per-slide: {{ per_slide }};">
+                                <div class="sleek-pslider-head">
+                                  <h3 class="sleek-pslider-title">
+                                    {{ column_block.settings.trend_title | default: 'Trend This Week' }}
+                                  </h3>
+                                  <div class="sleek-pslider-nav">
+                                    <button
+                                      type="button"
+                                      class="sleek-pslider-btn"
+                                      data-pslider-prev
+                                      aria-label="Previous"
+                                    >
+                                      <svg viewBox="0 0 14 14" fill="none">
+                                        <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                      </svg>
+                                    </button>
+                                    <span class="sleek-pslider-count"
+                                      ><span data-pslider-current>1</span>/<span data-pslider-total>1</span></span
+                                    >
+                                    <button type="button" class="sleek-pslider-btn" data-pslider-next aria-label="Next">
+                                      <svg viewBox="0 0 14 14" fill="none">
+                                        <path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </div>
+                                <div class="sleek-pslider-viewport">
+                                  <div class="sleek-pslider-track" data-pslider-track>
+                                    {%- assign prods = collections[trend_collection].products -%}
+                                    {%- for p in prods limit: 9 -%}
+                                      <a href="{{ p.url }}" class="sleek-pcard">
+                                        <div class="sleek-pcard-badges">
+                                          {%- if p.compare_at_price > p.price -%}
+                                            {%- assign discount = p.compare_at_price
+                                              | minus: p.price
+                                              | times: 100.0
+                                              | divided_by: p.compare_at_price
+                                              | round
+                                            -%}
+                                            <span class="sleek-pcard-badge">-{{ discount }}%</span>
+                                          {%- endif -%}
+                                          {%- if p.tags contains 'new' or p.tags contains 'New' -%}
+                                            <span class="sleek-pcard-badge is-new">New</span>
+                                          {%- endif -%}
+                                          {%- if p.tags contains 'hot' or p.tags contains 'Selling fast' -%}
+                                            <span class="sleek-pcard-badge is-hot">Popular</span>
+                                          {%- endif -%}
+                                        </div>
+                                        <div class="sleek-pcard-img">
+                                          {%- if p.featured_image -%}
+                                            {{
+                                              p.featured_image
+                                              | image_url: width: 400
+                                              | image_tag: loading: 'lazy', alt: p.title, widths: '200,300,400'
+                                            }}
+                                          {%- endif -%}
+                                        </div>
+                                        <div class="sleek-pcard-body">
+                                          {%- if p.type != blank -%}
+                                            <p class="sleek-pcard-type">{{ p.type }}</p>
+                                          {%- endif -%}
+                                          <p class="sleek-pcard-title">{{ p.title }}</p>
+                                          <div class="sleek-pcard-price">
+                                            {%- if p.price_varies -%}From {% endif -%}
+                                            {{ p.price | money }}
+                                            {%- if p.compare_at_price > p.price -%}
+                                              <span class="sleek-pcard-compare">{{ p.compare_at_price | money }}</span>
+                                            {%- endif -%}
+                                          </div>
+                                        </div>
+                                      </a>
+                                    {%- endfor -%}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          {%- endif -%}
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+
+                {%- elsif dropdown_block -%}
+                  <li class="sleek-nav-item has-dropdown">
+                    <a
+                      href="{{ link.url }}"
+                      class="sleek-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
+                    >
+                      {{ link.title }}
+                      <svg class="sleek-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                        <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                    <div class="sleek-dropdown">
+                      <ul>
+                        {%- for i in (1..8) -%}
+                          {%- assign d_t_key = 'item_' | append: i | append: '_title' -%}
+                          {%- assign d_l_key = 'item_' | append: i | append: '_link' -%}
+                          {%- assign d_s_key = 'item_' | append: i | append: '_submenu' -%}
+                          {%- assign d_title = dropdown_block.settings[d_t_key] -%}
+                          {%- assign d_link = dropdown_block.settings[d_l_key] -%}
+                          {%- assign d_sub = dropdown_block.settings[d_s_key] -%}
+                          {%- if d_title != blank -%}
+                            <li class="sleek-dropdown-item{% if d_sub != blank %} has-sub{% endif %}">
+                              <a href="{{ d_link | default: '#' }}" class="sleek-dropdown-item-link">{{ d_title }}</a>
+                              {%- if d_sub != blank -%}
+                                <svg class="sleek-dropdown-caret" viewBox="0 0 10 10" fill="none">
+                                  <path d="M3 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <div class="sleek-subdropdown">
+                                  <ul>
+                                    {%- for sub_link in linklists[d_sub].links -%}
+                                      <li class="sleek-dropdown-item">
+                                        <a href="{{ sub_link.url }}" class="sleek-dropdown-item-link">
+                                          {{- sub_link.title -}}
+                                        </a>
+                                      </li>
+                                    {%- endfor -%}
+                                  </ul>
+                                </div>
+                              {%- endif -%}
+                            </li>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </ul>
+                    </div>
+                  </li>
+
+                {%- elsif link.links.size > 0 -%}
+                  <li class="sleek-nav-item has-dropdown">
+                    <a
+                      href="{{ link.url }}"
+                      class="sleek-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
+                    >
+                      {{ link.title }}
+                      <svg class="sleek-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                        <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                    <div class="sleek-dropdown">
+                      <ul>
+                        {%- for child in link.links -%}
+                          <li class="sleek-dropdown-item">
+                            <a href="{{ child.url }}" class="sleek-dropdown-item-link">{{ child.title }}</a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    </div>
+                  </li>
+
+                {%- else -%}
+                  <li class="sleek-nav-item">
+                    <a href="{{ link.url }}" class="sleek-nav-link{% if link.active %} is-active{% endif %}">
+                      {{- link.title -}}
+                    </a>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+        </nav>
+
+        <div class="sleek-actions">
+          {%- if section.settings.show_search -%}
+            <button
+              type="button"
+              class="sleek-icon-btn sleek-search-toggle"
+              aria-label="{{ 'general.search' | t }}"
+              aria-controls="{{ section_id }}-search"
+              aria-expanded="false"
+              data-sf-search-toggle
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </button>
+          {%- endif -%}
+
+          {%- if section.settings.show_account -%}
+            <a
+              href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+              class="sleek-icon-btn is-account"
+              aria-label="Account"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- comment -%}
+            Cart icon + count bubble. ID="cart-icon-bubble" is required: glaze-cart.js
+            hijacks click on this exact ID when settings.cart_type == 'drawer'.
+            We render the cart-icon-bubble SECTION inside the anchor so Shopify's
+            Section Rendering API can refetch + swap its innerHTML server-side on
+            every cart mutation (no manual count math, no double source of truth).
+          {%- endcomment -%}
+          <a
+            id="cart-icon-bubble"
+            href="{{ routes.cart_url }}"
+            class="sleek-icon-btn is-cart"
+            aria-label="{{ 'cart.title' | t }}"
+          >
+            {% section 'cart-icon-bubble' %}
+          </a>
+        </div>
+      </div>
+    </header>
+
+    {%- comment -%} Mobile drawer {%- endcomment -%}
+    <div class="sleek-drawer-overlay" data-sleek-close-drawer></div>
+
+    <aside class="sleek-drawer" aria-hidden="true" data-sleek-drawer>
+      <div class="sleek-drawer-head">
+        <span class="sleek-drawer-logo">
+          {%- assign drawer_logo = section.settings.logo | default: section.settings.logo_dark -%}
+          {%- if drawer_logo != blank -%}
+            {{ drawer_logo | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120,180,240', sizes: '100px', alt: shop.name, style: 'max-width:100px' }}
+          {%- else -%}
+            {{ shop.name }}
+          {%- endif -%}
+        </span>
+        <button type="button" class="sleek-drawer-close" data-sleek-close-drawer aria-label="Close menu">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sleek-drawer-body">
+        <div class="sleek-drawer-panel is-root" data-panel="root">
+          <ul>
+            {%- if section.settings.menu != blank -%}
+              {%- for link in section.settings.menu.links -%}
+                {%- assign ltd = link.title | downcase | strip -%}
+                {%- assign has_panel = false -%}
+
+                {%- for b in card_blocks -%}
+                  {%- assign h = b.settings.menu_handle | downcase | strip -%}
+                  {%- if h == ltd -%}{%- assign has_panel = true -%}{%- endif -%}
+                {%- endfor -%}
+                {%- for b in column_blocks -%}
+                  {%- assign h = b.settings.menu_handle | downcase | strip -%}
+                  {%- if h == ltd -%}{%- assign has_panel = true -%}{%- endif -%}
+                {%- endfor -%}
+                {%- for b in dropdown_blocks -%}
+                  {%- assign h = b.settings.menu_handle | downcase | strip -%}
+                  {%- if h == ltd -%}{%- assign has_panel = true -%}{%- endif -%}
+                {%- endfor -%}
+                {%- if link.links.size > 0 -%}{%- assign has_panel = true -%}{%- endif -%}
+
+                <li>
+                  {%- if has_panel -%}
+                    <button type="button" class="sleek-drawer-link" data-panel-open="{{ forloop.index }}">
+                      {{ link.title }}
+                      <svg viewBox="0 0 10 10" fill="none">
+                        <path d="M3 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  {%- else -%}
+                    <a href="{{ link.url }}" class="sleek-drawer-link">{{ link.title }}</a>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+        </div>
+
+        {%- if section.settings.menu != blank -%}
+          {%- for link in section.settings.menu.links -%}
+            {%- assign ltd = link.title | downcase | strip -%}
+
+            {%- assign card_b = null -%}
+            {%- for b in card_blocks -%}
+              {%- assign h = b.settings.menu_handle | downcase | strip -%}
+              {%- if h == ltd -%}{%- assign card_b = b -%}{%- endif -%}
+            {%- endfor -%}
+
+            {%- assign col_b = null -%}
+            {%- for b in column_blocks -%}
+              {%- assign h = b.settings.menu_handle | downcase | strip -%}
+              {%- if h == ltd -%}{%- assign col_b = b -%}{%- endif -%}
+            {%- endfor -%}
+
+            {%- assign dd_b = null -%}
+            {%- for b in dropdown_blocks -%}
+              {%- assign h = b.settings.menu_handle | downcase | strip -%}
+              {%- if h == ltd -%}{%- assign dd_b = b -%}{%- endif -%}
+            {%- endfor -%}
+
+            {%- if card_b or col_b or dd_b or link.links.size > 0 -%}
+              <div class="sleek-drawer-panel" data-panel="{{ forloop.index }}">
+                <button type="button" class="sleek-drawer-back" data-panel-back>
+                  <svg viewBox="0 0 10 10" fill="none">
+                    <path d="M7 1L3 5l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  {{ link.title }}
+                </button>
+
+                {%- if card_b -%}
+                  <div class="sleek-drawer-cards">
+                    {%- for i in (1..6) -%}
+                      {%- assign c_t_key = 'card_' | append: i | append: '_title' -%}
+                      {%- assign c_s_key = 'card_' | append: i | append: '_sub' -%}
+                      {%- assign c_i_key = 'card_' | append: i | append: '_image' -%}
+                      {%- assign c_l_key = 'card_' | append: i | append: '_link' -%}
+                      {%- assign title = card_b.settings[c_t_key] -%}
+                      {%- assign sub = card_b.settings[c_s_key] -%}
+                      {%- assign img = card_b.settings[c_i_key] -%}
+                      {%- assign c_link = card_b.settings[c_l_key] -%}
+                      {%- if title != blank or img != blank -%}
+                        <a href="{{ c_link | default: '#' }}" class="sleek-drawer-card">
+                          <div class="sleek-drawer-card-img">
+                            {%- if img != blank -%}
+                              {{ img | image_url: width: 400 | image_tag: loading: 'lazy', alt: title }}
+                            {%- endif -%}
+                          </div>
+                          <div class="sleek-drawer-card-body">
+                            <p class="sleek-drawer-card-title">{{ title }}</p>
+                            {%- if sub != blank -%}
+                              <p class="sleek-drawer-card-sub">{{ sub }}</p>
+                            {%- endif -%}
+                          </div>
+                        </a>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+
+                {%- if col_b -%}
+                  <ul>
+                    {%- for i in (1..6) -%}
+                      {%- assign dfl_t_key = 'feature_' | append: i | append: '_title' -%}
+                      {%- assign dfl_l_key = 'feature_' | append: i | append: '_link' -%}
+                      {%- assign fl_title = col_b.settings[dfl_t_key] -%}
+                      {%- assign fl_link = col_b.settings[dfl_l_key] -%}
+                      {%- if fl_title != blank -%}
+                        <li>
+                          <a href="{{ fl_link | default: '#' }}" class="sleek-drawer-link">{{ fl_title }}</a>
+                        </li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                    {%- for col_idx in (1..2) -%}
+                      {%- assign dcol_m_key = 'col_' | append: col_idx | append: '_menu' -%}
+                      {%- assign dcol_t_key = 'col_' | append: col_idx | append: '_title' -%}
+                      {%- assign col_menu = col_b.settings[dcol_m_key] -%}
+                      {%- assign col_title = col_b.settings[dcol_t_key] -%}
+                      {%- if col_menu != blank -%}
+                        <li>
+                          <button
+                            type="button"
+                            class="sleek-drawer-link"
+                            data-panel-open="{{ forloop.parentloop.index }}-{{ col_idx }}"
+                          >
+                            {{ col_title }}
+                            <svg viewBox="0 0 10 10" fill="none">
+                              <path d="M3 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                          </button>
+                        </li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+
+                  {%- assign trend_collection = col_b.settings.trend_collection -%}
+                  {%- if trend_collection != blank -%}
+                    <p class="sleek-drawer-trend">{{ col_b.settings.trend_title | default: 'Trend This Week' }}</p>
+                    <div class="sleek-drawer-pslider">
+                      {%- for p in collections[trend_collection].products limit: 8 -%}
+                        <a href="{{ p.url }}" class="sleek-drawer-pcard">
+                          <div class="sleek-pcard-img">
+                            {%- if p.featured_image -%}
+                              {{ p.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: p.title }}
+                            {%- endif -%}
+                          </div>
+                          <div class="sleek-pcard-body">
+                            {%- if p.type != blank -%}
+                              <p class="sleek-pcard-type">{{ p.type }}</p>
+                            {%- endif -%}
+                            <p class="sleek-pcard-title">{{ p.title }}</p>
+                            <div class="sleek-pcard-price">
+                              {%- if p.price_varies -%}From {% endif -%}
+                              {{ p.price | money }}
+                              {%- if p.compare_at_price > p.price -%}
+                                <span class="sleek-pcard-compare">{{ p.compare_at_price | money }}</span>
+                              {%- endif -%}
+                            </div>
+                          </div>
+                        </a>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- if dd_b -%}
+                  <ul>
+                    {%- for i in (1..8) -%}
+                      {%- assign dd_t_key = 'item_' | append: i | append: '_title' -%}
+                      {%- assign dd_l_key = 'item_' | append: i | append: '_link' -%}
+                      {%- assign d_title = dd_b.settings[dd_t_key] -%}
+                      {%- assign d_link = dd_b.settings[dd_l_key] -%}
+                      {%- if d_title != blank -%}
+                        <li>
+                          <a href="{{ d_link | default: '#' }}" class="sleek-drawer-link">{{ d_title }}</a>
+                        </li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+
+                {%- if card_b == null and col_b == null and dd_b == null and link.links.size > 0 -%}
+                  <ul>
+                    {%- for child in link.links -%}
+                      <li>
+                        <a href="{{ child.url }}" class="sleek-drawer-link">{{ child.title }}</a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+
+      <div class="sleek-drawer-footer">
+        {%- if section.settings.show_country_selector -%}
+          <div class="sleek-country">
+            <span class="sleek-country-flag" aria-hidden="true"></span>
+            {{ section.settings.country_label | default: 'United States (USD $)' }}
+            <svg width="10" height="10" viewBox="0 0 10 6" fill="none">
+              <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        {%- endif -%}
+
+        <a
+          href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+          class="sleek-drawer-btn"
+        >
+          {%- if customer -%}
+            {{ 'customer.account.title' | t }}
+          {%- else -%}
+            {{ 'customer.login_page.sign_in' | t }}
+          {%- endif -%}
+        </a>
+
+        {%- if section.settings.show_social_mobile -%}
+          <div class="sleek-drawer-social">
+            {%- if section.settings.social_facebook != blank -%}
+              <a href="{{ section.settings.social_facebook }}" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M13.5 21v-8H16l.5-3h-3V8c0-.9.3-1.5 1.6-1.5H17V3.8c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4V10H8v3h2.6v8h2.9z"/>
+                </svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.social_x != blank -%}
+              <a href="{{ section.settings.social_x }}" aria-label="X">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.5 3h3l-6.5 7.4L21.5 21h-5.9l-4.6-6-5.3 6h-3l7-7.9L3 3h6l4.2 5.5L17.5 3zm-1 16h1.7L7.5 4.8H5.7L16.5 19z"/>
+                </svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.social_instagram != blank -%}
+              <a href="{{ section.settings.social_instagram }}" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+                </svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.social_tiktok != blank -%}
+              <a href="{{ section.settings.social_tiktok }}" aria-label="TikTok">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 3h3c0 2.3 1.8 4.3 4 4.6v3a7.5 7.5 0 0 1-4-1.2v5.9a6 6 0 1 1-6-6c.3 0 .7 0 1 .1v3.1a3 3 0 1 0 2 2.8V3z"/>
+                </svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.social_pinterest != blank -%}
+              <a href="{{ section.settings.social_pinterest }}" aria-label="Pinterest">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2 0-2.9l1.3-5.4s-.3-.7-.3-1.6c0-1.5.9-2.6 2-2.6.9 0 1.4.7 1.4 1.5 0 .9-.6 2.3-.9 3.6-.3 1 .6 1.9 1.6 1.9 2 0 3.5-2.1 3.5-5 0-2.6-1.9-4.4-4.6-4.4a4.7 4.7 0 0 0-5 4.8c0 1 .3 2 .8 2.5a.3.3 0 0 1 .1.3l-.3 1.1c-.1.2-.2.3-.4.2-1.4-.7-2.3-2.7-2.3-4.4 0-3.6 2.6-6.8 7.4-6.8 3.9 0 6.9 2.8 6.9 6.4 0 3.9-2.4 7-5.8 7-1.1 0-2.2-.6-2.5-1.3l-.7 2.6c-.3 1-1 2.3-1.5 3.1A10 10 0 1 0 12 2z"/>
+                </svg>
+              </a>
+            {%- endif -%}
+            {%- if section.settings.social_youtube != blank -%}
+              <a href="{{ section.settings.social_youtube }}" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.5 12 4.5 12 4.5s-7 0-8.9.6A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.8a3 3 0 0 0 2.1 2.1c1.9.6 8.9.6 8.9.6s7 0 8.9-.6a3 3 0 0 0 2.1-2.1c.4-1.6.5-3.2.5-4.8s-.1-3.2-.5-4.8zM10 15.5v-7l6 3.5-6 3.5z"/>
+                </svg>
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </aside>
+
+    {%- comment -%} ---- Predictive search modal (Theme Store required) ---- {%- endcomment -%}
+    {%- if section.settings.show_search -%}
+      <predictive-search id="{{ section_id }}-search" role="dialog" aria-modal="true" aria-label="{{ 'general.search' | t }}">
+        <div class="sf-search-backdrop" data-sf-search-close aria-hidden="true"></div>
+        <div class="sf-search-dialog">
+          <div class="sf-search-head">
+            <form action="{{ routes.search_url }}" method="get" role="search" class="sf-search-form">
+              <label for="{{ section_id }}-search-input" class="visually-hidden">{{ 'general.search' | t }}</label>
+              <input
+                type="search"
+                id="{{ section_id }}-search-input"
+                class="sf-search-input"
+                name="q"
+                placeholder="{{ 'search.placeholder' | t }}"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                data-sf-search-input
+                aria-autocomplete="list"
+                aria-controls="{{ section_id }}-search-results"
+              >
+              <input type="hidden" name="type" value="product,article,page">
+              <input type="hidden" name="options[prefix]" value="last">
+              <button type="submit" class="sf-search-submit" aria-label="{{ 'search.submit' | t }}">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </form>
+            <button type="button" class="sf-search-close" data-sf-search-close aria-label="{{ 'general.close' | t }}">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <div
+            class="sf-search-results"
+            id="{{ section_id }}-search-results"
+            data-sf-search-results
+            role="status"
+            aria-live="polite"
+            aria-relevant="additions text"
+          >
+            <p class="sf-search-state">{{ 'search.prompt' | t }}</p>
+          </div>
+        </div>
+      </predictive-search>
+    {%- endif -%}
   </div>
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      <shopify-account menu="{{ section.settings.customer_account_menu }}">
-        {{ 'icon-account.svg' | inline_asset_content }}
-      </shopify-account>
-    {% endif %}
+  <script>
+    (function () {
+      var root = document.getElementById('{{ section_id }}');
+      if (!root) return;
 
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
+      // Sticky on scroll
+      {% if sticky %}
+      var header = root.querySelector('.sleek-header');
+      var lastY = 0;
+      var ticking = false;
+      function onScroll() {
+        var y = window.scrollY || window.pageYOffset;
+        if (y > 80) {
+          root.classList.add('is-stuck');
+        } else {
+          root.classList.remove('is-stuck');
+        }
+        lastY = y;
+        ticking = false;
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) {
+          window.requestAnimationFrame(onScroll);
+          ticking = true;
+        }
+      }, { passive: true });
       {% endif %}
 
-      {{ 'icon-cart.svg' | inline_asset_content }}
-    </a>
-  </div>
-</header>
+      // Drawer
+      var drawer = root.querySelector('[data-sleek-drawer]');
+      var overlay = root.querySelector('.sleek-drawer-overlay');
+      root.querySelectorAll('[data-sleek-open-drawer]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          drawer.classList.add('is-open');
+          overlay.classList.add('is-open');
+          drawer.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+      root.querySelectorAll('[data-sleek-close-drawer]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          drawer.classList.remove('is-open');
+          overlay.classList.remove('is-open');
+          drawer.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+          // reset panels
+          drawer.querySelectorAll('.sleek-drawer-panel').forEach(function (p) {
+            p.classList.remove('is-active');
+            p.classList.remove('is-pushed');
+          });
+        });
+      });
 
-{% stylesheet %}
-  header {
-    height: 5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  header a {
-    position: relative;
-    text-decoration: none;
-    color: var(--color-foreground);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  header a sup {
-    position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
-  }
-  header svg {
-    width: 2rem;
-  }
-  header .header__menu,
-  header .header__icons {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
+      // Drawer panel navigation
+      drawer.querySelectorAll('[data-panel-open]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var key = btn.getAttribute('data-panel-open');
+          var target = drawer.querySelector('[data-panel="' + key + '"]');
+          var root_panel = drawer.querySelector('[data-panel="root"]');
+          if (target) {
+            target.classList.add('is-active');
+            if (root_panel) root_panel.classList.add('is-pushed');
+          }
+        });
+      });
+      drawer.querySelectorAll('[data-panel-back]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var panel = btn.closest('.sleek-drawer-panel');
+          if (panel) panel.classList.remove('is-active');
+          var root_panel = drawer.querySelector('[data-panel="root"]');
+          if (root_panel) root_panel.classList.remove('is-pushed');
+        });
+      });
+
+      // ---------- Predictive search ----------
+      var searchEl = document.getElementById('{{ section_id }}-search');
+      if (searchEl) {
+        var toggle = root.querySelector('[data-sf-search-toggle]');
+        var input = searchEl.querySelector('[data-sf-search-input]');
+        var resultsBox = searchEl.querySelector('[data-sf-search-results]');
+        var firstFocusable = null;
+        var lastFocusable = null;
+        var promptHTML = resultsBox ? resultsBox.innerHTML : '';
+
+        function openSearch() {
+          searchEl.setAttribute('open', '');
+          if (toggle) toggle.setAttribute('aria-expanded', 'true');
+          document.body.style.overflow = 'hidden';
+          // Move focus to the input
+          setTimeout(function () { if (input) input.focus(); }, 30);
+        }
+        function closeSearch() {
+          searchEl.removeAttribute('open');
+          if (toggle) toggle.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+          if (toggle) toggle.focus();
+        }
+        if (toggle) toggle.addEventListener('click', openSearch);
+        searchEl.querySelectorAll('[data-sf-search-close]').forEach(function (el) {
+          el.addEventListener('click', closeSearch);
+        });
+        // Escape to close
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && searchEl.hasAttribute('open')) {
+            closeSearch();
+          }
+        });
+        // Focus trap inside the dialog
+        searchEl.addEventListener('keydown', function (e) {
+          if (e.key !== 'Tab' || !searchEl.hasAttribute('open')) return;
+          var focusables = searchEl.querySelectorAll('input, button, a[href], [tabindex]:not([tabindex="-1"])');
+          if (focusables.length === 0) return;
+          firstFocusable = focusables[0];
+          lastFocusable = focusables[focusables.length - 1];
+          if (e.shiftKey && document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          } else if (!e.shiftKey && document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        });
+
+        // Predictive search fetch (debounced)
+        var debounceTimer = null;
+        function escapeHtml(s) {
+          return String(s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+          });
+        }
+        function renderResults(query, data) {
+          if (!resultsBox) return;
+          var products = (data.resources && data.resources.results && data.resources.results.products) || [];
+          var articles = (data.resources && data.resources.results && data.resources.results.articles) || [];
+          var pages    = (data.resources && data.resources.results && data.resources.results.pages) || [];
+          var total = products.length + articles.length + pages.length;
+          if (total === 0) {
+            resultsBox.innerHTML = '<p class="sf-search-state">{{ 'search.no_results_html' | t: terms: '__QUERY__' | replace: "'", "\\'" }}</p>'
+              .replace('__QUERY__', escapeHtml(query));
+            return;
+          }
+          var html = '';
+          if (products.length) {
+            html += '<div class="sf-search-group"><p class="sf-search-group-title">{{ 'general.product' | t }}</p><ul class="sf-search-list">';
+            products.forEach(function (p) {
+              var img = (p.featured_image && p.featured_image.url) ? '<span class="sf-search-thumb"><img src="' + p.featured_image.url + '" alt=""></span>' : '<span class="sf-search-thumb"></span>';
+              var price = (typeof p.price === 'string') ? p.price : '';
+              html += '<li><a class="sf-search-link" href="' + escapeHtml(p.url) + '">'
+                + img
+                + '<span class="sf-search-meta"><span class="sf-search-title">' + escapeHtml(p.title) + '</span>'
+                + (price ? '<span class="sf-search-sub">' + escapeHtml(price) + '</span>' : '')
+                + '</span></a></li>';
+            });
+            html += '</ul></div>';
+          }
+          if (articles.length) {
+            html += '<div class="sf-search-group"><p class="sf-search-group-title">{{ 'general.article' | t }}</p><ul class="sf-search-list">';
+            articles.forEach(function (a) {
+              html += '<li><a class="sf-search-link" href="' + escapeHtml(a.url) + '"><span class="sf-search-meta"><span class="sf-search-title">' + escapeHtml(a.title) + '</span></span></a></li>';
+            });
+            html += '</ul></div>';
+          }
+          if (pages.length) {
+            html += '<div class="sf-search-group"><p class="sf-search-group-title">{{ 'general.page' | t }}</p><ul class="sf-search-list">';
+            pages.forEach(function (pg) {
+              html += '<li><a class="sf-search-link" href="' + escapeHtml(pg.url) + '"><span class="sf-search-meta"><span class="sf-search-title">' + escapeHtml(pg.title) + '</span></span></a></li>';
+            });
+            html += '</ul></div>';
+          }
+          var viewAllUrl = '{{ routes.search_url }}?q=' + encodeURIComponent(query) + '&type=product,article,page&options%5Bprefix%5D=last';
+          html += '<a class="sf-search-viewall" href="' + viewAllUrl + '">{{ "search.view_all_html" | t: terms: "__QUERY__" | replace: "'", "\\'" }}</a>'
+            .replace('__QUERY__', escapeHtml(query));
+          resultsBox.innerHTML = html;
+        }
+        function doSearch(query) {
+          var url = '/search/suggest.json?q=' + encodeURIComponent(query)
+            + '&resources[type]=product,article,page&resources[limit]=4&resources[options][unavailable_products]=last';
+          fetch(url, { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.json(); })
+            .then(function (data) { renderResults(query, data); })
+            .catch(function () { resultsBox.innerHTML = '<p class="sf-search-state">{{ 'general.search_error' | t }}</p>'; });
+        }
+        if (input) {
+          input.addEventListener('input', function () {
+            var q = input.value.trim();
+            clearTimeout(debounceTimer);
+            if (!q) { resultsBox.innerHTML = promptHTML; return; }
+            if (q.length < 2) return;
+            debounceTimer = setTimeout(function () { doSearch(q); }, 200);
+          });
+        }
+      }
+
+      // Product slider within mega menu
+      root.querySelectorAll('[data-pslider]').forEach(function (slider) {
+        var track = slider.querySelector('[data-pslider-track]');
+        var prev = slider.querySelector('[data-pslider-prev]');
+        var next = slider.querySelector('[data-pslider-next]');
+        var current = slider.querySelector('[data-pslider-current]');
+        var total = slider.querySelector('[data-pslider-total]');
+        if (!track) return;
+        var perPage = parseInt(slider.getAttribute('data-per-page'), 10) || 2;
+        var cards = track.children;
+        var pages = Math.max(1, Math.ceil(cards.length / perPage));
+        var page = 0;
+        if (total) total.textContent = pages;
+
+        function update() {
+          var viewport = slider.querySelector('.sleek-pslider-viewport');
+          var vw = viewport ? viewport.clientWidth : 0;
+          track.style.transform = 'translateX(' + (-page * vw) + 'px)';
+          if (current) current.textContent = (page + 1);
+          if (prev) prev.disabled = page <= 0;
+          if (next) next.disabled = page >= pages - 1;
+        }
+        if (prev) prev.addEventListener('click', function () { if (page > 0) { page--; update(); } });
+        if (next) next.addEventListener('click', function () { if (page < pages - 1) { page++; update(); } });
+        window.addEventListener('resize', update);
+        // Initial update after layout
+        requestAnimationFrame(update);
+      });
+    })();
+  </script>
 
 {% schema %}
 {
-  "name": "t:general.header",
+  "name": "Header",
+  "class": "section-sleek-header",
+  "tag": "section",
+
   "settings": [
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_dark",
+      "label": "Logo (scrolled / sticky state)",
+      "info": "Optional. Shown when the header switches to a contrasting background on scroll. Falls back to Logo image if blank."
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 60,
+      "max": 260,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 120
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
     },
     {
       "type": "link_list",
-      "id": "customer_account_menu",
-      "label": "t:labels.customer_account_menu",
-      "default": "customer-account-main-menu"
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Main menu"
+    },
+    {
+      "type": "range",
+      "id": "nav_font_size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Nav font size",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Header colors"
+    },
+    {
+      "type": "color",
+      "id": "header_bg",
+      "label": "Header background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "header_fg",
+      "label": "Header text",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent / cart count",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Separator line",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "color",
+      "id": "mega_bg",
+      "label": "Mega menu background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search icon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account icon",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 16,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 22
+    },
+    {
+      "type": "header",
+      "content": "Behaviour"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky",
+      "label": "Sticky header on scroll",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Announcement bar"
+    },
+    {
+      "type": "color",
+      "id": "ann_bg",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "ann_fg",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "ann_font_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "ann_padding",
+      "min": 4,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "ann_speed",
+      "min": 10,
+      "max": 90,
+      "step": 2,
+      "unit": "s",
+      "label": "Scroll duration (lower = faster)",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "ann_direction",
+      "label": "Scroll direction",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Mobile drawer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "label": "Show country selector",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "country_label",
+      "label": "Country label",
+      "default": "United States (USD $)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_mobile",
+      "label": "Show social icons",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "social_x",
+      "label": "X (Twitter) URL"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "social_tiktok",
+      "label": "TikTok URL"
+    },
+    {
+      "type": "url",
+      "id": "social_pinterest",
+      "label": "Pinterest URL"
+    },
+    {
+      "type": "url",
+      "id": "social_youtube",
+      "label": "YouTube URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "100% CLEAN, NON-IRRITATING"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    },
+    {
+      "type": "menu_cards",
+      "name": "Mega: Cards",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Card-grid mega menu (e.g. \"Presets\"). Enter the exact top-level menu item title."
+        },
+        {
+          "type": "text",
+          "id": "menu_handle",
+          "label": "Parent menu item title",
+          "default": "Presets"
+        },
+        { "type": "header", "content": "Card 1" },
+        { "type": "image_picker", "id": "card_1_image", "label": "Image" },
+        { "type": "text", "id": "card_1_title", "label": "Title" },
+        { "type": "text", "id": "card_1_sub", "label": "Subtitle" },
+        { "type": "url", "id": "card_1_link", "label": "Link" },
+        { "type": "header", "content": "Card 2" },
+        { "type": "image_picker", "id": "card_2_image", "label": "Image" },
+        { "type": "text", "id": "card_2_title", "label": "Title" },
+        { "type": "text", "id": "card_2_sub", "label": "Subtitle" },
+        { "type": "url", "id": "card_2_link", "label": "Link" },
+        { "type": "header", "content": "Card 3" },
+        { "type": "image_picker", "id": "card_3_image", "label": "Image" },
+        { "type": "text", "id": "card_3_title", "label": "Title" },
+        { "type": "text", "id": "card_3_sub", "label": "Subtitle" },
+        { "type": "url", "id": "card_3_link", "label": "Link" },
+        { "type": "header", "content": "Card 4" },
+        { "type": "image_picker", "id": "card_4_image", "label": "Image" },
+        { "type": "text", "id": "card_4_title", "label": "Title" },
+        { "type": "text", "id": "card_4_sub", "label": "Subtitle" },
+        { "type": "url", "id": "card_4_link", "label": "Link" },
+        { "type": "header", "content": "Card 5" },
+        { "type": "image_picker", "id": "card_5_image", "label": "Image" },
+        { "type": "text", "id": "card_5_title", "label": "Title" },
+        { "type": "text", "id": "card_5_sub", "label": "Subtitle" },
+        { "type": "url", "id": "card_5_link", "label": "Link" },
+        { "type": "header", "content": "Card 6 (optional)" },
+        { "type": "image_picker", "id": "card_6_image", "label": "Image" },
+        { "type": "text", "id": "card_6_title", "label": "Title" },
+        { "type": "text", "id": "card_6_sub", "label": "Subtitle" },
+        { "type": "url", "id": "card_6_link", "label": "Link" }
+      ]
+    },
+    {
+      "type": "menu_columns",
+      "name": "Mega: Columns + Trend",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Multi-column mega menu with a trending product slider (e.g. \"Shop\")."
+        },
+        {
+          "type": "text",
+          "id": "menu_handle",
+          "label": "Parent menu item title",
+          "default": "Shop"
+        },
+        { "type": "header", "content": "Feature links (left column)" },
+        { "type": "text", "id": "feature_1_title", "label": "Link 1 title", "default": "Best Sellers" },
+        { "type": "url", "id": "feature_1_link", "label": "Link 1 URL" },
+        { "type": "text", "id": "feature_2_title", "label": "Link 2 title", "default": "New Arrivals" },
+        { "type": "url", "id": "feature_2_link", "label": "Link 2 URL" },
+        { "type": "text", "id": "feature_3_title", "label": "Link 3 title", "default": "Bundles" },
+        { "type": "url", "id": "feature_3_link", "label": "Link 3 URL" },
+        { "type": "text", "id": "feature_4_title", "label": "Link 4 title", "default": "Trending" },
+        { "type": "url", "id": "feature_4_link", "label": "Link 4 URL" },
+        { "type": "text", "id": "feature_5_title", "label": "Link 5 title" },
+        { "type": "url", "id": "feature_5_link", "label": "Link 5 URL" },
+        { "type": "text", "id": "feature_6_title", "label": "Link 6 title" },
+        { "type": "url", "id": "feature_6_link", "label": "Link 6 URL" },
+        { "type": "header", "content": "Column 1" },
+        { "type": "text", "id": "col_1_title", "label": "Column title", "default": "Skincare" },
+        { "type": "link_list", "id": "col_1_menu", "label": "Column menu" },
+        { "type": "header", "content": "Column 2" },
+        { "type": "text", "id": "col_2_title", "label": "Column title", "default": "Makeup" },
+        { "type": "link_list", "id": "col_2_menu", "label": "Column menu" },
+        { "type": "header", "content": "Trend slideshow" },
+        { "type": "text", "id": "trend_title", "label": "Slideshow title", "default": "Trend This Week" },
+        { "type": "collection", "id": "trend_collection", "label": "Products collection" },
+        {
+          "type": "range",
+          "id": "products_per_slide",
+          "label": "Products per slide",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 2
+        }
+      ]
+    },
+    {
+      "type": "menu_dropdown",
+      "name": "Mega: Dropdown",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Simple dropdown with optional nested submenu (e.g. \"Pages\")."
+        },
+        {
+          "type": "text",
+          "id": "menu_handle",
+          "label": "Parent menu item title",
+          "default": "Pages"
+        },
+        { "type": "header", "content": "Item 1" },
+        { "type": "text", "id": "item_1_title", "label": "Title" },
+        { "type": "url", "id": "item_1_link", "label": "Link" },
+        { "type": "link_list", "id": "item_1_submenu", "label": "Submenu (optional)" },
+        { "type": "header", "content": "Item 2" },
+        { "type": "text", "id": "item_2_title", "label": "Title" },
+        { "type": "url", "id": "item_2_link", "label": "Link" },
+        { "type": "link_list", "id": "item_2_submenu", "label": "Submenu (optional)" },
+        { "type": "header", "content": "Item 3" },
+        { "type": "text", "id": "item_3_title", "label": "Title" },
+        { "type": "url", "id": "item_3_link", "label": "Link" },
+        { "type": "link_list", "id": "item_3_submenu", "label": "Submenu (optional)" },
+        { "type": "header", "content": "Item 4" },
+        { "type": "text", "id": "item_4_title", "label": "Title" },
+        { "type": "url", "id": "item_4_link", "label": "Link" },
+        { "type": "link_list", "id": "item_4_submenu", "label": "Submenu (optional)" },
+        { "type": "header", "content": "Item 5" },
+        { "type": "text", "id": "item_5_title", "label": "Title" },
+        { "type": "url", "id": "item_5_link", "label": "Link" },
+        { "type": "link_list", "id": "item_5_submenu", "label": "Submenu (optional)" },
+        { "type": "header", "content": "Item 6" },
+        { "type": "text", "id": "item_6_title", "label": "Title" },
+        { "type": "url", "id": "item_6_link", "label": "Link" },
+        { "type": "link_list", "id": "item_6_submenu", "label": "Submenu (optional)" },
+        { "type": "header", "content": "Item 7" },
+        { "type": "text", "id": "item_7_title", "label": "Title" },
+        { "type": "url", "id": "item_7_link", "label": "Link" },
+        { "type": "header", "content": "Item 8" },
+        { "type": "text", "id": "item_8_title", "label": "Title" },
+        { "type": "url", "id": "item_8_link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header",
+      "blocks": [
+        { "type": "announcement", "settings": { "text": "100% CLEAN, NON-IRRITATING" } },
+        { "type": "announcement", "settings": { "text": "NO ANIMAL TESTING" } },
+        { "type": "announcement", "settings": { "text": "FREE SHIPPING ON ALL U.S. ORDERS $200+" } }
+      ]
     }
   ]
 }

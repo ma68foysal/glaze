@@ -1,0 +1,461 @@
+{%- liquid
+  assign section_id = 'sleek-hti-' | append: section.id
+-%}
+
+<style>
+  /* ============================================================
+     Highlight Text Image Sleek — scoped styles
+     ============================================================ */
+
+  #{{ section_id }} {
+    --hti-bg: {{ section.settings.bg_color }};
+    --hti-color: {{ section.settings.text_color }};
+    --hti-size-dt: {{ section.settings.font_size_desktop }}px;
+    --hti-size-mb: {{ section.settings.font_size_mobile }}px;
+    --hti-weight: {{ section.settings.font_weight }};
+    --hti-line: {{ section.settings.line_height }};
+    --hti-spacing: {{ section.settings.letter_spacing }}px;
+    --hti-gap: {{ section.settings.item_gap }}px;
+    --hti-maxw: {{ section.settings.max_width }}px;
+    --hti-pad-top: {{ section.settings.padding_top }}px;
+    --hti-pad-bottom: {{ section.settings.padding_bottom }}px;
+    --hti-side-pad: {{ section.settings.side_padding }}px;
+
+    display: block;
+    background: var(--hti-bg);
+    padding: var(--hti-pad-top) var(--hti-side-pad) var(--hti-pad-bottom);
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after { box-sizing: border-box; }
+
+  .hti-wrap {
+    max-width: var(--hti-maxw);
+    margin: 0 auto;
+    font-size: var(--hti-size-dt);
+    line-height: var(--hti-line);
+    letter-spacing: var(--hti-spacing);
+    font-weight: var(--hti-weight);
+    color: var(--hti-color);
+  }
+
+  .hti-wrap[data-align="left"] { text-align: left; }
+  .hti-wrap[data-align="center"] { text-align: center; }
+  .hti-wrap[data-align="right"] { text-align: right; }
+
+  /* Individual item (text or image) — inline-flex so images sit with text baseline */
+  .hti-item {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin: calc(var(--hti-gap) / 2);
+    max-width: 100%;
+  }
+
+  .hti-item--text { white-space: normal; }
+
+  /* Image pill / shape */
+  .hti-item--image {
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #f4f4f4;
+    transition: transform 0.4s ease;
+  }
+
+  .hti-item--image:hover { transform: translateY(-2px); }
+
+  .hti-item--image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hti-item--image[data-shape="pill"] { border-radius: 999px; }
+  .hti-item--image[data-shape="circle"] { border-radius: 50%; aspect-ratio: 1 / 1; }
+  .hti-item--image[data-shape="rectangle"] { border-radius: 0; }
+  .hti-item--image[data-shape="rounded"] { /* radius via inline style */ }
+
+  /* Highlight text span (can have its own color / accent) */
+  .hti-item--text[data-style="accent"] {
+    font-style: italic;
+  }
+
+  .hti-item--text[data-style="underline"] {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  /* Entrance animation */
+  .hti-item {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .hti-wrap.is-visible .hti-item {
+    animation: hti-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .hti-wrap.is-visible .hti-item:nth-child(1) { animation-delay: 0.05s; }
+  .hti-wrap.is-visible .hti-item:nth-child(2) { animation-delay: 0.12s; }
+  .hti-wrap.is-visible .hti-item:nth-child(3) { animation-delay: 0.19s; }
+  .hti-wrap.is-visible .hti-item:nth-child(4) { animation-delay: 0.26s; }
+  .hti-wrap.is-visible .hti-item:nth-child(5) { animation-delay: 0.33s; }
+  .hti-wrap.is-visible .hti-item:nth-child(6) { animation-delay: 0.40s; }
+  .hti-wrap.is-visible .hti-item:nth-child(7) { animation-delay: 0.47s; }
+  .hti-wrap.is-visible .hti-item:nth-child(8) { animation-delay: 0.54s; }
+  .hti-wrap.is-visible .hti-item:nth-child(9) { animation-delay: 0.61s; }
+  .hti-wrap.is-visible .hti-item:nth-child(10) { animation-delay: 0.68s; }
+  .hti-wrap.is-visible .hti-item:nth-child(n+11) { animation-delay: 0.75s; }
+
+  @keyframes hti-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* -------- Responsive -------- */
+  @media screen and (max-width: 749px) {
+    .hti-wrap { font-size: var(--hti-size-mb); }
+    #{{ section_id }} { --hti-side-pad: 16px; }
+  }
+</style>
+
+<div id="{{ section_id }}" class="sleek-hti" data-sleek-hti>
+  <div
+    class="hti-wrap"
+    data-align="{{ section.settings.text_align }}"
+    data-hti-wrap
+  >
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'text' -%}
+          <span
+            class="hti-item hti-item--text"
+            data-style="{{ block.settings.style }}"
+            style="{% if block.settings.color != blank %}color: {{ block.settings.color }};{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {{- block.settings.text -}}
+          </span>
+
+        {%- when 'image' -%}
+          {%- assign shape = block.settings.shape -%}
+          {%- assign w = block.settings.width -%}
+          {%- assign h = block.settings.height -%}
+          {%- assign r = block.settings.custom_radius -%}
+          <span
+            class="hti-item hti-item--image"
+            data-shape="{{ shape }}"
+            style="width: {{ w }}px; {% if shape != 'circle' %}height: {{ h }}px;{% endif %} {% if shape == 'rounded' %}border-radius: {{ r }}px;{% endif %} {% if block.settings.image_bg != blank %}background: {{ block.settings.image_bg }};{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 600
+                | image_tag: loading: 'lazy', alt: block.settings.alt, widths: '200,300,400,600'
+              }}
+            {%- endif -%}
+          </span>
+
+        {%- when 'break' -%}
+          <span
+            class="hti-item hti-item--break"
+            style="flex-basis: 100%; height: 0; margin: 0;"
+            aria-hidden="true"
+          ></span>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('{{ section_id }}');
+    if (!root) return;
+    var wrap = root.querySelector('[data-hti-wrap]');
+    if (!wrap) return;
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              wrap.classList.add('is-visible');
+              io.unobserve(wrap);
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+      io.observe(wrap);
+    } else {
+      wrap.classList.add('is-visible');
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Highlight text and image",
+  "class": "section-highlight-text-image-sleek",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 400,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "label": "Max width",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between items",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "min": 18,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Font size (desktop)",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 16,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size (mobile)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "font_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Font weight",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "min": 1.0,
+      "max": 2.0,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.3
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "min": -3,
+      "max": 8,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": -1
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Side padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Make you look"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "normal", "label": "Normal" },
+            { "value": "accent", "label": "Italic" },
+            { "value": "underline", "label": "Underlined" }
+          ],
+          "default": "normal"
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Override color (optional)"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text"
+        },
+        {
+          "type": "select",
+          "id": "shape",
+          "label": "Shape",
+          "options": [
+            { "value": "pill", "label": "Pill (horizontal oval)" },
+            { "value": "circle", "label": "Circle (1:1)" },
+            { "value": "rectangle", "label": "Rectangle (square corners)" },
+            { "value": "rounded", "label": "Rounded (custom radius)" }
+          ],
+          "default": "pill"
+        },
+        {
+          "type": "range",
+          "id": "width",
+          "min": 40,
+          "max": 400,
+          "step": 4,
+          "unit": "px",
+          "label": "Width",
+          "default": 140
+        },
+        {
+          "type": "range",
+          "id": "height",
+          "min": 32,
+          "max": 300,
+          "step": 4,
+          "unit": "px",
+          "label": "Height",
+          "info": "Ignored for Circle (uses width).",
+          "default": 68
+        },
+        {
+          "type": "range",
+          "id": "custom_radius",
+          "min": 0,
+          "max": 80,
+          "step": 2,
+          "unit": "px",
+          "label": "Custom radius (Rounded only)",
+          "default": 16
+        },
+        {
+          "type": "color",
+          "id": "image_bg",
+          "label": "Fallback background"
+        }
+      ]
+    },
+    {
+      "type": "break",
+      "name": "Line break",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Forces the next item onto a new line."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Highlight text and image",
+      "blocks": [
+        { "type": "text", "settings": { "text": "Make you look" } },
+        { "type": "image", "settings": { "shape": "pill", "width": 140, "height": 68 } },
+        { "type": "text", "settings": { "text": "and" } },
+        { "type": "text", "settings": { "text": "feel glowy" } },
+        { "type": "image", "settings": { "shape": "pill", "width": 160, "height": 68 } },
+        { "type": "text", "settings": { "text": "and healthy" } },
+        { "type": "image", "settings": { "shape": "pill", "width": 140, "height": 68 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

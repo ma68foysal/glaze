@@ -1,7 +1,7 @@
 <div class="custom-section full-width">
   {% if section.settings.background_image %}
-    <div class="custom-section__background">
-      {{ section.settings.background_image | image_url: width: 2000 | image_tag }}
+    <div class="custom-section__background" aria-hidden="true">
+      {{ section.settings.background_image | image_url: width: 2000 | image_tag: alt: '', loading: 'lazy' }}
     </div>
   {% endif %}
 

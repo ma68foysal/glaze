@@ -1,0 +1,492 @@
+{%- comment -%}
+  Glaze cart drawer — slides in from the right when cart_type == 'drawer'.
+  Rendered once per page from layout/theme.liquid. The body is the SECTION
+  that Section Rendering API refetches after every cart mutation, so the
+  whole drawer's innerHTML gets swapped server-side — no manual DOM mutation.
+
+  Wrapper: <glaze-cart-drawer> custom element (defined in glaze-cart.js).
+  Items wrapper: <glaze-cart-items> custom element.
+  Remove/quantity: <glaze-cart-remove> wraps each line's remove button.
+  Note: <glaze-cart-note> wraps the textarea.
+{%- endcomment -%}
+
+<glaze-cart-drawer
+  class="glaze-cart-drawer{% if cart.item_count == 0 %} is-empty{% endif %}"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="glaze-cart-drawer-heading"
+  aria-hidden="true"
+>
+  <div class="glaze-cart-drawer__overlay" data-glaze-cart-close aria-hidden="true"></div>
+  <aside class="glaze-cart-drawer__panel" tabindex="-1">
+    <header class="glaze-cart-drawer__head">
+      <h2 id="glaze-cart-drawer-heading" class="glaze-cart-drawer__title">
+        {{ 'cart.title' | t }}
+        {%- if cart.item_count > 0 -%}
+          <span class="glaze-cart-drawer__count">({{ cart.item_count }})</span>
+        {%- endif -%}
+      </h2>
+      <button
+        type="button"
+        class="glaze-cart-drawer__close"
+        data-glaze-cart-close
+        aria-label="{{ 'general.close' | t }}"
+      >
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </header>
+
+    {%- if cart.item_count == 0 -%}
+      <div class="glaze-cart-drawer__empty">
+        <p class="glaze-cart-drawer__empty-text">{{ 'cart.empty' | t }}</p>
+        <a class="glaze-btn glaze-btn--solid" href="{{ routes.all_products_collection_url }}" data-glaze-cart-close>
+          {{ 'cart.continue_shopping' | t }}
+        </a>
+      </div>
+    {%- else -%}
+      <glaze-cart-items class="glaze-cart-drawer__items">
+        <form action="{{ routes.cart_url }}" method="post" id="glaze-cart-drawer-form" novalidate>
+          <ul class="glaze-cart-drawer__list" role="list">
+            {%- for item in cart.items -%}
+              <li class="glaze-cart-drawer__item" data-key="{{ item.key }}" data-index="{{ forloop.index }}">
+                <a class="glaze-cart-drawer__item-media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+                  {%- if item.image -%}
+                    {{ item.image | image_url: width: 200 | image_tag:
+                        loading: 'lazy',
+                        sizes: '88px',
+                        widths: '88, 132, 200',
+                        alt: item.image.alt | default: item.product.title | escape
+                    }}
+                  {%- endif -%}
+                </a>
+                <div class="glaze-cart-drawer__item-body">
+                  <a class="glaze-cart-drawer__item-title" href="{{ item.url }}">
+                    {{ item.product.title | escape }}
+                  </a>
+
+                  {%- unless item.product.has_only_default_variant -%}
+                    <p class="glaze-cart-drawer__item-options">{{ item.variant.title | escape }}</p>
+                  {%- endunless -%}
+
+                  {%- if item.selling_plan_allocation -%}
+                    <p class="glaze-cart-drawer__item-options">{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>
+                  {%- endif -%}
+
+                  {%- for property in item.properties -%}
+                    {%- assign first_char = property.first | slice: 0 -%}
+                    {%- if first_char != '_' and property.last != blank -%}
+                      <p class="glaze-cart-drawer__item-options">
+                        <strong>{{ property.first | escape }}:</strong>
+                        {% if property.last contains '/uploads/' %}
+                          <a href="{{ property.last }}" target="_blank" rel="noopener">{{ property.last | split: '/' | last | escape }}</a>
+                        {% else %}
+                          {{ property.last | escape }}
+                        {% endif %}
+                      </p>
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- if item.line_level_discount_allocations.size > 0 -%}
+                    <ul class="glaze-cart-drawer__item-discounts" aria-label="{{ 'cart.discounts_aria' | t }}">
+                      {%- for discount in item.line_level_discount_allocations -%}
+                        <li>{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+
+                  <div class="glaze-cart-drawer__item-row">
+                    <div class="glaze-cart-drawer__qty">
+                      <label for="glaze-cart-qty-{{ item.key }}" class="visually-hidden">
+                        {{ 'cart.qty_label' | t: title: item.product.title | escape }}
+                      </label>
+                      <button
+                        type="button"
+                        class="glaze-cart-drawer__qty-btn"
+                        aria-label="{{ 'cart.qty_decrease' | t }}"
+                        data-glaze-cart-qty-step="-1"
+                        data-target="glaze-cart-qty-{{ item.key }}"
+                      >−</button>
+                      <input
+                        type="number"
+                        id="glaze-cart-qty-{{ item.key }}"
+                        name="updates[{{ item.key }}]"
+                        value="{{ item.quantity }}"
+                        min="0"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        data-glaze-cart-qty-input
+                        data-index="{{ forloop.index }}"
+                        data-key="{{ item.key }}"
+                      >
+                      <button
+                        type="button"
+                        class="glaze-cart-drawer__qty-btn"
+                        aria-label="{{ 'cart.qty_increase' | t }}"
+                        data-glaze-cart-qty-step="1"
+                        data-target="glaze-cart-qty-{{ item.key }}"
+                      >+</button>
+                    </div>
+
+                    <div class="glaze-cart-drawer__item-prices">
+                      {%- if item.original_line_price != item.final_line_price -%}
+                        <s class="glaze-cart-drawer__item-compare">{{ item.original_line_price | money }}</s>
+                        <span class="glaze-cart-drawer__item-price">{{ item.final_line_price | money }}</span>
+                      {%- else -%}
+                        <span class="glaze-cart-drawer__item-price">{{ item.final_line_price | money }}</span>
+                      {%- endif -%}
+                    </div>
+                  </div>
+
+                  <glaze-cart-remove data-key="{{ item.key }}" data-index="{{ forloop.index }}">
+                    <button
+                      type="button"
+                      class="glaze-cart-drawer__remove"
+                      aria-label="{{ 'cart.remove_aria' | t: title: item.product.title | escape }}"
+                    >{{ 'cart.remove' | t }}</button>
+                  </glaze-cart-remove>
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          {%- if cart.cart_level_discount_applications.size > 0 -%}
+            <ul class="glaze-cart-drawer__cart-discounts" aria-label="{{ 'cart.cart_discounts_aria' | t }}">
+              {%- for discount in cart.cart_level_discount_applications -%}
+                <li>{{ discount.title | escape }} (−{{ discount.total_allocated_amount | money }})</li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          {%- if settings.show_cart_note -%}
+            <details class="glaze-cart-drawer__note-wrap">
+              <summary>{{ 'cart.note_toggle' | t }}</summary>
+              <glaze-cart-note>
+                <label for="glaze-cart-drawer-note" class="visually-hidden">{{ 'cart.notes_label' | t }}</label>
+                <textarea
+                  id="glaze-cart-drawer-note"
+                  class="glaze-cart-drawer__note"
+                  name="note"
+                  rows="3"
+                  placeholder="{{ 'cart.notes_label' | t }}"
+                >{{ cart.note }}</textarea>
+              </glaze-cart-note>
+            </details>
+          {%- endif -%}
+        </form>
+      </glaze-cart-items>
+
+      <footer class="glaze-cart-drawer__footer">
+        <div class="glaze-cart-drawer__subtotal">
+          <span>{{ 'cart.subtotal' | t }}</span>
+          <span class="glaze-cart-drawer__subtotal-value">{{ cart.total_price | money_with_currency }}</span>
+        </div>
+        <p class="glaze-cart-drawer__tax-note">
+          {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+            {{ 'cart.tax_and_shipping_at_checkout_html' | t: link: shop.shipping_policy.url }}
+          {%- elsif cart.taxes_included -%}
+            {{ 'cart.tax_included_shipping_at_checkout' | t }}
+          {%- elsif shop.shipping_policy.body != blank -%}
+            {{ 'cart.tax_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+          {%- else -%}
+            {{ 'cart.tax_and_shipping_at_checkout' | t }}
+          {%- endif -%}
+        </p>
+        <a class="glaze-btn glaze-btn--ghost glaze-btn--full" href="{{ routes.cart_url }}">
+          {{ 'cart.view_cart' | t }}
+        </a>
+        <button
+          type="submit"
+          form="glaze-cart-drawer-form"
+          name="checkout"
+          class="glaze-btn glaze-btn--solid glaze-btn--full"
+        >
+          {{ 'cart.checkout' | t }}
+        </button>
+      </footer>
+    {%- endif -%}
+  </aside>
+</glaze-cart-drawer>
+
+{% stylesheet %}
+  .glaze-cart-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+    font-family: var(--g-body-font);
+    color: var(--g-ink);
+  }
+  .glaze-cart-drawer[open] {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .glaze-cart-drawer__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .glaze-cart-drawer[open] .glaze-cart-drawer__overlay { opacity: 1; }
+
+  .glaze-cart-drawer__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(440px, 100vw);
+    background: var(--g-cream);
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .glaze-cart-drawer[open] .glaze-cart-drawer__panel { transform: translateX(0); }
+  .glaze-cart-drawer__panel:focus { outline: none; }
+
+  .glaze-cart-drawer__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--g-line);
+    flex-shrink: 0;
+  }
+  .glaze-cart-drawer__title {
+    font-family: var(--g-display-font);
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .glaze-cart-drawer__count { color: var(--g-muted); font-weight: 400; margin-left: 6px; }
+  .glaze-cart-drawer__close {
+    width: var(--g-touch);
+    height: var(--g-touch);
+    border: 0;
+    background: transparent;
+    color: var(--g-ink);
+    cursor: pointer;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .glaze-cart-drawer__close:hover { background: rgba(0,0,0,0.04); }
+  .glaze-cart-drawer__close:focus-visible { outline: 2px solid var(--g-rose); outline-offset: 2px; }
+  .glaze-cart-drawer__close svg { width: 18px; height: 18px; }
+
+  .glaze-cart-drawer__items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+    display: block;
+  }
+  .glaze-cart-drawer__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .glaze-cart-drawer__item {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 14px;
+    padding: 14px;
+    background: var(--g-card-bg);
+    border-radius: var(--g-radius-md);
+  }
+  .glaze-cart-drawer__item-media {
+    aspect-ratio: 1 / 1;
+    border-radius: var(--g-radius-sm);
+    overflow: hidden;
+    background: var(--g-cream-warm);
+    display: block;
+  }
+  .glaze-cart-drawer__item-media img { width: 100%; height: 100%; object-fit: cover; }
+  .glaze-cart-drawer__item-body { display: grid; gap: 4px; min-width: 0; }
+  .glaze-cart-drawer__item-title {
+    font-family: var(--g-display-font);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--g-ink);
+    text-decoration: none;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .glaze-cart-drawer__item-title:hover { text-decoration: underline; }
+  .glaze-cart-drawer__item-options {
+    margin: 0;
+    font-size: 12px;
+    color: var(--g-muted);
+  }
+  .glaze-cart-drawer__item-discounts {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0;
+    color: var(--g-success-fg);
+    font-size: 12px;
+  }
+  .glaze-cart-drawer__item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .glaze-cart-drawer__qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-pill);
+    background: var(--g-cream);
+  }
+  .glaze-cart-drawer__qty-btn {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 0;
+    font: inherit;
+    font-size: 15px;
+    color: var(--g-ink);
+    cursor: pointer;
+  }
+  .glaze-cart-drawer__qty-btn:focus-visible {
+    outline: 2px solid var(--g-rose);
+    outline-offset: -4px;
+  }
+  .glaze-cart-drawer__qty input {
+    width: 36px;
+    height: 32px;
+    border: 0;
+    background: transparent;
+    text-align: center;
+    font: inherit;
+    font-size: 13px;
+    color: var(--g-ink);
+    -moz-appearance: textfield;
+  }
+  .glaze-cart-drawer__qty input::-webkit-outer-spin-button,
+  .glaze-cart-drawer__qty input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .glaze-cart-drawer__item-prices {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .glaze-cart-drawer__item-price { font-weight: 600; font-size: 14px; }
+  .glaze-cart-drawer__item-compare { color: var(--g-muted); font-size: 12px; }
+  .glaze-cart-drawer__remove {
+    align-self: start;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--g-muted);
+    font-size: 12px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .glaze-cart-drawer__remove:hover { color: var(--g-ink); }
+  .glaze-cart-drawer__remove:focus-visible { outline: 2px solid var(--g-rose); outline-offset: 2px; }
+
+  .glaze-cart-drawer__cart-discounts {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    color: var(--g-success-fg);
+    font-size: 13px;
+  }
+
+  .glaze-cart-drawer__note-wrap {
+    margin-top: 16px;
+    border-top: 1px solid var(--g-line);
+    padding-top: 12px;
+  }
+  .glaze-cart-drawer__note-wrap summary {
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--g-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    min-height: 24px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .glaze-cart-drawer__note-wrap > summary::-webkit-details-marker { display: none; }
+  .glaze-cart-drawer__note {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-md);
+    background: var(--g-card-bg);
+    font: inherit;
+    color: var(--g-ink);
+    resize: vertical;
+    min-height: 72px;
+    box-sizing: border-box;
+  }
+  .glaze-cart-drawer__note:focus { outline: 2px solid var(--g-rose); outline-offset: 2px; }
+
+  .glaze-cart-drawer__footer {
+    border-top: 1px solid var(--g-line);
+    padding: 16px 24px 20px;
+    display: grid;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .glaze-cart-drawer__subtotal {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 15px;
+  }
+  .glaze-cart-drawer__subtotal-value {
+    font-family: var(--g-display-font);
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .glaze-cart-drawer__tax-note {
+    margin: 0;
+    color: var(--g-muted);
+    font-size: 12px;
+  }
+  .glaze-cart-drawer__tax-note a { color: inherit; text-underline-offset: 3px; }
+
+  .glaze-cart-drawer__empty {
+    flex: 1;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 16px;
+    padding: 24px;
+    text-align: center;
+  }
+  .glaze-cart-drawer__empty-text {
+    font-family: var(--g-display-font);
+    font-size: 18px;
+    margin: 0;
+    color: var(--g-ink);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "tag": "div",
+  "settings": []
+}
+{% endschema %}

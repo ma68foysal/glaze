@@ -1,0 +1,492 @@
+{%- liquid
+  assign section_id = 'sleek-ab-' | append: section.id
+  assign cols = section.settings.columns_desktop
+-%}
+
+<style>
+  /* ============================================================
+     About Sleek — scoped styles (ab- prefix)
+     ============================================================ */
+
+  #{{ section_id }} {
+    --ab-bg: {{ section.settings.bg_color }};
+    --ab-title-c: {{ section.settings.title_color }};
+    --ab-title-s: {{ section.settings.title_size }}px;
+    --ab-title-w: {{ section.settings.title_weight }};
+    --ab-link-c: {{ section.settings.link_color }};
+    --ab-link-s: {{ section.settings.link_size }}px;
+    --ab-card-title-c: {{ section.settings.card_title_color }};
+    --ab-card-title-s: {{ section.settings.card_title_size }}px;
+    --ab-card-title-w: {{ section.settings.card_title_weight }};
+    --ab-btn-bg: {{ section.settings.btn_bg }};
+    --ab-btn-fg: {{ section.settings.btn_fg }};
+    --ab-btn-hover-bg: {{ section.settings.btn_hover_bg }};
+    --ab-btn-hover-fg: {{ section.settings.btn_hover_fg }};
+    --ab-card-radius: {{ section.settings.card_radius }}px;
+    --ab-gap: {{ section.settings.card_gap }}px;
+    --ab-cols: {{ cols }};
+    --ab-pad-top: {{ section.settings.padding_top }}px;
+    --ab-pad-bottom: {{ section.settings.padding_bottom }}px;
+
+    display: block;
+    background: var(--ab-bg);
+    padding: var(--ab-pad-top) 0 var(--ab-pad-bottom);
+    overflow-x: clip;
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after { box-sizing: border-box; }
+
+  .ab-wrap {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* Heading */
+  .ab-head {
+    text-align: center;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .ab-title {
+    margin: 0;
+    color: var(--ab-title-c);
+    font-size: var(--ab-title-s);
+    font-weight: var(--ab-title-w);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    max-width: 28ch;
+  }
+
+  .ab-link {
+    display: inline-block;
+    color: var(--ab-link-c);
+    font-size: var(--ab-link-s);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1.5px solid currentColor;
+    padding-bottom: 2px;
+    transition: opacity 0.2s ease;
+  }
+
+  .ab-link:hover { opacity: 0.7; }
+
+  /* Grid */
+  .ab-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--ab-cols), minmax(0, 1fr));
+    gap: var(--ab-gap);
+  }
+
+  /* Card — image as background, content overlaid at bottom */
+  .ab-card {
+    position: relative;
+    border-radius: var(--ab-card-radius);
+    overflow: hidden;
+    display: block;
+    aspect-ratio: 3 / 4;
+    padding: 0;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.35s ease;
+    isolation: isolate;
+  }
+
+  .ab-card:hover { transform: translateY(-3px); }
+
+  .ab-card-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .ab-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ab-card:hover .ab-card-media img { transform: scale(1.04); }
+
+  .ab-card-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 28px 24px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+    z-index: 2;
+  }
+
+  .ab-card-title {
+    margin: 0;
+    color: var(--ab-card-title-c);
+    font-size: var(--ab-card-title-s);
+    font-weight: var(--ab-card-title-w);
+    line-height: 1.2;
+  }
+
+  .ab-card-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    border-radius: 999px;
+    background: var(--ab-btn-bg);
+    color: var(--ab-btn-fg);
+    font-size: 13px;
+    font-weight: 600;
+    border: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.25s ease;
+  }
+
+  .ab-card-btn:hover {
+    background: var(--ab-btn-hover-bg);
+    color: var(--ab-btn-hover-fg);
+    transform: translateY(-1px);
+  }
+
+  /* Responsive */
+  @media screen and (max-width: 989px) {
+    #{{ section_id }} { --ab-cols: {% if cols > 2 %}2{% else %}{{ cols }}{% endif %}; }
+    .ab-wrap { padding: 0 20px; }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ab-wrap { padding: 0 16px; }
+    .ab-head { margin-bottom: 24px; }
+    .ab-title { font-size: 26px; }
+
+    /* Touch slider: 1 full + peek from right */
+    .ab-grid {
+      grid-template-columns: none;
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: 12px;
+      padding-right: 16px;
+      margin-right: -16px;
+    }
+
+    .ab-grid::-webkit-scrollbar { display: none; }
+
+    .ab-card {
+      flex: 0 0 calc(100% - 64px);
+      scroll-snap-align: start;
+      aspect-ratio: 3 / 4;
+    }
+
+    .ab-card-content { padding: 16px 16px 22px; gap: 12px; }
+    .ab-card-title { font-size: 20px; }
+  }
+</style>
+
+<div id="{{ section_id }}" class="sleek-ab">
+  <div class="ab-wrap">
+
+    {%- if section.settings.title != blank or section.settings.link_label != blank -%}
+      <div class="ab-head">
+        {%- if section.settings.title != blank -%}
+          <h2 class="ab-title">{{ section.settings.title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.link_label != blank -%}
+          <a href="{{ section.settings.link_url | default: '#' }}" class="ab-link">{{ section.settings.link_label }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="ab-grid">
+      {%- for block in section.blocks -%}
+        {%- capture card_inner -%}
+          <div class="ab-card-media">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: block.settings.title, widths: '300,500,700,800' }}
+            {%- endif -%}
+          </div>
+          <div class="ab-card-content">
+            {%- if block.settings.title != blank -%}
+              <h3 class="ab-card-title">{{ block.settings.title }}</h3>
+            {%- endif -%}
+            {%- if block.settings.btn_label != blank -%}
+              <span class="ab-card-btn">{{ block.settings.btn_label }}</span>
+            {%- endif -%}
+          </div>
+        {%- endcapture -%}
+
+        {%- if block.settings.link != blank -%}
+          <a
+            href="{{ block.settings.link }}"
+            class="ab-card"
+            style="background: {{ block.settings.bg_color }};"
+            {{ block.shopify_attributes }}
+          >{{ card_inner }}</a>
+        {%- else -%}
+          <div
+            class="ab-card"
+            style="background: {{ block.settings.bg_color }};"
+            {{ block.shopify_attributes }}
+          >{{ card_inner }}</div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "About",
+  "class": "section-about-sleek",
+  "tag": "section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Spring styles to wear together or apart, whatever the weather."
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "title_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Title weight",
+      "default": 600
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "About Us"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "link_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Link size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns (desktop)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card radius",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Card title"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Size",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "card_title_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Weight",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "Card button"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "btn_fg",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_fg",
+      "label": "Hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Card background",
+          "default": "#efe9de"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "News, tips, reviews"
+        },
+        {
+          "type": "text",
+          "id": "btn_label",
+          "label": "Button label",
+          "default": "View Our Blog"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Card link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About",
+      "blocks": [
+        { "type": "card", "settings": { "title": "News, tips, reviews", "btn_label": "View Our Blog", "bg_color": "#ebebeb" } },
+        { "type": "card", "settings": { "title": "Stores near you", "btn_label": "Find A Store", "bg_color": "#c9b49a" } },
+        { "type": "card", "settings": { "title": "On the gram", "btn_label": "@Glossy_store", "bg_color": "#e9cbcb" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

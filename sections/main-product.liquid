@@ -1,0 +1,1166 @@
+{%- liquid
+  assign sid = 'MasterProduct-' | append: section.id
+  assign product_form_id = 'product-form-' | append: section.id
+  assign current_variant = product.selected_or_first_available_variant
+  assign feature_blocks = section.blocks | where: 'type', 'feature'
+  assign trust_blocks   = section.blocks | where: 'type', 'trust'
+-%}
+
+<style>
+  #{{ sid }} {
+    --c-bg: {{ section.settings.bg_color }};
+    --c-card: {{ section.settings.card_bg }};
+    --c-fg: {{ section.settings.text_color }};
+    --c-muted: {{ section.settings.muted_color }};
+    --c-accent: {{ section.settings.accent_color }};
+    --c-accent-fg: {{ section.settings.accent_text_color }};
+    --c-border: {{ section.settings.border_color }};
+    --pt: {{ section.settings.padding_top }}px;
+    --pb: {{ section.settings.padding_bottom }}px;
+    --max-w: {{ section.settings.max_width }}px;
+    --side-pad: {{ section.settings.side_padding }}px;
+    --r-md: {{ section.settings.radius_md }}px;
+    --r-lg: {{ section.settings.radius_lg }}px;
+    --font-d: {{ section.settings.font_display | default: "var(--g-display-font, sans-serif)" }};
+    --font-b: {{ section.settings.font_body | default: "var(--g-body-font, sans-serif)" }};
+
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-b);
+    padding: var(--pt) 0 var(--pb);
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  @media (max-width: 749px) { #{{ sid }} { --side-pad: 16px; --pt: {{ section.settings.padding_top | times: 0.5 | round }}px; --pb: {{ section.settings.padding_bottom | times: 0.5 | round }}px; } }
+  #{{ sid }} a { color: inherit; text-decoration: none; }
+  #{{ sid }} button { cursor: pointer; border: 0; background: none; font: inherit; color: inherit; }
+
+  #{{ sid }} .mp__container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--side-pad);
+  }
+  #{{ sid }} .mp__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(20px, 4vw, 48px);
+  }
+  @media (min-width: 750px) {
+    #{{ sid }} .mp__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start; /* allows the gallery to be sticky inside its grid track */
+    }
+    /* Gallery sticks at the top of the viewport while the longer right column
+       scrolls; releases naturally when the section's grid row ends. */
+    #{{ sid }} .mp__gallery {
+      position: sticky;
+      top: {{ section.settings.gallery_sticky_top | default: 24 }}px;
+      align-self: start;
+    }
+  }
+
+  /* ---- Gallery ---- */
+  #{{ sid }} .mp__gallery { display: flex; flex-direction: column; gap: 12px; }
+  #{{ sid }} .mp__gallery-main {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--c-card);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  #{{ sid }} .mp__gallery-main img,
+  #{{ sid }} .mp__gallery-main video {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  #{{ sid }} .mp__thumbs {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  #{{ sid }} .mp__thumb {
+    width: {{ section.settings.thumb_size }}px;
+    height: {{ section.settings.thumb_size }}px;
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: var(--c-card);
+    border: 2px solid transparent;
+    transition: border-color 0.25s ease;
+    padding: 0;
+  }
+  #{{ sid }} .mp__thumb.is-active { border-color: var(--c-accent); }
+  #{{ sid }} .mp__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #{{ sid }} .mp__thumb { position: relative; }
+  #{{ sid }} .mp__thumb-badge {
+    position: absolute;
+    inset: auto 4px 4px auto;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    border-radius: 100px;
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700;
+  }
+  #{{ sid }} .mp__thumb-badge svg { width: 11px; height: 11px; display: block; }
+  #{{ sid }} .mp__media { position: absolute; inset: 0; }
+  #{{ sid }} .mp__media[hidden] { display: none; }
+  #{{ sid }} .mp__media img,
+  #{{ sid }} .mp__media video,
+  #{{ sid }} .mp__media iframe,
+  #{{ sid }} .mp__media model-viewer {
+    width: 100%; height: 100%; display: block;
+    border: 0;
+  }
+  #{{ sid }} .mp__media img,
+  #{{ sid }} .mp__media video { object-fit: cover; }
+
+  /* ---- Info column ---- */
+  #{{ sid }} .mp__info { display: flex; flex-direction: column; gap: 18px; }
+
+  #{{ sid }} .mp__rating {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: {{ section.settings.rating_size }}px;
+    color: var(--c-muted);
+  }
+  #{{ sid }} .mp__stars { display: inline-flex; gap: 2px; color: {{ section.settings.star_color }}; }
+  #{{ sid }} .mp__stars svg { width: 16px; height: 16px; fill: currentColor; }
+  #{{ sid }} .mp__review-count { color: var(--c-muted); text-decoration: underline; }
+
+  #{{ sid }} .mp__title {
+    font-family: var(--font-d);
+    font-size: clamp({{ section.settings.title_size_min }}px, {{ section.settings.title_size_vw }}vw, {{ section.settings.title_size_max }}px);
+    font-weight: 600;
+    color: {{ section.settings.title_color }};
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  #{{ sid }} .mp__features {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  #{{ sid }} .mp__feature {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: {{ section.settings.feature_size }}px;
+    color: {{ section.settings.feature_color }};
+    line-height: 1.5;
+  }
+  #{{ sid }} .mp__feature-check {
+    flex-shrink: 0;
+    width: 18px; height: 18px;
+    color: var(--c-accent);
+    margin-top: 1px;
+  }
+  #{{ sid }} .mp__feature-check svg { width: 100%; height: 100%; }
+
+  /* ---- Live price (above variants) ---- */
+  #{{ sid }} .mp__price {
+    display: flex; align-items: baseline; gap: 10px;
+    font-family: var(--font-d);
+  }
+  #{{ sid }} .mp__price-current {
+    font-size: {{ section.settings.variant_price_size }}px;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    line-height: 1;
+  }
+  #{{ sid }} .mp__price-compare {
+    font-size: 14px;
+    color: var(--c-muted);
+    text-decoration: line-through;
+    font-weight: 500;
+    line-height: 1;
+  }
+  #{{ sid }} .mp__price-compare:empty { display: none; }
+
+  /* ---- Variant picker (compact pills, wrap horizontally) ---- */
+  #{{ sid }} .mp__variants {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  #{{ sid }} .mp__variant-label {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--c-muted); font-weight: 600;
+  }
+  #{{ sid }} .mp__variant-options {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  #{{ sid }} .mp__variant-option {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 9px 16px;
+    border: 1.5px solid var(--c-border);
+    border-radius: 100px;
+    background: var(--c-card);
+    color: {{ section.settings.title_color }};
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+    font-family: var(--font-d);
+    font-size: {{ section.settings.variant_name_size }}px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  #{{ sid }} .mp__variant-option:hover { border-color: {{ section.settings.title_color }}; }
+  #{{ sid }} .mp__variant-option:has(input:checked),
+  #{{ sid }} .mp__variant-option.is-active {
+    border-color: {{ section.settings.title_color }};
+    background: {{ section.settings.title_color }};
+    color: {{ section.settings.card_bg }};
+  }
+  #{{ sid }} .mp__variant-option input { position: absolute; opacity: 0; pointer-events: none; }
+  #{{ sid }} .mp__variant-option[data-unavailable] {
+    opacity: 0.45;
+    text-decoration: line-through;
+    pointer-events: none;
+  }
+  #{{ sid }} .mp__variant-name { display: inline-block; }
+
+  /* ---- Option groups (per-option radio groups) ---- */
+  #{{ sid }} .mp__option-group { display: flex; flex-direction: column; gap: 8px; }
+  #{{ sid }} .mp__option-group + .mp__option-group { margin-top: 14px; }
+  #{{ sid }} .mp__option-current { color: var(--c-fg); font-weight: 600; letter-spacing: 0; text-transform: none; margin-left: 4px; }
+
+  /* ---- Swatch variant style ---- */
+  #{{ sid }} .mp__variant-option--swatch {
+    width: 36px; height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    border-width: 2px;
+  }
+  #{{ sid }} .mp__variant-option--swatch:has(input:checked),
+  #{{ sid }} .mp__variant-option--swatch.is-active {
+    background: transparent;
+    box-shadow: 0 0 0 2px var(--c-bg), 0 0 0 4px var(--c-fg);
+  }
+  #{{ sid }} .mp__swatch {
+    display: block;
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* ---- Visually hidden helper ---- */
+  #{{ sid }} .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---- Quantity stepper ---- */
+  #{{ sid }} .mp__qty {
+    display: flex; align-items: center; gap: 12px;
+  }
+  #{{ sid }} .mp__qty-label {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--c-muted); font-weight: 600;
+  }
+  #{{ sid }} .mp__qty-input {
+    display: inline-flex; align-items: center;
+    border: 1.5px solid var(--c-border);
+    border-radius: 100px;
+    background: var(--c-card);
+    overflow: hidden;
+  }
+  #{{ sid }} .mp__qty-btn {
+    width: 44px; height: 44px;
+    font-size: 18px;
+    color: var(--c-fg);
+  }
+  #{{ sid }} .mp__qty-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -4px; }
+  #{{ sid }} .mp__qty-field {
+    width: 48px; height: 44px;
+    border: 0; background: transparent;
+    text-align: center; font: inherit; color: var(--c-fg);
+    -moz-appearance: textfield;
+  }
+  #{{ sid }} .mp__qty-field::-webkit-outer-spin-button,
+  #{{ sid }} .mp__qty-field::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  /* ---- Tax indicator ---- */
+  #{{ sid }} .mp__tax-note {
+    font-size: 12px; color: var(--c-muted); margin: 0;
+  }
+  #{{ sid }} .mp__tax-note a { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---- Pickup availability ---- */
+  #{{ sid }} .mp__pickup {
+    display: block;
+    padding: 12px 14px;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-card);
+    font-size: 13px;
+  }
+  #{{ sid }} .mp__pickup:empty { display: none; }
+  #{{ sid }} .mp__pickup-status {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin: 0;
+    color: var(--c-fg);
+  }
+  #{{ sid }} .mp__pickup-status svg { color: #1d6b2e; flex-shrink: 0; margin-top: 2px; }
+  #{{ sid }} .mp__pickup-status--unavailable { color: var(--c-muted); }
+  #{{ sid }} .mp__pickup-details {
+    margin-top: 8px;
+    border-top: 1px solid var(--c-border);
+    padding-top: 8px;
+  }
+  #{{ sid }} .mp__pickup-details > summary {
+    cursor: pointer;
+    color: var(--c-fg);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-size: 12px;
+    min-height: 24px;
+    display: inline-flex; align-items: center;
+  }
+  #{{ sid }} .mp__pickup-details > summary::-webkit-details-marker { display: none; }
+  #{{ sid }} .mp__pickup-details ul {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+    display: grid;
+    gap: 10px;
+  }
+  #{{ sid }} .mp__pickup-details li {
+    display: grid;
+    gap: 2px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  #{{ sid }} .mp__pickup-details address {
+    font-style: normal;
+    color: var(--c-muted);
+  }
+
+  /* ---- App / theme blocks slot ---- */
+  #{{ sid }} .mp__app-blocks {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  #{{ sid }} .mp__app-blocks:empty { display: none; }
+
+  /* ---- Payment terms (Shop Pay Installments banner) ---- */
+  #{{ sid }} .mp__payment-terms { display: block; }
+  #{{ sid }} .mp__payment-terms:empty { display: none; }
+
+  /* ---- Accelerated checkout (Apple Pay, Google Pay, Shop Pay) ---- */
+  #{{ sid }} .mp__accelerated {
+    display: block;
+  }
+  #{{ sid }} .mp__accelerated:empty { display: none; }
+
+  /* ---- Gift card recipient form ---- */
+  #{{ sid }} .mp__gift-recipient {
+    display: grid; gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-card);
+  }
+  #{{ sid }} .mp__gift-toggle {
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer;
+    font-size: 13px; color: var(--c-fg);
+  }
+  #{{ sid }} .mp__gift-fields {
+    display: grid; gap: 8px;
+  }
+  #{{ sid }} .mp__gift-fields label {
+    font-size: 12px; color: var(--c-muted); font-weight: 500;
+  }
+  #{{ sid }} .mp__gift-fields input,
+  #{{ sid }} .mp__gift-fields textarea {
+    font: inherit; color: var(--c-fg);
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: 8px 12px;
+    width: 100%;
+  }
+  #{{ sid }} .mp__gift-fields input:focus,
+  #{{ sid }} .mp__gift-fields textarea:focus {
+    outline: 2px solid var(--c-accent); outline-offset: 2px;
+  }
+  #{{ sid }} .mp__gift-fields textarea { min-height: 80px; resize: vertical; }
+
+  /* ---- ATC ---- */
+  #{{ sid }} .mp__atc {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 100%;
+    padding: {{ section.settings.atc_padding_y }}px {{ section.settings.atc_padding_x }}px;
+    border-radius: {{ section.settings.atc_radius }}px;
+    background: {{ section.settings.atc_bg }};
+    color: {{ section.settings.atc_color }};
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: {{ section.settings.atc_size }}px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: background 0.25s ease, transform 0.25s ease;
+    cursor: pointer;
+    border: 0;
+  }
+  #{{ sid }} .mp__atc:hover { background: {{ section.settings.atc_hover_bg }}; transform: translateY(-1px); }
+  #{{ sid }} .mp__atc[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  #{{ sid }} .mp__shipping {
+    text-align: center;
+    font-size: 13px;
+    color: var(--c-muted);
+    margin: -6px 0 0;
+  }
+
+  /* ---- Author / verified ---- */
+  #{{ sid }} .mp__verified {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-card);
+  }
+  #{{ sid }} .mp__verified-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--c-accent);
+    color: var(--c-accent-fg);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  #{{ sid }} .mp__verified-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  #{{ sid }} .mp__verified-content { flex: 1; min-width: 0; }
+  #{{ sid }} .mp__verified-name {
+    font-size: 13px; font-weight: 600;
+    color: {{ section.settings.title_color }};
+    margin: 0 0 4px;
+  }
+  #{{ sid }} .mp__verified-text {
+    font-size: 12px; line-height: 1.5; color: var(--c-muted); margin: 0;
+  }
+
+  /* ---- Trust row ---- */
+  #{{ sid }} .mp__trust-row {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 6px;
+  }
+  #{{ sid }} .mp__trust {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 10px;
+    border-radius: 100px;
+    background: {{ section.settings.trust_bg }};
+    color: {{ section.settings.trust_color }};
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  #{{ sid }} .mp__trust svg { width: 14px; height: 14px; }
+
+  /* ---- Payment icons ---- */
+  #{{ sid }} .mp__payments {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    align-items: center;
+    padding-top: 4px;
+  }
+  #{{ sid }} .mp__payment-item {
+    width: 34px; height: 22px;
+    background: #fff;
+    border-radius: 4px;
+    padding: 2px 4px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--c-border);
+  }
+  #{{ sid }} .mp__payment-item svg { width: 100%; height: 100%; }
+
+  /* ---- Collapsible blocks ---- */
+  #{{ sid }} .mp__details {
+    border-top: 1px solid var(--c-border);
+    margin-top: 12px;
+  }
+  #{{ sid }} .mp__detail {
+    border-bottom: 1px solid var(--c-border);
+  }
+  #{{ sid }} .mp__detail-summary {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-d);
+    font-size: {{ section.settings.detail_label_size }}px;
+    font-weight: 600;
+    color: {{ section.settings.title_color }};
+  }
+  #{{ sid }} .mp__detail-summary::-webkit-details-marker { display: none; }
+  #{{ sid }} .mp__detail-summary::after {
+    content: '+';
+    font-size: 22px;
+    color: var(--c-muted);
+    transition: transform 0.3s ease;
+  }
+  #{{ sid }} .mp__detail[open] .mp__detail-summary::after { transform: rotate(45deg); }
+  #{{ sid }} .mp__detail-body {
+    padding: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--c-muted);
+  }
+  #{{ sid }} .mp__detail-body p:first-child { margin-top: 0; }
+  #{{ sid }} .mp__detail-body p:last-child { margin-bottom: 0; }
+</style>
+
+<section id="{{ sid }}" aria-label="{{ product.title | escape }}">
+  <div class="mp__container">
+    <div class="mp__grid">
+
+      {%- comment -%} ============ GALLERY (rich media: image / video / external_video / 3D model) ============ {%- endcomment -%}
+      <div class="mp__gallery" data-mp-gallery>
+        {%- assign first_media = current_variant.featured_media | default: product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+        {%- assign first_media_id = first_media.id | default: 0 -%}
+        {%- assign has_model = false -%}
+
+        <div class="mp__gallery-main" data-mp-main>
+          {%- if product.media.size > 0 -%}
+            {%- for media in product.media -%}
+              {%- assign is_first = false -%}
+              {%- if media.id == first_media_id -%}{%- assign is_first = true -%}{%- endif -%}
+              {%- if first_media_id == 0 and forloop.first -%}{%- assign is_first = true -%}{%- endif -%}
+
+              <div
+                class="mp__media{% if is_first %} is-active{% endif %}"
+                data-mp-media-id="{{ media.id }}"
+                data-mp-media-type="{{ media.media_type }}"
+                {% unless is_first %}hidden{% endunless %}
+              >
+                {%- case media.media_type -%}
+                  {%- when 'image' -%}
+                    {%- if is_first -%}
+                      {{ media | image_url: width: 1400 | image_tag:
+                          loading: 'eager',
+                          fetchpriority: 'high',
+                          widths: '400, 600, 800, 1000, 1200, 1400',
+                          sizes: '(min-width: 750px) 50vw, 100vw',
+                          alt: media.alt | default: product.title | escape
+                      }}
+                    {%- else -%}
+                      {{ media | image_url: width: 1400 | image_tag:
+                          loading: 'lazy',
+                          widths: '400, 600, 800, 1000, 1200, 1400',
+                          sizes: '(min-width: 750px) 50vw, 100vw',
+                          alt: media.alt | default: product.title | escape
+                      }}
+                    {%- endif -%}
+                  {%- when 'external_video' -%}
+                    {%- if media.host == 'youtube' -%}
+                      <iframe
+                        src="https://www.youtube.com/embed/{{ media.external_id }}?rel=0"
+                        title="{{ media.alt | default: product.title | escape }}"
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                      ></iframe>
+                    {%- elsif media.host == 'vimeo' -%}
+                      <iframe
+                        src="https://player.vimeo.com/video/{{ media.external_id }}"
+                        title="{{ media.alt | default: product.title | escape }}"
+                        loading="lazy"
+                        allow="autoplay; fullscreen; picture-in-picture"
+                        allowfullscreen
+                      ></iframe>
+                    {%- endif -%}
+                  {%- when 'video' -%}
+                    <video
+                      controls
+                      muted
+                      playsinline
+                      preload="metadata"
+                      poster="{{ media.preview_image | image_url: width: 1400 }}"
+                      aria-label="{{ media.alt | default: product.title | escape }}"
+                    >
+                      {%- for source in media.sources -%}
+                        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                      {%- endfor -%}
+                    </video>
+                  {%- when 'model' -%}
+                    {%- assign has_model = true -%}
+                    <model-viewer
+                      src="{{ media.sources[0].url }}"
+                      ar
+                      ar-modes="webxr scene-viewer quick-look"
+                      camera-controls
+                      auto-rotate
+                      shadow-intensity="1"
+                      alt="{{ media.alt | default: product.title | escape }}"
+                      poster="{{ media.preview_image | image_url: width: 1400 }}"
+                    ></model-viewer>
+                {%- endcase -%}
+              </div>
+            {%- endfor -%}
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </div>
+
+        {%- if product.media.size > 1 -%}
+          <div class="mp__thumbs" role="tablist" aria-label="{{ 'product.gallery_thumbs_aria' | t }}">
+            {%- for media in product.media -%}
+              {%- assign is_first = false -%}
+              {%- if media.id == first_media_id -%}{%- assign is_first = true -%}{%- endif -%}
+              {%- if first_media_id == 0 and forloop.first -%}{%- assign is_first = true -%}{%- endif -%}
+
+              <button
+                type="button"
+                class="mp__thumb{% if is_first %} is-active{% endif %}"
+                data-mp-thumb-id="{{ media.id }}"
+                role="tab"
+                aria-selected="{{ is_first }}"
+                aria-label="{% case media.media_type %}{% when 'image' %}{{ 'product.thumb_image' | t: index: forloop.index }}{% when 'video' or 'external_video' %}{{ 'product.thumb_video' | t: index: forloop.index }}{% when 'model' %}{{ 'product.thumb_model' | t: index: forloop.index }}{% endcase %}"
+              >
+                {{ media.preview_image | image_url: width: 200 | image_tag:
+                    loading: 'lazy',
+                    widths: '120, 180, 240',
+                    sizes: '120px',
+                    alt: ''
+                }}
+                {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+                  <span class="mp__thumb-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  </span>
+                {%- elsif media.media_type == 'model' -%}
+                  <span class="mp__thumb-badge" aria-hidden="true">3D</span>
+                {%- endif -%}
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if has_model -%}
+        {%- comment -%}
+          3D model support uses Google's <model-viewer> custom element, self-hosted in
+          assets/model-viewer.min.js (MIT-licensed). Only loaded when the current product
+          has at least one 3D media item, so non-3D products pay zero cost. Falls back to
+          the media's poster preview image if the script fails to load.
+        {%- endcomment -%}
+        <script type="module" src="{{ 'model-viewer.min.js' | asset_url }}" defer="defer"></script>
+      {%- endif -%}
+
+      {%- comment -%} ============ INFO ============ {%- endcomment -%}
+      <div class="mp__info">
+
+        {%- comment -%} Rating {%- endcomment -%}
+        {%- if section.settings.show_rating -%}
+          <div class="mp__rating">
+            <span class="mp__stars" aria-label="{{ section.settings.rating_value }} out of 5 stars">
+              {%- assign rv = section.settings.rating_value | times: 1.0 -%}
+              {%- for i in (1..5) -%}
+                <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01z"/></svg>
+              {%- endfor -%}
+            </span>
+            <span>{{ section.settings.rating_value }} / 5</span>
+            <a href="#reviews" class="mp__review-count">({{ section.settings.review_count }} reviews)</a>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Title {%- endcomment -%}
+        <h1 class="mp__title">{{ product.title | default: section.settings.title_fallback }}</h1>
+
+        {%- comment -%} Feature bullets {%- endcomment -%}
+        {%- if feature_blocks.size > 0 -%}
+          <ul class="mp__features">
+            {%- for b in feature_blocks -%}
+              <li class="mp__feature">
+                <span class="mp__feature-check" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+                <span>{{ b.settings.text }}</span>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- comment -%} Live price — updates when a different variant is selected {%- endcomment -%}
+        <div class="mp__price" data-mp-price>
+          <span class="mp__price-current" data-mp-price-current>{{ current_variant.price | money }}</span>
+          <span class="mp__price-compare" data-mp-price-compare>{%- if current_variant.compare_at_price > current_variant.price -%}{{ current_variant.compare_at_price | money }}{%- endif -%}</span>
+        </div>
+
+        {%- comment -%} Tax-inclusive indicator (Theme Store required when applicable) {%- endcomment -%}
+        {%- if cart.taxes_included -%}
+          <p class="mp__tax-note">
+            {%- if shop.shipping_policy.body != blank -%}
+              {{ 'product.tax_included_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+            {%- else -%}
+              {{ 'product.tax_included' | t }}
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+
+        {%- comment -%} Variant picker — one radiogroup per product option, swatches when option has swatch data {%- endcomment -%}
+        {%- unless product.has_only_default_variant -%}
+          <div class="mp__variants" data-mp-variants>
+            {%- for option in product.options_with_values -%}
+              {%- assign option_idx = forloop.index0 -%}
+              <div class="mp__option-group">
+                <span class="mp__variant-label" id="{{ sid }}-opt-{{ option.position }}-label">
+                  {{ option.name | escape }}:
+                  <span class="mp__option-current" data-mp-option-current="{{ option.position }}">{{ option.selected_value | escape }}</span>
+                </span>
+                <div class="mp__variant-options" role="radiogroup" aria-labelledby="{{ sid }}-opt-{{ option.position }}-label">
+                  {%- for value in option.values -%}
+                    {%- assign swatch = value.swatch -%}
+                    {%- assign input_id = sid | append: '-opt-' | append: option.position | append: '-' | append: forloop.index -%}
+                    <label
+                      class="mp__variant-option{% if swatch %} mp__variant-option--swatch{% endif %}{% if value.selected %} is-active{% endif %}"
+                      for="{{ input_id }}"
+                    >
+                      <input
+                        type="radio"
+                        id="{{ input_id }}"
+                        name="options[{{ option.name | escape }}]"
+                        value="{{ value | escape }}"
+                        data-mp-option
+                        data-option-position="{{ option.position }}"
+                        {% if value.selected %}checked{% endif %}
+                      >
+                      {%- if swatch.image -%}
+                        <span class="mp__swatch" style="background-image: url({{ swatch.image | image_url: width: 100 }})" aria-hidden="true"></span>
+                        <span class="visually-hidden">{{ value | escape }}</span>
+                      {%- elsif swatch.color -%}
+                        <span class="mp__swatch" style="background-color: {{ swatch.color }}" aria-hidden="true"></span>
+                        <span class="visually-hidden">{{ value | escape }}</span>
+                      {%- else -%}
+                        <span class="mp__variant-name">{{ value | escape }}</span>
+                      {%- endif -%}
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endfor -%}
+
+            {%- comment -%} Variant JSON blob for JS lookup (one entry per variant: id, options array, price, compare, available, featured_media id) {%- endcomment -%}
+            <script type="application/json" data-mp-variant-data>
+              [
+                {%- for v in product.variants -%}
+                  {
+                    "id": {{ v.id }},
+                    "options": {{ v.options | json }},
+                    "price": {{ v.price | money | json }},
+                    "compare_at_price": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}""{% endif %},
+                    "available": {{ v.available }},
+                    "featured_media_id": {% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %}
+                  }{% unless forloop.last %},{% endunless %}
+                {%- endfor -%}
+              ]
+            </script>
+          </div>
+        {%- endunless -%}
+
+        {%- comment -%} Hidden variant id field, kept in sync by JS as options change {%- endcomment -%}
+        <input type="hidden" name="id" form="{{ product_form_id }}" value="{{ current_variant.id }}" data-mp-id-input>
+
+        {%- comment -%} App / theme blocks slot — merchants drop in Judge.me, Klaviyo, Custom Liquid, etc. {%- endcomment -%}
+        {%- assign has_app_block = false -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == '@app' or block.type == '@theme' -%}
+            {%- assign has_app_block = true -%}
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if has_app_block -%}
+          <div class="mp__app-blocks">
+            {%- for block in section.blocks -%}
+              {%- if block.type == '@app' or block.type == '@theme' -%}
+                {%- render block -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Buy form: quantity, gift-card recipient (if applicable), payment_terms, ATC, payment_button.
+                       The hidden id input lives just above (linked via form="…") so option changes can update it.
+                       Wrapped in <glaze-product-form> so glaze-cart.js can intercept the submit
+                       when cart_type == 'drawer' (posts to /cart/add.js + opens drawer instead of
+                       navigating to /cart). Without the drawer the wrapper is inert — native submit. {%- endcomment -%}
+        <glaze-product-form>
+        {%- form 'product', product, id: product_form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+          {%- comment -%} Quantity selector {%- endcomment -%}
+          <div class="mp__qty">
+            <label for="{{ product_form_id }}-qty" class="mp__qty-label">{{ 'product.quantity' | t }}</label>
+            <div class="mp__qty-input">
+              <button type="button" class="mp__qty-btn" aria-label="{{ 'product.qty_decrease' | t }}" data-mp-qty-step="-1">−</button>
+              <input
+                type="number"
+                id="{{ product_form_id }}-qty"
+                class="mp__qty-field"
+                name="quantity"
+                value="1"
+                min="1"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                data-mp-qty-input
+              >
+              <button type="button" class="mp__qty-btn" aria-label="{{ 'product.qty_increase' | t }}" data-mp-qty-step="1">+</button>
+            </div>
+          </div>
+
+          {%- comment -%} Gift card recipient — only rendered for gift_card products (Theme Store required) {%- endcomment -%}
+          {%- if product.gift_card? -%}
+            <details class="mp__gift-recipient">
+              <summary class="mp__gift-toggle">
+                <input type="checkbox" name="properties[__shopify_send_gift_card_to_recipient]" value="on" data-mp-gift-toggle>
+                <span>{{ 'product.gift_send_to_recipient' | t }}</span>
+              </summary>
+              <div class="mp__gift-fields">
+                <label for="{{ product_form_id }}-gift-name">{{ 'product.gift_recipient_name' | t }}</label>
+                <input type="text" id="{{ product_form_id }}-gift-name" name="properties[Recipient name]" autocomplete="name">
+
+                <label for="{{ product_form_id }}-gift-email">{{ 'product.gift_recipient_email' | t }}</label>
+                <input type="email" id="{{ product_form_id }}-gift-email" name="properties[Recipient email]" autocomplete="email" required aria-required="true">
+
+                <label for="{{ product_form_id }}-gift-message">{{ 'product.gift_message' | t }}</label>
+                <textarea id="{{ product_form_id }}-gift-message" name="properties[Message]" maxlength="200"></textarea>
+
+                <label for="{{ product_form_id }}-gift-send-on">{{ 'product.gift_send_on' | t }}</label>
+                <input type="date" id="{{ product_form_id }}-gift-send-on" name="properties[Send on]">
+              </div>
+            </details>
+          {%- endif -%}
+
+          {%- comment -%} Shop Pay Installments banner (Theme Store required) {%- endcomment -%}
+          <div class="mp__payment-terms">{{ form | payment_terms }}</div>
+
+          <button
+            type="submit"
+            name="add"
+            class="mp__atc"
+            {% unless current_variant.available %}disabled{% endunless %}
+          >
+            {%- if current_variant.available -%}
+              {{ section.settings.atc_label | default: 'Add to Cart' }}
+            {%- else -%}
+              {{ section.settings.sold_out_label | default: 'Sold out' }}
+            {%- endif -%}
+          </button>
+
+          {%- comment -%} Accelerated checkout buttons (Apple Pay, Google Pay, Shop Pay) — Theme Store required {%- endcomment -%}
+          <div class="mp__accelerated">{{ form | payment_button }}</div>
+        {%- endform -%}
+        </glaze-product-form>
+
+        {%- if section.settings.shipping_note != blank -%}
+          <p class="mp__shipping">{{ section.settings.shipping_note }}</p>
+        {%- endif -%}
+
+        {%- comment -%} Pickup availability (Theme Store required) {%- endcomment -%}
+        {%- render 'pickup-availability', current_variant: current_variant, section: section, product: product -%}
+
+        {%- comment -%} Verified card {%- endcomment -%}
+        {%- if section.settings.show_verified -%}
+          <div class="mp__verified">
+            <div class="mp__verified-avatar" aria-hidden="true">
+              {%- if section.settings.verified_avatar != blank -%}
+                {%- assign verified_alt = section.settings.verified_name | escape -%}
+                {{ section.settings.verified_avatar | image_url: width: 80 | image_tag: loading: 'lazy', alt: verified_alt }}
+              {%- else -%}
+                {{ section.settings.verified_name | default: 'L' | slice: 0, 1 | upcase }}
+              {%- endif -%}
+            </div>
+            <div class="mp__verified-content">
+              <p class="mp__verified-name">{{ section.settings.verified_name }} · {{ section.settings.verified_meta }}</p>
+              <p class="mp__verified-text">{{ section.settings.verified_text }}</p>
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Payment icons {%- endcomment -%}
+        {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+          <div class="mp__payments" aria-label="Payment methods">
+            {%- for type in shop.enabled_payment_types -%}
+              <span class="mp__payment-item">{{ type | payment_type_svg_tag }}</span>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Trust badges row {%- endcomment -%}
+        {%- if trust_blocks.size > 0 -%}
+          <div class="mp__trust-row">
+            {%- for b in trust_blocks -%}
+              <span class="mp__trust">{{ b.settings.text }}</span>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Collapsible details: Ingredients & Safety / How to Use / Returns & Shipping {%- endcomment -%}
+        {%- if section.settings.details_1_title != blank or section.settings.details_2_title != blank or section.settings.details_3_title != blank or section.settings.details_4_title != blank -%}
+          <div class="mp__details">
+            {%- if section.settings.details_1_title != blank -%}
+              <details class="mp__detail">
+                <summary class="mp__detail-summary">{{ section.settings.details_1_title }}</summary>
+                <div class="mp__detail-body">{{ section.settings.details_1_body }}</div>
+              </details>
+            {%- endif -%}
+            {%- if section.settings.details_2_title != blank -%}
+              <details class="mp__detail">
+                <summary class="mp__detail-summary">{{ section.settings.details_2_title }}</summary>
+                <div class="mp__detail-body">{{ section.settings.details_2_body }}</div>
+              </details>
+            {%- endif -%}
+            {%- if section.settings.details_3_title != blank -%}
+              <details class="mp__detail">
+                <summary class="mp__detail-summary">{{ section.settings.details_3_title }}</summary>
+                <div class="mp__detail-body">{{ section.settings.details_3_body }}</div>
+              </details>
+            {%- endif -%}
+            {%- if section.settings.details_4_title != blank -%}
+              <details class="mp__detail">
+                <summary class="mp__detail-summary">{{ section.settings.details_4_title }}</summary>
+                <div class="mp__detail-body">{{ section.settings.details_4_body }}</div>
+              </details>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById('{{ sid }}');
+    if (!root) return;
+
+    // ---------- Gallery: thumb click → show that media item ----------
+    function showMedia(mediaId) {
+      var idStr = String(mediaId);
+      root.querySelectorAll('[data-mp-media-id]').forEach(function (el) {
+        var match = el.getAttribute('data-mp-media-id') === idStr;
+        if (match) { el.removeAttribute('hidden'); el.classList.add('is-active'); }
+        else { el.setAttribute('hidden', ''); el.classList.remove('is-active'); }
+      });
+      root.querySelectorAll('[data-mp-thumb-id]').forEach(function (btn) {
+        var match = btn.getAttribute('data-mp-thumb-id') === idStr;
+        btn.classList.toggle('is-active', match);
+        btn.setAttribute('aria-selected', match ? 'true' : 'false');
+      });
+    }
+    root.querySelectorAll('[data-mp-thumb-id]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        showMedia(btn.getAttribute('data-mp-thumb-id'));
+      });
+    });
+
+    // ---------- Variant picker: option radios → resolve variant → update form + price + media ----------
+    var variantData = [];
+    var dataEl = root.querySelector('[data-mp-variant-data]');
+    if (dataEl) {
+      try { variantData = JSON.parse(dataEl.textContent); } catch (e) { variantData = []; }
+    }
+    var idInput = root.querySelector('[data-mp-id-input]');
+    var priceCurrentEl = root.querySelector('[data-mp-price-current]');
+    var priceCompareEl = root.querySelector('[data-mp-price-compare]');
+    var atcBtn = root.querySelector('.mp__atc');
+    var atcAvailableLabel = '{{ section.settings.atc_label | default: "Add to Cart" | escape }}';
+    var atcSoldOutLabel = '{{ section.settings.sold_out_label | default: "Sold out" | escape }}';
+
+    function getSelectedOptions() {
+      var opts = [];
+      root.querySelectorAll('[data-mp-option]:checked').forEach(function (radio) {
+        var pos = parseInt(radio.getAttribute('data-option-position'), 10) - 1;
+        opts[pos] = radio.value;
+      });
+      return opts;
+    }
+
+    function findVariant(opts) {
+      for (var i = 0; i < variantData.length; i++) {
+        var v = variantData[i];
+        var match = true;
+        for (var j = 0; j < opts.length; j++) {
+          if (v.options[j] !== opts[j]) { match = false; break; }
+        }
+        if (match) return v;
+      }
+      return null;
+    }
+
+    function updateForVariant(v) {
+      if (!v) {
+        if (atcBtn) { atcBtn.setAttribute('disabled', ''); atcBtn.textContent = atcSoldOutLabel; }
+        if (idInput) idInput.value = '';
+        return;
+      }
+      if (idInput) idInput.value = v.id;
+      if (priceCurrentEl) priceCurrentEl.textContent = v.price;
+      if (priceCompareEl) priceCompareEl.textContent = v.compare_at_price || '';
+      if (atcBtn) {
+        if (v.available) { atcBtn.removeAttribute('disabled'); atcBtn.textContent = atcAvailableLabel; }
+        else { atcBtn.setAttribute('disabled', ''); atcBtn.textContent = atcSoldOutLabel; }
+      }
+      if (v.featured_media_id) showMedia(v.featured_media_id);
+      // Update URL ?variant=id so reloads keep the selection
+      if (window.history && window.history.replaceState) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('variant', v.id);
+        window.history.replaceState({}, '', url.toString());
+      }
+      // Notify other components (pickup-availability listens for this)
+      root.dispatchEvent(new CustomEvent('mp:variant-change', { bubbles: true, detail: { variantId: v.id } }));
+    }
+
+    function onOptionChange(e) {
+      var radio = e.target;
+      var pos = radio.getAttribute('data-option-position');
+      // Visual active state in the same option group
+      var group = radio.closest('.mp__option-group');
+      if (group) {
+        group.querySelectorAll('.mp__variant-option').forEach(function (l) { l.classList.remove('is-active'); });
+        var lbl = radio.closest('.mp__variant-option');
+        if (lbl) lbl.classList.add('is-active');
+        var curLabel = group.querySelector('[data-mp-option-current="' + pos + '"]');
+        if (curLabel) curLabel.textContent = radio.value;
+      }
+      updateForVariant(findVariant(getSelectedOptions()));
+    }
+    root.querySelectorAll('[data-mp-option]').forEach(function (radio) {
+      radio.addEventListener('change', onOptionChange);
+    });
+
+    // ---------- Quantity stepper ----------
+    var qtyInput = root.querySelector('[data-mp-qty-input]');
+    if (qtyInput) {
+      root.querySelectorAll('[data-mp-qty-step]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var step = parseInt(btn.getAttribute('data-mp-qty-step'), 10);
+          var next = Math.max(1, (parseInt(qtyInput.value, 10) || 1) + step);
+          qtyInput.value = next;
+        });
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product",
+  "tag": "section",
+  "class": "section section--master-main",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 1000, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "radius_md", "label": "Radius — medium", "min": 0, "max": 32, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "radius_lg", "label": "Radius — large", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "thumb_size", "label": "Thumbnail size", "min": 48, "max": 120, "step": 4, "unit": "px", "default": 76 },
+    { "type": "range", "id": "gallery_sticky_top", "label": "Gallery sticky top offset (desktop)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24, "info": "Distance from the viewport top while the gallery is pinned. Increase to clear a sticky header." },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#fbe9e8" },
+    { "type": "color", "id": "card_bg", "label": "Card / surface", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Body text", "default": "#1a1a1a" },
+    { "type": "color", "id": "muted_color", "label": "Muted text", "default": "#7a7a7a" },
+    { "type": "color", "id": "title_color", "label": "Title color", "default": "#1a1a1a" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#e8a5a0" },
+    { "type": "color", "id": "accent_text_color", "label": "Accent text (on accent bg)", "default": "#ffffff" },
+    { "type": "color", "id": "accent_dim_color", "label": "Accent — dim (selected variant)", "default": "#fae6e4" },
+    { "type": "color", "id": "border_color", "label": "Border", "default": "rgba(0,0,0,0.08)" },
+    { "type": "color", "id": "star_color", "label": "Star color", "default": "#f59e0b" },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "title_size_min", "label": "Title min size", "min": 20, "max": 40, "step": 1, "unit": "px", "default": 26 },
+    { "type": "range", "id": "title_size_vw", "label": "Title fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
+    { "type": "range", "id": "title_size_max", "label": "Title max size", "min": 28, "max": 64, "step": 1, "unit": "px", "default": 36 },
+    { "type": "range", "id": "feature_size", "label": "Feature bullet size", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
+    { "type": "color", "id": "feature_color", "label": "Feature bullet color", "default": "#444444" },
+    { "type": "text", "id": "title_fallback", "label": "Title fallback (when product has none)", "default": "Luxe Eyelash Growth Serum" },
+
+    { "type": "header", "content": "Rating" },
+    { "type": "checkbox", "id": "show_rating", "label": "Show rating row", "default": true },
+    { "type": "text", "id": "rating_value", "label": "Rating value", "default": "4.9" },
+    { "type": "text", "id": "review_count", "label": "Review count", "default": "1,827" },
+    { "type": "range", "id": "rating_size", "label": "Rating font size", "min": 11, "max": 16, "step": 1, "unit": "px", "default": 13 },
+
+    { "type": "header", "content": "Variants" },
+    { "type": "text", "id": "variant_label", "label": "Variant group label", "default": "Choose your option" },
+    { "type": "range", "id": "variant_name_size", "label": "Variant name size", "min": 13, "max": 20, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "variant_price_size", "label": "Variant price size", "min": 13, "max": 22, "step": 1, "unit": "px", "default": 16 },
+
+    { "type": "header", "content": "Add-to-cart button" },
+    { "type": "text", "id": "atc_label", "label": "Button label", "default": "Add to Cart" },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out label", "default": "Sold out" },
+    { "type": "text", "id": "shipping_note", "label": "Shipping note (below button)", "default": "Free shipping on all U.S. orders" },
+    { "type": "color", "id": "atc_bg", "label": "Button background", "default": "#1a1a1a" },
+    { "type": "color", "id": "atc_color", "label": "Button text", "default": "#ffffff" },
+    { "type": "color", "id": "atc_hover_bg", "label": "Button hover bg", "default": "#000000" },
+    { "type": "range", "id": "atc_size", "label": "Button font size", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "atc_padding_y", "label": "Button vertical padding", "min": 12, "max": 30, "step": 1, "unit": "px", "default": 18 },
+    { "type": "range", "id": "atc_padding_x", "label": "Button horizontal padding", "min": 16, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "atc_radius", "label": "Button radius", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 100 },
+
+    { "type": "header", "content": "Verified buyer block" },
+    { "type": "checkbox", "id": "show_verified", "label": "Show verified buyer block", "default": true },
+    { "type": "image_picker", "id": "verified_avatar", "label": "Avatar" },
+    { "type": "text", "id": "verified_name", "label": "Name", "default": "Louise S." },
+    { "type": "text", "id": "verified_meta", "label": "Meta (location/role)", "default": "Verified Buyer · Sydney" },
+    { "type": "textarea", "id": "verified_text", "label": "Quote", "default": "I cannot tell you how much I love this serum! Healthier, longer, fuller lashes — exactly what I was hoping for." },
+
+    { "type": "header", "content": "Payment icons" },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true },
+
+    { "type": "header", "content": "Trust badges (use Trust blocks below)" },
+    { "type": "color", "id": "trust_bg", "label": "Trust pill bg", "default": "#fae6e4" },
+    { "type": "color", "id": "trust_color", "label": "Trust pill text", "default": "#1a1a1a" },
+
+    { "type": "header", "content": "Collapsible details" },
+    { "type": "range", "id": "detail_label_size", "label": "Detail label size", "min": 13, "max": 20, "step": 1, "unit": "px", "default": 15 },
+    { "type": "text", "id": "details_1_title", "label": "Detail 1 — title", "default": "Ingredients and safety" },
+    { "type": "richtext", "id": "details_1_body", "label": "Detail 1 — body", "default": "<p>Vegan, cruelty-free, dermatologically tested. Full ingredient list available in pack.</p>" },
+    { "type": "text", "id": "details_2_title", "label": "Detail 2 — title", "default": "How to use" },
+    { "type": "richtext", "id": "details_2_body", "label": "Detail 2 — body", "default": "<p>Apply once daily along the upper lash line, like an eyeliner. Visible results in 4 weeks.</p>" },
+    { "type": "text", "id": "details_3_title", "label": "Detail 3 — title", "default": "Refund and returns" },
+    { "type": "richtext", "id": "details_3_body", "label": "Detail 3 — body", "default": "<p>30-day money-back guarantee. No questions asked.</p>" },
+    { "type": "text", "id": "details_4_title", "label": "Detail 4 — title", "default": "Shipping and guarantee" },
+    { "type": "richtext", "id": "details_4_body", "label": "Detail 4 — body", "default": "<p>Free shipping on US orders over $30. Ships within 24 hours.</p>" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature bullet",
+      "limit": 8,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Bullet text", "default": "Visible results in 4 weeks" }
+      ]
+    },
+    {
+      "type": "trust",
+      "name": "Trust pill",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Pill text", "default": "Vegan" }
+      ]
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product",
+      "blocks": [
+        { "type": "feature", "settings": { "text": "Visible results in 4 weeks" } },
+        { "type": "feature", "settings": { "text": "Zero side effects, dermatologically tested" } },
+        { "type": "feature", "settings": { "text": "Less than the price of a single lash treatment" } },
+        { "type": "feature", "settings": { "text": "30-second daily application" } },
+        { "type": "trust",   "settings": { "text": "Vegan" } },
+        { "type": "trust",   "settings": { "text": "Cruelty-Free" } },
+        { "type": "trust",   "settings": { "text": "Made in USA" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

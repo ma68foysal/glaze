@@ -1,23 +1,167 @@
-{% comment %}
-  This section is used in the 404 template to render page shown when customers
-  enter an invalid store URL.
+{%- liquid
+  assign section_id = '404-' | append: section.id
+  assign heading = section.settings.heading
+  assign subheading = section.settings.subheading
+  assign cta_primary_label = section.settings.cta_primary_label
+  assign cta_primary_link = section.settings.cta_primary_link
+  assign cta_secondary_label = section.settings.cta_secondary_label
+  assign cta_secondary_link = section.settings.cta_secondary_link
+-%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/404
-{% endcomment %}
+<section
+  id="{{ section_id }}"
+  class="glaze-404 full-width"
+  style="
+    --pad-top: {{ section.settings.padding_top }}px;
+    --pad-bottom: {{ section.settings.padding_bottom }}px;
+    --bg: {{ section.settings.bg_color }};
+    --fg: {{ section.settings.text_color }};
+  "
+>
+  <div class="glaze-404__inner">
+    <p class="glaze-404__eyebrow" aria-hidden="true">404</p>
+    <h1 class="glaze-404__heading">{{ heading | default: '404.title' | t | escape }}</h1>
+    <p class="glaze-404__subheading">{{ subheading | escape }}</p>
 
-<h1>{{ '404.title' | t }}</h1>
+    <div class="glaze-404__ctas">
+      {%- if cta_primary_label != blank -%}
+        <a class="glaze-btn glaze-btn--solid" href="{{ cta_primary_link | default: routes.root_url }}">
+          {{ cta_primary_label | escape }}
+        </a>
+      {%- endif -%}
+      {%- if cta_secondary_label != blank -%}
+        <a class="glaze-btn glaze-btn--ghost" href="{{ cta_secondary_link | default: routes.all_products_collection_url }}">
+          {{ cta_secondary_label | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
 
-<p>
-  {{ '404.not_found' | t }}
-</p>
-
-<a href="{{ routes.all_products_collection_url }}">
-  {{ '404.back_to_shopping' | t }}
-</a>
+{% stylesheet %}
+  .glaze-404 {
+    background: var(--bg, var(--g-cream));
+    color: var(--fg, var(--g-ink));
+    padding: var(--pad-top, 120px) 24px var(--pad-bottom, 120px);
+    font-family: var(--g-body-font);
+    text-align: center;
+  }
+  .glaze-404__inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .glaze-404__eyebrow {
+    font-family: var(--g-display-font);
+    font-size: clamp(64px, 12vw, 140px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--g-rose);
+    margin: 0 0 8px;
+    letter-spacing: -0.04em;
+  }
+  .glaze-404__heading {
+    font-family: var(--g-display-font);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 600;
+    margin: 0 0 16px;
+    color: var(--fg);
+  }
+  .glaze-404__subheading {
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0 0 32px;
+    color: var(--fg);
+    opacity: 0.78;
+  }
+  .glaze-404__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+  /* .glaze-btn, .glaze-btn--solid, .glaze-btn--ghost live in assets/base.css */
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.404",
-  "settings": []
+  "tag": "section",
+  "class": "section-404",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.page_404.heading",
+      "default": "We can't find that page"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "t:sections.page_404.subheading",
+      "default": "The link you followed may be broken, or the page may have moved. Let's get you back on track."
+    },
+    {
+      "type": "text",
+      "id": "cta_primary_label",
+      "label": "t:sections.page_404.cta_primary_label",
+      "default": "Back to home page"
+    },
+    {
+      "type": "url",
+      "id": "cta_primary_link",
+      "label": "t:sections.page_404.cta_primary_link"
+    },
+    {
+      "type": "text",
+      "id": "cta_secondary_label",
+      "label": "t:sections.page_404.cta_secondary_label",
+      "default": "Shop the product"
+    },
+    {
+      "type": "url",
+      "id": "cta_secondary_link",
+      "label": "t:sections.page_404.cta_secondary_link"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.page_404.colors_header"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "t:sections.page_404.bg_color",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.page_404.text_color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.page_404.spacing_header"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:sections.page_404.padding_top",
+      "min": 40,
+      "max": 200,
+      "step": 8,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:sections.page_404.padding_bottom",
+      "min": 40,
+      "max": 200,
+      "step": 8,
+      "unit": "px",
+      "default": 120
+    }
+  ]
 }
 {% endschema %}

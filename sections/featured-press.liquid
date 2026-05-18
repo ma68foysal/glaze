@@ -1,0 +1,411 @@
+{%- liquid
+  assign section_id = 'sleek-fpr-' | append: section.id
+  assign cols = section.settings.columns_desktop
+-%}
+
+<style>
+  /* ============================================================
+     Featured Press Sleek — scoped styles (fpr- prefix)
+     ============================================================ */
+
+  #{{ section_id }} {
+    --fpr-bg: {{ section.settings.bg_color }};
+    --fpr-fg: {{ section.settings.text_color }};
+    --fpr-title-c: {{ section.settings.title_color }};
+    --fpr-title-s: {{ section.settings.title_size }}px;
+    --fpr-title-w: {{ section.settings.title_weight }};
+    --fpr-quote-c: {{ section.settings.quote_color }};
+    --fpr-quote-s: {{ section.settings.quote_size }}px;
+    --fpr-quote-w: {{ section.settings.quote_weight }};
+    --fpr-logo-max-h: {{ section.settings.logo_max_height }}px;
+    --fpr-cols: {{ cols }};
+    --fpr-gap: {{ section.settings.gap }}px;
+    --fpr-pad-top: {{ section.settings.padding_top }}px;
+    --fpr-pad-bottom: {{ section.settings.padding_bottom }}px;
+    --fpr-border-c: {{ section.settings.border_color }};
+    --fpr-border-w: {{ section.settings.border_width }}px;
+
+    display: block;
+    background: var(--fpr-bg);
+    color: var(--fpr-fg);
+    padding: var(--fpr-pad-top) 0 var(--fpr-pad-bottom);
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after { box-sizing: border-box; }
+
+  .fpr-wrap {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    border-bottom: var(--fpr-border-w) solid var(--fpr-border-c);
+    padding-bottom: var(--fpr-pad-bottom);
+  }
+
+  .fpr-title {
+    margin: 0 0 44px;
+    text-align: center;
+    color: var(--fpr-title-c);
+    font-size: var(--fpr-title-s);
+    font-weight: var(--fpr-title-w);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  /* -------- Desktop: Grid -------- */
+  .fpr-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--fpr-cols), minmax(0, 1fr));
+    gap: var(--fpr-gap);
+  }
+
+  .fpr-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    text-decoration: none;
+    color: inherit;
+    padding: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .fpr-item:hover { transform: translateY(-2px); }
+
+  .fpr-item-logo {
+    height: var(--fpr-logo-max-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fpr-item-logo img {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .fpr-item-quote {
+    margin: 0;
+    color: var(--fpr-quote-c);
+    font-size: var(--fpr-quote-s);
+    font-weight: var(--fpr-quote-w);
+    line-height: 1.45;
+    max-width: 34ch;
+  }
+
+  /* -------- Mobile slider (one full + peek) -------- */
+  .fpr-slider {
+    display: none;
+  }
+
+  /* -------- Responsive -------- */
+  @media screen and (max-width: 1024px) {
+    #{{ section_id }} { --fpr-cols: {% if cols > 2 %}2{% else %}{{ cols }}{% endif %}; }
+  }
+
+  @media screen and (max-width: 749px) {
+    .fpr-wrap { padding: 0 0 0 16px; }
+    .fpr-title { text-align: left; margin-bottom: 24px; font-size: 26px; padding-right: 16px; }
+
+    /* Swap grid for horizontal scroll slider */
+    .fpr-grid { display: none; }
+
+    .fpr-slider {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: 12px;
+      padding-right: 16px;
+    }
+
+    .fpr-slider::-webkit-scrollbar { display: none; }
+
+    .fpr-slider .fpr-item {
+      flex: 0 0 calc(100% / 1.25 - 12px);
+      scroll-snap-align: start;
+      align-items: center;
+      padding: 16px 8px;
+    }
+
+    .fpr-slider .fpr-item-quote { font-size: 14px; }
+
+    /* Border sits under the slider */
+    .fpr-wrap {
+      padding-left: 16px;
+      padding-right: 0;
+    }
+  }
+</style>
+
+<div id="{{ section_id }}" class="sleek-fpr">
+  <div class="fpr-wrap">
+
+    {%- if section.settings.title != blank -%}
+      <h2 class="fpr-title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+
+    {%- comment -%} Desktop grid {%- endcomment -%}
+    <div class="fpr-grid">
+      {%- for block in section.blocks -%}
+        {%- capture item_inner -%}
+          <div class="fpr-item-logo">
+            {%- if block.settings.logo != blank -%}
+              {{ block.settings.logo | image_url: width: 400 | image_tag: loading: 'lazy', alt: block.settings.alt, widths: '120,180,240,320,400' }}
+            {%- endif -%}
+          </div>
+          {%- if block.settings.quote != blank -%}
+            <p class="fpr-item-quote">{{ block.settings.quote }}</p>
+          {%- endif -%}
+        {%- endcapture -%}
+
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}" class="fpr-item" {{ block.shopify_attributes }}>{{ item_inner }}</a>
+        {%- else -%}
+          <div class="fpr-item" {{ block.shopify_attributes }}>{{ item_inner }}</div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Mobile slider (same blocks, different container) {%- endcomment -%}
+    <div class="fpr-slider" data-fpr-slider>
+      {%- for block in section.blocks -%}
+        {%- capture item_inner_m -%}
+          <div class="fpr-item-logo">
+            {%- if block.settings.logo != blank -%}
+              {{ block.settings.logo | image_url: width: 400 | image_tag: loading: 'lazy', alt: block.settings.alt, widths: '120,180,240,320,400' }}
+            {%- endif -%}
+          </div>
+          {%- if block.settings.quote != blank -%}
+            <p class="fpr-item-quote">{{ block.settings.quote }}</p>
+          {%- endif -%}
+        {%- endcapture -%}
+
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}" class="fpr-item">{{ item_inner_m }}</a>
+        {%- else -%}
+          <div class="fpr-item">{{ item_inner_m }}</div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured press",
+  "class": "section-featured-press-sleek",
+  "tag": "section",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Featured by Press"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "title_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Title weight",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Columns (desktop)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between items",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_max_height",
+      "min": 30,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo max height",
+      "default": 54
+    },
+    {
+      "type": "header",
+      "content": "Quote text"
+    },
+    {
+      "type": "color",
+      "id": "quote_color",
+      "label": "Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "quote_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Size",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "quote_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Weight",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Section colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Default text",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Bottom border"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "label": "Border thickness",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "press",
+      "name": "Press logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text"
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "“Great product line. Very attentive staff to deal with.”"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured press",
+      "blocks": [
+        { "type": "press", "settings": { "quote": "“ Also the customer service is phenomenal. I would purchase again.”" } },
+        { "type": "press", "settings": { "quote": "“Great product line. Very attentive staff to deal with.”" } },
+        { "type": "press", "settings": { "quote": "\"Looking to affordably upgrade your everyday dinnerware? Look no further than e.Space\"" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,17 +1,170 @@
-{% comment %}
-  This section is used in the page template to render store pages like About us
-  or Contact us.
+{%- liquid
+  assign section_id = 'page-' | append: section.id
+  assign show_title = section.settings.show_title
+  assign show_subtitle = section.settings.show_subtitle
+  assign subtitle = section.settings.subtitle
+  assign align = section.settings.align
+  assign max_width = section.settings.max_width
+  assign bg_color = section.settings.bg_color
+  assign text_color = section.settings.text_color
+-%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/page
-{% endcomment %}
+<section
+  id="{{ section_id }}"
+  class="glaze-page glaze-page--align-{{ align }} full-width"
+  style="--bg: {{ bg_color }}; --fg: {{ text_color }}; --max-w: {{ max_width }}px;"
+>
+  <div class="glaze-page__inner">
+    {%- if show_title -%}
+      <header class="glaze-page__header">
+        <h1 class="glaze-page__title">{{ page.title | escape }}</h1>
+        {%- if show_subtitle and subtitle != blank -%}
+          <p class="glaze-page__subtitle">{{ subtitle | escape }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
 
-<h1>{{ page.title }}</h1>
+    {%- if page.content != blank -%}
+      <div class="glaze-page__content rte">{{ page.content }}</div>
+    {%- endif -%}
+  </div>
+</section>
 
-{{ page.content }}
+{% stylesheet %}
+  .glaze-page {
+    background: var(--bg, var(--g-cream));
+    color: var(--fg, var(--g-ink));
+    font-family: var(--g-body-font);
+    padding: 64px 24px 96px;
+  }
+  .glaze-page__inner {
+    max-width: var(--max-w, 768px);
+    margin: 0 auto;
+  }
+  .glaze-page--align-center .glaze-page__inner { text-align: center; }
+  .glaze-page--align-center .glaze-page__content { text-align: left; }
+  .glaze-page__header { margin-bottom: 40px; }
+  .glaze-page__title {
+    font-family: var(--g-display-font);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 600;
+    line-height: 1.15;
+    margin: 0 0 12px;
+  }
+  .glaze-page__subtitle {
+    font-size: 16px;
+    color: var(--g-muted-strong);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .glaze-page__content {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--g-ink);
+  }
+  .glaze-page__content > * + * { margin-top: 1.1em; }
+  .glaze-page__content h2,
+  .glaze-page__content h3,
+  .glaze-page__content h4 {
+    font-family: var(--g-display-font);
+    margin-top: 1.8em;
+    color: var(--g-ink);
+  }
+  .glaze-page__content h2 { font-size: 24px; }
+  .glaze-page__content h3 { font-size: 20px; }
+  .glaze-page__content h4 { font-size: 17px; }
+  .glaze-page__content a { color: var(--g-ink); text-underline-offset: 3px; }
+  .glaze-page__content a:hover { color: var(--g-rose); }
+  .glaze-page__content img {
+    border-radius: var(--g-radius-md);
+    margin: 1.6em 0;
+    max-width: 100%;
+    height: auto;
+  }
+  .glaze-page__content blockquote {
+    border-left: 3px solid var(--g-rose);
+    padding-left: 16px;
+    font-style: italic;
+    color: var(--g-muted-strong);
+    margin: 1.6em 0;
+  }
+  .glaze-page__content ul,
+  .glaze-page__content ol {
+    padding-left: 24px;
+  }
+  .glaze-page__content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.6em 0;
+  }
+  .glaze-page__content th,
+  .glaze-page__content td {
+    border-bottom: 1px solid var(--g-line);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .glaze-page__content th { font-weight: 600; }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.page",
-  "settings": []
+  "tag": "section",
+  "class": "section-page",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "t:sections.page.show_title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subtitle",
+      "label": "t:sections.page.show_subtitle",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "t:sections.page.subtitle"
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "t:labels.alignment",
+      "options": [
+        { "value": "left", "label": "t:options.alignment.left" },
+        { "value": "center", "label": "t:options.alignment.center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 560,
+      "max": 1200,
+      "step": 40,
+      "unit": "px",
+      "label": "t:sections.page.max_width",
+      "default": 760
+    },
+    {
+      "type": "header",
+      "content": "t:sections.page.colors_header"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "t:sections.page.bg_color",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.page.text_color",
+      "default": "#1a1a1a"
+    }
+  ]
 }
 {% endschema %}

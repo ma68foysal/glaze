@@ -23,6 +23,8 @@
     "password": "Password",
     "primary": "Primary",
     "product": "Product",
+    "heading_font": "Heading font",
+    "body_font": "Body font",
     "row": "Row",
     "search": "Search",
     "secondary": "Secondary",
@@ -31,7 +33,9 @@
     "sidebar": "Sidebar",
     "text": "Text",
     "theme": "Theme",
-    "typography": "Typography"
+    "typography": "Typography",
+    "motion": "Motion",
+    "social": "Social media"
   },
   "labels": {
     "alignment": "Alignment",
@@ -48,7 +52,14 @@
     "page_width": "Page width",
     "show_payment_icons": "Show payment icons",
     "text_style": "Text style",
-    "text": "Text"
+    "text": "Text",
+    "enable_smooth_scroll": "Smooth scrolling",
+    "enable_smooth_scroll_info": "Adds momentum-based smooth scrolling powered by Lenis. Automatically disabled when the visitor has enabled \"Reduce motion\" in their operating system.",
+    "share_image": "Social share image",
+    "share_image_info": "Fallback image used when a customer shares a page that has no image of its own (home page, generic search). Recommended size: 1200 x 630px.",
+    "cart_type": "Add-to-cart behavior",
+    "cart_type_info": "Choose how customers see their cart after adding a product. \"Cart page\" navigates to /cart. \"Cart drawer\" slides a panel in from the right without leaving the page.",
+    "show_cart_note": "Show order note field"
   },
   "options": {
     "alignment": {
@@ -64,6 +75,10 @@
       "narrow": "Narrow",
       "wide": "Wide"
     },
+    "cart_type": {
+      "page": "Cart page",
+      "drawer": "Cart drawer"
+    },
     "size": {
       "large": "Large",
       "small": "Small"
@@ -72,6 +87,133 @@
       "title": "Title",
       "subtitle": "Subtitle",
       "normal": "Normal text"
+    }
+  },
+  "sections": {
+    "contact_form": {
+      "name": "Contact form",
+      "heading_label": "Heading",
+      "subheading_label": "Subheading",
+      "submit_label": "Submit button label",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text",
+      "field_bg": "Field background",
+      "field_border": "Field border",
+      "accent_color": "Button background",
+      "accent_text_color": "Button text",
+      "spacing_header": "Spacing",
+      "padding_top": "Top padding",
+      "padding_bottom": "Bottom padding"
     },
+    "page_404": {
+      "heading": "Heading",
+      "subheading": "Subheading",
+      "cta_primary_label": "Primary button label",
+      "cta_primary_link": "Primary button link",
+      "cta_secondary_label": "Secondary button label",
+      "cta_secondary_link": "Secondary button link",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text",
+      "spacing_header": "Spacing",
+      "padding_top": "Top padding",
+      "padding_bottom": "Bottom padding"
+    },
+    "password": {
+      "eyebrow": "Eyebrow",
+      "heading": "Heading",
+      "subheading": "Subheading",
+      "background_image": "Background image",
+      "newsletter_header": "Newsletter signup",
+      "show_newsletter": "Show newsletter signup",
+      "newsletter_heading": "Newsletter heading",
+      "newsletter_placeholder": "Email field placeholder",
+      "newsletter_submit_label": "Newsletter button label",
+      "social_header": "Social media",
+      "show_social": "Show social links",
+      "social_instagram": "Instagram URL",
+      "social_facebook": "Facebook URL",
+      "social_tiktok": "TikTok URL",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text"
+    },
+    "cart": {
+      "show_notes": "Show order notes",
+      "notes_label": "Notes field label",
+      "continue_label": "Continue shopping button label",
+      "continue_link": "Continue shopping link",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text"
+    },
+    "collection": {
+      "show_image": "Show collection image",
+      "show_description": "Show collection description",
+      "show_filters": "Show filters",
+      "show_filters_info": "Filters must be set up in the Shopify admin under Online Store > Navigation > Filters.",
+      "show_sort": "Show sort dropdown",
+      "products_per_page": "Products per page",
+      "columns_desktop": "Columns on desktop",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text",
+      "card_bg": "Card background"
+    },
+    "collections": {
+      "heading": "Heading",
+      "show_description": "Show collection descriptions",
+      "columns_desktop": "Columns on desktop",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text"
+    },
+    "search": {
+      "products_per_page": "Results per page",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text"
+    },
+    "blog": {
+      "show_image": "Show featured images",
+      "show_excerpt": "Show excerpts",
+      "show_author": "Show author",
+      "articles_per_page": "Posts per page",
+      "columns_desktop": "Columns on desktop",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text"
+    },
+    "article": {
+      "show_image": "Show featured image",
+      "show_author": "Show author",
+      "show_share": "Show share links",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text"
+    },
+    "page": {
+      "show_title": "Show page title",
+      "show_subtitle": "Show subtitle",
+      "subtitle": "Subtitle",
+      "max_width": "Content max width",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text"
+    },
+    "product_recommendations": {
+      "name": "Product recommendations",
+      "intent": "Recommendation type",
+      "intent_related": "Related products",
+      "intent_complementary": "Complementary products",
+      "heading": "Heading",
+      "limit": "Number of products",
+      "columns_desktop": "Columns on desktop",
+      "colors_header": "Colors",
+      "bg_color": "Background",
+      "text_color": "Text",
+      "card_bg": "Card background"
+    }
   }
 }

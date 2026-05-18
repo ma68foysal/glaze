@@ -11,3 +11,24 @@
 #
 # Ignore templates and sections with a regular expression:
 #   /(templates|sections)/.*\.json/
+
+# Exclude temp/swap files (some editors + Windows atomic-write fallbacks leave these behind).
+# Shopify rejects filenames containing extra dots / hex suffixes — this prevents upload errors.
+*.tmp.*
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.orig
+*.bak
+
+# Editor + repo metadata that shouldn't ship with the theme
+.git/
+.gitignore
+.vscode/
+.idea/
+README.md
+LICENSE.md
+node_modules/
+memory/

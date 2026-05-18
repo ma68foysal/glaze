@@ -1,0 +1,139 @@
+{%- liquid
+  assign sid = 'PressLogos-' | append: section.id
+  assign logos = section.blocks | where: 'type', 'logo'
+-%}
+
+<style>
+  #{{ sid }} {
+    --c-bg: {{ section.settings.bg_color }};
+    --c-fg: {{ section.settings.text_color }};
+    --pt: {{ section.settings.padding_top }}px;
+    --pb: {{ section.settings.padding_bottom }}px;
+    --max-w: {{ section.settings.max_width }}px;
+    --side-pad: {{ section.settings.side_padding }}px;
+    background: var(--c-bg);
+    color: var(--c-fg);
+    padding: var(--pt) 0 var(--pb);
+    border-top: {{ section.settings.show_top_border | default: false }};
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  @media (max-width: 749px) { #{{ sid }} { --side-pad: 16px; --pt: {{ section.settings.padding_top | times: 0.7 | round }}px; --pb: {{ section.settings.padding_bottom | times: 0.7 | round }}px; } }
+
+  #{{ sid }} .pl__container { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--side-pad); }
+  #{{ sid }} .pl__eyebrow {
+    text-align: center;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: {{ section.settings.eyebrow_color }};
+    margin-bottom: clamp(16px, 2vw, 24px);
+    font-weight: 700;
+  }
+  #{{ sid }} .pl__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(24px, 5vw, 56px);
+  }
+  #{{ sid }} .pl__logo {
+    height: {{ section.settings.logo_height }}px;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    opacity: {{ section.settings.logo_opacity | divided_by: 100.0 }};
+    filter: {{ section.settings.logo_filter }};
+    transition: opacity 0.3s ease;
+  }
+  #{{ sid }} .pl__logo:hover { opacity: 1; }
+  #{{ sid }} .pl__logo img { max-height: 100%; width: auto; object-fit: contain; display: block; }
+  #{{ sid }} .pl__logo-text {
+    font-family: {{ section.settings.fallback_font | default: "serif" }};
+    font-size: {{ section.settings.fallback_text_size }}px;
+    font-weight: 700;
+    color: {{ section.settings.fallback_text_color }};
+    letter-spacing: 0.06em;
+  }
+</style>
+
+<section id="{{ sid }}" aria-label="{{ section.settings.aria_label | default: 'As featured in' | escape }}">
+  <div class="pl__container">
+    {%- if section.settings.eyebrow != blank -%}
+      <div class="pl__eyebrow">{{ section.settings.eyebrow }}</div>
+    {%- endif -%}
+    {%- if logos.size > 0 -%}
+      <div class="pl__row">
+        {%- for l in logos -%}
+          {%- if l.settings.link != blank -%}
+            <a href="{{ l.settings.link }}" class="pl__logo" target="_blank" rel="noopener" {{ l.shopify_attributes }} aria-label="{{ l.settings.name | escape }}">
+          {%- else -%}
+            <span class="pl__logo" {{ l.shopify_attributes }}>
+          {%- endif -%}
+            {%- if l.settings.image != blank -%}
+              {%- assign logo_alt = l.settings.name | escape -%}
+              {{ l.settings.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: logo_alt }}
+            {%- elsif l.settings.name != blank -%}
+              <span class="pl__logo-text">{{ l.settings.name }}</span>
+            {%- endif -%}
+          {%- if l.settings.link != blank -%}</a>{%- else -%}</span>{%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Press logos",
+  "tag": "section",
+  "class": "section section--master-press",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "As featured in" },
+    { "type": "text", "id": "aria_label", "label": "ARIA label", "default": "As featured in" },
+
+    { "type": "header", "content": "Logo style" },
+    { "type": "range", "id": "logo_height", "label": "Logo height", "min": 14, "max": 60, "step": 1, "unit": "px", "default": 22 },
+    { "type": "range", "id": "logo_opacity", "label": "Logo opacity (%)", "min": 20, "max": 100, "step": 5, "default": 70 },
+    { "type": "text", "id": "logo_filter", "label": "CSS filter (e.g. grayscale(100%))", "default": "none" },
+
+    { "type": "header", "content": "Text fallback (when no logo image)" },
+    { "type": "text", "id": "fallback_font", "label": "Font family for text fallback", "default": "serif" },
+    { "type": "range", "id": "fallback_text_size", "label": "Fallback text size", "min": 12, "max": 28, "step": 1, "unit": "px", "default": 18 },
+    { "type": "color", "id": "fallback_text_color", "label": "Fallback text color", "default": "#1a1a1a" },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1a1a1a" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow color", "default": "#7a7a7a" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 800, "max": 1600, "step": 20, "unit": "px", "default": 1100 },
+    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo / Publication",
+      "limit": 12,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Logo image (preferred)" },
+        { "type": "text", "id": "name", "label": "Name (alt / text fallback)", "default": "Closer" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Press logos",
+      "blocks": [
+        { "type": "logo", "settings": { "name": "Closer" } },
+        { "type": "logo", "settings": { "name": "GLAMA" } },
+        { "type": "logo", "settings": { "name": "LUXE+co." } },
+        { "type": "logo", "settings": { "name": "InStyle" } },
+        { "type": "logo", "settings": { "name": "FINELLE" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

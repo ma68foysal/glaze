@@ -1,21 +1,85 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "type": "footer",
   "name": "t:general.footer",
   "sections": {
     "footer": {
       "type": "footer",
+      "blocks": {
+        "menu_shop": {
+          "type": "menu",
+          "settings": {
+            "title": "Shop",
+            "menu": "main-menu"
+          }
+        },
+        "menu_care": {
+          "type": "menu",
+          "settings": {
+            "title": "Customer care",
+            "menu": "main-menu"
+          }
+        },
+        "about": {
+          "type": "about",
+          "settings": {
+            "title": "About",
+            "description": "We only carry designs we believe in ethically and aesthetically — original, authentic pieces that are made to last.",
+            "btn_label": "Learn More",
+            "btn_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "menu_shop",
+        "menu_care",
+        "about"
+      ],
       "settings": {
-        "menu": "",
-        "show_payment_icons": true
+        "news_title": "Subscribe to get 10% OFF",
+        "news_title_color": "#111111",
+        "news_title_size": 32,
+        "news_title_weight": 700,
+        "news_sub": "Subscribe for store updates and discounts.",
+        "news_sub_color": "#1a1a1a",
+        "news_sub_size": 15,
+        "input_placeholder": "Email",
+        "input_bg": "#f2f2f2",
+        "input_color": "#111111",
+        "input_placeholder_color": "#8a8a8a",
+        "arrow_bg": "rgba(0,0,0,0)",
+        "arrow_fg": "#121212",
+        "terms_text": "<p>By subscribing you agree to the <a href=\"/policies/terms-of-service\">Terms of Use</a> & <a href=\"/policies/privacy-policy\">Privacy Policy.</a></p>",
+        "col_title_color": "#111111",
+        "col_title_size": 16,
+        "col_title_weight": 600,
+        "link_color": "#1a1a1a",
+        "link_size": 14,
+        "about_desc_color": "#1a1a1a",
+        "about_desc_size": 14,
+        "about_btn_color": "#111111",
+        "about_btn_size": 14,
+        "show_currency": true,
+        "currency_label": "United States (USD $)",
+        "show_powered": true,
+        "legal_menu": "footer",
+        "bottom_color": "#1a1a1a",
+        "bottom_size": 13,
+        "show_social": true,
+        "icon_color": "#111111",
+        "icon_size": 18,
+        "social_facebook": "",
+        "social_x": "",
+        "social_instagram": "",
+        "social_tiktok": "",
+        "social_pinterest": "",
+        "social_youtube": "",
+        "show_payments": true,
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "muted_color": "#888888",
+        "border_color": "#e6e6e6",
+        "padding_top": 72,
+        "padding_bottom": 32
       }
     }
   },

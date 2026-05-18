@@ -1,0 +1,386 @@
+{%- liquid
+  assign section_id = 'sleek-ft-' | append: section.id
+-%}
+
+<style>
+  /* ============================================================
+     Features Sleek — scoped styles (ft- prefix)
+     ============================================================ */
+
+  #{{ section_id }} {
+    --ft-bg: {{ section.settings.bg_color }};
+    --ft-pill-bg: {{ section.settings.pill_bg }};
+    --ft-pill-border-c: {{ section.settings.pill_border_color }};
+    --ft-pill-border-w: {{ section.settings.pill_border_width }}px;
+    --ft-pill-radius: {{ section.settings.pill_radius }}px;
+    --ft-pill-pad-y: {{ section.settings.pill_padding_y }}px;
+    --ft-pill-pad-x: {{ section.settings.pill_padding_x }}px;
+
+    --ft-title-c: {{ section.settings.title_color }};
+    --ft-title-s: {{ section.settings.title_size }}px;
+    --ft-title-w: {{ section.settings.title_weight }};
+
+    --ft-icon-size: {{ section.settings.icon_size }}px;
+    --ft-icon-bg: {{ section.settings.icon_bg }};
+    --ft-icon-c: {{ section.settings.icon_color }};
+
+    --ft-gap: {{ section.settings.gap }}px;
+    --ft-pad-top: {{ section.settings.padding_top }}px;
+    --ft-pad-bottom: {{ section.settings.padding_bottom }}px;
+
+    display: block;
+    background: var(--ft-bg);
+    padding: var(--ft-pad-top) 0 var(--ft-pad-bottom);
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after { box-sizing: border-box; }
+
+  .ft-wrap {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .ft-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: var(--ft-align, center);
+    gap: var(--ft-gap);
+  }
+
+  .ft-list[data-align="left"] { --ft-align: flex-start; }
+  .ft-list[data-align="center"] { --ft-align: center; }
+  .ft-list[data-align="right"] { --ft-align: flex-end; }
+  .ft-list[data-align="between"] { --ft-align: space-between; }
+
+  /* Pill */
+  .ft-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: var(--ft-pill-pad-y) var(--ft-pill-pad-x);
+    background: var(--ft-pill-bg);
+    border: var(--ft-pill-border-w) solid var(--ft-pill-border-c);
+    border-radius: var(--ft-pill-radius);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .ft-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .ft-icon {
+    width: var(--ft-icon-size);
+    height: var(--ft-icon-size);
+    border-radius: 50%;
+    background: var(--ft-icon-bg);
+    color: var(--ft-icon-c);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ft-icon img,
+  .ft-icon svg {
+    width: 55%;
+    height: 55%;
+    object-fit: contain;
+  }
+
+  .ft-title {
+    margin: 0;
+    color: var(--ft-title-c);
+    font-size: var(--ft-title-s);
+    font-weight: var(--ft-title-w);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  /* -------- Mobile slider -------- */
+  @media screen and (max-width: 749px) {
+    .ft-wrap { padding: 0 0 0 16px; }
+
+    .ft-list {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-right: 16px;
+      justify-content: flex-start;
+    }
+
+    .ft-list::-webkit-scrollbar { display: none; }
+
+    .ft-item {
+      scroll-snap-align: start;
+      white-space: nowrap;
+    }
+
+    .ft-title { font-size: {{ section.settings.title_size_mobile }}px; }
+  }
+</style>
+
+<div id="{{ section_id }}" class="sleek-ft">
+  <div class="ft-wrap">
+    <div class="ft-list" data-align="{{ section.settings.align }}">
+      {%- for block in section.blocks -%}
+        {%- capture pill_inner -%}
+          <span class="ft-icon" aria-hidden="true">
+            {%- if block.settings.icon_image != blank -%}
+              {{ block.settings.icon_image | image_url: width: 80 | image_tag: loading: 'lazy', alt: block.settings.title, widths: '40,60,80' }}
+            {%- else -%}
+              <svg viewBox="0 0 16 16" fill="none">
+                <path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            {%- endif -%}
+          </span>
+          {%- if block.settings.title != blank -%}
+            <p class="ft-title">{{ block.settings.title }}</p>
+          {%- endif -%}
+        {%- endcapture -%}
+
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}" class="ft-item" {{ block.shopify_attributes }}>{{ pill_inner }}</a>
+        {%- else -%}
+          <div class="ft-item" {{ block.shopify_attributes }}>{{ pill_inner }}</div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Features",
+  "class": "section-features-sleek",
+  "tag": "section",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" },
+        { "value": "between", "label": "Space between" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between pills",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Section colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Pill"
+    },
+    {
+      "type": "color",
+      "id": "pill_bg",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "pill_border_color",
+      "label": "Border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "pill_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "pill_radius",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_y",
+      "min": 4,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_x",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Icon"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "icon_bg",
+      "label": "Icon background",
+      "default": "#f2f2f2"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Size (desktop)",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Size (mobile)",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "title_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Weight",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon image",
+          "info": "Leave empty for a checkmark."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Free Shipping"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Features",
+      "blocks": [
+        { "type": "feature", "settings": { "title": "Free Shipping" } },
+        { "type": "feature", "settings": { "title": "Money Guarantee" } },
+        { "type": "feature", "settings": { "title": "Flexible Payment" } },
+        { "type": "feature", "settings": { "title": "Online Support" } },
+        { "type": "feature", "settings": { "title": "Return within 7 days" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

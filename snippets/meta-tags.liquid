@@ -39,13 +39,14 @@
 >
 
 {%- if page_image -%}
+  {%- assign og_image_url = page_image | image_url: width: 1200 -%}
   <meta
     property="og:image"
-    content="http:{{ page_image | image_url }}"
+    content="https:{{ og_image_url }}"
   >
   <meta
     property="og:image:secure_url"
-    content="https:{{ page_image | image_url }}"
+    content="https:{{ og_image_url }}"
   >
   <meta
     property="og:image:width"
@@ -70,6 +71,45 @@
     property="og:price:currency"
     content="{{ cart.currency.iso_code }}"
   >
+{%- elsif request.page_type == 'article' -%}
+  <script type="application/ld+json">
+    {{ article | structured_data }}
+  </script>
+{%- elsif request.page_type == 'index' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": {{ shop.name | json }},
+      "url": {{ shop.url | append: '/' | json }}{%- if settings.share_image -%},
+      "logo": "https:{{ settings.share_image | image_url: width: 600 }}"
+      {%- elsif shop.brand.logo -%},
+      "logo": "https:{{ shop.brand.logo | image_url: width: 600 }}"
+      {%- endif -%}
+    }
+  </script>
+  {%- comment -%}
+    Build the search URL template separately so the literal "{search_term_string}"
+    placeholder doesn't collide with Liquid's "{{ … }}" tokenizer.
+  {%- endcomment -%}
+  {%- assign search_url_template = shop.url | append: '/search?q=' -%}
+  {%- assign search_url_template = search_url_template | append: '{search_term_string}' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "url": {{ shop.url | append: '/' | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": {{ search_url_template | json }}
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
 {%- endif -%}
 
 <meta
@@ -84,6 +124,12 @@
   name="twitter:description"
   content="{{ og_description | escape }}"
 >
+{%- if page_image -%}
+  <meta
+    name="twitter:image"
+    content="https:{{ page_image | image_url: width: 1200 }}"
+  >
+{%- endif -%}
 
 <title>
   {{ page_title }}

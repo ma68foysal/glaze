@@ -1,0 +1,451 @@
+{%- liquid
+  assign section_id = 'sleek-iwt-' | append: section.id
+-%}
+
+<style>
+  /* ============================================================
+     Image With Text Sleek — scoped styles (iwt- prefix)
+     ============================================================ */
+
+  #{{ section_id }} {
+    --iwt-bg: {{ section.settings.bg_color }};
+    --iwt-content-bg: {{ section.settings.content_bg }};
+    --iwt-eyebrow-c: {{ section.settings.eyebrow_color }};
+    --iwt-eyebrow-s: {{ section.settings.eyebrow_size }}px;
+    --iwt-title-c: {{ section.settings.title_color }};
+    --iwt-title-s: {{ section.settings.title_size }}px;
+    --iwt-title-w: {{ section.settings.title_weight }};
+    --iwt-desc-c: {{ section.settings.desc_color }};
+    --iwt-desc-s: {{ section.settings.desc_size }}px;
+    --iwt-btn-bg: {{ section.settings.btn_bg }};
+    --iwt-btn-fg: {{ section.settings.btn_fg }};
+    --iwt-btn-hover-bg: {{ section.settings.btn_hover_bg }};
+    --iwt-btn-hover-fg: {{ section.settings.btn_hover_fg }};
+    --iwt-btn-size: {{ section.settings.btn_size }}px;
+    --iwt-radius: {{ section.settings.radius }}px;
+    --iwt-pad-top: {{ section.settings.padding_top }}px;
+    --iwt-pad-bottom: {{ section.settings.padding_bottom }}px;
+    --iwt-side-pad: {{ section.settings.side_padding }}px;
+    --iwt-gap: {{ section.settings.text_gap }}px;
+    --iwt-min-h: {{ section.settings.min_height }}px;
+
+    display: block;
+    background: var(--iwt-bg);
+    padding: var(--iwt-pad-top) var(--iwt-side-pad) var(--iwt-pad-bottom);
+  }
+
+  #{{ section_id }} *,
+  #{{ section_id }} *::before,
+  #{{ section_id }} *::after { box-sizing: border-box; }
+
+  .iwt-wrap {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* Grid: 2 columns that blend as one rounded block */
+  .iwt-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: var(--iwt-radius);
+    overflow: hidden;
+    min-height: var(--iwt-min-h);
+  }
+
+  /* Image side swap via order */
+  .iwt-grid[data-image-side="right"] .iwt-content { order: 1; }
+  .iwt-grid[data-image-side="right"] .iwt-image { order: 2; }
+
+  .iwt-grid[data-image-side="left"] .iwt-image { order: 1; }
+  .iwt-grid[data-image-side="left"] .iwt-content { order: 2; }
+
+  /* Content side */
+  .iwt-content {
+    background: var(--iwt-content-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: clamp(32px, 6vw, 80px);
+    gap: var(--iwt-gap);
+  }
+
+  .iwt-eyebrow {
+    margin: 0;
+    color: var(--iwt-eyebrow-c);
+    font-size: var(--iwt-eyebrow-s);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .iwt-title {
+    margin: 0;
+    color: var(--iwt-title-c);
+    font-size: var(--iwt-title-s);
+    font-weight: var(--iwt-title-w);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    max-width: 14ch;
+  }
+
+  .iwt-desc {
+    margin: 0;
+    color: var(--iwt-desc-c);
+    font-size: var(--iwt-desc-s);
+    line-height: 1.55;
+    max-width: 42ch;
+  }
+
+  .iwt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    border-radius: 999px;
+    border: 0;
+    background: var(--iwt-btn-bg);
+    color: var(--iwt-btn-fg);
+    font-size: var(--iwt-btn-size);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.25s ease;
+    margin-top: 6px;
+  }
+
+  .iwt-btn:hover {
+    background: var(--iwt-btn-hover-bg);
+    color: var(--iwt-btn-hover-fg);
+    transform: translateY(-2px);
+  }
+
+  /* Image side */
+  .iwt-image {
+    position: relative;
+    background: #eee;
+    overflow: hidden;
+    min-height: 100%;
+  }
+
+  .iwt-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* -------- Responsive -------- */
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} { --iwt-side-pad: 16px; }
+
+    .iwt-grid {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    /* On mobile: image always on top, content always below */
+    .iwt-grid[data-image-side="right"] .iwt-image,
+    .iwt-grid[data-image-side="left"] .iwt-image { order: 1; }
+    .iwt-grid[data-image-side="right"] .iwt-content,
+    .iwt-grid[data-image-side="left"] .iwt-content { order: 2; }
+
+    .iwt-image { aspect-ratio: 1 / 1; }
+
+    .iwt-content {
+      padding: 32px 24px 36px;
+      text-align: left;
+      align-items: flex-start;
+    }
+
+    .iwt-title { font-size: clamp(26px, 8vw, 40px); max-width: 100%; }
+    .iwt-desc { max-width: 100%; }
+  }
+</style>
+
+<div id="{{ section_id }}" class="sleek-iwt">
+  <div class="iwt-wrap">
+    <div class="iwt-grid" data-image-side="{{ section.settings.image_side }}">
+
+      <div class="iwt-content">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="iwt-eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="iwt-title">{{ section.settings.title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <p class="iwt-desc">{{ section.settings.description }}</p>
+        {%- endif -%}
+        {%- if section.settings.btn_label != blank -%}
+          <a href="{{ section.settings.btn_link | default: '#' }}" class="iwt-btn">{{ section.settings.btn_label }}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="iwt-image">
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: section.settings.title, widths: '400,600,800,1000,1200' }}
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "class": "section-image-with-text-sleek",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_side",
+      "label": "Image side (desktop)",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Gentle And Safe"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Made for sensitive skin"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "We create safe products that really work and are designed to make you feel good"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "min": 300,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "label": "Min height (desktop)",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "text_gap",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Text spacing",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Section colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "content_bg",
+      "label": "Content side background",
+      "default": "#e9dccb"
+    },
+    {
+      "type": "header",
+      "content": "Eyebrow"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Size",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "title_weight",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "label": "Weight",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "Description"
+    },
+    {
+      "type": "color",
+      "id": "desc_color",
+      "label": "Color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "desc_size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Size",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "btn_fg",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_fg",
+      "label": "Hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "btn_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Side padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text"
+    }
+  ]
+}
+{% endschema %}

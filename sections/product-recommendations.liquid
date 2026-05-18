@@ -1,0 +1,195 @@
+{%- liquid
+  assign section_id = 'recs-' | append: section.id
+  assign intent = section.settings.intent
+  assign heading = section.settings.heading
+  assign limit = section.settings.limit
+  assign columns_desktop = section.settings.columns_desktop
+  assign bg_color = section.settings.bg_color
+  assign text_color = section.settings.text_color
+  assign card_bg = section.settings.card_bg
+-%}
+{%- assign recs_url = routes.product_recommendations_url | append: '?section_id=' | append: section.id | append: '&product_id=' | append: product.id | append: '&intent=' | append: intent | append: '&limit=' | append: limit -%}
+
+<product-recommendations
+  id="{{ section_id }}"
+  class="glaze-recs full-width"
+  data-url="{{ recs_url }}"
+  style="
+    --bg: {{ bg_color }};
+    --fg: {{ text_color }};
+    --card-bg: {{ card_bg }};
+    --cols-d: {{ columns_desktop }};
+  "
+>
+  {%- if recommendations.performed -%}
+    {%- if recommendations.products_count > 0 -%}
+      <div class="glaze-recs__inner">
+        <h2 class="glaze-recs__heading">{{ heading | escape }}</h2>
+        <ul class="glaze-recs__grid" role="list">
+          {%- for product in recommendations.products -%}
+            <li class="glaze-pcard">
+              <a class="glaze-pcard__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+                {%- if product.featured_image -%}
+                  {{ product.featured_image | image_url: width: 600 | image_tag:
+                      loading: 'lazy',
+                      sizes: '(min-width: 1080px) 22vw, (min-width: 720px) 33vw, 45vw',
+                      widths: '240, 360, 480, 600',
+                      alt: product.featured_image.alt | default: product.title | escape
+                  }}
+                {%- endif -%}
+                {%- if product.compare_at_price_max > product.price -%}
+                  <span class="glaze-pcard__badge glaze-pcard__badge--sale">{{ 'collection.sale_badge' | t }}</span>
+                {%- endif -%}
+                {%- if product.available == false -%}
+                  <span class="glaze-pcard__badge glaze-pcard__badge--soldout">{{ 'collection.soldout_badge' | t }}</span>
+                {%- endif -%}
+              </a>
+              <div class="glaze-pcard__body">
+                {%- if product.vendor != blank -%}
+                  <p class="glaze-pcard__vendor">{{ product.vendor | escape }}</p>
+                {%- endif -%}
+                <a class="glaze-pcard__title" href="{{ product.url }}">{{ product.title | escape }}</a>
+                <div class="glaze-pcard__prices">
+                  {%- if product.compare_at_price_max > product.price -%}
+                    <s class="glaze-pcard__compare">{{ product.compare_at_price_max | money }}</s>
+                  {%- endif -%}
+                  {%- if product.price_varies -%}
+                    <span class="glaze-pcard__price">{{ 'collection.from' | t }} {{ product.price_min | money }}</span>
+                  {%- else -%}
+                    <span class="glaze-pcard__price">{{ product.price | money }}</span>
+                  {%- endif -%}
+                </div>
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</product-recommendations>
+
+<script>
+  (function () {
+    if (window.customElements && customElements.get('product-recommendations')) return;
+    class ProductRecommendations extends HTMLElement {
+      connectedCallback() {
+        // If recommendations already server-rendered, skip the fetch
+        if (this.querySelector('.glaze-recs__inner')) return;
+        var url = this.dataset.url;
+        if (!url) return;
+        var self = this;
+        fetch(url, { headers: { 'Accept': 'text/html' } })
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var fresh = doc.querySelector('product-recommendations');
+            if (fresh && fresh.innerHTML.trim()) {
+              self.innerHTML = fresh.innerHTML;
+            }
+          }).catch(function () {});
+      }
+    }
+    customElements.define('product-recommendations', ProductRecommendations);
+  })();
+</script>
+
+{% stylesheet %}
+  .glaze-recs {
+    background: var(--bg, var(--g-cream));
+    color: var(--fg, var(--g-ink));
+    font-family: var(--g-body-font);
+    padding: 64px 24px 96px;
+  }
+  .glaze-recs:empty { display: none; }
+  .glaze-recs__inner { max-width: 1280px; margin: 0 auto; }
+  .glaze-recs__heading {
+    font-family: var(--g-display-font);
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 600;
+    text-align: center;
+    margin: 0 0 32px;
+  }
+  .glaze-recs__grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (min-width: 720px) {
+    .glaze-recs__grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  }
+  @media (min-width: 1080px) {
+    .glaze-recs__grid { grid-template-columns: repeat(var(--cols-d, 4), 1fr); gap: 24px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.product_recommendations.name",
+  "tag": "section",
+  "class": "section-product-recommendations",
+  "settings": [
+    {
+      "type": "select",
+      "id": "intent",
+      "label": "t:sections.product_recommendations.intent",
+      "options": [
+        { "value": "related", "label": "t:sections.product_recommendations.intent_related" },
+        { "value": "complementary", "label": "t:sections.product_recommendations.intent_complementary" }
+      ],
+      "default": "related"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.product_recommendations.heading",
+      "default": "You may also like"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "label": "t:sections.product_recommendations.limit",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "t:sections.product_recommendations.columns_desktop",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "t:sections.product_recommendations.colors_header"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "t:sections.product_recommendations.bg_color",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.product_recommendations.text_color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "t:sections.product_recommendations.card_bg",
+      "default": "#ffffff"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  }
+}
+{% endschema %}
