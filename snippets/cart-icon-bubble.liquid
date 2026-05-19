@@ -1,0 +1,23 @@
+{%- comment -%}
+  Cart icon + count bubble — the ACTUAL markup. Rendered two ways:
+
+  1) Inline by sections/header.liquid via {% render 'cart-icon-bubble' %}
+     (because Shopify forbids `{% section %}` inside another section).
+
+  2) Wrapped by sections/cart-icon-bubble.liquid which just renders this
+     snippet. That section exists so the Section Rendering API can refetch
+     `?section_id=cart-icon-bubble` after every cart mutation and return
+     fresh HTML for glaze-cart.js to swap into the header anchor.
+
+  Same source of truth, two callers — keeps the count in lockstep.
+{%- endcomment -%}
+
+<svg class="glaze-cart-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <path d="M4 7h16l-1.5 11a2 2 0 0 1-2 1.8H7.5a2 2 0 0 1-2-1.8L4 7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M9 7a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+</svg>
+<span class="visually-hidden">{{ 'cart.title' | t }}</span>
+{%- if cart.item_count > 0 -%}
+  <span class="glaze-cart-count" aria-hidden="true">{{ cart.item_count }}</span>
+  <span class="visually-hidden">{{ 'cart.count_aria' | t: count: cart.item_count }}</span>
+{%- endif -%}

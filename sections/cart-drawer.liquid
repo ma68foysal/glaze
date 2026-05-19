@@ -158,26 +158,28 @@
               {%- endfor -%}
             </ul>
           {%- endif -%}
-
-          {%- if settings.show_cart_note -%}
-            <details class="glaze-cart-drawer__note-wrap">
-              <summary>{{ 'cart.note_toggle' | t }}</summary>
-              <glaze-cart-note>
-                <label for="glaze-cart-drawer-note" class="visually-hidden">{{ 'cart.notes_label' | t }}</label>
-                <textarea
-                  id="glaze-cart-drawer-note"
-                  class="glaze-cart-drawer__note"
-                  name="note"
-                  rows="3"
-                  placeholder="{{ 'cart.notes_label' | t }}"
-                >{{ cart.note }}</textarea>
-              </glaze-cart-note>
-            </details>
-          {%- endif -%}
         </form>
       </glaze-cart-items>
 
       <footer class="glaze-cart-drawer__footer">
+        {%- if settings.show_cart_note -%}
+          {%- comment -%} Note lives in the footer (above subtotal) so it stays visible regardless of items list height. {%- endcomment -%}
+          <details class="glaze-cart-drawer__note-wrap">
+            <summary>{{ 'cart.note_toggle' | t }}</summary>
+            <glaze-cart-note>
+              <label for="glaze-cart-drawer-note" class="visually-hidden">{{ 'cart.notes_label' | t }}</label>
+              <textarea
+                id="glaze-cart-drawer-note"
+                class="glaze-cart-drawer__note"
+                form="glaze-cart-drawer-form"
+                name="note"
+                rows="3"
+                placeholder="{{ 'cart.notes_label' | t }}"
+              >{{ cart.note }}</textarea>
+            </glaze-cart-note>
+          </details>
+        {%- endif -%}
+
         <div class="glaze-cart-drawer__subtotal">
           <span>{{ 'cart.subtotal' | t }}</span>
           <span class="glaze-cart-drawer__subtotal-value">{{ cart.total_price | money_with_currency }}</span>
@@ -219,17 +221,22 @@
     pointer-events: none;
     font-family: var(--g-body-font);
     color: var(--g-ink);
+    /* On close: keep visibility:visible until the panel slide-out + overlay
+       fade complete (320ms), THEN flip to hidden so the animation plays.
+       On open: visibility flips instantly (no delay) so transforms can run. */
+    transition: visibility 0s linear 0.32s;
   }
   .glaze-cart-drawer[open] {
     visibility: visible;
     pointer-events: auto;
+    transition: visibility 0s linear 0s;
   }
   .glaze-cart-drawer__overlay {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.28s ease;
   }
   .glaze-cart-drawer[open] .glaze-cart-drawer__overlay { opacity: 1; }
 
@@ -244,7 +251,8 @@
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
-    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
   }
   .glaze-cart-drawer[open] .glaze-cart-drawer__panel { transform: translateX(0); }
   .glaze-cart-drawer__panel:focus { outline: none; }
@@ -300,6 +308,18 @@
     padding: 14px;
     background: var(--g-card-bg);
     border-radius: var(--g-radius-md);
+    position: relative;
+    transition: opacity 0.18s ease;
+  }
+  /* Per-item loading state — translucent overlay over the WHOLE item, spinner
+     centered over the image specifically. Uses base.css .is-loading helper
+     for the spinner + overlay generics, then refines centering on the image. */
+  .glaze-cart-drawer__item.is-loading::after { border-radius: var(--g-radius-md); }
+  .glaze-cart-drawer__item.is-loading::before {
+    /* Place spinner centered on the item image (first column, 88px / 2 from left) */
+    left: calc(14px + 44px);
+    top: calc(14px + 44px);
+    margin: -11px 0 0 -11px;
   }
   .glaze-cart-drawer__item-media {
     aspect-ratio: 1 / 1;
@@ -411,9 +431,8 @@
   }
 
   .glaze-cart-drawer__note-wrap {
-    margin-top: 16px;
-    border-top: 1px solid var(--g-line);
-    padding-top: 12px;
+    /* In footer now — separator above; no top border (footer already has one) */
+    padding-bottom: 4px;
   }
   .glaze-cart-drawer__note-wrap summary {
     cursor: pointer;
@@ -468,9 +487,10 @@
 
   .glaze-cart-drawer__empty {
     flex: 1;
-    display: grid;
-    align-content: center;
-    justify-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 16px;
     padding: 24px;
     text-align: center;
@@ -481,6 +501,7 @@
     margin: 0;
     color: var(--g-ink);
   }
+  .glaze-cart-drawer__empty .glaze-btn { align-self: center; }
 {% endstylesheet %}
 
 {% schema %}

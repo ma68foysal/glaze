@@ -1,5 +1,5 @@
 {%- liquid
-  assign section_id = 'sleek-slideshow-' | append: section.id
+  assign section_id = 'glaze-slideshow-' | append: section.id
   assign autoplay = section.settings.autoplay
   assign speed = section.settings.speed
   assign height_dt = section.settings.height_desktop
@@ -9,26 +9,26 @@
 
 <style>
   /* ============================================================
-     Slideshow Sleek — scoped styles
+     Slideshow Glaze — scoped styles
      ============================================================ */
 
   #{{ section_id }} {
-    --sleek-ss-height-dt: {{ height_dt }}px;
-    --sleek-ss-height-mb: {{ height_mb }}px;
-    --sleek-ss-gap: {{ section.settings.content_gap }}px;
-    --sleek-ss-radius: {{ section.settings.corner_radius }}px;
-    --sleek-ss-dot-color: {{ section.settings.dot_color }};
-    --sleek-ss-dot-active: {{ section.settings.dot_active_color }};
-    --sleek-ss-pad: {{ section.settings.section_padding }}px;
-    --sleek-ss-peek: {{ section.settings.peek }}px;
-    --sleek-ss-slide-gap: {{ section.settings.slide_gap }}px;
+    --glaze-ss-height-dt: {{ height_dt }}px;
+    --glaze-ss-height-mb: {{ height_mb }}px;
+    --glaze-ss-gap: {{ section.settings.content_gap }}px;
+    --glaze-ss-radius: {{ section.settings.corner_radius }}px;
+    --glaze-ss-dot-color: {{ section.settings.dot_color }};
+    --glaze-ss-dot-active: {{ section.settings.dot_active_color }};
+    --glaze-ss-pad: {{ section.settings.section_padding }}px;
+    --glaze-ss-peek: {{ section.settings.peek }}px;
+    --glaze-ss-slide-gap: {{ section.settings.slide_gap }}px;
     display: block;
     position: relative;
-    padding: var(--sleek-ss-pad) 0;
+    padding: var(--glaze-ss-pad) 0;
     overflow: hidden;
   }
 
-  .sleek-ss-wrap { overflow: hidden; }
+  .glaze-ss-wrap { overflow: hidden; }
 
   #{{ section_id }} *,
   #{{ section_id }} *::before,
@@ -36,37 +36,37 @@
     box-sizing: border-box;
   }
 
-  .sleek-ss-wrap {
+  .glaze-ss-wrap {
     position: relative;
     width: 100%;
   }
 
-  .sleek-ss-viewport {
+  .glaze-ss-viewport {
     position: relative;
     width: 100%;
-    height: var(--sleek-ss-height-dt);
+    height: var(--glaze-ss-height-dt);
     overflow: hidden;
   }
 
-  .sleek-ss-track {
+  .glaze-ss-track {
     display: flex;
     height: 100%;
     width: 100%;
-    padding: 0 var(--sleek-ss-peek);
-    gap: var(--sleek-ss-slide-gap);
+    padding: 0 var(--glaze-ss-peek);
+    gap: var(--glaze-ss-slide-gap);
     transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
     will-change: transform;
   }
 
-  .sleek-slide {
+  .glaze-slide {
     flex: 0 0 100%;
     height: 100%;
     position: relative;
     overflow: hidden;
-    border-radius: var(--sleek-ss-radius);
+    border-radius: var(--glaze-ss-radius);
   }
 
-  .sleek-slide__media {
+  .glaze-slide__media {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -76,13 +76,13 @@
     z-index: 1;
   }
 
-  .sleek-slide__media picture {
+  .glaze-slide__media picture {
     display: block;
     width: 100%;
     height: 100%;
   }
 
-  .sleek-slide__media img {
+  .glaze-slide__media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -91,71 +91,71 @@
     transition: transform 6s ease-out;
   }
 
-  .sleek-slide.is-active .sleek-slide__media img { transform: scale(1); }
+  .glaze-slide.is-active .glaze-slide__media img { transform: scale(1); }
 
-  .sleek-slide__overlay {
+  .glaze-slide__overlay {
     position: absolute;
     inset: 0;
     pointer-events: none;
   }
 
-  .sleek-slide__content {
+  .glaze-slide__content {
     position: absolute;
     inset: 0;
     z-index: 3;
     padding: clamp(24px, 5vw, 72px);
     display: flex;
     flex-direction: column;
-    gap: var(--sleek-ss-gap);
+    gap: var(--glaze-ss-gap);
     pointer-events: none;
     
   }
 
-  .sleek-slide__content > * { pointer-events: auto; }
+  .glaze-slide__content > * { pointer-events: auto; }
 
-  .sleek-slide__content-inner {
+  .glaze-slide__content-inner {
     display: flex;
     flex-direction: column;
-    gap: var(--sleek-ss-gap);
+    gap: var(--glaze-ss-gap);
     max-width: min(var(--slide-content-width, 460px), 90%);
     width: 100%;
   }
 
-  .sleek-slide[data-v-pos="top"] .sleek-slide__content { justify-content: flex-start; }
-  .sleek-slide[data-v-pos="middle"] .sleek-slide__content { justify-content: center; }
-  .sleek-slide[data-v-pos="bottom"] .sleek-slide__content { justify-content: flex-end; }
+  .glaze-slide[data-v-pos="top"] .glaze-slide__content { justify-content: flex-start; }
+  .glaze-slide[data-v-pos="middle"] .glaze-slide__content { justify-content: center; }
+  .glaze-slide[data-v-pos="bottom"] .glaze-slide__content { justify-content: flex-end; }
 
-  .sleek-slide[data-h-align="left"] .sleek-slide__content { align-items: flex-start; }
-  .sleek-slide[data-h-align="center"] .sleek-slide__content { align-items: center; }
-  .sleek-slide[data-h-align="right"] .sleek-slide__content { align-items: flex-end; }
+  .glaze-slide[data-h-align="left"] .glaze-slide__content { align-items: flex-start; }
+  .glaze-slide[data-h-align="center"] .glaze-slide__content { align-items: center; }
+  .glaze-slide[data-h-align="right"] .glaze-slide__content { align-items: flex-end; }
 
-  .sleek-slide[data-h-align="left"] .sleek-slide__content-inner { text-align: left; align-items: flex-start; }
-  .sleek-slide[data-h-align="center"] .sleek-slide__content-inner { text-align: center; align-items: center; }
-  .sleek-slide[data-h-align="right"] .sleek-slide__content-inner { text-align: right; align-items: flex-end; }
+  .glaze-slide[data-h-align="left"] .glaze-slide__content-inner { text-align: left; align-items: flex-start; }
+  .glaze-slide[data-h-align="center"] .glaze-slide__content-inner { text-align: center; align-items: center; }
+  .glaze-slide[data-h-align="right"] .glaze-slide__content-inner { text-align: right; align-items: flex-end; }
 
   /* Stagger-in for text */
-  .sleek-slide__eyebrow,
-  .sleek-slide__heading,
-  .sleek-slide__sub,
-  .sleek-slide__cta {
+  .glaze-slide__eyebrow,
+  .glaze-slide__heading,
+  .glaze-slide__sub,
+  .glaze-slide__cta {
     opacity: 0;
     transform: translateY(14px);
     transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .sleek-slide.is-active .sleek-slide__eyebrow { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
-  .sleek-slide.is-active .sleek-slide__heading { opacity: 1; transform: translateY(0); transition-delay: 0.28s; }
-  .sleek-slide.is-active .sleek-slide__sub { opacity: 1; transform: translateY(0); transition-delay: 0.40s; }
-  .sleek-slide.is-active .sleek-slide__cta { opacity: 1; transform: translateY(0); transition-delay: 0.52s; }
+  .glaze-slide.is-active .glaze-slide__eyebrow { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+  .glaze-slide.is-active .glaze-slide__heading { opacity: 1; transform: translateY(0); transition-delay: 0.28s; }
+  .glaze-slide.is-active .glaze-slide__sub { opacity: 1; transform: translateY(0); transition-delay: 0.40s; }
+  .glaze-slide.is-active .glaze-slide__cta { opacity: 1; transform: translateY(0); transition-delay: 0.52s; }
 
-  .sleek-slide__eyebrow {
+  .glaze-slide__eyebrow {
     font-size: 14px;
     letter-spacing: 0.04em;
     margin: 0;
     opacity: 0.85;
   }
 
-  .sleek-slide__heading {
+  .glaze-slide__heading {
     font-size: clamp(28px, 4.4vw, 64px);
     line-height: 1.05;
     font-weight: 600;
@@ -163,14 +163,14 @@
     letter-spacing: -0.02em;
   }
 
-  .sleek-slide__sub {
+  .glaze-slide__sub {
     font-size: 16px;
     line-height: 1.5;
     max-width: 46ch;
     margin: 0;
   }
 
-  .sleek-slide__cta {
+  .glaze-slide__cta {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -184,14 +184,14 @@
     transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .sleek-slide__cta:hover {
+  .glaze-slide__cta:hover {
     background: #222;
     transform: translateY(-2px);
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
   }
 
   /* -------- Dots / progress bar (below the bg container) -------- */
-  .sleek-ss-dots {
+  .glaze-ss-dots {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -201,12 +201,12 @@
     padding: 0;
   }
 
-  .sleek-ss-dot {
+  .glaze-ss-dot {
     position: relative;
     width: 8px;
     height: 8px;
     border-radius: 999px;
-    background: var(--sleek-ss-dot-color);
+    background: var(--glaze-ss-dot-color);
     border: 0;
     padding: 0;
     cursor: pointer;
@@ -215,30 +215,30 @@
     flex-shrink: 0;
   }
 
-  .sleek-ss-dot.is-active {
+  .glaze-ss-dot.is-active {
     width: 48px;
-    background: var(--sleek-ss-dot-color);
+    background: var(--glaze-ss-dot-color);
   }
 
-  .sleek-ss-dot-fill {
+  .glaze-ss-dot-fill {
     position: absolute;
     inset: 0;
     width: 0%;
-    background: var(--sleek-ss-dot-active);
+    background: var(--glaze-ss-dot-active);
     transition: none;
   }
 
-  .sleek-ss-dot.is-active .sleek-ss-dot-fill {
-    animation: sleek-ss-fill {{ speed }}s linear forwards;
+  .glaze-ss-dot.is-active .glaze-ss-dot-fill {
+    animation: glaze-ss-fill {{ speed }}s linear forwards;
   }
 
-  @keyframes sleek-ss-fill {
+  @keyframes glaze-ss-fill {
     from { width: 0%; }
     to { width: 100%; }
   }
 
   /* -------- Arrows (optional) -------- */
-  .sleek-ss-arrows {
+  .glaze-ss-arrows {
     position: absolute;
     top: 50%;
     left: 0;
@@ -251,7 +251,7 @@
     z-index: 4;
   }
 
-  .sleek-ss-arrow {
+  .glaze-ss-arrow {
     pointer-events: auto;
     width: 44px;
     height: 44px;
@@ -267,23 +267,23 @@
     backdrop-filter: blur(6px);
   }
 
-  .sleek-ss-arrow:hover {
+  .glaze-ss-arrow:hover {
     background: #fff;
     transform: scale(1.05);
   }
 
-  .sleek-ss-arrow svg { width: 16px; height: 16px; }
+  .glaze-ss-arrow svg { width: 16px; height: 16px; }
 
   /* -------- Responsive -------- */
   @media screen and (max-width: 768px) {
-    .sleek-ss-viewport { height: auto; overflow: hidden; }
-    .sleek-ss-track {
+    .glaze-ss-viewport { height: auto; overflow: hidden; }
+    .glaze-ss-track {
       height: auto;
       padding: 0 16px;
       gap: 12px;
     }
 
-    .sleek-slide {
+    .glaze-slide {
       display: flex;
       flex-direction: column;
       min-height: auto;
@@ -292,7 +292,7 @@
       border-radius: 0;
     }
 
-    .sleek-slide__media {
+    .glaze-slide__media {
       position: relative;
       inset: auto;
       width: 100%;
@@ -300,11 +300,11 @@
       flex: 0 0 auto;
       order: 1;
       background: transparent;
-      border-radius: var(--sleek-ss-radius);
+      border-radius: var(--glaze-ss-radius);
       overflow: hidden;
     }
 
-    .sleek-slide__content {
+    .glaze-slide__content {
       position: relative;
       inset: auto;
       padding: 24px 8px 8px;
@@ -314,30 +314,30 @@
       order: 2;
     }
 
-    .sleek-slide__content-inner {
+    .glaze-slide__content-inner {
       max-width: 100%;
       text-align: center !important;
       align-items: center !important;
     }
 
-    .sleek-slide__heading { font-size: clamp(24px, 7vw, 36px); }
-    .sleek-ss-arrows { display: none; }
+    .glaze-slide__heading { font-size: clamp(24px, 7vw, 36px); }
+    .glaze-ss-arrows { display: none; }
 
-    .sleek-slide[data-mobile-stack="content-first"] .sleek-slide__media { order: 2; }
-    .sleek-slide[data-mobile-stack="content-first"] .sleek-slide__content { order: 1; padding: 8px 8px 24px; }
+    .glaze-slide[data-mobile-stack="content-first"] .glaze-slide__media { order: 2; }
+    .glaze-slide[data-mobile-stack="content-first"] .glaze-slide__content { order: 1; padding: 8px 8px 24px; }
   }
 </style>
 
 <div
   id="{{ section_id }}"
-  class="sleek-slideshow"
-  data-sleek-slideshow
+  class="glaze-slideshow"
+  data-glaze-slideshow
   data-autoplay="{% if autoplay %}1{% else %}0{% endif %}"
   data-speed="{{ speed }}"
 >
-  <div class="sleek-ss-wrap">
-    <div class="sleek-ss-viewport">
-      <div class="sleek-ss-track" data-ss-track>
+  <div class="glaze-ss-wrap">
+    <div class="glaze-ss-viewport">
+      <div class="glaze-ss-track" data-ss-track>
         {%- for block in section.blocks -%}
           {%- liquid
             assign bg = block.settings.bg_color
@@ -352,7 +352,7 @@
             assign mobile_stack = block.settings.mobile_stack
           -%}
           <div
-            class="sleek-slide{% if forloop.first %} is-active{% endif %}"
+            class="glaze-slide{% if forloop.first %} is-active{% endif %}"
             data-image-side="{{ image_side }}"
             data-v-pos="{{ v_pos }}"
             data-h-align="{{ h_align }}"
@@ -361,7 +361,7 @@
             style="background-color: {{ bg }}; color: {{ text_color }}; --slide-content-width: {{ block.settings.content_width }}px;"
             {{ block.shopify_attributes }}
           >
-            <div class="sleek-slide__media">
+            <div class="glaze-slide__media">
               {%- if block.settings.image != blank or block.settings.image_mobile != blank -%}
                 {%- assign desktop_img = block.settings.image -%}
                 {%- assign mobile_img = block.settings.image_mobile | default: block.settings.image -%}
@@ -400,48 +400,48 @@
                 {%- case overlay_type -%}
                   {%- when 'solid' -%}
                     <div
-                      class="sleek-slide__overlay"
+                      class="glaze-slide__overlay"
                       style="background: {{ ovc }}; opacity: {{ overlay_opacity }};"
                     ></div>
                   {%- when 'gradient_bottom' -%}
                     <div
-                      class="sleek-slide__overlay"
+                      class="glaze-slide__overlay"
                       style="background: linear-gradient(to top, {{ ovc }}, transparent); opacity: {{ overlay_opacity }};"
                     ></div>
                   {%- when 'gradient_top' -%}
                     <div
-                      class="sleek-slide__overlay"
+                      class="glaze-slide__overlay"
                       style="background: linear-gradient(to bottom, {{ ovc }}, transparent); opacity: {{ overlay_opacity }};"
                     ></div>
                   {%- when 'gradient_left' -%}
                     <div
-                      class="sleek-slide__overlay"
+                      class="glaze-slide__overlay"
                       style="background: linear-gradient(to right, {{ ovc }}, transparent); opacity: {{ overlay_opacity }};"
                     ></div>
                   {%- when 'gradient_right' -%}
                     <div
-                      class="sleek-slide__overlay"
+                      class="glaze-slide__overlay"
                       style="background: linear-gradient(to left, {{ ovc }}, transparent); opacity: {{ overlay_opacity }};"
                     ></div>
                 {%- endcase -%}
               {%- endif -%}
             </div>
 
-            <div class="sleek-slide__content">
-              <div class="sleek-slide__content-inner">
+            <div class="glaze-slide__content">
+              <div class="glaze-slide__content-inner">
                 {%- if block.settings.eyebrow != blank -%}
-                  <p class="sleek-slide__eyebrow">{{ block.settings.eyebrow }}</p>
+                  <p class="glaze-slide__eyebrow">{{ block.settings.eyebrow }}</p>
                 {%- endif -%}
                 {%- if block.settings.heading != blank -%}
-                  <h2 class="sleek-slide__heading">{{ block.settings.heading }}</h2>
+                  <h2 class="glaze-slide__heading">{{ block.settings.heading }}</h2>
                 {%- endif -%}
                 {%- if block.settings.sub != blank -%}
-                  <p class="sleek-slide__sub">{{ block.settings.sub }}</p>
+                  <p class="glaze-slide__sub">{{ block.settings.sub }}</p>
                 {%- endif -%}
                 {%- if block.settings.button_label != blank -%}
                   <a
                     href="{{ block.settings.button_link | default: '#' }}"
-                    class="sleek-slide__cta"
+                    class="glaze-slide__cta"
                     style="background: {{ block.settings.button_bg }}; color: {{ block.settings.button_fg }};"
                   >
                     {{ block.settings.button_label }}
@@ -454,13 +454,13 @@
       </div>
 
       {%- if section.settings.show_arrows and section.blocks.size > 1 -%}
-        <div class="sleek-ss-arrows">
-          <button type="button" class="sleek-ss-arrow" data-ss-prev aria-label="Previous slide">
+        <div class="glaze-ss-arrows">
+          <button type="button" class="glaze-ss-arrow" data-ss-prev aria-label="Previous slide">
             <svg viewBox="0 0 16 16" fill="none">
               <path d="M10 2L4 8l6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-          <button type="button" class="sleek-ss-arrow" data-ss-next aria-label="Next slide">
+          <button type="button" class="glaze-ss-arrow" data-ss-next aria-label="Next slide">
             <svg viewBox="0 0 16 16" fill="none">
               <path d="M6 2l6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -470,15 +470,15 @@
     </div>
 
     {%- if show_dots and section.blocks.size > 1 -%}
-      <div class="sleek-ss-dots" role="tablist">
+      <div class="glaze-ss-dots" role="tablist">
         {%- for block in section.blocks -%}
           <button
             type="button"
-            class="sleek-ss-dot{% if forloop.first %} is-active{% endif %}"
+            class="glaze-ss-dot{% if forloop.first %} is-active{% endif %}"
             data-ss-dot="{{ forloop.index0 }}"
             aria-label="Go to slide {{ forloop.index }}"
           >
-            <span class="sleek-ss-dot-fill"></span>
+            <span class="glaze-ss-dot-fill"></span>
           </button>
         {%- endfor -%}
       </div>
@@ -492,8 +492,8 @@
     if (!root) return;
 
     var track = root.querySelector('[data-ss-track]');
-    var originals = Array.prototype.slice.call(track.querySelectorAll('.sleek-slide'));
-    var dots = root.querySelectorAll('.sleek-ss-dot');
+    var originals = Array.prototype.slice.call(track.querySelectorAll('.glaze-slide'));
+    var dots = root.querySelectorAll('.glaze-ss-dot');
     var prev = root.querySelector('[data-ss-prev]');
     var next = root.querySelector('[data-ss-next]');
     var realTotal = originals.length;
@@ -518,7 +518,7 @@
       track.insertBefore(lastClone, originals[0]);
     }
 
-    var slides = track.querySelectorAll('.sleek-slide');
+    var slides = track.querySelectorAll('.glaze-slide');
     var total = slides.length;
     var offset = infinite ? 1 : 0;
     var current = offset;
@@ -561,7 +561,7 @@
         s.classList.toggle('is-active', i === current || i === realElIdx);
       });
       dots.forEach(function (d, i) {
-        var fill = d.querySelector('.sleek-ss-dot-fill');
+        var fill = d.querySelector('.glaze-ss-dot-fill');
         if (fill) {
           fill.style.animation = 'none';
           void fill.offsetWidth;
@@ -661,7 +661,7 @@
 {% schema %}
 {
   "name": "Slideshow",
-  "class": "section-slideshow-sleek",
+  "class": "section-slideshow-glaze",
   "tag": "section",
   "max_blocks": 10,
   "settings": [

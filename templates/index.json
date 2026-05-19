@@ -1,6 +1,6 @@
 {
   "sections": {
-    "slideshow_sleek_x7W6aQ": {
+    "slideshow_glaze_x7W6aQ": {
       "type": "slideshow",
       "blocks": {
         "slide_RLe74U": {
@@ -98,28 +98,28 @@
         "dot_active_color": "#111111"
       }
     },
-    "featured_product_sleek_w7prWB": {
+    "featured_product_glaze_w7prWB": {
       "type": "featured-product",
       "blocks": {
         "tab_pddiiP": {
           "type": "tab",
           "settings": {
             "tab_label": "What's hot",
-            "collection": "sleek"
+            "collection": "all"
           }
         },
         "tab_UFkE9x": {
           "type": "tab",
           "settings": {
             "tab_label": "Best sellers",
-            "collection": "sleek"
+            "collection": "all"
           }
         },
         "tab_V33fHR": {
           "type": "tab",
           "settings": {
             "tab_label": "Sale",
-            "collection": "sleek"
+            "collection": "all"
           }
         }
       },
@@ -167,7 +167,7 @@
         "padding_bottom": 60
       }
     },
-    "highlight_text_image_sleek_AKKafm": {
+    "highlight_text_image_glaze_AKKafm": {
       "type": "highlight-text-image",
       "blocks": {
         "text_YM84tm": {
@@ -266,7 +266,7 @@
         "side_padding": 40
       }
     },
-    "collection_list_sleek_cTyQ8H": {
+    "collection_list_glaze_cTyQ8H": {
       "type": "collection-list",
       "blocks": {
         "collection_qnYMJp": {
@@ -350,7 +350,7 @@
         "padding_bottom": 80
       }
     },
-    "product_bundle_sleek_CM3gnJ": {
+    "product_bundle_glaze_CM3gnJ": {
       "type": "product-bundle",
       "blocks": {
         "product_M8i8mc": {
@@ -420,7 +420,7 @@
         "padding_bottom": 80
       }
     },
-    "featured_press_sleek_XWhbnq": {
+    "featured_press_glaze_XWhbnq": {
       "type": "featured-press",
       "blocks": {
         "press_9wwXw9": {
@@ -476,7 +476,7 @@
         "padding_bottom": 72
       }
     },
-    "features_sleek_xphNB6": {
+    "features_glaze_xphNB6": {
       "type": "features",
       "blocks": {
         "feature_H7xchU": {
@@ -544,13 +544,13 @@
         "padding_bottom": 40
       }
     },
-    "sticky_collections_sleek_H8XPUd": {
+    "sticky_collections_glaze_H8XPUd": {
       "type": "sticky-collections",
       "blocks": {
         "collection_MfnXLf": {
           "type": "collection",
           "settings": {
-            "collection": "sleek",
+            "collection": "all",
             "title_override": "Sale 30% off",
             "products_count": 8
           }
@@ -558,7 +558,7 @@
         "collection_ck67AF": {
           "type": "collection",
           "settings": {
-            "collection": "sleek",
+            "collection": "all",
             "title_override": "Travel & Minis",
             "products_count": 8
           }
@@ -566,7 +566,7 @@
         "collection_ae6yKd": {
           "type": "collection",
           "settings": {
-            "collection": "sleek",
+            "collection": "all",
             "title_override": "Under 29$",
             "products_count": 8
           }
@@ -642,7 +642,7 @@
         "padding_bottom": 80
       }
     },
-    "image_with_text_sleek_3hQB3m": {
+    "image_with_text_glaze_3hQB3m": {
       "type": "image-with-text",
       "name": "Image with text",
       "settings": {
@@ -675,7 +675,7 @@
         "side_padding": 40
       }
     },
-    "marquee_sleek_f8tiN3": {
+    "marquee_glaze_f8tiN3": {
       "type": "marquee",
       "blocks": {
         "item_tRy3x9": {
@@ -739,7 +739,7 @@
         "border_bottom_color": "#e6e6e6"
       }
     },
-    "shoppable_tabs_sleek_PwcPDF": {
+    "shoppable_tabs_glaze_PwcPDF": {
       "type": "shoppable-tabs",
       "blocks": {
         "tab_Tdjqi3": {
@@ -747,7 +747,7 @@
           "settings": {
             "tab_title": "Sensitive Skin",
             "tab_description": "<p>We're careful about every ingredient that goes in — and just as careful about what we keep out. No irritants, no unnecessary fragrance, no compromise on your skin's comfort.</p>",
-            "collection": "sleek",
+            "collection": "all",
             "products_count": 4
           }
         },
@@ -756,7 +756,7 @@
           "settings": {
             "tab_title": "Dry Skin",
             "tab_description": "<p>Deep, lasting hydration that works beneath the surface. Our dry skin range is formulated to restore your skin's natural moisture barrier and keep it protected throughout the day.</p>",
-            "collection": "sleek",
+            "collection": "all",
             "products_count": 4
           }
         },
@@ -765,7 +765,7 @@
           "settings": {
             "tab_title": "Organic Formulas",
             "tab_description": "<p>Where it's possible to use certified organic ingredients without affecting efficacy, we do. Because what's good for your skin should also be good for the planet.</p>",
-            "collection": "sleek",
+            "collection": "all",
             "products_count": 4
           }
         },
@@ -774,7 +774,7 @@
           "settings": {
             "tab_title": "Prestige Skincare",
             "tab_description": "<p>Professional-grade ingredients. Accessible price points. Our premium range delivers results you'd expect from a high-end skin clinic, without the clinic price tag.</p>",
-            "collection": "sleek",
+            "collection": "all",
             "products_count": 4
           }
         }
@@ -821,7 +821,7 @@
         "padding_bottom": 80
       }
     },
-    "faq_sleek_JcNjzx": {
+    "faq_glaze_JcNjzx": {
       "type": "faq-grid",
       "blocks": {
         "faq_MDpDEJ": {
@@ -895,7 +895,7 @@
         "padding_bottom": 80
       }
     },
-    "about_sleek_rmM4PF": {
+    "about_glaze_rmM4PF": {
       "type": "about",
       "blocks": {
         "card_4NHQw4": {
@@ -961,18 +961,18 @@
     }
   },
   "order": [
-    "slideshow_sleek_x7W6aQ",
-    "featured_product_sleek_w7prWB",
-    "highlight_text_image_sleek_AKKafm",
-    "collection_list_sleek_cTyQ8H",
-    "product_bundle_sleek_CM3gnJ",
-    "featured_press_sleek_XWhbnq",
-    "features_sleek_xphNB6",
-    "sticky_collections_sleek_H8XPUd",
-    "image_with_text_sleek_3hQB3m",
-    "marquee_sleek_f8tiN3",
-    "shoppable_tabs_sleek_PwcPDF",
-    "faq_sleek_JcNjzx",
-    "about_sleek_rmM4PF"
+    "slideshow_glaze_x7W6aQ",
+    "featured_product_glaze_w7prWB",
+    "highlight_text_image_glaze_AKKafm",
+    "collection_list_glaze_cTyQ8H",
+    "product_bundle_glaze_CM3gnJ",
+    "featured_press_glaze_XWhbnq",
+    "features_glaze_xphNB6",
+    "sticky_collections_glaze_H8XPUd",
+    "image_with_text_glaze_3hQB3m",
+    "marquee_glaze_f8tiN3",
+    "shoppable_tabs_glaze_PwcPDF",
+    "faq_glaze_JcNjzx",
+    "about_glaze_rmM4PF"
   ]
 }

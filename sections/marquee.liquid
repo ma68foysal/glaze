@@ -1,12 +1,12 @@
 {%- liquid
-  assign section_id = 'sleek-mq-' | append: section.id
+  assign section_id = 'glaze-mq-' | append: section.id
   assign direction = section.settings.direction
   assign speed = section.settings.speed
 -%}
 
 <style>
   /* ============================================================
-     Marquee Sleek — scoped styles (mq- prefix)
+     Marquee Glaze — scoped styles (mq- prefix)
      ============================================================ */
 
   #{{ section_id }} {
@@ -48,7 +48,7 @@
     align-items: center;
     gap: var(--mq-gap);
     padding-right: var(--mq-gap);
-    animation-name: sleek-mq-scroll;
+    animation-name: glaze-mq-scroll;
     animation-duration: {{ speed }}s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
@@ -60,7 +60,7 @@
     animation-play-state: paused;
   }
 
-  @keyframes sleek-mq-scroll {
+  @keyframes glaze-mq-scroll {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
@@ -112,7 +112,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="sleek-mq" data-sleek-mq>
+<div id="{{ section_id }}" class="glaze-mq" data-glaze-mq>
   <div class="mq-viewport">
     <div class="mq-track" data-mq-track>
       {%- comment -%} Render blocks twice for seamless infinite loop {%- endcomment -%}
@@ -143,7 +143,7 @@
 {% schema %}
 {
   "name": "Marquee",
-  "class": "section-marquee-sleek",
+  "class": "section-marquee-glaze",
   "tag": "section",
   "max_blocks": 20,
   "settings": [

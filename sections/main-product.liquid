@@ -345,10 +345,23 @@
   #{{ sid }} .mp__payment-terms:empty { display: none; }
 
   /* ---- Accelerated checkout (Apple Pay, Google Pay, Shop Pay) ---- */
+  /* Accelerated checkout (Shop Pay, Apple Pay, PayPal, Google Pay). Shopify injects these
+     buttons via the payment_button filter on the product form; they ship with their own
+     minimal styling. We push the wrapper down so it doesn't visually collide with our ATC,
+     and feed Shopify's internal CSS variables to round the corners so they match Glaze's
+     pill button shape. */
   #{{ sid }} .mp__accelerated {
     display: block;
+    margin-top: 12px;
+    /* Shopify reads these vars; set them so the rendered buttons aren't square */
+    --shopify-accelerated-checkout-button-border-radius: 100px;
+    --shopify-accelerated-checkout-cart-button-border-radius: 100px;
   }
   #{{ sid }} .mp__accelerated:empty { display: none; }
+  /* Belt-and-suspenders: many merchants still get square corners because Shopify ships
+     newer button widgets that ignore the vars above. Force pill on the injected wrappers. */
+  #{{ sid }} .mp__accelerated .shopify-payment-button__button,
+  #{{ sid }} .mp__accelerated > * { border-radius: 100px !important; }
 
   /* ---- Gift card recipient form ---- */
   #{{ sid }} .mp__gift-recipient {
@@ -403,6 +416,17 @@
   }
   #{{ sid }} .mp__atc:hover { background: {{ section.settings.atc_hover_bg }}; transform: translateY(-1px); }
   #{{ sid }} .mp__atc[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; }
+  /* Loading state — hide button text, override base.css spinner color for dark bg, no dim overlay (button already
+     shows feedback via its disabled appearance). */
+  #{{ sid }} .mp__atc.is-loading { color: transparent; pointer-events: none; }
+  #{{ sid }} .mp__atc.is-loading::after { display: none; }
+  #{{ sid }} .mp__atc.is-loading::before {
+    border-color: rgba(255, 255, 255, 0.25);
+    border-top-color: #fff;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+  }
 
   #{{ sid }} .mp__shipping {
     text-align: center;
@@ -579,7 +603,10 @@
                       aria-label="{{ media.alt | default: product.title | escape }}"
                     >
                       {%- for source in media.sources -%}
+                        {%- comment -%} Product media is already Shopify-CDN-hosted; asset_url doesn't apply. {%- endcomment -%}
+                        {% # theme-check-disable RemoteAsset %}
                         <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                        {% # theme-check-enable RemoteAsset %}
                       {%- endfor -%}
                     </video>
                   {%- when 'model' -%}
@@ -653,7 +680,6 @@
         {%- if section.settings.show_rating -%}
           <div class="mp__rating">
             <span class="mp__stars" aria-label="{{ section.settings.rating_value }} out of 5 stars">
-              {%- assign rv = section.settings.rating_value | times: 1.0 -%}
               {%- for i in (1..5) -%}
                 <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01z"/></svg>
               {%- endfor -%}
@@ -701,7 +727,6 @@
         {%- unless product.has_only_default_variant -%}
           <div class="mp__variants" data-mp-variants>
             {%- for option in product.options_with_values -%}
-              {%- assign option_idx = forloop.index0 -%}
               <div class="mp__option-group">
                 <span class="mp__variant-label" id="{{ sid }}-opt-{{ option.position }}-label">
                   {{ option.name | escape }}:

@@ -7,6 +7,8 @@
     "article": "Article",
     "page": "Page",
     "skip_to_content": "Skip to main content",
+    "country_label": "Country/region",
+    "language_label": "Language",
     "newsletter_form": {
       "confirmation": "Thanks for subscribing — we'll be in touch."
     }
@@ -60,7 +62,14 @@
     "note_toggle": "Add order note",
     "notes_label": "Order note",
     "error": "There was a problem updating your cart. Please try again.",
-    "add_error": "Couldn't add to cart. Please try again."
+    "add_error": "Couldn't add to cart. Please try again.",
+    "summary": "Order summary",
+    "summary_aria": "Order summary",
+    "items_total": {
+      "one": "{{ count }} item",
+      "other": "{{ count }} items"
+    },
+    "discount": "Discount"
   },
   "customer": {
     "account": {

@@ -57,6 +57,13 @@
         <p>{{ 'gift_card.use_at_checkout' | t }}</p>
         <p>{{ gift_card.code | format_code }}</p>
 
+        {%- comment -%}
+          QR code is mandated by the Theme Store spec at a minimum of 120x120px.
+          Shopify auto-registers the <shopify-qr-code> custom element and renders
+          the SVG inline from the gift_card.qr_identifier attribute.
+        {%- endcomment -%}
+        <shopify-qr-code data-identifier="{{ gift_card.qr_identifier }}" data-size="160" style="display:inline-block;width:160px;height:160px;"></shopify-qr-code>
+
         {% if gift_card.pass_url %}
           <a href="{{ gift_card.pass_url }}">
             <img

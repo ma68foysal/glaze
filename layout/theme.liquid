@@ -4,6 +4,17 @@
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
 
+    {%- comment -%}
+      Favicon. Shopify scales whatever the merchant uploads to 32x32, so we
+      hint the right type for both PNG and SVG uploads. The link is skipped
+      when no favicon is set so Shopify's domain default still applies.
+    {%- endcomment -%}
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" sizes="32x32" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+      <link rel="icon" type="image/png" sizes="16x16" href="{{ settings.favicon | image_url: width: 16, height: 16 }}">
+      <link rel="apple-touch-icon" sizes="180x180" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+    {%- endif -%}
+
     {% comment %}
       Preconnect to Shopify's image CDN so product / collection / slideshow images
       negotiate TLS in parallel with the rest of the page download.
@@ -73,8 +84,14 @@
 
     {%- if settings.cart_type == 'drawer' -%}
       {% section 'cart-drawer' %}
-      <script src="{{ 'glaze-cart.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
+
+    {%- comment -%}
+      glaze-cart.js powers the drawer AND the cart-page live updates
+      (qty change / remove without a button). Load it everywhere so the cart
+      page works even when cart_type == 'page'.
+    {%- endcomment -%}
+    <script src="{{ 'glaze-cart.js' | asset_url }}" defer="defer"></script>
 
     {%- if settings.enable_smooth_scroll -%}
       {%- comment -%}
@@ -98,7 +115,7 @@
 
             // Pause/resume around modals + drawers
             function refreshLockedState() {
-              const hasOpen = document.querySelector('predictive-search[open], .sleek-drawer.is-open, dialog[open]');
+              const hasOpen = document.querySelector('predictive-search[open], .glaze-drawer.is-open, dialog[open]');
               if (hasOpen) { lenis.stop(); } else { lenis.start(); }
             }
             const mo = new MutationObserver(refreshLockedState);

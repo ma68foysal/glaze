@@ -1,10 +1,10 @@
 {%- liquid
-  assign section_id = 'sleek-stc-' | append: section.id
+  assign section_id = 'glaze-stc-' | append: section.id
 -%}
 
 <style>
   /* ============================================================
-     Sticky Collections Sleek — scoped styles (stc- prefix)
+     Sticky Collections Glaze — scoped styles (stc- prefix)
      ============================================================ */
 
   #{{ section_id }} {
@@ -294,7 +294,7 @@
     will-change: transform;
   }
 
-  /* -------- Card (match Featured Product Sleek) -------- */
+  /* -------- Card (match Featured Product Glaze) -------- */
   .stc-card {
     flex: 0 0 calc((100% - 16px) / 2);
     position: relative;
@@ -596,7 +596,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="sleek-stc" data-sleek-stc>
+<div id="{{ section_id }}" class="glaze-stc" data-glaze-stc>
   <div class="stc-wrap">
 
     {%- if section.settings.head_title != blank or section.settings.head_desc != blank or section.settings.head_link_label != blank -%}
@@ -1023,16 +1023,28 @@
       var atcBtn = modalBody.querySelector('[data-stc-modal-atc]');
       atcBtn.addEventListener('click', function () {
         var v = findVariant(); if (!v || !v.available) return;
-        atcBtn.textContent = 'Adding…';
+        atcBtn.classList.add('is-loading');
         atcBtn.setAttribute('disabled', 'disabled');
-        addToCart(v.id, state.qty).then(function () { closeModal(); }).catch(function () { atcBtn.textContent = 'Try again'; atcBtn.removeAttribute('disabled'); });
+        addToCart(v.id, state.qty, atcBtn)
+          .then(function () { closeModal(); })
+          .catch(function (err) { console.error('[sticky-collections]', err); })
+          .finally(function () { atcBtn.classList.remove('is-loading'); atcBtn.removeAttribute('disabled'); });
       });
 
       var buyBtn = modalBody.querySelector('[data-stc-modal-buy]');
       buyBtn.addEventListener('click', function () {
         var v = findVariant(); if (!v || !v.available) return;
-        buyBtn.textContent = 'Processing…';
-        addToCart(v.id, state.qty).then(function () { window.location.href = '/checkout'; }).catch(function () { buyBtn.textContent = 'Buy It Now'; });
+        buyBtn.classList.add('is-loading');
+        // Buy-now: add the line, skip drawer open, then jump to /checkout.
+        if (window.GlazeCart && typeof window.GlazeCart.addToCart === 'function') {
+          window.GlazeCart.addToCart(v.id, { quantity: state.qty, sourceButton: buyBtn, openDrawer: false, source: 'sticky-collections:buy-now' })
+            .then(function () { window.location.href = '/checkout'; })
+            .catch(function (err) { console.error('[sticky-collections]', err); buyBtn.classList.remove('is-loading'); });
+        } else {
+          addToCart(v.id, state.qty, buyBtn)
+            .then(function () { window.location.href = '/checkout'; })
+            .catch(function (err) { console.error('[sticky-collections]', err); buyBtn.classList.remove('is-loading'); });
+        }
       });
 
       refresh();
@@ -1044,60 +1056,32 @@
         e.preventDefault(); e.stopPropagation();
         var id = btn.getAttribute('data-stc-atc');
         if (!id) return;
-        var lab = btn.querySelector('.stc-card-cta-label');
-        var original = lab ? lab.textContent : '';
-        if (lab) lab.textContent = 'Adding…';
+        btn.classList.add('is-loading');
         btn.setAttribute('disabled', 'disabled');
-        addToCart(id, 1).then(function () {
-          if (lab) lab.textContent = original;
-          btn.removeAttribute('disabled');
-        }).catch(function () {
-          if (lab) lab.textContent = 'Try again';
-          btn.removeAttribute('disabled');
-        });
+        addToCart(id, 1, btn)
+          .catch(function (err) { console.error('[sticky-collections]', err); })
+          .finally(function () {
+            btn.classList.remove('is-loading');
+            btn.removeAttribute('disabled');
+          });
       });
     });
 
-    // Cart helpers (prefer cart-drawer, fallback cart-notification)
-    function getCart() { return document.querySelector('cart-drawer') || document.querySelector('cart-notification'); }
-
-    function safeRenderOrOpen(cart, data) {
-      if (!cart) return;
-      if (typeof cart.renderContents === 'function') {
-        try {
-          if (cart.classList.contains('is-empty')) cart.classList.remove('is-empty');
-          if (typeof cart.setActiveElement === 'function') cart.setActiveElement(document.activeElement);
-          cart.renderContents(data);
-          return;
-        } catch (e) { console.warn('[sticky-collections-sleek] renderContents failed:', e); }
+    // Thin wrapper around the universal helper in glaze-cart.js.
+    function addToCart(id, quantity, sourceBtn) {
+      if (window.GlazeCart && typeof window.GlazeCart.addToCart === 'function') {
+        return window.GlazeCart.addToCart(id, {
+          quantity: quantity,
+          sourceButton: sourceBtn || null,
+          source: 'sticky-collections'
+        });
       }
-      if (typeof cart.open === 'function') { try { cart.open(); } catch (e) {} }
-    }
-
-    function addToCart(id, quantity) {
-      var cart = getCart();
-      var body = { id: parseInt(id, 10), quantity: parseInt(quantity, 10) || 1, sections_url: window.location.pathname };
-      if (cart && typeof cart.getSectionsToRender === 'function') {
-        body.sections = cart.getSectionsToRender().map(function (s) { return s.id; }).join(',');
-      }
-      var url = (window.routes && window.routes.cart_add_url) ? window.routes.cart_add_url : '/cart/add.js';
+      var url = (window.routes && window.routes.cart_add_url) || '/cart/add.js';
       return fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/javascript', 'X-Requested-With': 'XMLHttpRequest' },
-        body: JSON.stringify(body)
-      }).then(function (r) {
-        return r.json().then(function (data) {
-          if (!r.ok || data.status) throw new Error(data.description || data.message || 'Add to cart failed');
-          return data;
-        });
-      }).then(function (data) {
-        safeRenderOrOpen(cart, data);
-        if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined' && PUB_SUB_EVENTS.cartUpdate) {
-          publish(PUB_SUB_EVENTS.cartUpdate, { source: 'sticky-collections-sleek', cartData: data });
-        }
-        document.dispatchEvent(new CustomEvent('cart:refresh', { detail: data }));
-        return data;
-      });
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ id: parseInt(id, 10), quantity: parseInt(quantity, 10) || 1 })
+      }).then(function () { window.location.href = (window.routes && window.routes.cart_url) || '/cart'; });
     }
   })();
 </script>
@@ -1105,7 +1089,7 @@
 {% schema %}
 {
   "name": "Sticky collections",
-  "class": "section-sticky-collections-sleek",
+  "class": "section-sticky-collections-glaze",
   "tag": "section",
   "max_blocks": 6,
   "settings": [

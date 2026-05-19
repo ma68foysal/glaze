@@ -1,10 +1,10 @@
 {%- liquid
-  assign section_id = 'sleek-pb-' | append: section.id
+  assign section_id = 'glaze-pb-' | append: section.id
 -%}
 
 <style>
   /* ============================================================
-     Product Bundle Sleek — scoped styles (pb- prefix)
+     Product Bundle Glaze — scoped styles (pb- prefix)
      ============================================================ */
 
   #{{ section_id }} {
@@ -368,7 +368,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="sleek-pb" data-sleek-pb>
+<div id="{{ section_id }}" class="glaze-pb" data-glaze-pb>
   <div class="pb-wrap">
     <div class="pb-grid">
 
@@ -526,12 +526,6 @@
     });
 
     // ------- Add All To Cart -------
-    // Prefer cart-drawer for bulk adds: cart-notification uses a single-item `key`
-    // that's undefined for bulk POSTs and crashes its renderContents.
-    function getCart() {
-      return document.querySelector('cart-drawer') || document.querySelector('cart-notification');
-    }
-
     function getSelectedVariants() {
       var ids = [];
       items.forEach(function (item) {
@@ -549,87 +543,46 @@
       return ids;
     }
 
-    function safeRenderOrOpen(cart, data) {
-      if (!cart) return;
-      if (typeof cart.renderContents === 'function') {
-        try {
-          if (cart.classList.contains('is-empty')) cart.classList.remove('is-empty');
-          if (typeof cart.setActiveElement === 'function') cart.setActiveElement(document.activeElement);
-          cart.renderContents(data);
-          return;
-        } catch (e) {
-          console.warn('[product-bundle-sleek] renderContents failed, opening directly:', e);
-        }
-      }
-      if (typeof cart.open === 'function') {
-        try { cart.open(); } catch (e) { /* noop */ }
-      }
-    }
-
-    function addOne(id, includeSections, cart) {
-      var cartAddUrl = (window.routes && window.routes.cart_add_url) ? window.routes.cart_add_url : '/cart/add.js';
-      var body = {
-        id: id,
-        quantity: 1,
-        sections_url: window.location.pathname
-      };
-      if (includeSections && cart && typeof cart.getSectionsToRender === 'function') {
-        body.sections = cart.getSectionsToRender().map(function (s) { return s.id; }).join(',');
-      }
-      return fetch(cartAddUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/javascript',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(body)
-      }).then(function (r) {
-        return r.json().then(function (data) {
-          if (!r.ok || data.status) {
-            throw new Error(data.description || data.message || 'Add to cart failed');
-          }
-          return data;
-        });
-      });
-    }
-
     if (btn) {
       btn.addEventListener('click', function () {
         var variantIds = getSelectedVariants();
         if (!variantIds.length) {
-          console.warn('[product-bundle-sleek] No variant IDs collected. Check that blocks have products selected.');
+          console.warn('[product-bundle] No variant IDs collected. Check that blocks have products selected.');
           return;
         }
 
-        var cart = getCart();
         btn.setAttribute('disabled', 'disabled');
-        var span = btn.querySelector('span');
-        var originalText = span ? span.textContent : '';
-        if (span) span.textContent = 'Adding…';
+        btn.classList.add('is-loading');
 
-        // Sequentially add each variant so cart-notification (which needs a per-item key)
-        // gets a valid single-item response on the LAST add to hand to renderContents.
+        // Sequentially add each variant — only the LAST call opens the drawer
+        // so the user sees the fully-built cart instead of a flash per item.
         var promise = Promise.resolve(null);
         variantIds.forEach(function (id, idx) {
           var isLast = idx === variantIds.length - 1;
-          promise = promise.then(function () { return addOne(id, isLast, cart); });
+          promise = promise.then(function () {
+            if (window.GlazeCart && typeof window.GlazeCart.addToCart === 'function') {
+              return window.GlazeCart.addToCart(id, {
+                quantity: 1,
+                sourceButton: isLast ? btn : null,
+                openDrawer: isLast,
+                source: 'product-bundle'
+              });
+            }
+            // Fallback: minimal /cart/add.js fetch (no drawer open).
+            var url = (window.routes && window.routes.cart_add_url) || '/cart/add.js';
+            return fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ id: id, quantity: 1 })
+            }).then(function (r) { return r.json(); });
+          });
         });
 
-        promise.then(function (lastData) {
-          safeRenderOrOpen(cart, lastData);
-          if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined' && PUB_SUB_EVENTS.cartUpdate) {
-            publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-bundle-sleek', cartData: lastData });
-          }
-          document.dispatchEvent(new CustomEvent('cart:refresh', { detail: lastData }));
-        }).catch(function (err) {
-          console.error('[product-bundle-sleek]', err);
-          if (span) span.textContent = 'Try again';
+        promise.catch(function (err) {
+          console.error('[product-bundle]', err);
         }).finally(function () {
           btn.removeAttribute('disabled');
-          setTimeout(function () {
-            if (span && span.textContent !== originalText) span.textContent = originalText;
-          }, 1800);
+          btn.classList.remove('is-loading');
         });
       });
     }
@@ -639,7 +592,7 @@
 {% schema %}
 {
   "name": "Product bundle",
-  "class": "section-product-bundle-sleek",
+  "class": "section-product-bundle-glaze",
   "tag": "section",
   "max_blocks": 8,
   "settings": [

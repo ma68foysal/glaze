@@ -15,24 +15,34 @@
     --font-heading--family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
     --font-heading--style: {{ settings.type_heading_font.style }};
     --font-heading--weight: {{ settings.type_heading_font.weight }};
-    --page-width: {{ settings.max_page_width }};
+    --page-width: {{ settings.max_page_width }}px;
     --page-margin: {{ settings.min_page_margin }}px;
     --color-background: {{ settings.background_color }};
     --color-foreground: {{ settings.foreground_color }};
     --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
 
-    /* Glaze design tokens — used by default templates (404, cart, collection, etc.)
-       so they inherit the brand without duplicating CSS in each section. */
-    --g-cream: #fbe9e8;
+    /* Glaze design tokens — drive section defaults (404, cart, collection, etc.)
+       so the theme inherits merchant colour choices without per-section duplication.
+       The hardcoded fallbacks (#fbe9e8 etc.) are only used if a setting is blank. */
+    --g-bg: {{ settings.background_color | default: '#ffffff' }};
+    --g-fg: {{ settings.foreground_color | default: '#1a1a1a' }};
+    --g-cream: {{ settings.secondary_background | default: '#fbe9e8' }};
+    --g-cream-fg: {{ settings.secondary_foreground | default: '#1a1a1a' }};
+    --g-accent: {{ settings.accent_background | default: '#111111' }};
+    --g-accent-fg: {{ settings.accent_foreground | default: '#ffffff' }};
+    --g-card-bg: {{ settings.card_background | default: '#ffffff' }};
+    --g-card-fg: {{ settings.card_foreground | default: '#1a1a1a' }};
+
+    /* Brand-fixed shades derived from the cream/ink palette — these stay as
+       theme constants because they're tonal helpers, not merchant-facing. */
     --g-cream-soft: #fae6e4;
     --g-cream-warm: #f5d8d5;
     --g-rose: #e8a5a0;
-    --g-ink: #1a1a1a;
+    --g-ink: var(--g-fg);
     --g-ink-soft: #444444;
     --g-muted: #7a7a7a;
     --g-muted-strong: #555555;
     --g-line: #00000014;
-    --g-card-bg: #ffffff;
     --g-star: #f59e0b;
     --g-success-bg: #e9f7ec;
     --g-success-fg: #1d6b2e;

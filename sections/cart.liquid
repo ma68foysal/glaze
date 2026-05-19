@@ -30,142 +30,178 @@
       </div>
     {%- else -%}
       <form action="{{ routes.cart_url }}" method="post" novalidate class="glaze-cart__form" id="{{ section_id }}-form">
-        <ul class="glaze-cart__items" role="list">
-          {%- for item in cart.items -%}
-            <li class="glaze-cart__item" data-key="{{ item.key }}">
-              <a class="glaze-cart__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
-                {%- if item.image -%}
-                  {{ item.image | image_url: width: 240 | image_tag:
-                      loading: 'lazy',
-                      sizes: '120px',
-                      widths: '120, 180, 240',
-                      alt: item.image.alt | default: item.product.title | escape
-                  }}
-                {%- endif -%}
-              </a>
+        <div class="glaze-cart__grid">
 
-              <div class="glaze-cart__body">
-                <a class="glaze-cart__title" href="{{ item.url }}">{{ item.product.title | escape }}</a>
+          {%- comment -%} ============ LEFT: items + cart-level discounts + notes ============ {%- endcomment -%}
+          <div class="glaze-cart__main">
+            <glaze-cart-items class="glaze-cart__items-wrap">
+            <ul class="glaze-cart__items" role="list">
+              {%- for item in cart.items -%}
+                <li class="glaze-cart__item" data-key="{{ item.key }}">
+                  <a class="glaze-cart__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+                    {%- if item.image -%}
+                      {{ item.image | image_url: width: 240 | image_tag:
+                          loading: 'lazy',
+                          sizes: '120px',
+                          widths: '120, 180, 240',
+                          alt: item.image.alt | default: item.product.title | escape
+                      }}
+                    {%- endif -%}
+                  </a>
 
-                {%- unless item.product.has_only_default_variant -%}
-                  <p class="glaze-cart__options">{{ item.variant.title | escape }}</p>
-                {%- endunless -%}
+                  <div class="glaze-cart__body">
+                    <a class="glaze-cart__title" href="{{ item.url }}">{{ item.product.title | escape }}</a>
 
-                {%- if item.selling_plan_allocation -%}
-                  <p class="glaze-cart__selling-plan">{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>
-                {%- endif -%}
+                    {%- unless item.product.has_only_default_variant -%}
+                      <p class="glaze-cart__options">{{ item.variant.title | escape }}</p>
+                    {%- endunless -%}
 
-                {%- for property in item.properties -%}
-                  {%- assign first_char = property.first | slice: 0 -%}
-                  {%- if first_char != '_' and property.last != blank -%}
-                    <p class="glaze-cart__property">
-                      <span>{{ property.first | escape }}:</span>
-                      {% if property.last contains '/uploads/' %}
-                        <a href="{{ property.last }}" target="_blank" rel="noopener">{{ property.last | split: '/' | last | escape }}</a>
-                      {% else %}
-                        {{ property.last | escape }}
-                      {% endif %}
-                    </p>
-                  {%- endif -%}
-                {%- endfor -%}
+                    {%- if item.selling_plan_allocation -%}
+                      <p class="glaze-cart__selling-plan">{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>
+                    {%- endif -%}
 
-                {%- if item.line_level_discount_allocations.size > 0 -%}
-                  <ul class="glaze-cart__discounts" aria-label="{{ 'cart.discounts_aria' | t }}">
-                    {%- for discount in item.line_level_discount_allocations -%}
-                      <li>{{ discount.discount_application.title | escape }} (-{{ discount.amount | money }})</li>
+                    {%- for property in item.properties -%}
+                      {%- assign first_char = property.first | slice: 0 -%}
+                      {%- if first_char != '_' and property.last != blank -%}
+                        <p class="glaze-cart__property">
+                          <span>{{ property.first | escape }}:</span>
+                          {% if property.last contains '/uploads/' %}
+                            <a href="{{ property.last }}" target="_blank" rel="noopener">{{ property.last | split: '/' | last | escape }}</a>
+                          {% else %}
+                            {{ property.last | escape }}
+                          {% endif %}
+                        </p>
+                      {%- endif -%}
                     {%- endfor -%}
-                  </ul>
-                {%- endif -%}
 
-                <div class="glaze-cart__row">
-                  <div class="glaze-cart__qty">
-                    <label for="updates_{{ item.key }}" class="visually-hidden">
-                      {{ 'cart.qty_label' | t: title: item.product.title }}
-                    </label>
-                    <button type="button" class="glaze-cart__qty-btn" aria-label="{{ 'cart.qty_decrease' | t }}" data-qty-step="-1" data-target="updates_{{ item.key }}">−</button>
-                    <input
-                      type="number"
-                      id="updates_{{ item.key }}"
-                      name="updates[{{ item.key }}]"
-                      value="{{ item.quantity }}"
-                      min="0"
-                      inputmode="numeric"
-                      pattern="[0-9]*"
-                      data-qty-input
-                    >
-                    <button type="button" class="glaze-cart__qty-btn" aria-label="{{ 'cart.qty_increase' | t }}" data-qty-step="1" data-target="updates_{{ item.key }}">+</button>
-                  </div>
-
-                  <div class="glaze-cart__prices">
-                    {%- if item.original_line_price != item.final_line_price -%}
-                      <s class="glaze-cart__compare">{{ item.original_line_price | money }}</s>
-                      <span class="glaze-cart__price">{{ item.final_line_price | money }}</span>
-                    {%- else -%}
-                      <span class="glaze-cart__price">{{ item.final_line_price | money }}</span>
+                    {%- if item.line_level_discount_allocations.size > 0 -%}
+                      <ul class="glaze-cart__discounts" aria-label="{{ 'cart.discounts_aria' | t }}">
+                        {%- for discount in item.line_level_discount_allocations -%}
+                          <li>{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</li>
+                        {%- endfor -%}
+                      </ul>
                     {%- endif -%}
-                    {%- if item.unit_price_measurement -%}
-                      <span class="glaze-cart__unit">
-                        {{ item.unit_price | money }}/{% if item.unit_price_measurement.reference_value != 1 %}{{ item.unit_price_measurement.reference_value }}{% endif %}{{ item.unit_price_measurement.reference_unit }}
-                      </span>
-                    {%- endif -%}
+
+                    <div class="glaze-cart__row">
+                      <div class="glaze-cart__qty">
+                        <label for="updates_{{ item.key }}" class="visually-hidden">
+                          {{ 'cart.qty_label' | t: title: item.product.title }}
+                        </label>
+                        <button type="button" class="glaze-cart__qty-btn" aria-label="{{ 'cart.qty_decrease' | t }}" data-qty-step="-1" data-target="updates_{{ item.key }}">−</button>
+                        <input
+                          type="number"
+                          id="updates_{{ item.key }}"
+                          name="updates[{{ item.key }}]"
+                          value="{{ item.quantity }}"
+                          min="0"
+                          inputmode="numeric"
+                          pattern="[0-9]*"
+                          data-qty-input
+                          data-glaze-cart-qty-input
+                          data-key="{{ item.key }}"
+                        >
+                        <button type="button" class="glaze-cart__qty-btn" aria-label="{{ 'cart.qty_increase' | t }}" data-qty-step="1" data-target="updates_{{ item.key }}">+</button>
+                      </div>
+
+                      <div class="glaze-cart__prices">
+                        {%- if item.original_line_price != item.final_line_price -%}
+                          <s class="glaze-cart__compare">{{ item.original_line_price | money }}</s>
+                          <span class="glaze-cart__price">{{ item.final_line_price | money }}</span>
+                        {%- else -%}
+                          <span class="glaze-cart__price">{{ item.final_line_price | money }}</span>
+                        {%- endif -%}
+                        {%- if item.unit_price_measurement -%}
+                          <span class="glaze-cart__unit">
+                            {{ item.unit_price | money }}/{% if item.unit_price_measurement.reference_value != 1 %}{{ item.unit_price_measurement.reference_value }}{% endif %}{{ item.unit_price_measurement.reference_unit }}
+                          </span>
+                        {%- endif -%}
+                      </div>
+                    </div>
+
+                    <glaze-cart-remove data-key="{{ item.key }}">
+                      <button type="button" class="glaze-cart__remove" aria-label="{{ 'cart.remove_aria' | t: title: item.product.title }}">
+                        {{ 'cart.remove' | t }}
+                      </button>
+                    </glaze-cart-remove>
                   </div>
-                </div>
+                </li>
+              {%- endfor -%}
+            </ul>
+            </glaze-cart-items>
 
-                <a class="glaze-cart__remove" href="{{ item.url_to_remove }}" aria-label="{{ 'cart.remove_aria' | t: title: item.product.title }}">
-                  {{ 'cart.remove' | t }}
-                </a>
-              </div>
-            </li>
-          {%- endfor -%}
-        </ul>
-
-        {%- if cart.cart_level_discount_applications.size > 0 -%}
-          <ul class="glaze-cart__cart-discounts" aria-label="{{ 'cart.cart_discounts_aria' | t }}">
-            {%- for discount in cart.cart_level_discount_applications -%}
-              <li>{{ discount.title | escape }} (-{{ discount.total_allocated_amount | money }})</li>
-            {%- endfor -%}
-          </ul>
-        {%- endif -%}
-
-        {%- if show_notes -%}
-          <div class="glaze-cart__notes">
-            <label for="{{ section_id }}-notes">{{ notes_label | escape }}</label>
-            <textarea
-              id="{{ section_id }}-notes"
-              name="note"
-              rows="3"
-            >{{ cart.note }}</textarea>
-          </div>
-        {%- endif -%}
-
-        <div class="glaze-cart__summary">
-          <div class="glaze-cart__subtotal-row">
-            <span>{{ 'cart.subtotal' | t }}</span>
-            <span class="glaze-cart__subtotal">{{ cart.total_price | money_with_currency }}</span>
-          </div>
-
-          <p class="glaze-cart__tax-note">
-            {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
-              {{ 'cart.tax_and_shipping_at_checkout_html' | t: link: shop.shipping_policy.url }}
-            {%- elsif cart.taxes_included -%}
-              {{ 'cart.tax_included_shipping_at_checkout' | t }}
-            {%- elsif shop.shipping_policy.body != blank -%}
-              {{ 'cart.tax_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
-            {%- else -%}
-              {{ 'cart.tax_and_shipping_at_checkout' | t }}
+            {%- if cart.cart_level_discount_applications.size > 0 -%}
+              <ul class="glaze-cart__cart-discounts" aria-label="{{ 'cart.cart_discounts_aria' | t }}">
+                {%- for discount in cart.cart_level_discount_applications -%}
+                  <li>{{ discount.title | escape }} (−{{ discount.total_allocated_amount | money }})</li>
+                {%- endfor -%}
+              </ul>
             {%- endif -%}
-          </p>
 
-          <div class="glaze-cart__actions">
-            <button type="submit" name="update" class="glaze-btn glaze-btn--ghost">{{ 'cart.update' | t }}</button>
-            <button type="submit" name="checkout" class="glaze-btn glaze-btn--solid">{{ 'cart.checkout' | t }}</button>
+            {%- if show_notes -%}
+              <div class="glaze-cart__notes">
+                <label for="{{ section_id }}-notes">{{ notes_label | escape }}</label>
+                <textarea
+                  id="{{ section_id }}-notes"
+                  name="note"
+                  rows="3"
+                  placeholder="{{ notes_label | escape }}"
+                >{{ cart.note }}</textarea>
+              </div>
+            {%- endif -%}
           </div>
 
-          {%- if additional_checkout_buttons -%}
-            <div class="glaze-cart__additional" aria-label="{{ 'cart.additional_checkout' | t }}">
-              {{ content_for_additional_checkout_buttons }}
-            </div>
-          {%- endif -%}
+          {%- comment -%} ============ RIGHT: sticky order summary ============ {%- endcomment -%}
+          <aside class="glaze-cart__summary" aria-label="{{ 'cart.summary_aria' | t }}">
+            <h2 class="glaze-cart__summary-heading">{{ 'cart.summary' | t }}</h2>
+
+            <dl class="glaze-cart__summary-list">
+              <div class="glaze-cart__summary-row">
+                <dt>{{ 'cart.items_total' | t: count: cart.item_count }}</dt>
+                <dd>{{ cart.items_subtotal_price | money_with_currency }}</dd>
+              </div>
+              {%- if cart.total_discounts > 0 -%}
+                <div class="glaze-cart__summary-row glaze-cart__summary-row--discount">
+                  <dt>{{ 'cart.discount' | t }}</dt>
+                  <dd>−{{ cart.total_discounts | money_with_currency }}</dd>
+                </div>
+              {%- endif -%}
+              <div class="glaze-cart__summary-row glaze-cart__summary-row--total">
+                <dt>{{ 'cart.subtotal' | t }}</dt>
+                <dd>{{ cart.total_price | money_with_currency }}</dd>
+              </div>
+            </dl>
+
+            <p class="glaze-cart__tax-note">
+              {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+                {{ 'cart.tax_and_shipping_at_checkout_html' | t: link: shop.shipping_policy.url }}
+              {%- elsif cart.taxes_included -%}
+                {{ 'cart.tax_included_shipping_at_checkout' | t }}
+              {%- elsif shop.shipping_policy.body != blank -%}
+                {{ 'cart.tax_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+              {%- else -%}
+                {{ 'cart.tax_and_shipping_at_checkout' | t }}
+              {%- endif -%}
+            </p>
+
+            <button
+              type="submit"
+              name="checkout"
+              class="glaze-btn glaze-btn--solid glaze-btn--full glaze-cart__checkout"
+            >
+              {{ 'cart.checkout' | t }}
+            </button>
+
+            {%- if additional_checkout_buttons -%}
+              <div class="glaze-cart__additional" aria-label="{{ 'cart.additional_checkout' | t }}">
+                {{ content_for_additional_checkout_buttons }}
+              </div>
+            {%- endif -%}
+
+            <a class="glaze-cart__continue" href="{{ continue_link | default: routes.all_products_collection_url }}">
+              ← {{ continue_label | escape }}
+            </a>
+          </aside>
+
         </div>
       </form>
     {%- endif -%}
@@ -176,6 +212,9 @@
   (function () {
     var section = document.getElementById('{{ section_id }}');
     if (!section) return;
+    // +/- buttons bump the input and dispatch `change` so <glaze-cart-items>
+    // (which listens on its own change event) fires /cart/change.js immediately.
+    // getElementById is used because line-item keys contain ":" which breaks #id selectors.
     section.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-qty-step]');
       if (!btn) return;
@@ -184,7 +223,20 @@
       if (!input) return;
       var next = Math.max(0, (parseInt(input.value, 10) || 0) + step);
       input.value = next;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
     });
+    // Submitting the form is now a no-op for line updates (no Update button) —
+    // but the Checkout button still submits with name="checkout". Block any
+    // accidental Enter-key submit from a qty input so it doesn't navigate.
+    var form = document.getElementById('{{ section_id }}-form');
+    if (form) {
+      form.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && e.target && e.target.matches('input[type="number"]')) {
+          e.preventDefault();
+          e.target.blur();
+        }
+      });
+    }
   })();
 </script>
 
@@ -196,9 +248,22 @@
     padding: 64px 24px 96px;
   }
   .glaze-cart__inner {
-    max-width: 960px;
+    max-width: 1200px;
     margin: 0 auto;
   }
+  .glaze-cart__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (min-width: 900px) {
+    .glaze-cart__grid {
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 40px;
+    }
+  }
+  .glaze-cart__main { min-width: 0; }
   .glaze-cart__header {
     display: flex;
     align-items: baseline;
@@ -223,11 +288,14 @@
     background: var(--g-card-bg);
     border-radius: var(--g-radius-lg);
     padding: 64px 24px;
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 24px;
-    justify-items: center;
   }
   .glaze-cart__empty-text { font-size: 18px; margin: 0; }
+  .glaze-cart__empty .glaze-btn { align-self: center; }
   .glaze-cart__items { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 16px; }
   .glaze-cart__item {
     display: grid;
@@ -334,8 +402,14 @@
     min-height: var(--g-touch);
     display: inline-flex;
     align-items: center;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font-family: inherit;
+    cursor: pointer;
   }
   .glaze-cart__remove:hover { color: var(--g-ink); }
+  .glaze-cart__remove:focus-visible { outline: 2px solid var(--g-ink); outline-offset: 2px; border-radius: 2px; }
   .glaze-cart__notes {
     margin: 24px 0;
     display: grid;
@@ -356,20 +430,59 @@
     min-height: 80px;
   }
   .glaze-cart__notes textarea:focus { outline: 2px solid var(--g-rose); outline-offset: 2px; }
+  /* ============ Right-rail sticky order summary ============ */
   .glaze-cart__summary {
     background: var(--g-card-bg);
     border-radius: var(--g-radius-lg);
-    padding: 24px;
+    padding: 28px 24px;
     display: grid;
     gap: 16px;
   }
-  .glaze-cart__subtotal-row {
+  @media (min-width: 900px) {
+    .glaze-cart__summary {
+      position: sticky;
+      top: 24px;
+    }
+  }
+  .glaze-cart__summary-heading {
+    font-family: var(--g-display-font);
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--g-line);
+  }
+  .glaze-cart__summary-list {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .glaze-cart__summary-row {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 16px;
+    font-size: 14px;
   }
-  .glaze-cart__subtotal {
+  .glaze-cart__summary-row dt,
+  .glaze-cart__summary-row dd {
+    margin: 0;
+  }
+  .glaze-cart__summary-row dt { color: var(--g-muted); }
+  .glaze-cart__summary-row dd { color: var(--g-ink); font-weight: 500; }
+  .glaze-cart__summary-row--discount dd { color: var(--g-success-fg); }
+  .glaze-cart__summary-row--total {
+    padding-top: 12px;
+    border-top: 1px solid var(--g-line);
+    margin-top: 4px;
+    font-size: 16px;
+  }
+  .glaze-cart__summary-row--total dt {
+    color: var(--g-ink);
+    font-weight: 600;
+  }
+  .glaze-cart__summary-row--total dd {
     font-family: var(--g-display-font);
     font-size: 22px;
     font-weight: 600;
@@ -377,20 +490,64 @@
   .glaze-cart__tax-note {
     margin: 0;
     color: var(--g-muted);
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.5;
   }
   .glaze-cart__tax-note a { color: inherit; text-underline-offset: 3px; }
-  .glaze-cart__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-end;
+  .glaze-cart__checkout {
+    margin-top: 4px;
   }
-  .glaze-cart__actions button { flex: 1 1 auto; min-width: 160px; }
   .glaze-cart__additional {
     display: grid;
     gap: 8px;
   }
+  /* Reset Shopify-injected accelerated checkout button container to a clean column */
+  .glaze-cart__additional > * {
+    display: block;
+    width: 100%;
+  }
+  /* Live update feedback: while /cart/change.js is in flight, suppress the
+     universal full-row overlay/spinner from base.css and instead overlay the
+     image only. The row stays fully readable; just the thumbnail dims with a
+     centered spinner so the user knows that line is updating. */
+  .glaze-cart__item.is-loading { pointer-events: none; }
+  .glaze-cart__item.is-loading::before,
+  .glaze-cart__item.is-loading::after {
+    content: none !important;
+    display: none !important;
+  }
+  .glaze-cart__item.is-loading .glaze-cart__media { position: relative; }
+  .glaze-cart__item.is-loading .glaze-cart__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: inherit;
+    z-index: 1;
+  }
+  .glaze-cart__item.is-loading .glaze-cart__media::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    border: 2px solid rgba(0, 0, 0, 0.15);
+    border-top-color: var(--g-ink);
+    border-radius: 50%;
+    animation: glaze-spin 0.7s linear infinite;
+    z-index: 2;
+  }
+  .glaze-cart__continue {
+    text-align: center;
+    color: var(--g-muted);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 8px 0;
+    min-height: 24px;
+  }
+  .glaze-cart__continue:hover { color: var(--g-ink); }
   /* .glaze-btn family + .visually-hidden live in assets/base.css */
 {% endstylesheet %}
 

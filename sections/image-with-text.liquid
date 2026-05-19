@@ -1,10 +1,10 @@
 {%- liquid
-  assign section_id = 'sleek-iwt-' | append: section.id
+  assign section_id = 'glaze-iwt-' | append: section.id
 -%}
 
 <style>
   /* ============================================================
-     Image With Text Sleek — scoped styles (iwt- prefix)
+     Image With Text Glaze — scoped styles (iwt- prefix)
      ============================================================ */
 
   #{{ section_id }} {
@@ -163,7 +163,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="sleek-iwt">
+<div id="{{ section_id }}" class="glaze-iwt">
   <div class="iwt-wrap">
     <div class="iwt-grid" data-image-side="{{ section.settings.image_side }}">
 
@@ -195,7 +195,7 @@
 {% schema %}
 {
   "name": "Image with text",
-  "class": "section-image-with-text-sleek",
+  "class": "section-image-with-text-glaze",
   "tag": "section",
   "settings": [
     {

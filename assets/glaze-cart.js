@@ -1,3 +1,17 @@
+/* eslint-disable no-console */
+// Toggle [data-debug-cart] on <body> to silence logs in production. Default ON
+// while we're stabilising the cart system; flip to false before submission.
+var GLAZE_CART_DEBUG = true;
+function clog() {
+  if (!GLAZE_CART_DEBUG) return;
+  var args = ['[glaze-cart]'].concat(Array.prototype.slice.call(arguments));
+  try { console.log.apply(console, args); } catch (e) {}
+}
+function cwarn() {
+  var args = ['[glaze-cart]'].concat(Array.prototype.slice.call(arguments));
+  try { console.warn.apply(console, args); } catch (e) {}
+}
+
 /**
  * Glaze cart system — drawer + product-form ATC interceptor.
  *
@@ -31,6 +45,20 @@
       clearTimeout(t);
       t = setTimeout(function () { fn.apply(ctx, args); }, wait);
     };
+  }
+
+  // Shopify exposes routes.cart_* as the HTML form endpoints (e.g. "/cart/change"),
+  // not the JSON endpoints. POSTing to the form endpoint returns a 302 → /cart with
+  // a Clear-Site-Data header instead of JSON, so we always force ".js".
+  function cartJsUrl(routeUrl, fallback) {
+    var u = routeUrl || fallback;
+    if (!u) return fallback;
+    // Strip query/hash for the suffix check, then re-append.
+    var qIdx = u.search(/[?#]/);
+    var path = qIdx === -1 ? u : u.slice(0, qIdx);
+    var rest = qIdx === -1 ? '' : u.slice(qIdx);
+    if (!/\.js$/.test(path)) path += '.js';
+    return path + rest;
   }
 
   function fetchJSON(url, opts) {
@@ -107,33 +135,54 @@
 
   // Apply a full /cart/add.js or /cart/change.js response that included
   // `sections: { 'cart-drawer': '...', 'cart-icon-bubble': '...' }` HTML strings.
+  // Returns true if at least one section was successfully swapped — callers
+  // use this to know whether they need a manual is-loading cleanup fallback.
   function applyCartSections(sectionsObj) {
-    if (!sectionsObj) return;
+    if (!sectionsObj) {
+      cwarn('applyCartSections: no sections in response — Section Rendering API likely missing sections_url param OR Shopify error');
+      return false;
+    }
+    clog('applyCartSections received sections:', Object.keys(sectionsObj));
+    var anySwapped = false;
+
     if (sectionsObj['cart-drawer']) {
       var drawer = document.querySelector('glaze-cart-drawer');
       if (drawer) {
         var doc = new DOMParser().parseFromString(sectionsObj['cart-drawer'], 'text/html');
         var freshDrawer = doc.querySelector('glaze-cart-drawer');
-        if (freshDrawer) drawer.innerHTML = freshDrawer.innerHTML;
-      }
-    }
-    if (sectionsObj['cart-icon-bubble']) {
-      var bubbleSection = document.getElementById('shopify-section-cart-icon-bubble') || document.querySelector('[id$="cart-icon-bubble"]');
-      if (bubbleSection) {
-        var doc2 = new DOMParser().parseFromString(sectionsObj['cart-icon-bubble'], 'text/html');
-        var fresh = doc2.getElementById('shopify-section-cart-icon-bubble') || doc2.querySelector('[id$="cart-icon-bubble"]');
-        if (fresh) bubbleSection.innerHTML = fresh.innerHTML;
-      } else {
-        // Fallback: header anchor wraps the section content directly
-        var iconLink = document.getElementById('cart-icon-bubble');
-        if (iconLink) {
-          var doc3 = new DOMParser().parseFromString(sectionsObj['cart-icon-bubble'], 'text/html');
-          // Take the inner of the shopify-section wrapper if present
-          var wrap = doc3.querySelector('.shopify-section') || doc3.body;
-          if (wrap) iconLink.innerHTML = wrap.innerHTML;
+        if (freshDrawer) {
+          drawer.innerHTML = freshDrawer.innerHTML;
+          // Mirror the empty/non-empty class flag from the freshly rendered server HTML
+          if (freshDrawer.classList.contains('is-empty')) drawer.classList.add('is-empty');
+          else drawer.classList.remove('is-empty');
+          clog('swapped cart-drawer (' + freshDrawer.innerHTML.length + ' chars)');
+          anySwapped = true;
+        } else {
+          cwarn('cart-drawer section HTML had no <glaze-cart-drawer> element inside');
         }
+      } else {
+        cwarn('no <glaze-cart-drawer> in DOM to swap into — cart_type may not be "drawer"');
       }
     }
+
+    if (sectionsObj['cart-icon-bubble']) {
+      // The header anchor renders the snippet directly (no section wrapper), so we
+      // always swap the anchor's innerHTML with the inner of the fetched section.
+      var iconLink = document.getElementById('cart-icon-bubble');
+      if (iconLink) {
+        var doc3 = new DOMParser().parseFromString(sectionsObj['cart-icon-bubble'], 'text/html');
+        var wrap = doc3.querySelector('.shopify-section') || doc3.body;
+        if (wrap) {
+          iconLink.innerHTML = wrap.innerHTML;
+          clog('swapped cart-icon-bubble');
+          anySwapped = true;
+        }
+      } else {
+        cwarn('#cart-icon-bubble anchor not found in DOM');
+      }
+    }
+
+    return anySwapped;
   }
 
   // The fixed list of sections we want re-rendered on every cart mutation.
@@ -211,7 +260,9 @@
           btn.dataset.bound = '1';
           btn.addEventListener('click', function () {
             var step = parseInt(btn.getAttribute('data-glaze-cart-qty-step'), 10);
-            var input = self.querySelector('#' + btn.getAttribute('data-target'));
+            // getElementById tolerates colons + other special chars in IDs (cart item keys
+            // are formatted like "62760579727731:2d7174f57f7e6281…" which break #id selectors).
+            var input = document.getElementById(btn.getAttribute('data-target'));
             if (!input) return;
             var next = Math.max(0, (parseInt(input.value, 10) || 0) + step);
             input.value = next;
@@ -220,6 +271,7 @@
         });
       }
       open(triggeredBy) {
+        clog('drawer.open()');
         this._triggeredBy = triggeredBy || null;
         this.setAttribute('open', '');
         this.setAttribute('aria-hidden', 'false');
@@ -231,6 +283,7 @@
         setTimeout(function () { if (focusEl) focusEl.focus(); }, 30);
       }
       close() {
+        clog('drawer.close()');
         this.removeAttribute('open');
         this.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
@@ -243,7 +296,28 @@
         this.bindCloseHandlers();
         this.bindQuantityStepper();
       }
+      // ============ Dawn-compatible API ============
+      // Legacy code (featured-product, product-bundle, shoppable-tabs, sticky-collections)
+      // calls document.querySelector('cart-drawer') and expects Dawn's API: getSectionsToRender(),
+      // renderContents(data), setActiveElement(el). Exposing these aliases means the legacy
+      // sections find Glaze's drawer and work without modification.
+      getSectionsToRender() {
+        return [
+          { id: 'cart-drawer', selector: 'glaze-cart-drawer' },
+          { id: 'cart-icon-bubble' }
+        ];
+      }
+      renderContents(data) {
+        clog('drawer.renderContents() from legacy ATC, has sections?', !!(data && data.sections));
+        if (data && data.sections) {
+          this.renderFromSections(data.sections);
+        }
+        this.classList.remove('is-empty');
+        this.open();
+      }
+      setActiveElement(el) { this._triggeredBy = el || null; }
     });
+
   }
 
   // ----------------------------------------------------------------------
@@ -265,19 +339,69 @@
         this.updateLine(key, qty, input);
       }
       updateLine(key, quantity, sourceInput) {
-        var item = sourceInput ? sourceInput.closest('.glaze-cart-drawer__item') : null;
+        var self = this;
+        var isOnCartPage = !this.closest('glaze-cart-drawer');
+        clog('updateLine →', { key: key, quantity: quantity, onCartPage: isOnCartPage });
+
+        // Find the item being mutated. Could be either the drawer-styled element
+        // or the cart-page-styled element — both carry data-key.
+        var item = sourceInput
+          ? sourceInput.closest('.glaze-cart-drawer__item, .glaze-cart__item')
+          : this.querySelector('[data-key="' + key + '"]');
         if (item) item.classList.add('is-loading');
-        fetchJSON((window.routes && window.routes.cart_change_url) || '/cart/change.js', {
+
+        var stuckTimer = setTimeout(function () {
+          if (item) item.classList.remove('is-loading');
+          cwarn('updateLine timed out — cleared is-loading after 8s');
+        }, 8000);
+
+        fetchJSON(cartJsUrl(window.routes && window.routes.cart_change_url, '/cart/change.js'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: key, quantity: quantity, sections: sectionsToRender().join(',') })
+          body: JSON.stringify({
+            id: key,
+            quantity: quantity,
+            sections: sectionsToRender().join(','),
+            sections_url: window.location.pathname
+          })
         }).then(function (res) {
-          applyCartSections(res.sections);
+          clog('updateLine response', { item_count: res.item_count, total_price: res.total_price, has_sections: !!res.sections });
+          var swapped = applyCartSections(res.sections);
+          if (!swapped && item && !isOnCartPage) item.classList.remove('is-loading');
           publish('cart:update', { source: 'cart-items', data: res });
+          // The drawer section sync above doesn't include the cart page's own
+          // items + summary, so when we're rendered on the cart page we refetch
+          // /cart and swap the inner container.
+          if (isOnCartPage) return self.refreshCartPage(res);
         }).catch(function (err) {
           if (item) item.classList.remove('is-loading');
-          console.error('[glaze-cart] update failed', err);
+          console.error('[glaze-cart] updateLine failed', err);
+        }).finally(function () {
+          clearTimeout(stuckTimer);
         });
+      }
+      refreshCartPage(res) {
+        return fetch((window.routes && window.routes.cart_url) || '/cart', {
+          headers: { 'Accept': 'text/html' }
+        })
+          .then(function (r) { return r.text(); })
+          .then(function (html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            // .glaze-cart__inner wraps both the populated form AND the empty state,
+            // so swapping it covers the transition when the user removes the last item.
+            var fresh = doc.querySelector('.glaze-cart__inner');
+            var current = document.querySelector('.glaze-cart__inner');
+            if (fresh && current) {
+              current.innerHTML = fresh.innerHTML;
+              clog('cart page swapped (.glaze-cart__inner)');
+            } else {
+              cwarn('cart page swap: .glaze-cart__inner not found, reloading');
+              window.location.reload();
+            }
+          })
+          .catch(function (err) {
+            cwarn('cart page refresh failed', err);
+          });
       }
       refresh(payload) {
         // Skip our own publish so we don't refetch what we just rendered
@@ -300,6 +424,9 @@
           e.preventDefault();
           var key = self.getAttribute('data-key');
           var items = self.closest('glaze-cart-items');
+          // Add .is-loading to the item immediately so the user sees feedback before fetch
+          var item = self.closest('.glaze-cart-drawer__item');
+          if (item) item.classList.add('is-loading');
           if (items) items.updateLine(key, 0, null);
         });
       }
@@ -315,10 +442,10 @@
         var textarea = this.querySelector('textarea');
         if (!textarea) return;
         textarea.addEventListener('input', debounce(function (e) {
-          fetchJSON((window.routes && window.routes.cart_update_url) || '/cart/update.js', {
+          fetchJSON(cartJsUrl(window.routes && window.routes.cart_update_url, '/cart/update.js'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ note: e.target.value })
+            body: JSON.stringify({ note: e.target.value, sections_url: window.location.pathname })
           }).catch(function () {});
         }, 400));
       }
@@ -340,15 +467,19 @@
         this.form.addEventListener('submit', this.onSubmit.bind(this));
       }
       onSubmit(e) {
-        if (!this.cartMailbox) return; // fall through to native submit (page mode)
+        if (!this.cartMailbox) {
+          clog('product-form: no drawer mounted — letting native submit fire (page mode)');
+          return; // fall through to native submit (page mode)
+        }
         e.preventDefault();
+        clog('product-form: intercepting submit, drawer mode active');
         if (this.submitBtn) { this.submitBtn.setAttribute('aria-disabled', 'true'); this.submitBtn.classList.add('is-loading'); }
         var formData = new FormData(this.form);
         formData.append('sections', sectionsToRender().join(','));
         formData.append('sections_url', window.location.pathname);
 
         var self = this;
-        fetch((window.routes && window.routes.cart_add_url) || '/cart/add.js', {
+        fetch(cartJsUrl(window.routes && window.routes.cart_add_url, '/cart/add.js'), {
           method: 'POST',
           headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
           body: formData
@@ -363,10 +494,13 @@
             });
           })
           .then(function (data) {
+            clog('product-form ATC response', { key: data.key, quantity: data.quantity, has_sections: !!data.sections });
             // Shopify response: { id, key, quantity, ..., sections: { 'cart-drawer': '...', 'cart-icon-bubble': '...' } }
             if (data.sections) {
               self.cartMailbox.renderFromSections(data.sections);
               publish('cart:update', { source: 'product-form', data: data });
+            } else {
+              cwarn('product-form: response had no sections — drawer content will be stale until next refresh');
             }
             self.cartMailbox.open(self.submitBtn);
           })
@@ -384,6 +518,95 @@
     });
   }
 
-  // Expose minimal API for other theme code that may want to react.
-  window.GlazeCart = { subscribe: subscribe, publish: publish, refreshSection: refreshSection, applyCartSections: applyCartSections };
+  // ----------------------------------------------------------------------
+  // Universal add-to-cart helper — call from anywhere in the theme.
+  //
+  //   GlazeCart.addToCart(123456789)
+  //   GlazeCart.addToCart(123456789, { quantity: 2, sourceButton: btn })
+  //   GlazeCart.addToCart({ id: 123, quantity: 2, properties: {...} })
+  //
+  // Options:
+  //   sourceButton        — element clicked (used for focus return + setActiveElement)
+  //   openDrawer          — default true; pass false for bulk adds, true on the final call
+  //   redirectIfNoDrawer  — default true; when cart_type == 'page', redirects to /cart
+  //
+  // Returns a Promise that resolves with the /cart/add.js response.
+  // The caller manages the source button's .is-loading class — different
+  // sections want different timing (clear immediately vs after drawer opens).
+  // ----------------------------------------------------------------------
+  function addToCartUniversal(payload, options) {
+    options = options || {};
+    var drawer = document.querySelector('glaze-cart-drawer');
+    var sourceButton = options.sourceButton || null;
+
+    var body;
+    if (typeof payload === 'number' || typeof payload === 'string') {
+      body = { id: parseInt(payload, 10), quantity: parseInt(options.quantity, 10) || 1 };
+    } else {
+      body = Object.assign({}, payload);
+      if (body.id != null) body.id = parseInt(body.id, 10);
+      if (body.quantity != null) body.quantity = parseInt(body.quantity, 10) || 1;
+    }
+
+    // Section Rendering: include sections + sections_url so /cart/add.js
+    // returns rendered HTML for the drawer + icon bubble in one round trip.
+    body.sections = sectionsToRender().join(',');
+    body.sections_url = window.location.pathname;
+
+    clog('GlazeCart.addToCart →', body);
+
+    var cartAddUrl = cartJsUrl(window.routes && window.routes.cart_add_url, '/cart/add.js');
+    return fetch(cartAddUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify(body)
+    })
+      .then(function (r) {
+        return r.text().then(function (txt) {
+          var data; try { data = JSON.parse(txt); } catch (e) { data = {}; }
+          if (!r.ok || data.status) {
+            var err = new Error((data && data.description) || (window.cartStrings && window.cartStrings.addError) || 'Could not add to cart.');
+            err.data = data; err.status = r.status;
+            throw err;
+          }
+          return data;
+        });
+      })
+      .then(function (data) {
+        clog('GlazeCart.addToCart ✓', { key: data.key, qty: data.quantity, has_sections: !!data.sections });
+
+        if (drawer) {
+          if (data.sections) drawer.renderFromSections(data.sections);
+          else cwarn('GlazeCart.addToCart: response missing sections — drawer will be stale until next refresh');
+
+          if (options.openDrawer !== false) {
+            drawer.classList.remove('is-empty');
+            if (typeof drawer.setActiveElement === 'function') drawer.setActiveElement(sourceButton);
+            drawer.open(sourceButton);
+          }
+        } else if (options.redirectIfNoDrawer !== false) {
+          // Page-mode cart: hop to /cart so the user sees their addition
+          window.location.href = (window.routes && window.routes.cart_url) || '/cart';
+          return data;
+        }
+
+        publish('cart:update', { source: options.source || 'GlazeCart.addToCart', data: data });
+        document.dispatchEvent(new CustomEvent('cart:refresh', { detail: data }));
+        return data;
+      });
+  }
+
+  // Expose API for other theme code.
+  window.GlazeCart = {
+    addToCart: addToCartUniversal,
+    subscribe: subscribe,
+    publish: publish,
+    refreshSection: refreshSection,
+    applyCartSections: applyCartSections,
+    getDrawer: function () { return document.querySelector('glaze-cart-drawer'); }
+  };
 })();

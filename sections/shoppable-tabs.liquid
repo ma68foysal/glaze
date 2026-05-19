@@ -1,10 +1,10 @@
 {%- liquid
-  assign section_id = 'sleek-st-' | append: section.id
+  assign section_id = 'glaze-st-' | append: section.id
 -%}
 
 <style>
   /* ============================================================
-     Shoppable Tabs Sleek — scoped styles (st- prefix)
+     Shoppable Tabs Glaze — scoped styles (st- prefix)
      ============================================================ */
 
   #{{ section_id }} {
@@ -393,7 +393,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="sleek-st" data-sleek-st>
+<div id="{{ section_id }}" class="glaze-st" data-glaze-st>
   <div class="st-wrap">
 
     {%- if section.settings.eyebrow != blank or section.settings.title != blank -%}
@@ -568,66 +568,31 @@
         var id = btn.getAttribute('data-st-atc');
         if (!id) return;
         btn.setAttribute('disabled', 'disabled');
-        addToCart(id, 1).then(function () {
+        btn.classList.add('is-loading');
+        addToCart(id, 1, btn).catch(function (err) {
+          console.error('[shoppable-tabs]', err);
+        }).finally(function () {
           btn.removeAttribute('disabled');
-        }).catch(function (err) {
-          console.error('[shoppable-tabs-sleek]', err);
-          btn.removeAttribute('disabled');
+          btn.classList.remove('is-loading');
         });
       });
     });
 
-    // Cart helpers (prefers cart-drawer, falls back to cart-notification)
-    function getCart() {
-      return document.querySelector('cart-drawer') || document.querySelector('cart-notification');
-    }
-
-    function safeRenderOrOpen(cart, data) {
-      if (!cart) return;
-      if (typeof cart.renderContents === 'function') {
-        try {
-          if (cart.classList.contains('is-empty')) cart.classList.remove('is-empty');
-          if (typeof cart.setActiveElement === 'function') cart.setActiveElement(document.activeElement);
-          cart.renderContents(data);
-          return;
-        } catch (e) {
-          console.warn('[shoppable-tabs-sleek] renderContents failed:', e);
-        }
+    // Thin wrapper around the universal helper in glaze-cart.js.
+    function addToCart(id, quantity, sourceBtn) {
+      if (window.GlazeCart && typeof window.GlazeCart.addToCart === 'function') {
+        return window.GlazeCart.addToCart(id, {
+          quantity: quantity,
+          sourceButton: sourceBtn || null,
+          source: 'shoppable-tabs'
+        });
       }
-      if (typeof cart.open === 'function') { try { cart.open(); } catch (e) {} }
-    }
-
-    function addToCart(id, quantity) {
-      var cart = getCart();
-      var body = {
-        id: parseInt(id, 10),
-        quantity: parseInt(quantity, 10) || 1,
-        sections_url: window.location.pathname
-      };
-      if (cart && typeof cart.getSectionsToRender === 'function') {
-        body.sections = cart.getSectionsToRender().map(function (s) { return s.id; }).join(',');
-      }
-      var url = (window.routes && window.routes.cart_add_url) ? window.routes.cart_add_url : '/cart/add.js';
+      var url = (window.routes && window.routes.cart_add_url) || '/cart/add.js';
       return fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/javascript',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(body)
-      }).then(function (r) {
-        return r.json().then(function (data) {
-          if (!r.ok || data.status) throw new Error(data.description || data.message || 'Add to cart failed');
-          return data;
-        });
-      }).then(function (data) {
-        safeRenderOrOpen(cart, data);
-        if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined' && PUB_SUB_EVENTS.cartUpdate) {
-          publish(PUB_SUB_EVENTS.cartUpdate, { source: 'shoppable-tabs-sleek', cartData: data });
-        }
-        return data;
-      });
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ id: parseInt(id, 10), quantity: parseInt(quantity, 10) || 1 })
+      }).then(function () { window.location.href = (window.routes && window.routes.cart_url) || '/cart'; });
     }
   })();
 </script>
@@ -635,7 +600,7 @@
 {% schema %}
 {
   "name": "Shoppable tabs",
-  "class": "section-shoppable-tabs-sleek",
+  "class": "section-shoppable-tabs-glaze",
   "tag": "section",
   "max_blocks": 6,
   "settings": [

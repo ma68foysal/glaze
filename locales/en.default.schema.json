@@ -35,7 +35,13 @@
     "theme": "Theme",
     "typography": "Typography",
     "motion": "Motion",
-    "social": "Social media"
+    "social": "Social media",
+    "favicon": "Favicon",
+    "page_colors": "Page",
+    "secondary_colors": "Secondary surface",
+    "accent_colors": "Accent",
+    "card_colors": "Cards",
+    "form_settings": "Form fields"
   },
   "labels": {
     "alignment": "Alignment",
@@ -48,8 +54,10 @@
     "menu": "Menu",
     "customer_account_menu": "Customer account menu",
     "padding": "Padding",
-    "page_margin": "Page margin",
-    "page_width": "Page width",
+    "page_margin": "Page side margin",
+    "page_margin_info": "Distance between page content and the viewport edge on desktop. Set to 0 for fully edge-to-edge sections.",
+    "page_width": "Maximum content width",
+    "page_width_info": "Cap that constrained sections respect (product info, cart, blog, etc.). Full-bleed sections like the slideshow ignore this and always fill the viewport.",
     "show_payment_icons": "Show payment icons",
     "text_style": "Text style",
     "text": "Text",
@@ -59,7 +67,17 @@
     "share_image_info": "Fallback image used when a customer shares a page that has no image of its own (home page, generic search). Recommended size: 1200 x 630px.",
     "cart_type": "Add-to-cart behavior",
     "cart_type_info": "Choose how customers see their cart after adding a product. \"Cart page\" navigates to /cart. \"Cart drawer\" slides a panel in from the right without leaving the page.",
-    "show_cart_note": "Show order note field"
+    "show_cart_note": "Show order note field",
+    "secondary_background": "Secondary background",
+    "secondary_background_info": "Used for cream surfaces — cart drawer, modals, hero sub-areas.",
+    "secondary_foreground": "Secondary foreground",
+    "accent_background": "Accent background",
+    "accent_background_info": "Primary call-to-action colour — buttons, links, focus rings.",
+    "accent_foreground": "Accent foreground",
+    "card_background": "Card background",
+    "card_foreground": "Card foreground",
+    "favicon": "Favicon image",
+    "favicon_info": "Will be scaled down to 32 × 32 px. Use a square PNG or SVG."
   },
   "options": {
     "alignment": {

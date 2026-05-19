@@ -1,10 +1,10 @@
 {%- liquid
-  assign section_id = 'sleek-footer-' | append: section.id
+  assign section_id = 'glaze-footer-' | append: section.id
 -%}
 
 <style>
   /* ============================================================
-     Footer Sleek — scoped styles (sf- prefix)
+     Footer Glaze — scoped styles (sf- prefix)
      ============================================================ */
 
   #{{ section_id }} {
@@ -232,24 +232,42 @@
 
   .sf-bottom-right { align-items: flex-end; }
 
-  .sf-currency {
+  /* Real localization form dropdowns. Native <select> styled to match
+     the footer copy size. Hidden entirely on single-locale stores by the
+     snippet's conditional. */
+  .sf-localization {
     display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
   }
-
-  .sf-currency-flag {
-    width: 20px;
-    height: 14px;
-    border-radius: 2px;
-    overflow: hidden;
+  .sf-localization__form {
     display: inline-flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0;
   }
-
-  .sf-currency-flag-inner {
-    background: linear-gradient(#b22234 33%, #fff 33%, #fff 66%, #3c3b6e 66%);
-    width: 100%;
-    height: 100%;
+  .sf-localization__field {
+    position: relative;
+  }
+  .sf-localization__select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    color: inherit;
+    border: 1px solid var(--sf-border, #e6e6e6);
+    border-radius: var(--g-radius-pill, 999px);
+    padding: 6px 30px 6px 12px;
+    font: inherit;
+    font-size: var(--sf-bottom-s, 13px);
+    line-height: 1.4;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23111' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+  .sf-localization__select:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
 
   .sf-copy {
@@ -410,7 +428,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="sleek-footer">
+<div id="{{ section_id }}" class="glaze-footer">
   <div class="sf-wrap">
 
     <div class="sf-top">
@@ -489,16 +507,12 @@
     <div class="sf-bottom">
       <div class="sf-bottom-left">
         {%- if section.settings.show_currency -%}
-          <div class="sf-currency">
-            <span class="sf-currency-flag" aria-hidden="true"><span class="sf-currency-flag-inner"></span></span>
-            <span>{{ section.settings.currency_label | default: 'United States (USD $)' }}</span>
-            <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
+          {% render 'localization-form', class_prefix: 'sf-localization' %}
         {%- endif -%}
         <p class="sf-copy">
           © {{ 'now' | date: '%Y' }} {{ shop.name | upcase }}.
           {%- if section.settings.show_powered -%}
-            <a href="https://www.shopify.com" target="_blank" rel="noopener">Powered by Shopify</a>
+            {{ powered_by_link }}
           {%- endif -%}
         </p>
       </div>
@@ -573,7 +587,7 @@
 {% schema %}
 {
   "name": "Footer",
-  "class": "section-footer-sleek",
+  "class": "section-footer-glaze",
   "tag": "footer",
   "max_blocks": 5,
   "settings": [

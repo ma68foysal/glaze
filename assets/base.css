@@ -641,6 +641,9 @@ summary:focus-visible {
   height: 100%;
 }
 
+/* Unified loading state — any element with .is-loading gets a translucent
+   overlay (::after) AND a centered spinner (::before). Use on anything from
+   buttons to cart line items. */
 .is-loading {
   pointer-events: none;
   position: relative;
@@ -649,8 +652,74 @@ summary:focus-visible {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.55);
   border-radius: inherit;
+  z-index: 1;
+}
+.is-loading::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: var(--g-ink);
+  border-radius: 50%;
+  animation: glaze-spin 0.7s linear infinite;
+  z-index: 2;
+}
+
+/* Special-case: buttons + anchors that use .is-loading directly. Many cards
+   in the legacy sections (featured-product, sticky-collections, etc.) ALREADY
+   have a `::before` pseudo-element for a hover shimmer, so our spinner has to
+   live on `::after` instead — and we explicitly suppress the existing `::before`
+   while loading so it doesn't bleed through. !important is required because
+   the section-scoped rules (e.g. `.sfp-card-cta::before { … }`) have higher
+   specificity than `.is-loading::after` in the cascade. */
+button.is-loading,
+a.is-loading {
+  color: transparent !important;
+  /* Hide direct children too — covers <span> labels whose color was set
+     explicitly and wouldn't inherit transparent from the button. */
+}
+button.is-loading > *,
+a.is-loading > * {
+  visibility: hidden;
+}
+/* Suppress any existing ::before (shimmer, gradient, etc.) during loading */
+button.is-loading::before,
+a.is-loading::before {
+  display: none !important;
+  content: none !important;
+}
+/* The dim overlay (::after) is repurposed as the SPINNER for buttons.
+   inset:auto cancels the generic .is-loading::after { inset: 0 } from above. */
+button.is-loading::after,
+a.is-loading::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  inset: auto !important;
+  width: 22px !important;
+  height: 22px !important;
+  margin: -11px 0 0 -11px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 2px solid rgba(255, 255, 255, 0.25) !important;
+  border-top-color: #ffffff !important;
+  border-radius: 50% !important;
+  animation: glaze-spin 0.7s linear infinite !important;
+  z-index: 10 !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  transition: none !important;
 }
 
 .spinner {
@@ -733,8 +802,8 @@ summary:focus-visible {
 @media print {
   .skip-to-content,
   predictive-search,
-  .sleek-drawer,
-  .sleek-search-toggle,
+  .glaze-drawer,
+  .glaze-search-toggle,
   header,
   footer { display: none !important; }
 

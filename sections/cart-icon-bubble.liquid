@@ -1,20 +1,14 @@
 {%- comment -%}
-  Cart icon + count bubble. Rendered as a SECTION (not a snippet) so Shopify's
-  Section Rendering API can refetch and replace its innerHTML server-side after
-  every cart mutation (/cart/add.js, /cart/change.js, /cart/update.js). The
-  header anchor wraps this section with id="cart-icon-bubble" so glaze-cart.js
-  knows what to hijack when drawer mode is on.
+  Thin section wrapper around snippets/cart-icon-bubble.liquid. Exists ONLY so
+  the Shopify Section Rendering API can refetch this section's HTML on every
+  cart mutation (called by glaze-cart.js with ?section_id=cart-icon-bubble).
+
+  The actual markup lives in the snippet so it can also be rendered inline
+  inside sections/header.liquid (where {% section %} would error with
+  "Cannot render sections inside sections").
 {%- endcomment -%}
 
-<svg class="glaze-cart-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-  <path d="M4 7h16l-1.5 11a2 2 0 0 1-2 1.8H7.5a2 2 0 0 1-2-1.8L4 7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-  <path d="M9 7a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-</svg>
-<span class="visually-hidden">{{ 'cart.title' | t }}</span>
-{%- if cart.item_count > 0 -%}
-  <span class="glaze-cart-count" aria-hidden="true">{{ cart.item_count }}</span>
-  <span class="visually-hidden">{{ 'cart.count_aria' | t: count: cart.item_count }}</span>
-{%- endif -%}
+{% render 'cart-icon-bubble' %}
 
 {% schema %}
 {

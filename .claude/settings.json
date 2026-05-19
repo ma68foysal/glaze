@@ -38,7 +38,17 @@
       "Bash(grep -v '\\\\.liquid$')",
       "Bash(grep -v '\\\\.json$')",
       "Bash(grep -vE '\\\\.\\(liquid|json|css|js|svg|png|jpg|jpeg|gif|webp|ico|ttf|woff|woff2|otf|md\\)$')",
-      "Bash(grep -v '^$')"
+      "Bash(grep -v '^$')",
+      "Bash(echo \"\\(exit code: $?\\)\")",
+      "Bash(grep -nA3 \"button.is-loading::after\" assets/base.css)",
+      "Bash(shopify version *)",
+      "Bash(shopify theme *)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('config/settings_schema.json','utf8'\\)\\); console.log\\('settings_schema.json: valid JSON'\\)\")",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('locales/en.default.schema.json','utf8'\\)\\); console.log\\('en.default.schema.json: valid JSON'\\)\")",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('config/settings_data.json','utf8'\\)\\); console.log\\('settings_data.json: valid JSON'\\)\")",
+      "Bash(grep -v \":0$\")",
+      "Bash(sort -t: -k2 -n -r)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('templates/index.json','utf8'\\)\\); console.log\\('index.json: valid JSON'\\)\")"
     ]
   }
 }

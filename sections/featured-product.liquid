@@ -1,12 +1,12 @@
 {%- liquid
-  assign section_id = 'sleek-fp-' | append: section.id
+  assign section_id = 'glaze-fp-' | append: section.id
   assign per_tab = section.settings.products_per_tab
   assign cols = section.settings.columns_desktop
 -%}
 
 <style>
   /* ============================================================
-     Featured Product Sleek — scoped styles
+     Featured Product Glaze — scoped styles
      ============================================================ */
 
   #{{ section_id }} {
@@ -744,26 +744,30 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="sleek-fp" data-sleek-fp>
+<div id="{{ section_id }}" class="glaze-fp" data-glaze-fp>
   <div class="sfp-wrap">
 
     <div class="sfp-head">
       <div class="sfp-tabs" role="tablist">
+        {%- assign tab_index = 0 -%}
         {%- for block in section.blocks -%}
-          {%- assign label = block.settings.tab_label -%}
-          {%- if label == blank and block.settings.collection != blank -%}
-            {%- assign label = block.settings.collection.title -%}
+          {%- if block.type == 'tab' -%}
+            {%- assign label = block.settings.tab_label -%}
+            {%- if label == blank and block.settings.collection != blank -%}
+              {%- assign label = block.settings.collection.title -%}
+            {%- endif -%}
+            <button
+              type="button"
+              class="sfp-tab{% if tab_index == 0 %} is-active{% endif %}"
+              role="tab"
+              data-sfp-tab="{{ tab_index }}"
+              aria-selected="{% if tab_index == 0 %}true{% else %}false{% endif %}"
+              {{ block.shopify_attributes }}
+            >
+              {{ label | default: 'Tab' }}
+            </button>
+            {%- assign tab_index = tab_index | plus: 1 -%}
           {%- endif -%}
-          <button
-            type="button"
-            class="sfp-tab{% if forloop.first %} is-active{% endif %}"
-            role="tab"
-            data-sfp-tab="{{ forloop.index0 }}"
-            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
-            {{ block.shopify_attributes }}
-          >
-            {{ label | default: 'Tab' }}
-          </button>
         {%- endfor -%}
       </div>
 
@@ -775,12 +779,14 @@
     </div>
 
     <div class="sfp-panels">
+      {%- assign panel_index = 0 -%}
       {%- for block in section.blocks -%}
+        {%- if block.type == 'tab' -%}
         {%- assign coll = block.settings.collection -%}
         <div
-          class="sfp-panel{% if forloop.first %} is-active{% endif %}"
+          class="sfp-panel{% if panel_index == 0 %} is-active{% endif %}"
           role="tabpanel"
-          data-sfp-panel="{{ forloop.index0 }}"
+          data-sfp-panel="{{ panel_index }}"
         >
           <div class="sfp-grid">
             {%- if coll != blank and coll.products.size > 0 -%}
@@ -901,8 +907,28 @@
             {%- endif -%}
           </div>
         </div>
+        {%- assign panel_index = panel_index | plus: 1 -%}
+        {%- endif -%}
       {%- endfor -%}
     </div>
+
+    {%- comment -%}
+      App block region. Theme Store requires `@app` blocks on main product and
+      featured product sections so reviews / upsell / loyalty apps can hook in.
+    {%- endcomment -%}
+    {%- assign has_apps = false -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == '@app' -%}{%- assign has_apps = true -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if has_apps -%}
+      <div class="sfp-apps">
+        {%- for block in section.blocks -%}
+          {%- if block.type == '@app' -%}
+            {% render block %}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
 
   </div>
 
@@ -1191,13 +1217,14 @@
       if (atcBtn) atcBtn.addEventListener('click', function () {
         var v = findVariant();
         if (!v || !v.available) return;
-        atcBtn.textContent = 'Adding…';
+        atcBtn.classList.add('is-loading');
         atcBtn.setAttribute('disabled', 'disabled');
-        addToCart(v.id, state.qty).then(function () {
+        addToCart(v.id, state.qty, atcBtn).then(function () {
           closeModal();
-          openCartDrawer();
-        }).catch(function () {
-          atcBtn.textContent = 'Try again';
+        }).catch(function (err) {
+          console.error('[featured-product]', err);
+        }).finally(function () {
+          atcBtn.classList.remove('is-loading');
           atcBtn.removeAttribute('disabled');
         });
       });
@@ -1207,12 +1234,17 @@
       if (buyBtn) buyBtn.addEventListener('click', function () {
         var v = findVariant();
         if (!v || !v.available) return;
-        buyBtn.textContent = 'Processing…';
-        addToCart(v.id, state.qty).then(function () {
-          window.location.href = '/checkout';
-        }).catch(function () {
-          buyBtn.textContent = 'Buy It Now';
-        });
+        buyBtn.classList.add('is-loading');
+        // For buy-now we don't want the drawer to open before we redirect.
+        if (window.GlazeCart && typeof window.GlazeCart.addToCart === 'function') {
+          window.GlazeCart.addToCart(v.id, { quantity: state.qty, sourceButton: buyBtn, openDrawer: false, source: 'featured-product:buy-now' })
+            .then(function () { window.location.href = '/checkout'; })
+            .catch(function (err) { console.error('[featured-product]', err); buyBtn.classList.remove('is-loading'); });
+        } else {
+          addToCart(v.id, state.qty, buyBtn).then(function () {
+            window.location.href = '/checkout';
+          }).catch(function () { buyBtn.classList.remove('is-loading'); });
+        }
       });
 
       refreshPriceAndAvailability();
@@ -1225,92 +1257,40 @@
         e.stopPropagation();
         var id = btn.getAttribute('data-sfp-atc');
         if (!id) return;
-        var original = btn.querySelector('.sfp-card-cta-label');
-        var originalText = original ? original.textContent : '';
-        if (original) original.textContent = 'Adding…';
+        btn.classList.add('is-loading');
         btn.setAttribute('disabled', 'disabled');
-        addToCart(id, 1).then(function () {
-          if (original) original.textContent = originalText;
-          btn.removeAttribute('disabled');
-          openCartDrawer();
-        }).catch(function () {
-          if (original) original.textContent = 'Try again';
+        addToCart(id, 1, btn).catch(function (err) {
+          console.error('[featured-product] add failed', err);
+        }).finally(function () {
+          btn.classList.remove('is-loading');
           btn.removeAttribute('disabled');
         });
       });
     });
 
     // ------- Cart helpers -------
-    // Prefer cart-drawer: cart-notification expects a `cart-notification-product`
-    // element that may not exist on every template and crashes renderContents.
-    function getCart() {
-      return document.querySelector('cart-drawer') || document.querySelector('cart-notification');
-    }
-
-    function addToCart(id, quantity) {
-      var cart = getCart();
-
-      var body = {
-        id: parseInt(id, 10),
-        quantity: parseInt(quantity, 10) || 1,
-        sections_url: window.location.pathname
-      };
-
-      if (cart && typeof cart.getSectionsToRender === 'function') {
-        body.sections = cart.getSectionsToRender().map(function (s) { return s.id; }).join(',');
-      }
-
-      var cartAddUrl = (window.routes && window.routes.cart_add_url) ? window.routes.cart_add_url : '/cart/add.js';
-
-      return fetch(cartAddUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/javascript',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(body)
-      }).then(function (r) {
-        return r.json().then(function (data) {
-          if (!r.ok || data.status) {
-            throw new Error(data.description || data.message || 'Add to cart failed');
-          }
-          return data;
+    // Delegates to the universal helper in glaze-cart.js so the drawer opens
+    // and updates atomically across every section in the theme.
+    function addToCart(id, quantity, sourceBtn) {
+      if (window.GlazeCart && typeof window.GlazeCart.addToCart === 'function') {
+        return window.GlazeCart.addToCart(id, {
+          quantity: quantity,
+          sourceButton: sourceBtn || null,
+          source: 'featured-product'
         });
-      }).then(function (data) {
-        // renderContents updates the drawer/notification HTML AND opens it.
-        // Wrapped in try/catch because some templates don't render all section
-        // targets cart-notification expects (e.g. pages missing cart-icon-bubble).
-        if (cart) {
-          var opened = false;
-          if (typeof cart.renderContents === 'function') {
-            try {
-              if (cart.classList.contains('is-empty')) cart.classList.remove('is-empty');
-              if (typeof cart.setActiveElement === 'function') cart.setActiveElement(document.activeElement);
-              cart.renderContents(data);
-              opened = true;
-            } catch (e) {
-              console.warn('[featured-product-sleek] renderContents failed, opening directly:', e);
-            }
-          }
-          if (!opened && typeof cart.open === 'function') {
-            try { cart.open(); } catch (e) { /* noop */ }
-          }
-        }
-        // Broadcast for any other listeners (cart count bubbles, etc.)
-        if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined' && PUB_SUB_EVENTS.cartUpdate) {
-          publish(PUB_SUB_EVENTS.cartUpdate, { source: 'featured-product-sleek', cartData: data });
-        }
-        document.dispatchEvent(new CustomEvent('cart:refresh', { detail: data }));
-        return data;
-      });
+      }
+      // Hard fallback if glaze-cart.js failed to load: native cart add then redirect.
+      var url = (window.routes && window.routes.cart_add_url) || '/cart/add.js';
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ id: parseInt(id, 10), quantity: parseInt(quantity, 10) || 1 })
+      }).then(function () { window.location.href = (window.routes && window.routes.cart_url) || '/cart'; });
     }
 
     function openCartDrawer() {
-      // renderContents already opens the drawer; this is a no-op fallback
-      // for edge cases (e.g. if renderContents wasn't available).
-      var cart = getCart();
-      if (cart && typeof cart.open === 'function') cart.open();
+      var d = document.querySelector('glaze-cart-drawer');
+      if (d && typeof d.open === 'function') d.open();
     }
   })();
 </script>
@@ -1318,9 +1298,9 @@
 {% schema %}
 {
   "name": "Featured product",
-  "class": "section-featured-product-sleek",
+  "class": "section-featured-product-glaze",
   "tag": "section",
-  "max_blocks": 6,
+  "max_blocks": 16,
   "settings": [
     {
       "type": "header",
@@ -1631,7 +1611,8 @@
           "label": "Collection"
         }
       ]
-    }
+    },
+    { "type": "@app" }
   ],
   "presets": [
     {

@@ -32,36 +32,36 @@
     "name": "t:general.layout",
     "settings": [
       {
-        "type": "select",
+        "type": "range",
         "id": "max_page_width",
         "label": "t:labels.page_width",
-        "options": [
-          {
-            "value": "90rem",
-            "label": "t:options.page_width.narrow"
-          },
-          {
-            "value": "110rem",
-            "label": "t:options.page_width.wide"
-          }
-        ],
-        "default": "90rem"
+        "min": 1240,
+        "max": 1660,
+        "step": 20,
+        "unit": "px",
+        "default": 1440,
+        "info": "t:labels.page_width_info"
       },
       {
         "type": "range",
         "id": "min_page_margin",
-        "min": 10,
+        "label": "t:labels.page_margin",
+        "min": 0,
         "max": 100,
         "step": 1,
         "unit": "px",
-        "label": "t:labels.page_margin",
-        "default": 20
+        "default": 0,
+        "info": "t:labels.page_margin_info"
       }
     ]
   },
   {
     "name": "t:general.colors",
     "settings": [
+      {
+        "type": "header",
+        "content": "t:general.page_colors"
+      },
       {
         "type": "color",
         "id": "background_color",
@@ -71,8 +71,62 @@
       {
         "type": "color",
         "id": "foreground_color",
-        "default": "#333333",
+        "default": "#1A1A1A",
         "label": "t:labels.foreground"
+      },
+      {
+        "type": "header",
+        "content": "t:general.secondary_colors"
+      },
+      {
+        "type": "color",
+        "id": "secondary_background",
+        "default": "#FBE9E8",
+        "label": "t:labels.secondary_background",
+        "info": "t:labels.secondary_background_info"
+      },
+      {
+        "type": "color",
+        "id": "secondary_foreground",
+        "default": "#1A1A1A",
+        "label": "t:labels.secondary_foreground"
+      },
+      {
+        "type": "header",
+        "content": "t:general.accent_colors"
+      },
+      {
+        "type": "color",
+        "id": "accent_background",
+        "default": "#111111",
+        "label": "t:labels.accent_background",
+        "info": "t:labels.accent_background_info"
+      },
+      {
+        "type": "color",
+        "id": "accent_foreground",
+        "default": "#FFFFFF",
+        "label": "t:labels.accent_foreground"
+      },
+      {
+        "type": "header",
+        "content": "t:general.card_colors"
+      },
+      {
+        "type": "color",
+        "id": "card_background",
+        "default": "#FFFFFF",
+        "label": "t:labels.card_background"
+      },
+      {
+        "type": "color",
+        "id": "card_foreground",
+        "default": "#1A1A1A",
+        "label": "t:labels.card_foreground"
+      },
+      {
+        "type": "header",
+        "content": "t:general.form_settings"
       },
       {
         "type": "range",
@@ -83,6 +137,17 @@
         "unit": "px",
         "label": "t:labels.input_corner_radius",
         "default": 4
+      }
+    ]
+  },
+  {
+    "name": "t:general.favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "t:labels.favicon",
+        "info": "t:labels.favicon_info"
       }
     ]
   },

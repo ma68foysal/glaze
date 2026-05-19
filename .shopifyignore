@@ -24,11 +24,11 @@ Thumbs.db
 *.bak
 
 # Editor + repo metadata that shouldn't ship with the theme
-.git/
+.git/*
 .gitignore
-.vscode/
-.idea/
+.vscode/*
+.idea/*
 README.md
 LICENSE.md
-node_modules/
-memory/
+node_modules/*
+memory/*
