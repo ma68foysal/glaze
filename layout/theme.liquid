@@ -52,7 +52,7 @@
     {% render 'meta-tags' %}
 
     {%- comment -%}
-      Globals for glaze-cart.js (and any other JS that fetches Shopify cart endpoints).
+      Globals for cart.js (and any other JS that fetches Shopify cart endpoints).
       Routes are localized per-storefront; cart strings are themable via locales.
     {%- endcomment -%}
     <script>
@@ -66,6 +66,7 @@
         error: {{ 'cart.error' | t | json }},
         addError: {{ 'cart.add_error' | t | json }}
       };
+      window.shopMoneyFormat = {{ shop.money_format | json }};
     </script>
 
     {{ content_for_header }}
@@ -87,11 +88,27 @@
     {%- endif -%}
 
     {%- comment -%}
-      glaze-cart.js powers the drawer AND the cart-page live updates
-      (qty change / remove without a button). Load it everywhere so the cart
-      page works even when cart_type == 'page'.
+      global.js — theme-wide utilities (reveal observer, accordion, tab
+      indicator, hero slideshow controller, money/debounce helpers).
+      Loaded BEFORE cart.js so window.Glaze is available to cart code if
+      needed. Both are deferred so they run after the parser hits </body>.
     {%- endcomment -%}
-    <script src="{{ 'glaze-cart.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
+
+    {%- comment -%}
+      quick-view.js — product quick-view modal renderer, shared by
+      sections that open a quick-view (sticky-collections, featured-product).
+      Depends on window.Glaze.utils.money + window.Glaze.cartAdd from
+      global.js, so loads after it.
+    {%- endcomment -%}
+    <script src="{{ 'quick-view.js' | asset_url }}" defer="defer"></script>
+
+    {%- comment -%}
+      cart.js powers the drawer AND the cart-page live updates (qty change
+      / remove without a button). Load it everywhere so the cart page works
+      even when cart_type == 'page'.
+    {%- endcomment -%}
+    <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 
     {%- if settings.enable_smooth_scroll -%}
       {%- comment -%}

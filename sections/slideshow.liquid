@@ -1,669 +1,214 @@
 {%- liquid
-  assign section_id = 'glaze-slideshow-' | append: section.id
+  assign sid = 'glaze-hero-' | append: section.id
   assign autoplay = section.settings.autoplay
-  assign speed = section.settings.speed
-  assign height_dt = section.settings.height_desktop
-  assign height_mb = section.settings.height_mobile
-  assign show_dots = section.settings.show_dots
+  assign speed = section.settings.speed | default: 6
+  assign h_desk = section.settings.height_desktop | default: 720
+  assign h_mob = section.settings.height_mobile | default: 580
+  assign parallax = section.settings.parallax_strength | default: 40
+  assign show_progress = section.settings.show_progress
+  assign show_counter = section.settings.show_counter
 -%}
 
-<style>
-  /* ============================================================
-     Slideshow Glaze — scoped styles
-     ============================================================ */
+{% comment %}
+  Glaze editorial hero — asymmetric magazine-spread slideshow.
+  Image takes one side, cream-textured content panel takes the other.
+  Slides crossfade (not horizontal slide), text reveals with mask wipes,
+  numbered nav with autoplay progress bars at the side.
+  All motion gated on prefers-reduced-motion. Pauses when out of viewport.
 
-  #{{ section_id }} {
-    --glaze-ss-height-dt: {{ height_dt }}px;
-    --glaze-ss-height-mb: {{ height_mb }}px;
-    --glaze-ss-gap: {{ section.settings.content_gap }}px;
-    --glaze-ss-radius: {{ section.settings.corner_radius }}px;
-    --glaze-ss-dot-color: {{ section.settings.dot_color }};
-    --glaze-ss-dot-active: {{ section.settings.dot_active_color }};
-    --glaze-ss-pad: {{ section.settings.section_padding }}px;
-    --glaze-ss-peek: {{ section.settings.peek }}px;
-    --glaze-ss-slide-gap: {{ section.settings.slide_gap }}px;
-    display: block;
-    position: relative;
-    padding: var(--glaze-ss-pad) 0;
-    overflow: hidden;
-  }
+  Block-level "theme" preset swaps surface colors smoothly across slides
+  (cream / blush / sage / ivory / ink / custom).
+{% endcomment %}
 
-  .glaze-ss-wrap { overflow: hidden; }
-
-  #{{ section_id }} *,
-  #{{ section_id }} *::before,
-  #{{ section_id }} *::after {
-    box-sizing: border-box;
-  }
-
-  .glaze-ss-wrap {
-    position: relative;
-    width: 100%;
-  }
-
-  .glaze-ss-viewport {
-    position: relative;
-    width: 100%;
-    height: var(--glaze-ss-height-dt);
-    overflow: hidden;
-  }
-
-  .glaze-ss-track {
-    display: flex;
-    height: 100%;
-    width: 100%;
-    padding: 0 var(--glaze-ss-peek);
-    gap: var(--glaze-ss-slide-gap);
-    transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
-    will-change: transform;
-  }
-
-  .glaze-slide {
-    flex: 0 0 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--glaze-ss-radius);
-  }
-
-  .glaze-slide__media {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #f0ecea;
-    z-index: 1;
-  }
-
-  .glaze-slide__media picture {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .glaze-slide__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transform: scale(1.04);
-    transition: transform 6s ease-out;
-  }
-
-  .glaze-slide.is-active .glaze-slide__media img { transform: scale(1); }
-
-  .glaze-slide__overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .glaze-slide__content {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    padding: clamp(24px, 5vw, 72px);
-    display: flex;
-    flex-direction: column;
-    gap: var(--glaze-ss-gap);
-    pointer-events: none;
-    
-  }
-
-  .glaze-slide__content > * { pointer-events: auto; }
-
-  .glaze-slide__content-inner {
-    display: flex;
-    flex-direction: column;
-    gap: var(--glaze-ss-gap);
-    max-width: min(var(--slide-content-width, 460px), 90%);
-    width: 100%;
-  }
-
-  .glaze-slide[data-v-pos="top"] .glaze-slide__content { justify-content: flex-start; }
-  .glaze-slide[data-v-pos="middle"] .glaze-slide__content { justify-content: center; }
-  .glaze-slide[data-v-pos="bottom"] .glaze-slide__content { justify-content: flex-end; }
-
-  .glaze-slide[data-h-align="left"] .glaze-slide__content { align-items: flex-start; }
-  .glaze-slide[data-h-align="center"] .glaze-slide__content { align-items: center; }
-  .glaze-slide[data-h-align="right"] .glaze-slide__content { align-items: flex-end; }
-
-  .glaze-slide[data-h-align="left"] .glaze-slide__content-inner { text-align: left; align-items: flex-start; }
-  .glaze-slide[data-h-align="center"] .glaze-slide__content-inner { text-align: center; align-items: center; }
-  .glaze-slide[data-h-align="right"] .glaze-slide__content-inner { text-align: right; align-items: flex-end; }
-
-  /* Stagger-in for text */
-  .glaze-slide__eyebrow,
-  .glaze-slide__heading,
-  .glaze-slide__sub,
-  .glaze-slide__cta {
-    opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .glaze-slide.is-active .glaze-slide__eyebrow { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
-  .glaze-slide.is-active .glaze-slide__heading { opacity: 1; transform: translateY(0); transition-delay: 0.28s; }
-  .glaze-slide.is-active .glaze-slide__sub { opacity: 1; transform: translateY(0); transition-delay: 0.40s; }
-  .glaze-slide.is-active .glaze-slide__cta { opacity: 1; transform: translateY(0); transition-delay: 0.52s; }
-
-  .glaze-slide__eyebrow {
-    font-size: 14px;
-    letter-spacing: 0.04em;
-    margin: 0;
-    opacity: 0.85;
-  }
-
-  .glaze-slide__heading {
-    font-size: clamp(28px, 4.4vw, 64px);
-    line-height: 1.05;
-    font-weight: 600;
-    margin: 0;
-    letter-spacing: -0.02em;
-  }
-
-  .glaze-slide__sub {
-    font-size: 16px;
-    line-height: 1.5;
-    max-width: 46ch;
-    margin: 0;
-  }
-
-  .glaze-slide__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 28px;
-    border-radius: 999px;
-    background: #111;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .glaze-slide__cta:hover {
-    background: #222;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
-  }
-
-  /* -------- Dots / progress bar (below the bg container) -------- */
-  .glaze-ss-dots {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin: 20px auto 0;
-    width: 100%;
-    padding: 0;
-  }
-
-  .glaze-ss-dot {
-    position: relative;
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: var(--glaze-ss-dot-color);
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    overflow: hidden;
-    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease;
-    flex-shrink: 0;
-  }
-
-  .glaze-ss-dot.is-active {
-    width: 48px;
-    background: var(--glaze-ss-dot-color);
-  }
-
-  .glaze-ss-dot-fill {
-    position: absolute;
-    inset: 0;
-    width: 0%;
-    background: var(--glaze-ss-dot-active);
-    transition: none;
-  }
-
-  .glaze-ss-dot.is-active .glaze-ss-dot-fill {
-    animation: glaze-ss-fill {{ speed }}s linear forwards;
-  }
-
-  @keyframes glaze-ss-fill {
-    from { width: 0%; }
-    to { width: 100%; }
-  }
-
-  /* -------- Arrows (optional) -------- */
-  .glaze-ss-arrows {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 24px;
-    pointer-events: none;
-    z-index: 4;
-  }
-
-  .glaze-ss-arrow {
-    pointer-events: auto;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    color: #111;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    cursor: pointer;
-    transition: background 0.25s ease, transform 0.25s ease;
-    backdrop-filter: blur(6px);
-  }
-
-  .glaze-ss-arrow:hover {
-    background: #fff;
-    transform: scale(1.05);
-  }
-
-  .glaze-ss-arrow svg { width: 16px; height: 16px; }
-
-  /* -------- Responsive -------- */
-  @media screen and (max-width: 768px) {
-    .glaze-ss-viewport { height: auto; overflow: hidden; }
-    .glaze-ss-track {
-      height: auto;
-      padding: 0 16px;
-      gap: 12px;
-    }
-
-    .glaze-slide {
-      display: flex;
-      flex-direction: column;
-      min-height: auto;
-      background: transparent !important;
-      overflow: hidden;
-      border-radius: 0;
-    }
-
-    .glaze-slide__media {
-      position: relative;
-      inset: auto;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      flex: 0 0 auto;
-      order: 1;
-      background: transparent;
-      border-radius: var(--glaze-ss-radius);
-      overflow: hidden;
-    }
-
-    .glaze-slide__content {
-      position: relative;
-      inset: auto;
-      padding: 24px 8px 8px;
-      justify-content: flex-start;
-      align-items: center !important;
-      flex: 0 0 auto;
-      order: 2;
-    }
-
-    .glaze-slide__content-inner {
-      max-width: 100%;
-      text-align: center !important;
-      align-items: center !important;
-    }
-
-    .glaze-slide__heading { font-size: clamp(24px, 7vw, 36px); }
-    .glaze-ss-arrows { display: none; }
-
-    .glaze-slide[data-mobile-stack="content-first"] .glaze-slide__media { order: 2; }
-    .glaze-slide[data-mobile-stack="content-first"] .glaze-slide__content { order: 1; padding: 8px 8px 24px; }
-  }
-</style>
-
-<div
-  id="{{ section_id }}"
-  class="glaze-slideshow"
-  data-glaze-slideshow
-  data-autoplay="{% if autoplay %}1{% else %}0{% endif %}"
+<section
+  id="{{ sid }}"
+  class="glaze-hero"
+  data-glaze-hero
+  data-autoplay="{{ autoplay }}"
   data-speed="{{ speed }}"
+  aria-roledescription="carousel"
+  aria-label="{{ section.settings.aria_label | default: 'Featured stories' }}"
+  style="--hero-h-desk: {{ h_desk }}px; --hero-h-mob: {{ h_mob }}px;"
 >
-  <div class="glaze-ss-wrap">
-    <div class="glaze-ss-viewport">
-      <div class="glaze-ss-track" data-ss-track>
-        {%- for block in section.blocks -%}
-          {%- liquid
-            assign bg = block.settings.bg_color
-            assign text_color = block.settings.text_color
-            assign image_side = block.settings.image_side
-            assign v_pos = block.settings.content_v_position
-            assign h_align = block.settings.content_h_align
-            assign overlay_type = block.settings.overlay_type
-            assign overlay_color = block.settings.overlay_color
-            assign overlay_opacity = block.settings.overlay_opacity | divided_by: 100.0
-            assign layout = block.settings.layout
-            assign mobile_stack = block.settings.mobile_stack
-          -%}
-          <div
-            class="glaze-slide{% if forloop.first %} is-active{% endif %}"
-            data-image-side="{{ image_side }}"
-            data-v-pos="{{ v_pos }}"
-            data-h-align="{{ h_align }}"
-            data-layout="{{ layout }}"
-            data-mobile-stack="{{ mobile_stack }}"
-            style="background-color: {{ bg }}; color: {{ text_color }}; --slide-content-width: {{ block.settings.content_width }}px;"
-            {{ block.shopify_attributes }}
-          >
-            <div class="glaze-slide__media">
-              {%- if block.settings.image != blank or block.settings.image_mobile != blank -%}
-                {%- assign desktop_img = block.settings.image -%}
-                {%- assign mobile_img = block.settings.image_mobile | default: block.settings.image -%}
-                {%- if desktop_img == blank -%}{%- assign desktop_img = mobile_img -%}{%- endif -%}
-                <picture>
-                  {%- if mobile_img != blank -%}
-                    <source media="(max-width: 767px)" srcset="{{ mobile_img | image_url: width: 400 }} 400w, {{ mobile_img | image_url: width: 600 }} 600w, {{ mobile_img | image_url: width: 800 }} 800w, {{ mobile_img | image_url: width: 1000 }} 1000w">
-                  {%- endif -%}
-                  {%- if forloop.first -%}
-                    {{
-                      desktop_img
-                      | image_url: width: 1600
-                      | image_tag:
-                        loading: 'eager',
-                        fetchpriority: 'high',
-                        widths: '600,800,1200,1600,2000',
-                        sizes: '100vw',
-                        alt: block.settings.heading | default: shop.name
-                    }}
-                  {%- else -%}
-                    {{
-                      desktop_img
-                      | image_url: width: 1600
-                      | image_tag:
-                        loading: 'lazy',
-                        widths: '600,800,1200,1600,2000',
-                        sizes: '100vw',
-                        alt: block.settings.heading | default: shop.name
-                    }}
-                  {%- endif -%}
-                </picture>
+  <div class="glaze-hero__stage" data-hero-stage>
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'slide' -%}
+        {%- assign theme = block.settings.theme_preset | default: 'cream' -%}
+        {%- assign align = block.settings.content_align | default: 'right' -%}
+        {%- assign media_type = block.settings.media_type | default: 'image' -%}
+        {%- assign has_video = false -%}
+        {%- if media_type == 'video' and block.settings.video != blank -%}
+          {%- assign has_video = true -%}
+        {%- endif -%}
+        <article
+          class="glaze-hero__slide {% if forloop.first %}is-active{% endif %}"
+          data-slide-index="{{ forloop.index0 }}"
+          data-theme="{{ theme }}"
+          data-align="{{ align }}"
+          data-media="{% if has_video %}video{% else %}image{% endif %}"
+          role="group"
+          aria-roledescription="slide"
+          aria-label="{{ forloop.index }} of {{ section.blocks.size }}"
+          {% unless forloop.first %}aria-hidden="true"{% endunless %}
+          {% if theme == 'custom' %}style="--hero-surface: {{ block.settings.bg_color }}; --hero-ink: {{ block.settings.text_color }};"{% endif %}
+          {{ block.shopify_attributes }}
+        >
+          <div class="glaze-hero__media">
+            <div class="glaze-hero__media-inner" data-parallax style="--parallax-strength: {{ parallax }};">
+              {%- if has_video -%}
+                {%- comment -%}
+                  Shopify-hosted video. Image (if set) doubles as poster so
+                  the first paint is instant. autoplay+muted+loop+playsinline
+                  is required for the video to start without user interaction
+                  on iOS Safari. First slide preloads fully; others preload
+                  metadata only (saves bandwidth on multi-slide heroes).
+                {%- endcomment -%}
+                {% capture poster_url %}{% if block.settings.image != blank %}{{ block.settings.image | image_url: width: 1600 }}{% endif %}{% endcapture %}
+                {% capture vid_preload %}{% if forloop.first %}auto{% else %}metadata{% endif %}{% endcapture %}
+                {% # theme-check-disable RemoteAsset %}
+                <video
+                  class="glaze-hero__img glaze-hero__video"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  preload="{{ vid_preload }}"
+                  {% if poster_url != blank %}poster="{{ poster_url }}"{% endif %}
+                  aria-label="{{ block.settings.heading | default: shop.name | escape }}"
+                >
+                  {%- for source in block.settings.video.sources -%}
+                    <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                  {%- endfor -%}
+                </video>
+                {% # theme-check-enable RemoteAsset %}
+              {%- elsif block.settings.image != blank -%}
+                {%- assign img_alt = block.settings.heading | default: shop.name | escape -%}
+                {% capture img_loading %}{% if forloop.first %}eager{% else %}lazy{% endif %}{% endcapture %}
+                {% capture img_fetchpriority %}{% if forloop.first %}high{% else %}auto{% endif %}{% endcapture %}
+                {{
+                  block.settings.image
+                  | image_url: width: 2400
+                  | image_tag:
+                    loading: img_loading,
+                    fetchpriority: img_fetchpriority,
+                    widths: '600, 900, 1200, 1600, 2000, 2400',
+                    sizes: '(min-width: 900px) 62vw, 100vw',
+                    class: 'glaze-hero__img',
+                    alt: img_alt
+                }}
+              {%- else -%}
+                <div class="glaze-hero__img glaze-hero__img--placeholder" aria-hidden="true">
+                  {{ 'lifestyle-1' | placeholder_svg_tag }}
+                </div>
               {%- endif -%}
-
-              {%- if overlay_type != 'none' -%}
-                {%- assign ovc = overlay_color -%}
-                {%- case overlay_type -%}
-                  {%- when 'solid' -%}
-                    <div
-                      class="glaze-slide__overlay"
-                      style="background: {{ ovc }}; opacity: {{ overlay_opacity }};"
-                    ></div>
-                  {%- when 'gradient_bottom' -%}
-                    <div
-                      class="glaze-slide__overlay"
-                      style="background: linear-gradient(to top, {{ ovc }}, transparent); opacity: {{ overlay_opacity }};"
-                    ></div>
-                  {%- when 'gradient_top' -%}
-                    <div
-                      class="glaze-slide__overlay"
-                      style="background: linear-gradient(to bottom, {{ ovc }}, transparent); opacity: {{ overlay_opacity }};"
-                    ></div>
-                  {%- when 'gradient_left' -%}
-                    <div
-                      class="glaze-slide__overlay"
-                      style="background: linear-gradient(to right, {{ ovc }}, transparent); opacity: {{ overlay_opacity }};"
-                    ></div>
-                  {%- when 'gradient_right' -%}
-                    <div
-                      class="glaze-slide__overlay"
-                      style="background: linear-gradient(to left, {{ ovc }}, transparent); opacity: {{ overlay_opacity }};"
-                    ></div>
-                {%- endcase -%}
-              {%- endif -%}
-            </div>
-
-            <div class="glaze-slide__content">
-              <div class="glaze-slide__content-inner">
-                {%- if block.settings.eyebrow != blank -%}
-                  <p class="glaze-slide__eyebrow">{{ block.settings.eyebrow }}</p>
-                {%- endif -%}
-                {%- if block.settings.heading != blank -%}
-                  <h2 class="glaze-slide__heading">{{ block.settings.heading }}</h2>
-                {%- endif -%}
-                {%- if block.settings.sub != blank -%}
-                  <p class="glaze-slide__sub">{{ block.settings.sub }}</p>
-                {%- endif -%}
-                {%- if block.settings.button_label != blank -%}
-                  <a
-                    href="{{ block.settings.button_link | default: '#' }}"
-                    class="glaze-slide__cta"
-                    style="background: {{ block.settings.button_bg }}; color: {{ block.settings.button_fg }};"
-                  >
-                    {{ block.settings.button_label }}
-                  </a>
-                {%- endif -%}
-              </div>
             </div>
           </div>
-        {%- endfor -%}
-      </div>
 
-      {%- if section.settings.show_arrows and section.blocks.size > 1 -%}
-        <div class="glaze-ss-arrows">
-          <button type="button" class="glaze-ss-arrow" data-ss-prev aria-label="Previous slide">
-            <svg viewBox="0 0 16 16" fill="none">
-              <path d="M10 2L4 8l6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          <button type="button" class="glaze-ss-arrow" data-ss-next aria-label="Next slide">
-            <svg viewBox="0 0 16 16" fill="none">
-              <path d="M6 2l6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </div>
+          <div class="glaze-hero__panel glaze-grain">
+            <div class="glaze-hero__panel-inner">
+              {%- if block.settings.eyebrow != blank -%}
+                <span class="glaze-eyebrow glaze-hero__eyebrow" data-reveal="mask">
+                  {{ block.settings.eyebrow | escape }}
+                </span>
+              {%- endif -%}
+
+              {%- if block.settings.heading != blank -%}
+                <h2 class="glaze-display glaze-hero__heading" data-reveal="mask" style="--stagger-index: 1;">
+                  {{ block.settings.heading | escape }}
+                </h2>
+              {%- endif -%}
+
+              {%- if block.settings.body != blank -%}
+                <p class="glaze-lede glaze-hero__body" data-reveal="fade" style="--stagger-index: 2;">
+                  {{ block.settings.body }}
+                </p>
+              {%- endif -%}
+
+              {%- if block.settings.button_label != blank -%}
+                <a
+                  class="glaze-hero__cta"
+                  data-reveal="fade"
+                  style="--stagger-index: 3;"
+                  href="{{ block.settings.button_link | default: '#' }}"
+                >
+                  <span class="glaze-hero__cta-label">{{ block.settings.button_label | escape }}</span>
+                  <span class="glaze-hero__cta-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 24 16" width="24" height="16" fill="none">
+                      <path d="M1 8h21M16 1l7 7-7 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                </a>
+              {%- endif -%}
+
+              {%- if show_counter and section.blocks.size > 1 -%}
+                <span class="glaze-hero__counter" aria-hidden="true">
+                  <span class="glaze-hero__counter-current">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+                  <span class="glaze-hero__counter-sep">/</span>
+                  <span class="glaze-hero__counter-total">{% if section.blocks.size < 10 %}0{% endif %}{{ section.blocks.size }}</span>
+                </span>
+              {%- endif -%}
+            </div>
+          </div>
+        </article>
       {%- endif -%}
-    </div>
-
-    {%- if show_dots and section.blocks.size > 1 -%}
-      <div class="glaze-ss-dots" role="tablist">
-        {%- for block in section.blocks -%}
-          <button
-            type="button"
-            class="glaze-ss-dot{% if forloop.first %} is-active{% endif %}"
-            data-ss-dot="{{ forloop.index0 }}"
-            aria-label="Go to slide {{ forloop.index }}"
-          >
-            <span class="glaze-ss-dot-fill"></span>
-          </button>
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
+    {%- endfor -%}
   </div>
-</div>
 
-<script>
-  (function () {
-    var root = document.getElementById('{{ section_id }}');
-    if (!root) return;
+  {%- if section.blocks.size > 1 -%}
+    <nav class="glaze-hero__nav" aria-label="Slide controls">
+      <ol class="glaze-hero__dots" role="tablist">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'slide' -%}
+            <li role="presentation">
+              <button
+                type="button"
+                class="glaze-hero__dot {% if forloop.first %}is-active{% endif %}"
+                data-go-to="{{ forloop.index0 }}"
+                role="tab"
+                aria-label="Go to slide {{ forloop.index }}"
+                {% if forloop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}
+              >
+                <span class="glaze-hero__dot-num">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+                {%- if show_progress -%}
+                  <span class="glaze-hero__progress" aria-hidden="true"><span class="glaze-hero__progress-bar"></span></span>
+                {%- endif -%}
+              </button>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ol>
 
-    var track = root.querySelector('[data-ss-track]');
-    var originals = Array.prototype.slice.call(track.querySelectorAll('.glaze-slide'));
-    var dots = root.querySelectorAll('.glaze-ss-dot');
-    var prev = root.querySelector('[data-ss-prev]');
-    var next = root.querySelector('[data-ss-next]');
-    var realTotal = originals.length;
-    if (!realTotal) return;
+      <button type="button" class="glaze-hero__pause" data-hero-toggle aria-label="Pause slideshow" aria-pressed="false">
+        <svg class="glaze-hero__pause-icon glaze-hero__pause-icon--pause" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+          <rect x="2" y="1" width="3" height="10" fill="currentColor"/><rect x="7" y="1" width="3" height="10" fill="currentColor"/>
+        </svg>
+        <svg class="glaze-hero__pause-icon glaze-hero__pause-icon--play" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+          <path d="M2 1l9 5-9 5z" fill="currentColor"/>
+        </svg>
+      </button>
+    </nav>
 
-    var autoplay = root.getAttribute('data-autoplay') === '1';
-    var speed = parseFloat(root.getAttribute('data-speed')) || 5;
-    var infinite = realTotal > 1;
-    var transitionMs = 800;
+    <div class="visually-hidden" aria-live="polite" aria-atomic="true" data-hero-live></div>
+  {%- endif -%}
+</section>
 
-    // Clone first and last slides for seamless looping
-    if (infinite) {
-      var firstClone = originals[0].cloneNode(true);
-      var lastClone = originals[realTotal - 1].cloneNode(true);
-      firstClone.setAttribute('aria-hidden', 'true');
-      firstClone.setAttribute('data-clone', '1');
-      firstClone.classList.remove('is-active');
-      lastClone.setAttribute('aria-hidden', 'true');
-      lastClone.setAttribute('data-clone', '1');
-      lastClone.classList.remove('is-active');
-      track.appendChild(firstClone);
-      track.insertBefore(lastClone, originals[0]);
-    }
 
-    var slides = track.querySelectorAll('.glaze-slide');
-    var total = slides.length;
-    var offset = infinite ? 1 : 0;
-    var current = offset;
-    var timer = null;
-    var teleportTimer = null;
-
-    function computeStep() {
-      if (!slides.length) return 0;
-      var rect = slides[0].getBoundingClientRect();
-      var gapVal = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || '0') || 0;
-      return rect.width + gapVal;
-    }
-
-    function applyTransform(animate) {
-      var step = computeStep();
-      if (animate === false) {
-        track.style.transition = 'none';
-        track.style.transform = 'translateX(' + (-current * step) + 'px)';
-        void track.offsetWidth;
-        track.style.transition = '';
-      } else {
-        track.style.transition = '';
-        track.style.transform = 'translateX(' + (-current * step) + 'px)';
-      }
-    }
-
-    function getRealIdx() {
-      if (!infinite) return current;
-      if (current === 0) return realTotal - 1;       // on lastClone
-      if (current === total - 1) return 0;           // on firstClone
-      return current - 1;
-    }
-
-    function updateUi() {
-      var realIdx = getRealIdx();
-      var realElIdx = offset + realIdx;
-      slides.forEach(function (s, i) {
-        // Active = visually-current slide OR the real slide that corresponds to it.
-        // Keeping the real slide active during a clone-frame means no flicker after teleport.
-        s.classList.toggle('is-active', i === current || i === realElIdx);
-      });
-      dots.forEach(function (d, i) {
-        var fill = d.querySelector('.glaze-ss-dot-fill');
-        if (fill) {
-          fill.style.animation = 'none';
-          void fill.offsetWidth;
-          fill.style.animation = '';
-        }
-        d.classList.toggle('is-active', i === realIdx);
-      });
-    }
-
-    function goTo(idx) {
-      if (teleportTimer) { clearTimeout(teleportTimer); teleportTimer = null; }
-      current = idx;
-      applyTransform(true);
-      updateUi();
-
-      // After transition, silently teleport from clone back to real slide
-      if (infinite && (current === 0 || current === total - 1)) {
-        teleportTimer = setTimeout(function () {
-          if (current === 0) current = realTotal;
-          else if (current === total - 1) current = 1;
-          applyTransform(false);
-          // Refresh active classes so the off-screen clone loses .is-active
-          // and only the visible real slide keeps it (text stays visible).
-          slides.forEach(function (s, i) { s.classList.toggle('is-active', i === current); });
-          teleportTimer = null;
-        }, transitionMs);
-      }
-
-      restartAutoplay();
-    }
-
-    function goToReal(realIdx) { goTo(offset + realIdx); }
-    function nextSlide() { goTo(current + 1); }
-    function prevSlide() { goTo(current - 1); }
-
-    function startAutoplay() {
-      if (!autoplay || realTotal < 2) return;
-      stopAutoplay();
-      timer = setTimeout(nextSlide, speed * 1000);
-    }
-
-    function stopAutoplay() {
-      if (timer) { clearTimeout(timer); timer = null; }
-    }
-
-    function restartAutoplay() { stopAutoplay(); startAutoplay(); }
-
-    dots.forEach(function (d) {
-      d.addEventListener('click', function () {
-        var idx = parseInt(d.getAttribute('data-ss-dot'), 10);
-        if (!isNaN(idx)) goToReal(idx);
-      });
-    });
-
-    if (next) next.addEventListener('click', nextSlide);
-    if (prev) prev.addEventListener('click', prevSlide);
-
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) stopAutoplay();
-      else startAutoplay();
-    });
-
-    // Swipe on touch
-    var startX = 0, dx = 0, dragging = false;
-    root.addEventListener('touchstart', function (e) {
-      if (!e.touches || !e.touches[0]) return;
-      startX = e.touches[0].clientX;
-      dragging = true;
-      stopAutoplay();
-    }, { passive: true });
-    root.addEventListener('touchmove', function (e) {
-      if (!dragging || !e.touches || !e.touches[0]) return;
-      dx = e.touches[0].clientX - startX;
-    }, { passive: true });
-    root.addEventListener('touchend', function () {
-      if (!dragging) return;
-      dragging = false;
-      if (Math.abs(dx) > 40) { dx < 0 ? nextSlide() : prevSlide(); }
-      else { startAutoplay(); }
-      dx = 0;
-    });
-
-    // Re-snap on resize
-    var resizeTimer = null;
-    window.addEventListener('resize', function () {
-      if (resizeTimer) clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function () { applyTransform(false); }, 80);
-    });
-
-    // Kickoff
-    applyTransform(false);
-    updateUi();
-    startAutoplay();
-  })();
-</script>
+{%- comment -%}
+  This section ships no inline CSS or JS:
+    - Styles live in assets/base.css under "S1. Hero slideshow"
+    - Controller lives in assets/global.js as `Glaze.hero`, auto-initialising
+      any element with [data-glaze-hero] (also re-runs on
+      shopify:section:load so theme-editor reloads work).
+  Per-instance values (height, autoplay speed, parallax strength) pass
+  through inline `style="--hero-h-desk: …"` on the section element.
+{%- endcomment -%}
 
 {% schema %}
 {
   "name": "Slideshow",
-  "class": "section-slideshow-glaze",
   "tag": "section",
-  "max_blocks": 10,
+  "class": "section-slideshow-glaze",
+  "max_blocks": 6,
   "settings": [
     {
       "type": "header",
@@ -672,73 +217,33 @@
     {
       "type": "range",
       "id": "height_desktop",
-      "min": 360,
+      "min": 520,
       "max": 900,
       "step": 20,
       "unit": "px",
       "label": "Desktop height",
-      "default": 620
+      "default": 720
     },
     {
       "type": "range",
       "id": "height_mobile",
-      "min": 300,
+      "min": 420,
       "max": 800,
       "step": 20,
       "unit": "px",
       "label": "Mobile height",
-      "default": 560
+      "default": 580
     },
     {
       "type": "range",
-      "id": "corner_radius",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "label": "Slide corner radius",
-      "default": 14
-    },
-    {
-      "type": "range",
-      "id": "peek",
-      "min": 0,
-      "max": 240,
-      "step": 8,
-      "unit": "px",
-      "label": "Side peek (shows adjacent slides)",
-      "info": "Distance from each side where the previous / next slide peeks in.",
-      "default": 96
-    },
-    {
-      "type": "range",
-      "id": "slide_gap",
-      "min": 0,
-      "max": 60,
-      "step": 2,
-      "unit": "px",
-      "label": "Gap between slides",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "content_gap",
-      "min": 8,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "label": "Text spacing",
-      "default": 18
-    },
-    {
-      "type": "range",
-      "id": "section_padding",
+      "id": "parallax_strength",
       "min": 0,
       "max": 80,
-      "step": 4,
+      "step": 5,
       "unit": "px",
-      "label": "Section padding",
-      "default": 20
+      "label": "Parallax strength",
+      "info": "Vertical drift of the image while scrolling. Set 0 to disable.",
+      "default": 40
     },
     {
       "type": "header",
@@ -747,13 +252,13 @@
     {
       "type": "checkbox",
       "id": "autoplay",
-      "label": "Auto-rotate slides",
+      "label": "Auto-advance slides",
       "default": true
     },
     {
       "type": "range",
       "id": "speed",
-      "min": 3,
+      "min": 4,
       "max": 12,
       "step": 1,
       "unit": "s",
@@ -766,27 +271,26 @@
     },
     {
       "type": "checkbox",
-      "id": "show_dots",
-      "label": "Show progress dots",
+      "id": "show_progress",
+      "label": "Show autoplay progress bars",
       "default": true
     },
     {
       "type": "checkbox",
-      "id": "show_arrows",
-      "label": "Show arrows",
-      "default": false
+      "id": "show_counter",
+      "label": "Show 01 / 03 counter on each slide",
+      "default": true
     },
     {
-      "type": "color",
-      "id": "dot_color",
-      "label": "Dot (inactive)",
-      "default": "#d4d4d4"
+      "type": "header",
+      "content": "Accessibility"
     },
     {
-      "type": "color",
-      "id": "dot_active_color",
-      "label": "Dot fill (active)",
-      "default": "#111111"
+      "type": "text",
+      "id": "aria_label",
+      "label": "Region label",
+      "info": "Announced by screen readers when they enter the slideshow.",
+      "default": "Featured stories"
     }
   ],
   "blocks": [
@@ -799,45 +303,26 @@
           "content": "Media"
         },
         {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video", "label": "Video" }
+          ],
+          "default": "image"
+        },
+        {
           "type": "image_picker",
           "id": "image",
-          "label": "Image (desktop)"
+          "label": "Image",
+          "info": "Recommended: 2400 x 1600px. For video slides, used as the poster (first frame shown while video loads)."
         },
         {
-          "type": "image_picker",
-          "id": "image_mobile",
-          "label": "Image (mobile)",
-          "info": "Optional. Used under 768px. Falls back to desktop image."
-        },
-        {
-          "type": "select",
-          "id": "layout",
-          "label": "Layout",
-          "options": [
-            { "value": "split", "label": "Split (image + content side)" },
-            { "value": "overlay", "label": "Full image (content over)" }
-          ],
-          "default": "split"
-        },
-        {
-          "type": "select",
-          "id": "image_side",
-          "label": "Image side (split layout)",
-          "options": [
-            { "value": "left", "label": "Left" },
-            { "value": "right", "label": "Right" }
-          ],
-          "default": "right"
-        },
-        {
-          "type": "select",
-          "id": "mobile_stack",
-          "label": "Mobile stack order",
-          "options": [
-            { "value": "image-first", "label": "Image on top" },
-            { "value": "content-first", "label": "Content on top" }
-          ],
-          "default": "image-first"
+          "type": "video",
+          "id": "video",
+          "label": "Video",
+          "info": "MP4/WEBM, uploaded via Shopify Files. Plays muted, looped, autoplay. The image above is used as the poster frame."
         },
         {
           "type": "header",
@@ -846,25 +331,26 @@
         {
           "type": "text",
           "id": "eyebrow",
-          "label": "Eyebrow text",
-          "default": "Blend Beauty In You"
+          "label": "Eyebrow",
+          "default": "Edit 01"
         },
         {
           "type": "text",
           "id": "heading",
-          "label": "Heading",
+          "label": "Headline",
           "default": "Get the skin you want to feel"
         },
         {
           "type": "textarea",
-          "id": "sub",
-          "label": "Description"
+          "id": "body",
+          "label": "Body",
+          "default": "Thoughtful, clean formulas built for everyday rituals — made to perform without performance."
         },
         {
           "type": "text",
           "id": "button_label",
           "label": "Button label",
-          "default": "Shop Now"
+          "default": "Shop the edit"
         },
         {
           "type": "url",
@@ -873,143 +359,89 @@
         },
         {
           "type": "header",
-          "content": "Content placement"
+          "content": "Layout"
         },
         {
           "type": "select",
-          "id": "content_v_position",
-          "label": "Vertical position",
+          "id": "content_align",
+          "label": "Content side",
           "options": [
-            { "value": "top", "label": "Top" },
-            { "value": "middle", "label": "Middle" },
-            { "value": "bottom", "label": "Bottom" }
+            { "value": "right", "label": "Right" },
+            { "value": "left",  "label": "Left" }
           ],
-          "default": "middle"
-        },
-        {
-          "type": "select",
-          "id": "content_h_align",
-          "label": "Horizontal alignment",
-          "options": [
-            { "value": "left", "label": "Left" },
-            { "value": "center", "label": "Center" },
-            { "value": "right", "label": "Right" }
-          ],
-          "default": "left"
-        },
-        {
-          "type": "range",
-          "id": "content_width",
-          "min": 220,
-          "max": 760,
-          "step": 20,
-          "unit": "px",
-          "label": "Content box width",
-          "default": 460
+          "default": "right",
+          "info": "Alternate left/right across slides for editorial rhythm."
         },
         {
           "type": "header",
-          "content": "Colors"
+          "content": "Colour theme"
+        },
+        {
+          "type": "select",
+          "id": "theme_preset",
+          "label": "Surface theme",
+          "options": [
+            { "value": "cream",  "label": "Cream" },
+            { "value": "blush",  "label": "Blush" },
+            { "value": "sage",   "label": "Sage" },
+            { "value": "ivory",  "label": "Ivory" },
+            { "value": "ink",    "label": "Ink (dark)" },
+            { "value": "custom", "label": "Custom" }
+          ],
+          "default": "cream"
         },
         {
           "type": "color",
           "id": "bg_color",
-          "label": "Slide background",
-          "default": "#f2dcd4"
+          "label": "Custom background",
+          "info": "Used only when surface theme is set to Custom.",
+          "default": "#FBE9E8"
         },
         {
           "type": "color",
           "id": "text_color",
-          "label": "Text color",
-          "default": "#1a1a1a"
-        },
-        {
-          "type": "color",
-          "id": "button_bg",
-          "label": "Button background",
-          "default": "#111111"
-        },
-        {
-          "type": "color",
-          "id": "button_fg",
-          "label": "Button text",
-          "default": "#ffffff"
-        },
-        {
-          "type": "header",
-          "content": "Overlay (on image)"
-        },
-        {
-          "type": "select",
-          "id": "overlay_type",
-          "label": "Overlay style",
-          "options": [
-            { "value": "none", "label": "None" },
-            { "value": "solid", "label": "Solid tint" },
-            { "value": "gradient_bottom", "label": "Gradient from bottom" },
-            { "value": "gradient_top", "label": "Gradient from top" },
-            { "value": "gradient_left", "label": "Gradient from left" },
-            { "value": "gradient_right", "label": "Gradient from right" }
-          ],
-          "default": "none"
-        },
-        {
-          "type": "color",
-          "id": "overlay_color",
-          "label": "Overlay color",
-          "default": "#000000"
-        },
-        {
-          "type": "range",
-          "id": "overlay_opacity",
-          "min": 0,
-          "max": 100,
-          "step": 5,
-          "unit": "%",
-          "label": "Overlay opacity",
-          "default": 30
+          "label": "Custom text",
+          "info": "Used only when surface theme is set to Custom.",
+          "default": "#1A1A1A"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Slideshow",
+      "name": "Editorial hero",
       "blocks": [
         {
           "type": "slide",
           "settings": {
-            "eyebrow": "Blend Beauty In You",
+            "eyebrow": "Edit 01",
             "heading": "Get the skin you want to feel",
-            "button_label": "Shop Now",
-            "image_side": "right",
-            "content_v_position": "middle",
-            "content_h_align": "left",
-            "bg_color": "#f2dcd4"
+            "body": "Thoughtful, clean formulas built for everyday rituals — made to perform without performance.",
+            "button_label": "Shop the edit",
+            "content_align": "right",
+            "theme_preset": "cream"
           }
         },
         {
           "type": "slide",
           "settings": {
-            "eyebrow": "Blend Beauty In You",
-            "heading": "Get the skin you want to feel",
-            "button_label": "Shop Now",
-            "image_side": "left",
-            "content_v_position": "middle",
-            "content_h_align": "right",
-            "bg_color": "#e8c8c0"
+            "eyebrow": "Edit 02",
+            "heading": "Quiet ingredients. Loud results.",
+            "body": "Made with bio-active actives and the kind of restraint that lets your skin do the talking.",
+            "button_label": "Discover the ritual",
+            "content_align": "left",
+            "theme_preset": "blush"
           }
         },
         {
           "type": "slide",
           "settings": {
-            "eyebrow": "Blend Beauty In You",
-            "heading": "Get the skin you want to feel",
-            "button_label": "Shop Now",
-            "layout": "overlay",
-            "content_v_position": "middle",
-            "content_h_align": "left",
-            "bg_color": "#d89a80"
+            "eyebrow": "Edit 03",
+            "heading": "Skin first. Always.",
+            "body": "Dermatologist-approved formulas designed for sensitive routines, gentle on every skin type.",
+            "button_label": "Browse all",
+            "content_align": "right",
+            "theme_preset": "sage"
           }
         }
       ]

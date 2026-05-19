@@ -4,8 +4,14 @@
   assign current_variant = product.selected_or_first_available_variant
   assign feature_blocks = section.blocks | where: 'type', 'feature'
   assign trust_blocks   = section.blocks | where: 'type', 'trust'
+  assign pt_mobile = section.settings.padding_top | times: 0.5 | round
+  assign pb_mobile = section.settings.padding_bottom | times: 0.5 | round
 -%}
 
+{%- comment -%}
+  Per-instance CSS variables. Structural styles live in assets/base.css
+  under "S14. Main product".
+{%- endcomment -%}
 <style>
   #{{ sid }} {
     --c-bg: {{ section.settings.bg_color }};
@@ -17,524 +23,45 @@
     --c-border: {{ section.settings.border_color }};
     --pt: {{ section.settings.padding_top }}px;
     --pb: {{ section.settings.padding_bottom }}px;
+    --pt-mobile: {{ pt_mobile }}px;
+    --pb-mobile: {{ pb_mobile }}px;
     --max-w: {{ section.settings.max_width }}px;
     --side-pad: {{ section.settings.side_padding }}px;
     --r-md: {{ section.settings.radius_md }}px;
     --r-lg: {{ section.settings.radius_lg }}px;
     --font-d: {{ section.settings.font_display | default: "var(--g-display-font, sans-serif)" }};
     --font-b: {{ section.settings.font_body | default: "var(--g-body-font, sans-serif)" }};
-
-    background: var(--c-bg);
-    color: var(--c-fg);
-    font-family: var(--font-b);
-    padding: var(--pt) 0 var(--pb);
+    --gallery-sticky-top: {{ section.settings.gallery_sticky_top | default: 24 }}px;
+    --thumb-size: {{ section.settings.thumb_size }}px;
+    --rating-size: {{ section.settings.rating_size }}px;
+    --star-color: {{ section.settings.star_color }};
+    --title-color: {{ section.settings.title_color }};
+    --title-size: clamp({{ section.settings.title_size_min }}px, {{ section.settings.title_size_vw }}vw, {{ section.settings.title_size_max }}px);
+    --feature-size: {{ section.settings.feature_size }}px;
+    --feature-color: {{ section.settings.feature_color }};
+    --variant-price-size: {{ section.settings.variant_price_size }}px;
+    --variant-name-size: {{ section.settings.variant_name_size }}px;
+    --atc-padding-y: {{ section.settings.atc_padding_y }}px;
+    --atc-padding-x: {{ section.settings.atc_padding_x }}px;
+    --atc-radius: {{ section.settings.atc_radius }}px;
+    --atc-bg: {{ section.settings.atc_bg }};
+    --atc-color: {{ section.settings.atc_color }};
+    --atc-hover-bg: {{ section.settings.atc_hover_bg }};
+    --atc-size: {{ section.settings.atc_size }}px;
+    --trust-bg: {{ section.settings.trust_bg }};
+    --trust-color: {{ section.settings.trust_color }};
+    --detail-label-size: {{ section.settings.detail_label_size }}px;
   }
-  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
-  @media (max-width: 749px) { #{{ sid }} { --side-pad: 16px; --pt: {{ section.settings.padding_top | times: 0.5 | round }}px; --pb: {{ section.settings.padding_bottom | times: 0.5 | round }}px; } }
-  #{{ sid }} a { color: inherit; text-decoration: none; }
-  #{{ sid }} button { cursor: pointer; border: 0; background: none; font: inherit; color: inherit; }
-
-  #{{ sid }} .mp__container {
-    max-width: var(--max-w);
-    margin: 0 auto;
-    padding: 0 var(--side-pad);
-  }
-  #{{ sid }} .mp__grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: clamp(20px, 4vw, 48px);
-  }
-  @media (min-width: 750px) {
-    #{{ sid }} .mp__grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: start; /* allows the gallery to be sticky inside its grid track */
-    }
-    /* Gallery sticks at the top of the viewport while the longer right column
-       scrolls; releases naturally when the section's grid row ends. */
-    #{{ sid }} .mp__gallery {
-      position: sticky;
-      top: {{ section.settings.gallery_sticky_top | default: 24 }}px;
-      align-self: start;
-    }
-  }
-
-  /* ---- Gallery ---- */
-  #{{ sid }} .mp__gallery { display: flex; flex-direction: column; gap: 12px; }
-  #{{ sid }} .mp__gallery-main {
-    position: relative;
-    aspect-ratio: 1 / 1;
-    background: var(--c-card);
-    border-radius: var(--r-lg);
-    overflow: hidden;
-  }
-  #{{ sid }} .mp__gallery-main img,
-  #{{ sid }} .mp__gallery-main video {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-  }
-  #{{ sid }} .mp__thumbs {
-    display: flex; gap: 10px; flex-wrap: wrap;
-  }
-  #{{ sid }} .mp__thumb {
-    width: {{ section.settings.thumb_size }}px;
-    height: {{ section.settings.thumb_size }}px;
-    border-radius: var(--r-md);
-    overflow: hidden;
-    background: var(--c-card);
-    border: 2px solid transparent;
-    transition: border-color 0.25s ease;
-    padding: 0;
-  }
-  #{{ sid }} .mp__thumb.is-active { border-color: var(--c-accent); }
-  #{{ sid }} .mp__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  #{{ sid }} .mp__thumb { position: relative; }
-  #{{ sid }} .mp__thumb-badge {
-    position: absolute;
-    inset: auto 4px 4px auto;
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    border-radius: 100px;
-    width: 22px; height: 22px;
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 9px; font-weight: 700;
-  }
-  #{{ sid }} .mp__thumb-badge svg { width: 11px; height: 11px; display: block; }
-  #{{ sid }} .mp__media { position: absolute; inset: 0; }
-  #{{ sid }} .mp__media[hidden] { display: none; }
-  #{{ sid }} .mp__media img,
-  #{{ sid }} .mp__media video,
-  #{{ sid }} .mp__media iframe,
-  #{{ sid }} .mp__media model-viewer {
-    width: 100%; height: 100%; display: block;
-    border: 0;
-  }
-  #{{ sid }} .mp__media img,
-  #{{ sid }} .mp__media video { object-fit: cover; }
-
-  /* ---- Info column ---- */
-  #{{ sid }} .mp__info { display: flex; flex-direction: column; gap: 18px; }
-
-  #{{ sid }} .mp__rating {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: {{ section.settings.rating_size }}px;
-    color: var(--c-muted);
-  }
-  #{{ sid }} .mp__stars { display: inline-flex; gap: 2px; color: {{ section.settings.star_color }}; }
-  #{{ sid }} .mp__stars svg { width: 16px; height: 16px; fill: currentColor; }
-  #{{ sid }} .mp__review-count { color: var(--c-muted); text-decoration: underline; }
-
-  #{{ sid }} .mp__title {
-    font-family: var(--font-d);
-    font-size: clamp({{ section.settings.title_size_min }}px, {{ section.settings.title_size_vw }}vw, {{ section.settings.title_size_max }}px);
-    font-weight: 600;
-    color: {{ section.settings.title_color }};
-    line-height: 1.2;
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-
-  #{{ sid }} .mp__features {
-    list-style: none; padding: 0; margin: 0;
-    display: flex; flex-direction: column; gap: 8px;
-  }
-  #{{ sid }} .mp__feature {
-    display: flex; align-items: flex-start; gap: 10px;
-    font-size: {{ section.settings.feature_size }}px;
-    color: {{ section.settings.feature_color }};
-    line-height: 1.5;
-  }
-  #{{ sid }} .mp__feature-check {
-    flex-shrink: 0;
-    width: 18px; height: 18px;
-    color: var(--c-accent);
-    margin-top: 1px;
-  }
-  #{{ sid }} .mp__feature-check svg { width: 100%; height: 100%; }
-
-  /* ---- Live price (above variants) ---- */
-  #{{ sid }} .mp__price {
-    display: flex; align-items: baseline; gap: 10px;
-    font-family: var(--font-d);
-  }
-  #{{ sid }} .mp__price-current {
-    font-size: {{ section.settings.variant_price_size }}px;
-    font-weight: 700;
-    color: {{ section.settings.title_color }};
-    line-height: 1;
-  }
-  #{{ sid }} .mp__price-compare {
-    font-size: 14px;
-    color: var(--c-muted);
-    text-decoration: line-through;
-    font-weight: 500;
-    line-height: 1;
-  }
-  #{{ sid }} .mp__price-compare:empty { display: none; }
-
-  /* ---- Variant picker (compact pills, wrap horizontally) ---- */
-  #{{ sid }} .mp__variants {
-    display: flex; flex-direction: column; gap: 8px;
-  }
-  #{{ sid }} .mp__variant-label {
-    font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
-    color: var(--c-muted); font-weight: 600;
-  }
-  #{{ sid }} .mp__variant-options {
-    display: flex; flex-wrap: wrap; gap: 8px;
-  }
-  #{{ sid }} .mp__variant-option {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 9px 16px;
-    border: 1.5px solid var(--c-border);
-    border-radius: 100px;
-    background: var(--c-card);
-    color: {{ section.settings.title_color }};
-    cursor: pointer;
-    position: relative;
-    transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
-    font-family: var(--font-d);
-    font-size: {{ section.settings.variant_name_size }}px;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-  #{{ sid }} .mp__variant-option:hover { border-color: {{ section.settings.title_color }}; }
-  #{{ sid }} .mp__variant-option:has(input:checked),
-  #{{ sid }} .mp__variant-option.is-active {
-    border-color: {{ section.settings.title_color }};
-    background: {{ section.settings.title_color }};
-    color: {{ section.settings.card_bg }};
-  }
-  #{{ sid }} .mp__variant-option input { position: absolute; opacity: 0; pointer-events: none; }
-  #{{ sid }} .mp__variant-option[data-unavailable] {
-    opacity: 0.45;
-    text-decoration: line-through;
-    pointer-events: none;
-  }
-  #{{ sid }} .mp__variant-name { display: inline-block; }
-
-  /* ---- Option groups (per-option radio groups) ---- */
-  #{{ sid }} .mp__option-group { display: flex; flex-direction: column; gap: 8px; }
-  #{{ sid }} .mp__option-group + .mp__option-group { margin-top: 14px; }
-  #{{ sid }} .mp__option-current { color: var(--c-fg); font-weight: 600; letter-spacing: 0; text-transform: none; margin-left: 4px; }
-
-  /* ---- Swatch variant style ---- */
-  #{{ sid }} .mp__variant-option--swatch {
-    width: 36px; height: 36px;
-    padding: 0;
-    border-radius: 50%;
-    overflow: hidden;
-    border-width: 2px;
-  }
-  #{{ sid }} .mp__variant-option--swatch:has(input:checked),
-  #{{ sid }} .mp__variant-option--swatch.is-active {
-    background: transparent;
-    box-shadow: 0 0 0 2px var(--c-bg), 0 0 0 4px var(--c-fg);
-  }
-  #{{ sid }} .mp__swatch {
-    display: block;
-    width: 100%; height: 100%;
-    background-size: cover;
-    background-position: center;
-  }
-
-  /* ---- Visually hidden helper ---- */
-  #{{ sid }} .visually-hidden {
-    position: absolute;
-    width: 1px; height: 1px;
-    padding: 0; margin: -1px;
-    overflow: hidden;
-    clip: rect(0,0,0,0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  /* ---- Quantity stepper ---- */
-  #{{ sid }} .mp__qty {
-    display: flex; align-items: center; gap: 12px;
-  }
-  #{{ sid }} .mp__qty-label {
-    font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
-    color: var(--c-muted); font-weight: 600;
-  }
-  #{{ sid }} .mp__qty-input {
-    display: inline-flex; align-items: center;
-    border: 1.5px solid var(--c-border);
-    border-radius: 100px;
-    background: var(--c-card);
-    overflow: hidden;
-  }
-  #{{ sid }} .mp__qty-btn {
-    width: 44px; height: 44px;
-    font-size: 18px;
-    color: var(--c-fg);
-  }
-  #{{ sid }} .mp__qty-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -4px; }
-  #{{ sid }} .mp__qty-field {
-    width: 48px; height: 44px;
-    border: 0; background: transparent;
-    text-align: center; font: inherit; color: var(--c-fg);
-    -moz-appearance: textfield;
-  }
-  #{{ sid }} .mp__qty-field::-webkit-outer-spin-button,
-  #{{ sid }} .mp__qty-field::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-  /* ---- Tax indicator ---- */
-  #{{ sid }} .mp__tax-note {
-    font-size: 12px; color: var(--c-muted); margin: 0;
-  }
-  #{{ sid }} .mp__tax-note a { text-decoration: underline; text-underline-offset: 3px; }
-
-  /* ---- Pickup availability ---- */
-  #{{ sid }} .mp__pickup {
-    display: block;
-    padding: 12px 14px;
-    border: 1px solid var(--c-border);
-    border-radius: var(--r-md);
-    background: var(--c-card);
-    font-size: 13px;
-  }
-  #{{ sid }} .mp__pickup:empty { display: none; }
-  #{{ sid }} .mp__pickup-status {
-    display: flex; align-items: flex-start; gap: 8px;
-    margin: 0;
-    color: var(--c-fg);
-  }
-  #{{ sid }} .mp__pickup-status svg { color: #1d6b2e; flex-shrink: 0; margin-top: 2px; }
-  #{{ sid }} .mp__pickup-status--unavailable { color: var(--c-muted); }
-  #{{ sid }} .mp__pickup-details {
-    margin-top: 8px;
-    border-top: 1px solid var(--c-border);
-    padding-top: 8px;
-  }
-  #{{ sid }} .mp__pickup-details > summary {
-    cursor: pointer;
-    color: var(--c-fg);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    font-size: 12px;
-    min-height: 24px;
-    display: inline-flex; align-items: center;
-  }
-  #{{ sid }} .mp__pickup-details > summary::-webkit-details-marker { display: none; }
-  #{{ sid }} .mp__pickup-details ul {
-    list-style: none;
-    padding: 0;
-    margin: 8px 0 0;
-    display: grid;
-    gap: 10px;
-  }
-  #{{ sid }} .mp__pickup-details li {
-    display: grid;
-    gap: 2px;
-    font-size: 12px;
-    line-height: 1.4;
-  }
-  #{{ sid }} .mp__pickup-details address {
-    font-style: normal;
-    color: var(--c-muted);
-  }
-
-  /* ---- App / theme blocks slot ---- */
-  #{{ sid }} .mp__app-blocks {
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  #{{ sid }} .mp__app-blocks:empty { display: none; }
-
-  /* ---- Payment terms (Shop Pay Installments banner) ---- */
-  #{{ sid }} .mp__payment-terms { display: block; }
-  #{{ sid }} .mp__payment-terms:empty { display: none; }
-
-  /* ---- Accelerated checkout (Apple Pay, Google Pay, Shop Pay) ---- */
-  /* Accelerated checkout (Shop Pay, Apple Pay, PayPal, Google Pay). Shopify injects these
-     buttons via the payment_button filter on the product form; they ship with their own
-     minimal styling. We push the wrapper down so it doesn't visually collide with our ATC,
-     and feed Shopify's internal CSS variables to round the corners so they match Glaze's
-     pill button shape. */
-  #{{ sid }} .mp__accelerated {
-    display: block;
-    margin-top: 12px;
-    /* Shopify reads these vars; set them so the rendered buttons aren't square */
-    --shopify-accelerated-checkout-button-border-radius: 100px;
-    --shopify-accelerated-checkout-cart-button-border-radius: 100px;
-  }
-  #{{ sid }} .mp__accelerated:empty { display: none; }
-  /* Belt-and-suspenders: many merchants still get square corners because Shopify ships
-     newer button widgets that ignore the vars above. Force pill on the injected wrappers. */
-  #{{ sid }} .mp__accelerated .shopify-payment-button__button,
-  #{{ sid }} .mp__accelerated > * { border-radius: 100px !important; }
-
-  /* ---- Gift card recipient form ---- */
-  #{{ sid }} .mp__gift-recipient {
-    display: grid; gap: 12px;
-    padding: 14px;
-    border: 1px solid var(--c-border);
-    border-radius: var(--r-md);
-    background: var(--c-card);
-  }
-  #{{ sid }} .mp__gift-toggle {
-    display: flex; align-items: center; gap: 8px;
-    cursor: pointer;
-    font-size: 13px; color: var(--c-fg);
-  }
-  #{{ sid }} .mp__gift-fields {
-    display: grid; gap: 8px;
-  }
-  #{{ sid }} .mp__gift-fields label {
-    font-size: 12px; color: var(--c-muted); font-weight: 500;
-  }
-  #{{ sid }} .mp__gift-fields input,
-  #{{ sid }} .mp__gift-fields textarea {
-    font: inherit; color: var(--c-fg);
-    background: var(--c-bg);
-    border: 1px solid var(--c-border);
-    border-radius: var(--r-md);
-    padding: 8px 12px;
-    width: 100%;
-  }
-  #{{ sid }} .mp__gift-fields input:focus,
-  #{{ sid }} .mp__gift-fields textarea:focus {
-    outline: 2px solid var(--c-accent); outline-offset: 2px;
-  }
-  #{{ sid }} .mp__gift-fields textarea { min-height: 80px; resize: vertical; }
-
-  /* ---- ATC ---- */
-  #{{ sid }} .mp__atc {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 100%;
-    padding: {{ section.settings.atc_padding_y }}px {{ section.settings.atc_padding_x }}px;
-    border-radius: {{ section.settings.atc_radius }}px;
-    background: {{ section.settings.atc_bg }};
-    color: {{ section.settings.atc_color }};
-    font-family: var(--font-d);
-    font-weight: 700;
-    font-size: {{ section.settings.atc_size }}px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    transition: background 0.25s ease, transform 0.25s ease;
-    cursor: pointer;
-    border: 0;
-  }
-  #{{ sid }} .mp__atc:hover { background: {{ section.settings.atc_hover_bg }}; transform: translateY(-1px); }
-  #{{ sid }} .mp__atc[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; }
-  /* Loading state — hide button text, override base.css spinner color for dark bg, no dim overlay (button already
-     shows feedback via its disabled appearance). */
-  #{{ sid }} .mp__atc.is-loading { color: transparent; pointer-events: none; }
-  #{{ sid }} .mp__atc.is-loading::after { display: none; }
-  #{{ sid }} .mp__atc.is-loading::before {
-    border-color: rgba(255, 255, 255, 0.25);
-    border-top-color: #fff;
-    width: 20px;
-    height: 20px;
-    margin: -10px 0 0 -10px;
-  }
-
-  #{{ sid }} .mp__shipping {
-    text-align: center;
-    font-size: 13px;
-    color: var(--c-muted);
-    margin: -6px 0 0;
-  }
-
-  /* ---- Author / verified ---- */
-  #{{ sid }} .mp__verified {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 14px;
-    border: 1px solid var(--c-border);
-    border-radius: var(--r-md);
-    background: var(--c-card);
-  }
-  #{{ sid }} .mp__verified-avatar {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--c-accent);
-    color: var(--c-accent-fg);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-family: var(--font-d);
-    font-weight: 700;
-    font-size: 13px;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-  #{{ sid }} .mp__verified-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  #{{ sid }} .mp__verified-content { flex: 1; min-width: 0; }
-  #{{ sid }} .mp__verified-name {
-    font-size: 13px; font-weight: 600;
-    color: {{ section.settings.title_color }};
-    margin: 0 0 4px;
-  }
-  #{{ sid }} .mp__verified-text {
-    font-size: 12px; line-height: 1.5; color: var(--c-muted); margin: 0;
-  }
-
-  /* ---- Trust row ---- */
-  #{{ sid }} .mp__trust-row {
-    display: flex; flex-wrap: wrap; gap: 10px;
-    margin-top: 6px;
-  }
-  #{{ sid }} .mp__trust {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 10px;
-    border-radius: 100px;
-    background: {{ section.settings.trust_bg }};
-    color: {{ section.settings.trust_color }};
-    font-size: 11px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.08em;
-  }
-  #{{ sid }} .mp__trust svg { width: 14px; height: 14px; }
-
-  /* ---- Payment icons ---- */
-  #{{ sid }} .mp__payments {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    align-items: center;
-    padding-top: 4px;
-  }
-  #{{ sid }} .mp__payment-item {
-    width: 34px; height: 22px;
-    background: #fff;
-    border-radius: 4px;
-    padding: 2px 4px;
-    display: inline-flex; align-items: center; justify-content: center;
-    border: 1px solid var(--c-border);
-  }
-  #{{ sid }} .mp__payment-item svg { width: 100%; height: 100%; }
-
-  /* ---- Collapsible blocks ---- */
-  #{{ sid }} .mp__details {
-    border-top: 1px solid var(--c-border);
-    margin-top: 12px;
-  }
-  #{{ sid }} .mp__detail {
-    border-bottom: 1px solid var(--c-border);
-  }
-  #{{ sid }} .mp__detail-summary {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 0;
-    cursor: pointer;
-    list-style: none;
-    font-family: var(--font-d);
-    font-size: {{ section.settings.detail_label_size }}px;
-    font-weight: 600;
-    color: {{ section.settings.title_color }};
-  }
-  #{{ sid }} .mp__detail-summary::-webkit-details-marker { display: none; }
-  #{{ sid }} .mp__detail-summary::after {
-    content: '+';
-    font-size: 22px;
-    color: var(--c-muted);
-    transition: transform 0.3s ease;
-  }
-  #{{ sid }} .mp__detail[open] .mp__detail-summary::after { transform: rotate(45deg); }
-  #{{ sid }} .mp__detail-body {
-    padding: 0 0 12px;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--c-muted);
-  }
-  #{{ sid }} .mp__detail-body p:first-child { margin-top: 0; }
-  #{{ sid }} .mp__detail-body p:last-child { margin-bottom: 0; }
 </style>
 
-<section id="{{ sid }}" aria-label="{{ product.title | escape }}">
+<section
+  id="{{ sid }}"
+  class="glaze-mp"
+  data-glaze-mp
+  data-atc-label="{{ section.settings.atc_label | default: 'Add to Cart' | escape }}"
+  data-sold-out-label="{{ section.settings.sold_out_label | default: 'Sold out' | escape }}"
+  aria-label="{{ product.title | escape }}"
+>
   <div class="mp__container">
     <div class="mp__grid">
 
@@ -805,7 +332,7 @@
 
         {%- comment -%} Buy form: quantity, gift-card recipient (if applicable), payment_terms, ATC, payment_button.
                        The hidden id input lives just above (linked via form="…") so option changes can update it.
-                       Wrapped in <glaze-product-form> so glaze-cart.js can intercept the submit
+                       Wrapped in <glaze-product-form> so cart.js can intercept the submit
                        when cart_type == 'drawer' (posts to /cart/add.js + opens drawer instead of
                        navigating to /cart). Without the drawer the wrapper is inert — native submit. {%- endcomment -%}
         <glaze-product-form>
@@ -953,120 +480,12 @@
   </div>
 </section>
 
-<script>
-  (function () {
-    var root = document.getElementById('{{ sid }}');
-    if (!root) return;
-
-    // ---------- Gallery: thumb click → show that media item ----------
-    function showMedia(mediaId) {
-      var idStr = String(mediaId);
-      root.querySelectorAll('[data-mp-media-id]').forEach(function (el) {
-        var match = el.getAttribute('data-mp-media-id') === idStr;
-        if (match) { el.removeAttribute('hidden'); el.classList.add('is-active'); }
-        else { el.setAttribute('hidden', ''); el.classList.remove('is-active'); }
-      });
-      root.querySelectorAll('[data-mp-thumb-id]').forEach(function (btn) {
-        var match = btn.getAttribute('data-mp-thumb-id') === idStr;
-        btn.classList.toggle('is-active', match);
-        btn.setAttribute('aria-selected', match ? 'true' : 'false');
-      });
-    }
-    root.querySelectorAll('[data-mp-thumb-id]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        showMedia(btn.getAttribute('data-mp-thumb-id'));
-      });
-    });
-
-    // ---------- Variant picker: option radios → resolve variant → update form + price + media ----------
-    var variantData = [];
-    var dataEl = root.querySelector('[data-mp-variant-data]');
-    if (dataEl) {
-      try { variantData = JSON.parse(dataEl.textContent); } catch (e) { variantData = []; }
-    }
-    var idInput = root.querySelector('[data-mp-id-input]');
-    var priceCurrentEl = root.querySelector('[data-mp-price-current]');
-    var priceCompareEl = root.querySelector('[data-mp-price-compare]');
-    var atcBtn = root.querySelector('.mp__atc');
-    var atcAvailableLabel = '{{ section.settings.atc_label | default: "Add to Cart" | escape }}';
-    var atcSoldOutLabel = '{{ section.settings.sold_out_label | default: "Sold out" | escape }}';
-
-    function getSelectedOptions() {
-      var opts = [];
-      root.querySelectorAll('[data-mp-option]:checked').forEach(function (radio) {
-        var pos = parseInt(radio.getAttribute('data-option-position'), 10) - 1;
-        opts[pos] = radio.value;
-      });
-      return opts;
-    }
-
-    function findVariant(opts) {
-      for (var i = 0; i < variantData.length; i++) {
-        var v = variantData[i];
-        var match = true;
-        for (var j = 0; j < opts.length; j++) {
-          if (v.options[j] !== opts[j]) { match = false; break; }
-        }
-        if (match) return v;
-      }
-      return null;
-    }
-
-    function updateForVariant(v) {
-      if (!v) {
-        if (atcBtn) { atcBtn.setAttribute('disabled', ''); atcBtn.textContent = atcSoldOutLabel; }
-        if (idInput) idInput.value = '';
-        return;
-      }
-      if (idInput) idInput.value = v.id;
-      if (priceCurrentEl) priceCurrentEl.textContent = v.price;
-      if (priceCompareEl) priceCompareEl.textContent = v.compare_at_price || '';
-      if (atcBtn) {
-        if (v.available) { atcBtn.removeAttribute('disabled'); atcBtn.textContent = atcAvailableLabel; }
-        else { atcBtn.setAttribute('disabled', ''); atcBtn.textContent = atcSoldOutLabel; }
-      }
-      if (v.featured_media_id) showMedia(v.featured_media_id);
-      // Update URL ?variant=id so reloads keep the selection
-      if (window.history && window.history.replaceState) {
-        var url = new URL(window.location.href);
-        url.searchParams.set('variant', v.id);
-        window.history.replaceState({}, '', url.toString());
-      }
-      // Notify other components (pickup-availability listens for this)
-      root.dispatchEvent(new CustomEvent('mp:variant-change', { bubbles: true, detail: { variantId: v.id } }));
-    }
-
-    function onOptionChange(e) {
-      var radio = e.target;
-      var pos = radio.getAttribute('data-option-position');
-      // Visual active state in the same option group
-      var group = radio.closest('.mp__option-group');
-      if (group) {
-        group.querySelectorAll('.mp__variant-option').forEach(function (l) { l.classList.remove('is-active'); });
-        var lbl = radio.closest('.mp__variant-option');
-        if (lbl) lbl.classList.add('is-active');
-        var curLabel = group.querySelector('[data-mp-option-current="' + pos + '"]');
-        if (curLabel) curLabel.textContent = radio.value;
-      }
-      updateForVariant(findVariant(getSelectedOptions()));
-    }
-    root.querySelectorAll('[data-mp-option]').forEach(function (radio) {
-      radio.addEventListener('change', onOptionChange);
-    });
-
-    // ---------- Quantity stepper ----------
-    var qtyInput = root.querySelector('[data-mp-qty-input]');
-    if (qtyInput) {
-      root.querySelectorAll('[data-mp-qty-step]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var step = parseInt(btn.getAttribute('data-mp-qty-step'), 10);
-          var next = Math.max(1, (parseInt(qtyInput.value, 10) || 1) + step);
-          qtyInput.value = next;
-        });
-      });
-    }
-  })();
-</script>
+{%- comment -%}
+  Gallery thumb switcher + variant picker + qty stepper live in
+  assets/global.js as Glaze.mainProduct, auto-initialised on the
+  [data-glaze-mp] root element above. ATC labels are passed through
+  data-atc-label / data-sold-out-label attributes.
+{%- endcomment -%}
 
 {% schema %}
 {

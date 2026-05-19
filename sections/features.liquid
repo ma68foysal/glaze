@@ -2,11 +2,11 @@
   assign section_id = 'glaze-ft-' | append: section.id
 -%}
 
+{%- comment -%}
+  Per-instance CSS variables. Structural styles live in assets/base.css
+  under "S2. Features" — only the merchant-driven values stay inline here.
+{%- endcomment -%}
 <style>
-  /* ============================================================
-     Features Glaze — scoped styles (ft- prefix)
-     ============================================================ */
-
   #{{ section_id }} {
     --ft-bg: {{ section.settings.bg_color }};
     --ft-pill-bg: {{ section.settings.pill_bg }};
@@ -15,115 +15,16 @@
     --ft-pill-radius: {{ section.settings.pill_radius }}px;
     --ft-pill-pad-y: {{ section.settings.pill_padding_y }}px;
     --ft-pill-pad-x: {{ section.settings.pill_padding_x }}px;
-
     --ft-title-c: {{ section.settings.title_color }};
     --ft-title-s: {{ section.settings.title_size }}px;
+    --ft-title-s-mobile: {{ section.settings.title_size_mobile }}px;
     --ft-title-w: {{ section.settings.title_weight }};
-
     --ft-icon-size: {{ section.settings.icon_size }}px;
     --ft-icon-bg: {{ section.settings.icon_bg }};
     --ft-icon-c: {{ section.settings.icon_color }};
-
     --ft-gap: {{ section.settings.gap }}px;
     --ft-pad-top: {{ section.settings.padding_top }}px;
     --ft-pad-bottom: {{ section.settings.padding_bottom }}px;
-
-    display: block;
-    background: var(--ft-bg);
-    padding: var(--ft-pad-top) 0 var(--ft-pad-bottom);
-  }
-
-  #{{ section_id }} *,
-  #{{ section_id }} *::before,
-  #{{ section_id }} *::after { box-sizing: border-box; }
-
-  .ft-wrap {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 0 40px;
-  }
-
-  .ft-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: var(--ft-align, center);
-    gap: var(--ft-gap);
-  }
-
-  .ft-list[data-align="left"] { --ft-align: flex-start; }
-  .ft-list[data-align="center"] { --ft-align: center; }
-  .ft-list[data-align="right"] { --ft-align: flex-end; }
-  .ft-list[data-align="between"] { --ft-align: space-between; }
-
-  /* Pill */
-  .ft-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: var(--ft-pill-pad-y) var(--ft-pill-pad-x);
-    background: var(--ft-pill-bg);
-    border: var(--ft-pill-border-w) solid var(--ft-pill-border-c);
-    border-radius: var(--ft-pill-radius);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-decoration: none;
-    flex-shrink: 0;
-  }
-
-  .ft-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-  }
-
-  .ft-icon {
-    width: var(--ft-icon-size);
-    height: var(--ft-icon-size);
-    border-radius: 50%;
-    background: var(--ft-icon-bg);
-    color: var(--ft-icon-c);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .ft-icon img,
-  .ft-icon svg {
-    width: 55%;
-    height: 55%;
-    object-fit: contain;
-  }
-
-  .ft-title {
-    margin: 0;
-    color: var(--ft-title-c);
-    font-size: var(--ft-title-s);
-    font-weight: var(--ft-title-w);
-    line-height: 1.2;
-    white-space: nowrap;
-  }
-
-  /* -------- Mobile slider -------- */
-  @media screen and (max-width: 749px) {
-    .ft-wrap { padding: 0 0 0 16px; }
-
-    .ft-list {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      padding-right: 16px;
-      justify-content: flex-start;
-    }
-
-    .ft-list::-webkit-scrollbar { display: none; }
-
-    .ft-item {
-      scroll-snap-align: start;
-      white-space: nowrap;
-    }
-
-    .ft-title { font-size: {{ section.settings.title_size_mobile }}px; }
   }
 </style>
 

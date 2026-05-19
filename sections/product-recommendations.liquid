@@ -68,62 +68,17 @@
   {%- endif -%}
 </product-recommendations>
 
-<script>
-  (function () {
-    if (window.customElements && customElements.get('product-recommendations')) return;
-    class ProductRecommendations extends HTMLElement {
-      connectedCallback() {
-        // If recommendations already server-rendered, skip the fetch
-        if (this.querySelector('.glaze-recs__inner')) return;
-        var url = this.dataset.url;
-        if (!url) return;
-        var self = this;
-        fetch(url, { headers: { 'Accept': 'text/html' } })
-          .then(function (r) { return r.text(); })
-          .then(function (html) {
-            var doc = new DOMParser().parseFromString(html, 'text/html');
-            var fresh = doc.querySelector('product-recommendations');
-            if (fresh && fresh.innerHTML.trim()) {
-              self.innerHTML = fresh.innerHTML;
-            }
-          }).catch(function () {});
-      }
-    }
-    customElements.define('product-recommendations', ProductRecommendations);
-  })();
-</script>
+{%- comment -%}
+  The <product-recommendations> custom element is defined in assets/global.js
+  (registers on script load). Just including this tag here is enough to
+  trigger the AJAX fetch + inject when needed.
+{%- endcomment -%}
 
-{% stylesheet %}
-  .glaze-recs {
-    background: var(--bg, var(--g-cream));
-    color: var(--fg, var(--g-ink));
-    font-family: var(--g-body-font);
-    padding: 64px 24px 96px;
-  }
-  .glaze-recs:empty { display: none; }
-  .glaze-recs__inner { max-width: 1280px; margin: 0 auto; }
-  .glaze-recs__heading {
-    font-family: var(--g-display-font);
-    font-size: clamp(24px, 3vw, 32px);
-    font-weight: 600;
-    text-align: center;
-    margin: 0 0 32px;
-  }
-  .glaze-recs__grid {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-  @media (min-width: 720px) {
-    .glaze-recs__grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  }
-  @media (min-width: 1080px) {
-    .glaze-recs__grid { grid-template-columns: repeat(var(--cols-d, 4), 1fr); gap: 24px; }
-  }
-{% endstylesheet %}
+{%- comment -%}
+  Structural styles live in assets/base.css under "S15. Product recommendations".
+  Per-instance variables (--bg, --fg, --card-bg, --cols-d) are set via the
+  inline style attribute on the <product-recommendations> element above.
+{%- endcomment -%}
 
 {% schema %}
 {

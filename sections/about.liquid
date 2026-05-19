@@ -1,13 +1,18 @@
 {%- liquid
   assign section_id = 'glaze-ab-' | append: section.id
   assign cols = section.settings.columns_desktop
+  if cols > 2
+    assign cols_tablet = 2
+  else
+    assign cols_tablet = cols
+  endif
 -%}
 
+{%- comment -%}
+  Per-instance CSS variables. Structural styles live in assets/base.css
+  under "S4. About".
+{%- endcomment -%}
 <style>
-  /* ============================================================
-     About Glaze — scoped styles (ab- prefix)
-     ============================================================ */
-
   #{{ section_id }} {
     --ab-bg: {{ section.settings.bg_color }};
     --ab-title-c: {{ section.settings.title_color }};
@@ -25,178 +30,9 @@
     --ab-card-radius: {{ section.settings.card_radius }}px;
     --ab-gap: {{ section.settings.card_gap }}px;
     --ab-cols: {{ cols }};
+    --ab-cols-tablet: {{ cols_tablet }};
     --ab-pad-top: {{ section.settings.padding_top }}px;
     --ab-pad-bottom: {{ section.settings.padding_bottom }}px;
-
-    display: block;
-    background: var(--ab-bg);
-    padding: var(--ab-pad-top) 0 var(--ab-pad-bottom);
-    overflow-x: clip;
-  }
-
-  #{{ section_id }} *,
-  #{{ section_id }} *::before,
-  #{{ section_id }} *::after { box-sizing: border-box; }
-
-  .ab-wrap {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 0 40px;
-  }
-
-  /* Heading */
-  .ab-head {
-    text-align: center;
-    margin-bottom: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .ab-title {
-    margin: 0;
-    color: var(--ab-title-c);
-    font-size: var(--ab-title-s);
-    font-weight: var(--ab-title-w);
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    max-width: 28ch;
-  }
-
-  .ab-link {
-    display: inline-block;
-    color: var(--ab-link-c);
-    font-size: var(--ab-link-s);
-    font-weight: 600;
-    text-decoration: none;
-    border-bottom: 1.5px solid currentColor;
-    padding-bottom: 2px;
-    transition: opacity 0.2s ease;
-  }
-
-  .ab-link:hover { opacity: 0.7; }
-
-  /* Grid */
-  .ab-grid {
-    display: grid;
-    grid-template-columns: repeat(var(--ab-cols), minmax(0, 1fr));
-    gap: var(--ab-gap);
-  }
-
-  /* Card — image as background, content overlaid at bottom */
-  .ab-card {
-    position: relative;
-    border-radius: var(--ab-card-radius);
-    overflow: hidden;
-    display: block;
-    aspect-ratio: 3 / 4;
-    padding: 0;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.35s ease;
-    isolation: isolate;
-  }
-
-  .ab-card:hover { transform: translateY(-3px); }
-
-  .ab-card-media {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 1;
-  }
-
-  .ab-card-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .ab-card:hover .ab-card-media img { transform: scale(1.04); }
-
-  .ab-card-content {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 28px 24px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    text-align: center;
-    z-index: 2;
-  }
-
-  .ab-card-title {
-    margin: 0;
-    color: var(--ab-card-title-c);
-    font-size: var(--ab-card-title-s);
-    font-weight: var(--ab-card-title-w);
-    line-height: 1.2;
-  }
-
-  .ab-card-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 28px;
-    border-radius: 999px;
-    background: var(--ab-btn-bg);
-    color: var(--ab-btn-fg);
-    font-size: 13px;
-    font-weight: 600;
-    border: 0;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.3s ease, color 0.3s ease, transform 0.25s ease;
-  }
-
-  .ab-card-btn:hover {
-    background: var(--ab-btn-hover-bg);
-    color: var(--ab-btn-hover-fg);
-    transform: translateY(-1px);
-  }
-
-  /* Responsive */
-  @media screen and (max-width: 989px) {
-    #{{ section_id }} { --ab-cols: {% if cols > 2 %}2{% else %}{{ cols }}{% endif %}; }
-    .ab-wrap { padding: 0 20px; }
-  }
-
-  @media screen and (max-width: 749px) {
-    .ab-wrap { padding: 0 16px; }
-    .ab-head { margin-bottom: 24px; }
-    .ab-title { font-size: 26px; }
-
-    /* Touch slider: 1 full + peek from right */
-    .ab-grid {
-      grid-template-columns: none;
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      gap: 12px;
-      padding-right: 16px;
-      margin-right: -16px;
-    }
-
-    .ab-grid::-webkit-scrollbar { display: none; }
-
-    .ab-card {
-      flex: 0 0 calc(100% - 64px);
-      scroll-snap-align: start;
-      aspect-ratio: 3 / 4;
-    }
-
-    .ab-card-content { padding: 16px 16px 22px; gap: 12px; }
-    .ab-card-title { font-size: 20px; }
   }
 </style>
 

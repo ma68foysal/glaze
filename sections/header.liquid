@@ -1442,11 +1442,11 @@
           {%- endif -%}
 
           {%- comment -%}
-            Cart icon + count bubble. ID="cart-icon-bubble" is required: glaze-cart.js
+            Cart icon + count bubble. ID="cart-icon-bubble" is required: cart.js
             hijacks click on this exact ID when settings.cart_type == 'drawer'.
 
             We render the snippet directly here (Shopify forbids {% section %} inside
-            another section). After cart mutations, glaze-cart.js fetches
+            another section). After cart mutations, cart.js fetches
             /cart?section_id=cart-icon-bubble — that calls the SECTION wrapper, which
             renders the same snippet — and swaps the returned innerHTML into this
             anchor. Same source of truth in both code paths.

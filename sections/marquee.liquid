@@ -1,114 +1,36 @@
 {%- liquid
   assign section_id = 'glaze-mq-' | append: section.id
-  assign direction = section.settings.direction
-  assign speed = section.settings.speed
+  if section.settings.direction == 'right'
+    assign direction_value = 'reverse'
+  else
+    assign direction_value = 'normal'
+  endif
 -%}
 
+{%- comment -%}
+  Per-instance CSS variables. Structural styles live in assets/base.css
+  under "S5. Marquee".
+{%- endcomment -%}
 <style>
-  /* ============================================================
-     Marquee Glaze — scoped styles (mq- prefix)
-     ============================================================ */
-
   #{{ section_id }} {
     --mq-bg: {{ section.settings.bg_color }};
     --mq-text-c: {{ section.settings.text_color }};
     --mq-text-s: {{ section.settings.text_size }}px;
+    --mq-text-s-mobile: {{ section.settings.text_size_mobile }}px;
     --mq-text-w: {{ section.settings.text_weight }};
     --mq-img-size: {{ section.settings.image_size }}px;
+    --mq-img-size-mobile: {{ section.settings.image_size_mobile }}px;
     --mq-img-radius: {{ section.settings.image_radius }}px;
     --mq-gap: {{ section.settings.gap }}px;
+    --mq-gap-mobile: {{ section.settings.gap_mobile }}px;
     --mq-border-top-w: {{ section.settings.border_top_width }}px;
     --mq-border-top-c: {{ section.settings.border_top_color }};
     --mq-border-bottom-w: {{ section.settings.border_bottom_width }}px;
     --mq-border-bottom-c: {{ section.settings.border_bottom_color }};
     --mq-pad-top: {{ section.settings.padding_top }}px;
     --mq-pad-bottom: {{ section.settings.padding_bottom }}px;
-
-    display: block;
-    background: var(--mq-bg);
-    border-top: var(--mq-border-top-w) solid var(--mq-border-top-c);
-    border-bottom: var(--mq-border-bottom-w) solid var(--mq-border-bottom-c);
-    padding: var(--mq-pad-top) 0 var(--mq-pad-bottom);
-    overflow: hidden;
-  }
-
-  #{{ section_id }} *,
-  #{{ section_id }} *::before,
-  #{{ section_id }} *::after { box-sizing: border-box; }
-
-  .mq-viewport {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .mq-track {
-    display: flex;
-    width: max-content;
-    align-items: center;
-    gap: var(--mq-gap);
-    padding-right: var(--mq-gap);
-    animation-name: glaze-mq-scroll;
-    animation-duration: {{ speed }}s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: {% if direction == 'right' %}reverse{% else %}normal{% endif %};
-    will-change: transform;
-  }
-
-  .mq-track:hover {
-    animation-play-state: paused;
-  }
-
-  @keyframes glaze-mq-scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  .mq-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 16px;
-    flex-shrink: 0;
-    color: var(--mq-text-c);
-    font-size: var(--mq-text-s);
-    font-weight: var(--mq-text-w);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    text-decoration: none;
-  }
-
-  .mq-image {
-    width: var(--mq-img-size);
-    height: var(--mq-img-size);
-    border-radius: var(--mq-img-radius);
-    overflow: hidden;
-    flex-shrink: 0;
-    background: #eee;
-  }
-
-  .mq-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .mq-text { white-space: nowrap; }
-
-  /* -------- Responsive -------- */
-  @media screen and (max-width: 749px) {
-    #{{ section_id }} {
-      --mq-img-size: {{ section.settings.image_size_mobile }}px;
-      --mq-text-s: {{ section.settings.text_size_mobile }}px;
-      --mq-gap: {{ section.settings.gap_mobile }}px;
-    }
-    .mq-item { gap: 10px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .mq-track { animation: none; }
+    --mq-speed: {{ section.settings.speed }}s;
+    --mq-direction: {{ direction_value }};
   }
 </style>
 

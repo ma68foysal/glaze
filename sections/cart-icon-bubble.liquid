@@ -1,7 +1,7 @@
 {%- comment -%}
   Thin section wrapper around snippets/cart-icon-bubble.liquid. Exists ONLY so
   the Shopify Section Rendering API can refetch this section's HTML on every
-  cart mutation (called by glaze-cart.js with ?section_id=cart-icon-bubble).
+  cart mutation (called by cart.js with ?section_id=cart-icon-bubble).
 
   The actual markup lives in the snippet so it can also be rendered inline
   inside sections/header.liquid (where {% section %} would error with

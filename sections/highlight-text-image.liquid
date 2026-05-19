@@ -2,11 +2,11 @@
   assign section_id = 'glaze-hti-' | append: section.id
 -%}
 
+{%- comment -%}
+  Per-instance CSS variables. Structural styles live in assets/base.css
+  under "S8. Highlight text + image".
+{%- endcomment -%}
 <style>
-  /* ============================================================
-     Highlight Text Image Glaze — scoped styles
-     ============================================================ */
-
   #{{ section_id }} {
     --hti-bg: {{ section.settings.bg_color }};
     --hti-color: {{ section.settings.text_color }};
@@ -20,103 +20,6 @@
     --hti-pad-top: {{ section.settings.padding_top }}px;
     --hti-pad-bottom: {{ section.settings.padding_bottom }}px;
     --hti-side-pad: {{ section.settings.side_padding }}px;
-
-    display: block;
-    background: var(--hti-bg);
-    padding: var(--hti-pad-top) var(--hti-side-pad) var(--hti-pad-bottom);
-  }
-
-  #{{ section_id }} *,
-  #{{ section_id }} *::before,
-  #{{ section_id }} *::after { box-sizing: border-box; }
-
-  .hti-wrap {
-    max-width: var(--hti-maxw);
-    margin: 0 auto;
-    font-size: var(--hti-size-dt);
-    line-height: var(--hti-line);
-    letter-spacing: var(--hti-spacing);
-    font-weight: var(--hti-weight);
-    color: var(--hti-color);
-  }
-
-  .hti-wrap[data-align="left"] { text-align: left; }
-  .hti-wrap[data-align="center"] { text-align: center; }
-  .hti-wrap[data-align="right"] { text-align: right; }
-
-  /* Individual item (text or image) — inline-flex so images sit with text baseline */
-  .hti-item {
-    display: inline-flex;
-    align-items: center;
-    vertical-align: middle;
-    margin: calc(var(--hti-gap) / 2);
-    max-width: 100%;
-  }
-
-  .hti-item--text { white-space: normal; }
-
-  /* Image pill / shape */
-  .hti-item--image {
-    overflow: hidden;
-    flex-shrink: 0;
-    background: #f4f4f4;
-    transition: transform 0.4s ease;
-  }
-
-  .hti-item--image:hover { transform: translateY(-2px); }
-
-  .hti-item--image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .hti-item--image[data-shape="pill"] { border-radius: 999px; }
-  .hti-item--image[data-shape="circle"] { border-radius: 50%; aspect-ratio: 1 / 1; }
-  .hti-item--image[data-shape="rectangle"] { border-radius: 0; }
-  .hti-item--image[data-shape="rounded"] { /* radius via inline style */ }
-
-  /* Highlight text span (can have its own color / accent) */
-  .hti-item--text[data-style="accent"] {
-    font-style: italic;
-  }
-
-  .hti-item--text[data-style="underline"] {
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-  }
-
-  /* Entrance animation */
-  .hti-item {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  .hti-wrap.is-visible .hti-item {
-    animation: hti-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-
-  .hti-wrap.is-visible .hti-item:nth-child(1) { animation-delay: 0.05s; }
-  .hti-wrap.is-visible .hti-item:nth-child(2) { animation-delay: 0.12s; }
-  .hti-wrap.is-visible .hti-item:nth-child(3) { animation-delay: 0.19s; }
-  .hti-wrap.is-visible .hti-item:nth-child(4) { animation-delay: 0.26s; }
-  .hti-wrap.is-visible .hti-item:nth-child(5) { animation-delay: 0.33s; }
-  .hti-wrap.is-visible .hti-item:nth-child(6) { animation-delay: 0.40s; }
-  .hti-wrap.is-visible .hti-item:nth-child(7) { animation-delay: 0.47s; }
-  .hti-wrap.is-visible .hti-item:nth-child(8) { animation-delay: 0.54s; }
-  .hti-wrap.is-visible .hti-item:nth-child(9) { animation-delay: 0.61s; }
-  .hti-wrap.is-visible .hti-item:nth-child(10) { animation-delay: 0.68s; }
-  .hti-wrap.is-visible .hti-item:nth-child(n+11) { animation-delay: 0.75s; }
-
-  @keyframes hti-in {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* -------- Responsive -------- */
-  @media screen and (max-width: 749px) {
-    .hti-wrap { font-size: var(--hti-size-mb); }
-    #{{ section_id }} { --hti-side-pad: 16px; }
   }
 </style>
 
@@ -169,31 +72,10 @@
   </div>
 </div>
 
-<script>
-  (function () {
-    var root = document.getElementById('{{ section_id }}');
-    if (!root) return;
-    var wrap = root.querySelector('[data-hti-wrap]');
-    if (!wrap) return;
-
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(
-        function (entries) {
-          entries.forEach(function (e) {
-            if (e.isIntersecting) {
-              wrap.classList.add('is-visible');
-              io.unobserve(wrap);
-            }
-          });
-        },
-        { threshold: 0.15 }
-      );
-      io.observe(wrap);
-    } else {
-      wrap.classList.add('is-visible');
-    }
-  })();
-</script>
+{%- comment -%}
+  Reveal animation handled by Glaze.hti in assets/global.js — auto-initialises
+  any element matching [data-glaze-hti] (set on the section wrapper above).
+{%- endcomment -%}
 
 {% schema %}
 {

@@ -1,13 +1,18 @@
 {%- liquid
   assign section_id = 'glaze-fpr-' | append: section.id
   assign cols = section.settings.columns_desktop
+  if cols > 2
+    assign cols_tablet = 2
+  else
+    assign cols_tablet = cols
+  endif
 -%}
 
+{%- comment -%}
+  Per-instance CSS variables. Structural styles live in assets/base.css
+  under "S3. Featured press".
+{%- endcomment -%}
 <style>
-  /* ============================================================
-     Featured Press Glaze — scoped styles (fpr- prefix)
-     ============================================================ */
-
   #{{ section_id }} {
     --fpr-bg: {{ section.settings.bg_color }};
     --fpr-fg: {{ section.settings.text_color }};
@@ -19,129 +24,12 @@
     --fpr-quote-w: {{ section.settings.quote_weight }};
     --fpr-logo-max-h: {{ section.settings.logo_max_height }}px;
     --fpr-cols: {{ cols }};
+    --fpr-cols-tablet: {{ cols_tablet }};
     --fpr-gap: {{ section.settings.gap }}px;
     --fpr-pad-top: {{ section.settings.padding_top }}px;
     --fpr-pad-bottom: {{ section.settings.padding_bottom }}px;
     --fpr-border-c: {{ section.settings.border_color }};
     --fpr-border-w: {{ section.settings.border_width }}px;
-
-    display: block;
-    background: var(--fpr-bg);
-    color: var(--fpr-fg);
-    padding: var(--fpr-pad-top) 0 var(--fpr-pad-bottom);
-  }
-
-  #{{ section_id }} *,
-  #{{ section_id }} *::before,
-  #{{ section_id }} *::after { box-sizing: border-box; }
-
-  .fpr-wrap {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 0 40px;
-    border-bottom: var(--fpr-border-w) solid var(--fpr-border-c);
-    padding-bottom: var(--fpr-pad-bottom);
-  }
-
-  .fpr-title {
-    margin: 0 0 44px;
-    text-align: center;
-    color: var(--fpr-title-c);
-    font-size: var(--fpr-title-s);
-    font-weight: var(--fpr-title-w);
-    letter-spacing: -0.01em;
-    line-height: 1.1;
-  }
-
-  /* -------- Desktop: Grid -------- */
-  .fpr-grid {
-    display: grid;
-    grid-template-columns: repeat(var(--fpr-cols), minmax(0, 1fr));
-    gap: var(--fpr-gap);
-  }
-
-  .fpr-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 20px;
-    text-decoration: none;
-    color: inherit;
-    padding: 20px;
-    transition: transform 0.3s ease;
-  }
-
-  .fpr-item:hover { transform: translateY(-2px); }
-
-  .fpr-item-logo {
-    height: var(--fpr-logo-max-h);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .fpr-item-logo img {
-    max-height: 100%;
-    max-width: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
-  }
-
-  .fpr-item-quote {
-    margin: 0;
-    color: var(--fpr-quote-c);
-    font-size: var(--fpr-quote-s);
-    font-weight: var(--fpr-quote-w);
-    line-height: 1.45;
-    max-width: 34ch;
-  }
-
-  /* -------- Mobile slider (one full + peek) -------- */
-  .fpr-slider {
-    display: none;
-  }
-
-  /* -------- Responsive -------- */
-  @media screen and (max-width: 1024px) {
-    #{{ section_id }} { --fpr-cols: {% if cols > 2 %}2{% else %}{{ cols }}{% endif %}; }
-  }
-
-  @media screen and (max-width: 749px) {
-    .fpr-wrap { padding: 0 0 0 16px; }
-    .fpr-title { text-align: left; margin-bottom: 24px; font-size: 26px; padding-right: 16px; }
-
-    /* Swap grid for horizontal scroll slider */
-    .fpr-grid { display: none; }
-
-    .fpr-slider {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      gap: 12px;
-      padding-right: 16px;
-    }
-
-    .fpr-slider::-webkit-scrollbar { display: none; }
-
-    .fpr-slider .fpr-item {
-      flex: 0 0 calc(100% / 1.25 - 12px);
-      scroll-snap-align: start;
-      align-items: center;
-      padding: 16px 8px;
-    }
-
-    .fpr-slider .fpr-item-quote { font-size: 14px; }
-
-    /* Border sits under the slider */
-    .fpr-wrap {
-      padding-left: 16px;
-      padding-right: 0;
-    }
   }
 </style>
 
