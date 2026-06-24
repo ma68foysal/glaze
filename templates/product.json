@@ -1,5 +1,18 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
+    "breadcrumbs": {
+      "type": "breadcrumbs",
+      "settings": {}
+    },
     "main": {
       "type": "main-product",
       "blocks": {
@@ -63,6 +76,7 @@
         "radius_md": 12,
         "radius_lg": 24,
         "thumb_size": 76,
+        "gallery_sticky_top": 24,
         "bg_color": "#fbe9e8",
         "card_bg": "#ffffff",
         "text_color": "#1a1a1a",
@@ -73,8 +87,6 @@
         "accent_dim_color": "#fae6e4",
         "border_color": "#00000014",
         "star_color": "#f59e0b",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "title_size_min": 26,
         "title_size_vw": 3,
         "title_size_max": 36,
@@ -88,7 +100,6 @@
         "variant_label": "Choose your option",
         "variant_name_size": 15,
         "variant_price_size": 16,
-        "show_subscription": true,
         "atc_label": "Add to Cart",
         "sold_out_label": "Sold out",
         "shipping_note": "Free shipping on all U.S. orders",
@@ -173,9 +184,93 @@
         "text_color": "#1a1a1a",
         "label_color": "#1a1a1a",
         "accent_color": "#e8a5a0",
-        "icon_bg": "#ffffff",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif"
+        "icon_bg": "#ffffff"
+      }
+    },
+    "social_feed_QNJJQt": {
+      "type": "social-feed",
+      "blocks": {
+        "slide_TkcCjY": {
+          "type": "slide",
+          "settings": {
+            "video_url": "",
+            "alt": "",
+            "badge": "@user1",
+            "link": ""
+          }
+        },
+        "slide_qRhTpt": {
+          "type": "slide",
+          "settings": {
+            "video_url": "",
+            "alt": "",
+            "badge": "@user2",
+            "link": ""
+          }
+        },
+        "slide_3eYw9J": {
+          "type": "slide",
+          "settings": {
+            "video_url": "",
+            "alt": "",
+            "badge": "@user3",
+            "link": ""
+          }
+        },
+        "slide_YKiDCp": {
+          "type": "slide",
+          "settings": {
+            "video_url": "",
+            "alt": "",
+            "badge": "@user4",
+            "link": ""
+          }
+        },
+        "slide_WxCa8g": {
+          "type": "slide",
+          "settings": {
+            "video_url": "",
+            "alt": "",
+            "badge": "@user5",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_TkcCjY",
+        "slide_qRhTpt",
+        "slide_3eYw9J",
+        "slide_YKiDCp",
+        "slide_WxCa8g"
+      ],
+      "name": "Social feed",
+      "settings": {
+        "title": "Over 6K 5★ Product Reviews",
+        "subtitle": "",
+        "title_align": "center",
+        "title_size": 30,
+        "title_weight": 600,
+        "title_color": "#1a1a1a",
+        "show_nav": false,
+        "show_dots": true,
+        "autoplay": true,
+        "autoplay_interval": 4,
+        "pause_on_hover": true,
+        "slides_desktop": 5,
+        "slides_tablet": 3,
+        "slides_mobile": 1,
+        "slide_gap": 16,
+        "slide_radius": 18,
+        "center_radius": 32,
+        "center_scale": 1.1,
+        "max_width": 1200,
+        "bg_color": "#fbe9e8",
+        "text_color": "#1a1a1a",
+        "frame_color": "#1a1a1a",
+        "accent_color": "#e8a5a0",
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "side_padding": 24
       }
     },
     "feature_problem": {
@@ -211,8 +306,6 @@
         "muted_color": "#7a7a7a",
         "accent_color": "#e8a5a0",
         "border_color": "#00000014",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "eyebrow_size": 12,
         "heading_size_min": 26,
         "heading_size_vw": 3,
@@ -293,8 +386,6 @@
         "muted_color": "#7a7a7a",
         "accent_color": "#e8a5a0",
         "border_color": "#00000014",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "eyebrow_size": 12,
         "heading_size_min": 26,
         "heading_size_vw": 3,
@@ -378,8 +469,6 @@
         "btn_bg": "#1a1a1a",
         "btn_color": "#ffffff",
         "btn_hover_bg": "#000000",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "heading_size_min": 26,
         "heading_size_vw": 3,
         "heading_size_max": 36,
@@ -403,8 +492,6 @@
         "muted_color": "#7a7a7a",
         "accent_color": "#e8a5a0",
         "avatar_text_color": "#ffffff",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "quote_size_min": 24,
         "quote_size_vw": 3,
         "quote_size_max": 34,
@@ -447,8 +534,6 @@
         "muted_color": "#7a7a7a",
         "accent_color": "#e8a5a0",
         "border_color": "#00000014",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "eyebrow_size": 12,
         "heading_size_min": 26,
         "heading_size_vw": 3,
@@ -516,8 +601,6 @@
         "body_color": "#666666",
         "muted_color": "#7a7a7a",
         "accent_color": "#e8a5a0",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "heading_size_min": 24,
         "heading_size_vw": 3,
         "heading_size_max": 32,
@@ -558,8 +641,6 @@
         "muted_color": "#7a7a7a",
         "accent_color": "#e8a5a0",
         "border_color": "#00000014",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "eyebrow_size": 12,
         "heading_size_min": 26,
         "heading_size_vw": 3,
@@ -632,8 +713,6 @@
         "title_color": "#1a1a1a",
         "accent_color": "#e8a5a0",
         "media_bg": "#f5d8d5",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "heading_size_min": 24,
         "heading_size_vw": 3,
         "heading_size_max": 32
@@ -736,8 +815,6 @@
         "muted_color": "#7a7a7a",
         "accent_color": "#e8a5a0",
         "border_color": "#00000014",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "eyebrow_size": 12,
         "heading_size_min": 26,
         "heading_size_vw": 3,
@@ -838,8 +915,6 @@
         "muted_color": "#7a7a7a",
         "accent_color": "#e8a5a0",
         "border_color": "#00000014",
-        "font_display": "'Syne', sans-serif",
-        "font_body": "'DM Sans', sans-serif",
         "heading_size_min": 24,
         "heading_size_vw": 3,
         "heading_size_max": 32,
@@ -854,8 +929,10 @@
     }
   },
   "order": [
+    "breadcrumbs",
     "main",
     "trust_icons",
+    "social_feed_QNJJQt",
     "feature_problem",
     "feature_results",
     "before_after",

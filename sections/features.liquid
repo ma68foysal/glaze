@@ -5,24 +5,25 @@
 {%- comment -%}
   Per-instance CSS variables. Structural styles live in assets/base.css
   under "S2. Features" — only the merchant-driven values stay inline here.
+  Editorial trust strip: custom SVG icon + title + optional subtitle,
+  hairline dividers between items. Replaces the generic pill row.
 {%- endcomment -%}
 <style>
   #{{ section_id }} {
     --ft-bg: {{ section.settings.bg_color }};
-    --ft-pill-bg: {{ section.settings.pill_bg }};
-    --ft-pill-border-c: {{ section.settings.pill_border_color }};
-    --ft-pill-border-w: {{ section.settings.pill_border_width }}px;
-    --ft-pill-radius: {{ section.settings.pill_radius }}px;
-    --ft-pill-pad-y: {{ section.settings.pill_padding_y }}px;
-    --ft-pill-pad-x: {{ section.settings.pill_padding_x }}px;
+    --ft-fg: {{ section.settings.text_color }};
+    --ft-divider-c: {{ section.settings.divider_color }};
+    --ft-icon-size: {{ section.settings.icon_size }}px;
+    --ft-icon-bg: {{ section.settings.icon_bg }};
+    --ft-icon-c: {{ section.settings.icon_color }};
     --ft-title-c: {{ section.settings.title_color }};
     --ft-title-s: {{ section.settings.title_size }}px;
     --ft-title-s-mobile: {{ section.settings.title_size_mobile }}px;
     --ft-title-w: {{ section.settings.title_weight }};
-    --ft-icon-size: {{ section.settings.icon_size }}px;
-    --ft-icon-bg: {{ section.settings.icon_bg }};
-    --ft-icon-c: {{ section.settings.icon_color }};
-    --ft-gap: {{ section.settings.gap }}px;
+    --ft-subtitle-c: {{ section.settings.subtitle_color }};
+    --ft-subtitle-s: {{ section.settings.subtitle_size }}px;
+    --ft-item-pad-y: {{ section.settings.item_padding_y }}px;
+    --ft-item-pad-x: {{ section.settings.item_padding_x }}px;
     --ft-pad-top: {{ section.settings.padding_top }}px;
     --ft-pad-bottom: {{ section.settings.padding_bottom }}px;
   }
@@ -30,30 +31,122 @@
 
 <div id="{{ section_id }}" class="glaze-ft">
   <div class="ft-wrap">
-    <div class="ft-list" data-align="{{ section.settings.align }}">
+    <ul
+      class="ft-list"
+      data-align="{{ section.settings.align }}"
+      data-divider="{{ section.settings.divider_style }}"
+      data-stagger
+    >
       {%- for block in section.blocks -%}
-        {%- capture pill_inner -%}
-          <span class="ft-icon" aria-hidden="true">
-            {%- if block.settings.icon_image != blank -%}
-              {{ block.settings.icon_image | image_url: width: 80 | image_tag: loading: 'lazy', alt: block.settings.title, widths: '40,60,80' }}
-            {%- else -%}
-              <svg viewBox="0 0 16 16" fill="none">
-                <path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        {%- liquid
+          assign preset = block.settings.icon_preset | default: 'check'
+          # Smart fallback: if merchant hasn't explicitly picked an icon (still
+          # on the default 'check'), infer one from the title text so existing
+          # sections from before this schema gained icon_preset don't all show
+          # checkmarks.
+          if preset == 'check'
+            assign t = block.settings.title | downcase
+            if t contains 'ship' or t contains 'delivery'
+              assign preset = 'shipping'
+            elsif t contains 'guarantee' or t contains 'refund' or t contains 'money-back' or t contains 'money back'
+              assign preset = 'guarantee'
+            elsif t contains 'pay later' or t contains 'installment' or t contains 'payment'
+              assign preset = 'payment'
+            elsif t contains 'support' or t contains 'help' or t contains 'chat'
+              assign preset = 'support'
+            elsif t contains 'return' or t contains 'exchange'
+              assign preset = 'return'
+            elsif t contains 'natural' or t contains 'organic' or t contains 'vegan' or t contains 'clean'
+              assign preset = 'leaf'
+            endif
+          endif
+          assign has_link = false
+          if block.settings.link != blank
+            assign has_link = true
+          endif
+        -%}
+
+        {%- capture icon_svg -%}
+          {%- case preset -%}
+            {%- when 'shipping' -%}
+              <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                <path d="M4 14h22v18H4V14z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M26 20h10l6 6v6H26V20z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="13" cy="36" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+                <circle cx="34" cy="36" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M16.5 36H30.5M4 32h5.5M37.5 32H42" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
               </svg>
-            {%- endif -%}
-          </span>
-          {%- if block.settings.title != blank -%}
-            <p class="ft-title">{{ block.settings.title }}</p>
-          {%- endif -%}
+            {%- when 'guarantee' -%}
+              <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                <path d="M24 4L8 10v12c0 10 7 18 16 22 9-4 16-12 16-22V10L24 4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M17 24l5 5 9-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            {%- when 'payment' -%}
+              <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                <rect x="4" y="11" width="40" height="26" rx="3" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M4 19h40" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M10 29h8M22 29h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            {%- when 'support' -%}
+              <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                <path d="M8 28v-4a16 16 0 0 1 32 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="6" y="26" width="8" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <rect x="34" y="26" width="8" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M38 40v1a4 4 0 0 1-4 4h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="25" cy="45" r="1.5" fill="currentColor"/>
+              </svg>
+            {%- when 'return' -%}
+              <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                <path d="M40 24a16 16 0 1 1-4.7-11.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M40 6v8h-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            {%- when 'leaf' -%}
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 4c0 9-7 16-16 16 0-9 7-16 16-16z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M4 20c4-4 8-8 16-16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            {%- when 'sparkle' -%}
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3l1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11l6.2-1.8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            {%- else -%}
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 12.5l5 5L20 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          {%- endcase -%}
         {%- endcapture -%}
 
-        {%- if block.settings.link != blank -%}
-          <a href="{{ block.settings.link }}" class="ft-item" {{ block.shopify_attributes }}>{{ pill_inner }}</a>
-        {%- else -%}
-          <div class="ft-item" {{ block.shopify_attributes }}>{{ pill_inner }}</div>
-        {%- endif -%}
+        {%- capture item_inner -%}
+          <span class="ft-icon" aria-hidden="true">
+            {%- if block.settings.icon_image != blank -%}
+              {{ block.settings.icon_image | image_url: width: 80 | image_tag:
+                  loading: 'lazy',
+                  alt: '',
+                  widths: '40,60,80'
+              }}
+            {%- else -%}
+              {{ icon_svg }}
+            {%- endif -%}
+          </span>
+          <div class="ft-content">
+            {%- if block.settings.title != blank -%}
+              <p class="ft-title">{{ block.settings.title | escape }}</p>
+            {%- endif -%}
+            {%- if block.settings.subtitle != blank -%}
+              <p class="ft-subtitle">{{ block.settings.subtitle | escape }}</p>
+            {%- endif -%}
+          </div>
+        {%- endcapture -%}
+
+        <li class="ft-item" data-reveal="fade" {{ block.shopify_attributes }}>
+          {%- if has_link -%}
+            <a href="{{ block.settings.link }}" class="ft-item-inner">{{ item_inner }}</a>
+          {%- else -%}
+            <div class="ft-item-inner">{{ item_inner }}</div>
+          {%- endif -%}
+        </li>
       {%- endfor -%}
-    </div>
+    </ul>
   </div>
 </div>
 
@@ -62,7 +155,7 @@
   "name": "Features",
   "class": "section-features-glaze",
   "tag": "section",
-  "max_blocks": 10,
+  "max_blocks": 8,
   "settings": [
     {
       "type": "header",
@@ -81,14 +174,21 @@
       "default": "center"
     },
     {
-      "type": "range",
-      "id": "gap",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "label": "Gap between pills",
-      "default": 12
+      "type": "select",
+      "id": "divider_style",
+      "label": "Divider between items",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "line", "label": "Vertical line" },
+        { "value": "dot",  "label": "Dot" }
+      ],
+      "default": "line"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider colour",
+      "default": "#e2dcd6"
     },
     {
       "type": "header",
@@ -101,60 +201,34 @@
       "default": "#ffffff"
     },
     {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#1a1a1a"
+    },
+    {
       "type": "header",
-      "content": "Pill"
-    },
-    {
-      "type": "color",
-      "id": "pill_bg",
-      "label": "Background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "pill_border_color",
-      "label": "Border color",
-      "default": "#e6e6e6"
+      "content": "Item"
     },
     {
       "type": "range",
-      "id": "pill_border_width",
-      "min": 0,
-      "max": 4,
-      "step": 1,
-      "unit": "px",
-      "label": "Border width",
-      "default": 1
-    },
-    {
-      "type": "range",
-      "id": "pill_radius",
-      "min": 0,
-      "max": 60,
-      "step": 2,
-      "unit": "px",
-      "label": "Border radius",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "pill_padding_y",
+      "id": "item_padding_y",
       "min": 4,
       "max": 28,
       "step": 2,
       "unit": "px",
       "label": "Vertical padding",
-      "default": 10
+      "default": 8
     },
     {
       "type": "range",
-      "id": "pill_padding_x",
-      "min": 8,
-      "max": 40,
+      "id": "item_padding_x",
+      "min": 12,
+      "max": 60,
       "step": 2,
       "unit": "px",
       "label": "Horizontal padding",
-      "default": 18
+      "default": 28
     },
     {
       "type": "header",
@@ -163,24 +237,24 @@
     {
       "type": "range",
       "id": "icon_size",
-      "min": 16,
-      "max": 48,
+      "min": 28,
+      "max": 64,
       "step": 2,
       "unit": "px",
-      "label": "Icon size",
-      "default": 28
+      "label": "Icon circle size",
+      "default": 44
     },
     {
       "type": "color",
       "id": "icon_bg",
       "label": "Icon background",
-      "default": "#f2f2f2"
+      "default": "#fbe9e8"
     },
     {
       "type": "color",
       "id": "icon_color",
-      "label": "Icon color",
-      "default": "#111111"
+      "label": "Icon colour",
+      "default": "#1a1a1a"
     },
     {
       "type": "header",
@@ -189,7 +263,7 @@
     {
       "type": "color",
       "id": "title_color",
-      "label": "Color",
+      "label": "Colour",
       "default": "#1a1a1a"
     },
     {
@@ -200,7 +274,7 @@
       "step": 1,
       "unit": "px",
       "label": "Size (desktop)",
-      "default": 15
+      "default": 14
     },
     {
       "type": "range",
@@ -210,7 +284,7 @@
       "step": 1,
       "unit": "px",
       "label": "Size (mobile)",
-      "default": 14
+      "default": 13
     },
     {
       "type": "range",
@@ -219,7 +293,27 @@
       "max": 900,
       "step": 100,
       "label": "Weight",
-      "default": 500
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "Subtitle"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Colour",
+      "default": "#7a7a7a"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Size",
+      "default": 12
     },
     {
       "type": "header",
@@ -233,7 +327,7 @@
       "step": 4,
       "unit": "px",
       "label": "Top padding",
-      "default": 40
+      "default": 56
     },
     {
       "type": "range",
@@ -243,7 +337,7 @@
       "step": 4,
       "unit": "px",
       "label": "Bottom padding",
-      "default": 40
+      "default": 56
     }
   ],
   "blocks": [
@@ -252,16 +346,39 @@
       "name": "Feature",
       "settings": [
         {
+          "type": "select",
+          "id": "icon_preset",
+          "label": "Icon",
+          "options": [
+            { "value": "shipping",  "label": "Shipping" },
+            { "value": "guarantee", "label": "Guarantee shield" },
+            { "value": "payment",   "label": "Payment card" },
+            { "value": "support",   "label": "Support headset" },
+            { "value": "return",    "label": "Return arrows" },
+            { "value": "leaf",      "label": "Leaf (natural)" },
+            { "value": "sparkle",   "label": "Sparkle" },
+            { "value": "check",     "label": "Checkmark" }
+          ],
+          "default": "check",
+          "info": "Built-in icons. Upload a custom image below to override."
+        },
+        {
           "type": "image_picker",
           "id": "icon_image",
-          "label": "Icon image",
-          "info": "Leave empty for a checkmark."
+          "label": "Icon image (overrides preset)",
+          "info": "Recommended: square 80×80 PNG/SVG with transparent background."
         },
         {
           "type": "text",
           "id": "title",
           "label": "Title",
-          "default": "Free Shipping"
+          "default": "Free shipping"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "On orders over $50"
         },
         {
           "type": "url",
@@ -275,11 +392,11 @@
     {
       "name": "Features",
       "blocks": [
-        { "type": "feature", "settings": { "title": "Free Shipping" } },
-        { "type": "feature", "settings": { "title": "Money Guarantee" } },
-        { "type": "feature", "settings": { "title": "Flexible Payment" } },
-        { "type": "feature", "settings": { "title": "Online Support" } },
-        { "type": "feature", "settings": { "title": "Return within 7 days" } }
+        { "type": "feature", "settings": { "icon_preset": "shipping",  "title": "Free shipping",       "subtitle": "On orders over $50" } },
+        { "type": "feature", "settings": { "icon_preset": "guarantee", "title": "30-day guarantee",    "subtitle": "Money-back, no questions" } },
+        { "type": "feature", "settings": { "icon_preset": "payment",   "title": "Buy now, pay later",  "subtitle": "4 interest-free payments" } },
+        { "type": "feature", "settings": { "icon_preset": "support",   "title": "24/7 live support",   "subtitle": "We reply within the hour" } },
+        { "type": "feature", "settings": { "icon_preset": "return",    "title": "Easy returns",        "subtitle": "Free returns within 14 days" } }
       ]
     }
   ]

@@ -88,6 +88,7 @@
     }
   },
   "collection": {
+    "eyebrow": "Collection",
     "filters_toggle": "Filter and sort",
     "filters_aria": "Collection filters",
     "product_count": {
@@ -99,11 +100,17 @@
     "max": "Max",
     "apply": "Apply",
     "clear": "Clear all",
+    "reset": "Reset",
     "from": "From",
     "sale_badge": "Sale",
     "soldout_badge": "Sold out",
     "pagination_aria": "Pagination",
-    "empty": "No products match those filters yet."
+    "pagination_prev": "Previous",
+    "pagination_next": "Next",
+    "pagination_page": "Page {{ page }}",
+    "empty": "No products match those filters yet.",
+    "quick_view": "Quick view {{ title }}",
+    "add_to_cart": "Add {{ title }} to cart"
   },
   "collections": {
     "title": "Collections",

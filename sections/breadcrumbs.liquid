@@ -1,0 +1,93 @@
+{%- comment -%}
+  Breadcrumbs — context-aware trail. No presets, so it can only be added to
+  a template via templates/{collection,product,page,article}.json — never
+  via the visual section picker.
+{%- endcomment -%}
+
+<nav class="glaze-crumbs full-width" aria-label="Breadcrumb">
+  <ol class="glaze-crumbs__list">
+    <li class="glaze-crumbs__item"><a href="{{ routes.root_url }}">Home</a></li>
+
+    {%- if template.name == 'collection' and collection -%}
+      <li class="glaze-crumbs__sep" aria-hidden="true">/</li>
+      <li class="glaze-crumbs__item"><a href="{{ routes.collections_url }}">Collections</a></li>
+      <li class="glaze-crumbs__sep" aria-hidden="true">/</li>
+      <li class="glaze-crumbs__item" aria-current="page">{{ collection.title | escape }}</li>
+
+    {%- elsif template.name == 'product' and product -%}
+      {%- if collection -%}
+        <li class="glaze-crumbs__sep" aria-hidden="true">/</li>
+        <li class="glaze-crumbs__item"><a href="{{ collection.url }}">{{ collection.title | escape }}</a></li>
+      {%- else -%}
+        <li class="glaze-crumbs__sep" aria-hidden="true">/</li>
+        <li class="glaze-crumbs__item"><a href="{{ routes.collections_url }}">Collections</a></li>
+      {%- endif -%}
+      <li class="glaze-crumbs__sep" aria-hidden="true">/</li>
+      <li class="glaze-crumbs__item" aria-current="page">{{ product.title | escape }}</li>
+
+    {%- elsif template.name == 'page' and page -%}
+      <li class="glaze-crumbs__sep" aria-hidden="true">/</li>
+      <li class="glaze-crumbs__item" aria-current="page">{{ page.title | escape }}</li>
+
+    {%- elsif template.name == 'article' and article -%}
+      {%- if blog -%}
+        <li class="glaze-crumbs__sep" aria-hidden="true">/</li>
+        <li class="glaze-crumbs__item"><a href="{{ blog.url }}">{{ blog.title | escape }}</a></li>
+      {%- endif -%}
+      <li class="glaze-crumbs__sep" aria-hidden="true">/</li>
+      <li class="glaze-crumbs__item" aria-current="page">{{ article.title | escape }}</li>
+
+    {%- elsif template.name == 'blog' and blog -%}
+      <li class="glaze-crumbs__sep" aria-hidden="true">/</li>
+      <li class="glaze-crumbs__item" aria-current="page">{{ blog.title | escape }}</li>
+    {%- endif -%}
+  </ol>
+</nav>
+
+{% stylesheet %}
+  .glaze-crumbs {
+    background: var(--g-cream, #fbe9e8);
+    padding: 16px 24px;
+  }
+  .glaze-crumbs__list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 1280px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--g-muted-strong, #555);
+  }
+  .glaze-crumbs__item a {
+    color: var(--g-muted-strong, #555);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .glaze-crumbs__item a:hover {
+    color: var(--g-ink);
+    text-decoration: underline;
+  }
+  .glaze-crumbs__item[aria-current="page"] {
+    color: var(--g-ink);
+    font-weight: 600;
+  }
+  .glaze-crumbs__sep {
+    color: var(--g-muted, #7a7a7a);
+  }
+  @media (max-width: 749px) {
+    .glaze-crumbs { padding: 12px 16px; }
+    .glaze-crumbs__list { font-size: 12px; gap: 6px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Breadcrumbs",
+  "tag": "section",
+  "class": "section-breadcrumbs",
+  "settings": []
+}
+{% endschema %}

@@ -75,7 +75,12 @@
       "Bash(sed -i '253,600d' sections/featured-product.liquid)",
       "Bash(sed -n '250,260p' sections/featured-product.liquid)",
       "Bash(awk '{printf \"  %-30s %s\\\\n\", $NF, $5}')",
-      "Bash(grep -rn \"html\\\\s*{\\\\|body\\\\s*{\\\\|html,\\\\s*body\\\\|body,\\\\s*html\" --include=\"*.css\" --include=\"*.liquid\")"
+      "Bash(grep -rn \"html\\\\s*{\\\\|body\\\\s*{\\\\|html,\\\\s*body\\\\|body,\\\\s*html\" --include=\"*.css\" --include=\"*.liquid\")",
+      "Bash(sed -i '2909,3455d' assets/base.css)",
+      "Bash(sed -n '2906,2912p' assets/base.css)",
+      "Bash(grep -nA 20 \"featured_product_glaze\" templates/index.json)",
+      "Bash(findstr collection *)",
+      "WebSearch"
     ]
   }
 }

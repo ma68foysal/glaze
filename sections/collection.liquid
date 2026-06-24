@@ -4,8 +4,6 @@
   assign columns_desktop = section.settings.columns_desktop
   assign show_filters = section.settings.show_filters
   assign show_sort = section.settings.show_sort
-  assign show_description = section.settings.show_description
-  assign show_image = section.settings.show_image
   assign bg_color = section.settings.bg_color
   assign text_color = section.settings.text_color
   assign card_bg = section.settings.card_bg
@@ -24,41 +22,27 @@
   "
 >
   <div class="glaze-collection__inner">
-    <header class="glaze-collection__header">
-      {%- if show_image and collection.featured_image != blank -%}
-        <div class="glaze-collection__hero">
-          {{ collection.featured_image | image_url: width: 2000 | image_tag:
-              loading: 'eager',
-              fetchpriority: 'high',
-              sizes: '100vw',
-              widths: '600, 900, 1200, 1600, 2000',
-              alt: collection.featured_image.alt | default: collection.title | escape
-          }}
-        </div>
-      {%- endif -%}
-      <h1 class="glaze-collection__title">{{ collection.title | escape }}</h1>
-      {%- if show_description and collection.description != blank -%}
-        <div class="glaze-collection__description rte">{{ collection.description }}</div>
-      {%- endif -%}
-    </header>
-
     {%- paginate collection.products by products_per_page -%}
       <div class="glaze-collection__toolbar">
-        {%- if show_filters and collection.filters.size > 0 -%}
-          <button
-            type="button"
-            class="glaze-collection__filter-toggle glaze-btn glaze-btn--ghost"
-            aria-controls="{{ section_id }}-filters"
-            aria-expanded="false"
-            data-filter-toggle
-          >
-            {{ 'collection.filters_toggle' | t }}
-          </button>
-        {%- endif -%}
-
-        <p class="glaze-collection__count">
-          {{ 'collection.product_count' | t: count: collection.products_count }}
-        </p>
+        <div class="glaze-collection__toolbar-left">
+          {%- if show_filters and collection.filters.size > 0 -%}
+            <button
+              type="button"
+              class="glaze-collection__filter-toggle"
+              aria-controls="{{ section_id }}-filters"
+              aria-expanded="false"
+              data-filter-toggle
+            >
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+                <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span>{{ 'collection.filters_toggle' | t }}</span>
+            </button>
+          {%- endif -%}
+          <p class="glaze-collection__count">
+            {{ 'collection.product_count' | t: count: collection.products_count }}
+          </p>
+        </div>
 
         {%- if show_sort -%}
           <form method="get" class="glaze-collection__sort" id="{{ section_id }}-sort">
@@ -83,11 +67,18 @@
             hidden
           >
             <form method="get" class="glaze-collection__filter-form">
+              <header class="glaze-collection__filter-head">
+                <a href="{{ collection.url }}" class="glaze-collection__filter-head-clear">{{ 'collection.reset' | t }}</a>
+              </header>
               {%- for filter in collection.filters -%}
                 <details class="glaze-collection__filter" open>
                   <summary class="glaze-collection__filter-summary">
                     <span>{{ filter.label | escape }}</span>
-                    <span class="glaze-collection__filter-caret" aria-hidden="true">+</span>
+                    <span class="glaze-collection__filter-caret" aria-hidden="true">
+                      <svg viewBox="0 0 12 8" width="10" height="7" fill="none">
+                        <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
                   </summary>
                   <div class="glaze-collection__filter-body">
                     {%- case filter.type -%}
@@ -103,7 +94,15 @@
                                   {% if value.active %}checked{% endif %}
                                   {% if value.count == 0 and value.active == false %}disabled{% endif %}
                                 >
-                                <span>{{ value.label | escape }} <span class="glaze-collection__filter-count">({{ value.count }})</span></span>
+                                <span class="glaze-collection__filter-checkbox" aria-hidden="true">
+                                  <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+                                    <path d="M2 6.5l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                  </svg>
+                                </span>
+                                <span class="glaze-collection__filter-label">
+                                  {{ value.label | escape }}
+                                  <span class="glaze-collection__filter-count">({{ value.count }})</span>
+                                </span>
                               </label>
                             </li>
                           {%- endfor -%}
@@ -111,27 +110,58 @@
                       {%- when 'price_range' -%}
                         <div class="glaze-collection__price-range">
                           <label>
-                            <span>{{ 'collection.min' | t }}</span>
-                            <input
-                              type="number"
-                              name="{{ filter.min_value.param_name }}"
-                              value="{{ filter.min_value.value | money_without_currency | strip_html | replace: ',', '' }}"
-                              min="0"
-                              placeholder="0"
-                              inputmode="decimal"
-                            >
+                            <span class="glaze-collection__price-label">{{ 'collection.min' | t }}</span>
+                            <span class="glaze-collection__price-field">
+                              <span class="glaze-collection__price-prefix" aria-hidden="true">{{ cart.currency.symbol }}</span>
+                              <input
+                                type="number"
+                                name="{{ filter.min_value.param_name }}"
+                                value="{{ filter.min_value.value | money_without_currency | strip_html | replace: ',', '' }}"
+                                min="0"
+                                placeholder="0"
+                                inputmode="decimal"
+                              >
+                            </span>
                           </label>
                           <label>
-                            <span>{{ 'collection.max' | t }}</span>
-                            <input
-                              type="number"
-                              name="{{ filter.max_value.param_name }}"
-                              value="{{ filter.max_value.value | money_without_currency | strip_html | replace: ',', '' }}"
-                              min="0"
-                              placeholder="{{ filter.range_max | money_without_currency | strip_html | replace: ',', '' }}"
-                              inputmode="decimal"
-                            >
+                            <span class="glaze-collection__price-label">{{ 'collection.max' | t }}</span>
+                            <span class="glaze-collection__price-field">
+                              <span class="glaze-collection__price-prefix" aria-hidden="true">{{ cart.currency.symbol }}</span>
+                              <input
+                                type="number"
+                                name="{{ filter.max_value.param_name }}"
+                                value="{{ filter.max_value.value | money_without_currency | strip_html | replace: ',', '' }}"
+                                min="0"
+                                placeholder="{{ filter.range_max | money_without_currency | strip_html | replace: ',', '' }}"
+                                inputmode="decimal"
+                              >
+                            </span>
                           </label>
+                        </div>
+                      {%- when 'rating' -%}
+                        {%- assign current_rating = filter.min_value.value | default: 0 | times: 1.0 -%}
+                        <div class="glaze-collection__rating-filter">
+                          <input type="hidden" name="{{ filter.max_value.param_name }}" value="5">
+                          {%- for rating in (1..5) reversed -%}
+                            <label class="glaze-collection__rating-option">
+                              <input
+                                type="radio"
+                                name="{{ filter.min_value.param_name }}"
+                                value="{{ rating }}"
+                                {% if current_rating == rating %}checked{% endif %}
+                              >
+                              <span class="glaze-collection__rating-stars" aria-hidden="true">
+                                {%- for s in (1..5) -%}
+                                  {%- if s <= rating -%}
+                                    <svg viewBox="0 0 16 16" fill="currentColor" class="is-full"><path d="M8 1.2l2.06 4.17 4.6.67-3.33 3.24.79 4.58L8 11.7l-4.12 2.17.79-4.58L1.34 6.04l4.6-.67L8 1.2z"/></svg>
+                                  {%- else -%}
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="0.8" class="is-empty"><path d="M8 1.2l2.06 4.17 4.6.67-3.33 3.24.79 4.58L8 11.7l-4.12 2.17.79-4.58L1.34 6.04l4.6-.67L8 1.2z"/></svg>
+                                  {%- endif -%}
+                                {%- endfor -%}
+                              </span>
+                              <span class="glaze-collection__rating-label">{{ rating }} &amp; up</span>
+                            </label>
+                          {%- endfor -%}
                         </div>
                     {%- endcase -%}
                   </div>
@@ -139,8 +169,7 @@
               {%- endfor -%}
 
               <div class="glaze-collection__filter-actions">
-                <button type="submit" class="glaze-btn glaze-btn--solid">{{ 'collection.apply' | t }}</button>
-                <a class="glaze-btn glaze-btn--ghost" href="{{ collection.url }}">{{ 'collection.clear' | t }}</a>
+                <button type="submit" class="glaze-btn glaze-btn--solid glaze-btn--full">{{ 'collection.apply' | t }}</button>
               </div>
             </form>
           </aside>
@@ -150,63 +179,97 @@
           {%- if collection.products.size > 0 -%}
             <ul class="glaze-collection__grid" role="list">
               {%- for product in collection.products -%}
-                <li class="glaze-pcard">
-                  <a class="glaze-pcard__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
-                    {%- if product.featured_image -%}
-                      {{ product.featured_image | image_url: width: 800 | image_tag:
-                          loading: 'lazy',
-                          sizes: '(min-width: 1080px) 28vw, (min-width: 720px) 45vw, 90vw',
-                          widths: '300, 450, 600, 800',
-                          alt: product.featured_image.alt | default: product.title | escape
-                      }}
-                    {%- endif -%}
-                    {%- if product.compare_at_price_max > product.price -%}
-                      <span class="glaze-pcard__badge glaze-pcard__badge--sale">{{ 'collection.sale_badge' | t }}</span>
-                    {%- endif -%}
-                    {%- if product.available == false -%}
-                      <span class="glaze-pcard__badge glaze-pcard__badge--soldout">{{ 'collection.soldout_badge' | t }}</span>
-                    {%- endif -%}
-                  </a>
-                  <div class="glaze-pcard__body">
-                    {%- if product.vendor != blank -%}
-                      <p class="glaze-pcard__vendor">{{ product.vendor | escape }}</p>
-                    {%- endif -%}
-                    <a class="glaze-pcard__title" href="{{ product.url }}">{{ product.title | escape }}</a>
-                    <div class="glaze-pcard__prices">
-                      {%- if product.compare_at_price_max > product.price -%}
-                        <s class="glaze-pcard__compare">{{ product.compare_at_price_max | money }}</s>
-                      {%- endif -%}
-                      {%- if product.price_varies -%}
-                        <span class="glaze-pcard__price">{{ 'collection.from' | t }} {{ product.price_min | money }}</span>
-                      {%- else -%}
-                        <span class="glaze-pcard__price">{{ product.price | money }}</span>
-                      {%- endif -%}
-                      {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
-                        <span class="glaze-pcard__unit">
-                          {{ product.selected_or_first_available_variant.unit_price | money }}/{{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
-                        </span>
-                      {%- endif -%}
-                    </div>
-                  </div>
+                <li>
+                  {%- render 'product-card',
+                    product: product,
+                    section_id: section.id
+                  -%}
                 </li>
               {%- endfor -%}
             </ul>
 
             {%- if paginate.pages > 1 -%}
               <nav class="glaze-collection__pagination" aria-label="{{ 'collection.pagination_aria' | t }}">
-                {{- paginate | default_pagination -}}
+                <ul class="glaze-pager" role="list">
+                  {%- if paginate.previous -%}
+                    <li>
+                      <a class="glaze-pager__nav" href="{{ paginate.previous.url }}" rel="prev" aria-label="{{ 'collection.pagination_prev' | t }}">
+                        <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+                          <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>{{ 'collection.pagination_prev' | t }}</span>
+                      </a>
+                    </li>
+                  {%- else -%}
+                    <li>
+                      <span class="glaze-pager__nav is-disabled" aria-hidden="true">
+                        <svg viewBox="0 0 14 14" width="12" height="12" fill="none">
+                          <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>{{ 'collection.pagination_prev' | t }}</span>
+                      </span>
+                    </li>
+                  {%- endif -%}
+
+                  {%- for part in paginate.parts -%}
+                    {%- if part.is_link -%}
+                      <li>
+                        <a class="glaze-pager__page" href="{{ part.url }}" aria-label="{{ 'collection.pagination_page' | t: page: part.title }}">{{ part.title }}</a>
+                      </li>
+                    {%- elsif part.title == paginate.current_page -%}
+                      <li>
+                        <span class="glaze-pager__page is-current" aria-current="page">{{ part.title }}</span>
+                      </li>
+                    {%- else -%}
+                      <li>
+                        <span class="glaze-pager__gap" aria-hidden="true">{{ part.title }}</span>
+                      </li>
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- if paginate.next -%}
+                    <li>
+                      <a class="glaze-pager__nav" href="{{ paginate.next.url }}" rel="next" aria-label="{{ 'collection.pagination_next' | t }}">
+                        <span>{{ 'collection.pagination_next' | t }}</span>
+                        <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+                          <path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </a>
+                    </li>
+                  {%- else -%}
+                    <li>
+                      <span class="glaze-pager__nav is-disabled" aria-hidden="true">
+                        <span>{{ 'collection.pagination_next' | t }}</span>
+                        <svg viewBox="0 0 14 14" width="12" height="12" fill="none">
+                          <path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                    </li>
+                  {%- endif -%}
+                </ul>
               </nav>
             {%- endif -%}
 
           {%- else -%}
             <div class="glaze-collection__empty">
               <p>{{ 'collection.empty' | t }}</p>
-              <a class="glaze-btn glaze-btn--ghost" href="{{ collection.url }}">{{ 'collection.clear' | t }}</a>
+              <a class="glaze-btn glaze-btn--solid" href="{{ collection.url }}">{{ 'collection.clear' | t }}</a>
             </div>
           {%- endif -%}
         </div>
       </div>
     {%- endpaginate -%}
+
+    {%- comment -%} Shared quick-view modal (renders via window.GlazeQuickView with the 'pc' class prefix) {%- endcomment -%}
+    <div class="pc-modal-overlay" data-pc-modal-close></div>
+    <aside class="pc-modal" aria-hidden="true" role="dialog" aria-modal="true" data-pc-modal>
+      <button type="button" class="pc-modal-close" data-pc-modal-close aria-label="{{ 'general.close' | t }}">
+        <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="pc-modal-inner" data-pc-modal-body></div>
+    </aside>
   </div>
 </section>
 
@@ -227,7 +290,6 @@
           toggle.setAttribute('aria-expanded', 'true');
         }
       });
-      // Default open on wide viewports
       if (window.matchMedia('(min-width: 900px)').matches) {
         panel.removeAttribute('hidden');
         toggle.setAttribute('aria-expanded', 'true');
@@ -240,147 +302,409 @@
         if (form) form.submit();
       });
     }
+
+    // ---- Quick-view modal + ATC ----
+    var modal     = section.querySelector('[data-pc-modal]');
+    var overlay   = section.querySelector('.pc-modal-overlay');
+    var modalBody = section.querySelector('[data-pc-modal-body]');
+
+    function openModal() {
+      if (!modal || !overlay) return;
+      modal.classList.add('is-open');
+      overlay.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      if (!modal || !overlay) return;
+      modal.classList.remove('is-open');
+      overlay.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    if (modal) {
+      section.querySelectorAll('[data-pc-modal-close]').forEach(function (el) {
+        el.addEventListener('click', closeModal);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+      });
+    }
+
+    function getProductData(handle) {
+      var node = section.querySelector('script[data-pc-product="' + handle + '"]');
+      if (!node) return null;
+      try { return JSON.parse(node.textContent); } catch (e) { return null; }
+    }
+
+    section.querySelectorAll('[data-pc-quickview]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var p = getProductData(btn.getAttribute('data-pc-quickview'));
+        if (!p || !modalBody || !window.GlazeQuickView) return;
+        modalBody.innerHTML = window.GlazeQuickView.render(p, 'pc');
+        openModal();
+        window.GlazeQuickView.bind(modalBody, p, { cls: 'pc', source: 'collection', onClose: closeModal });
+      });
+    });
+
+    section.querySelectorAll('[data-pc-atc]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var id = btn.getAttribute('data-pc-atc');
+        if (!id) return;
+        var card = btn.closest('.glaze-pcard');
+        btn.setAttribute('disabled', 'disabled');
+        if (card) card.classList.add('is-busy');
+        var add = (window.Glaze && typeof window.Glaze.cartAdd === 'function')
+          ? window.Glaze.cartAdd(id, 1, btn, 'collection')
+          : Promise.reject(new Error('Glaze.cartAdd not loaded'));
+        add.catch(function (err) {
+          console.error('[collection]', err);
+        }).finally(function () {
+          btn.removeAttribute('disabled');
+          if (card) card.classList.remove('is-busy');
+        });
+      });
+    });
   })();
 </script>
 
 {% stylesheet %}
   .glaze-collection {
-    background: var(--bg, var(--g-cream));
+    background: var(--bg, #ffffff);
     color: var(--fg, var(--g-ink));
     font-family: var(--g-body-font);
-    padding: 32px 24px 96px;
+    padding: 32px 0 96px;
   }
   .glaze-collection__inner {
     max-width: 1280px;
     margin: 0 auto;
+    padding: 0 24px;
   }
-  .glaze-collection__header {
-    display: grid;
-    gap: 16px;
-    margin-bottom: 32px;
-    text-align: center;
-  }
-  .glaze-collection__hero {
-    aspect-ratio: 21 / 6;
-    border-radius: var(--g-radius-lg);
-    overflow: hidden;
-    background: var(--g-cream-warm);
-  }
-  .glaze-collection__hero img { width: 100%; height: 100%; object-fit: cover; }
-  .glaze-collection__title {
-    font-family: var(--g-display-font);
-    font-size: clamp(28px, 4vw, 44px);
-    font-weight: 600;
-    margin: 0;
-  }
-  .glaze-collection__description {
-    max-width: 60ch;
-    margin: 0 auto;
-    color: var(--g-muted-strong);
-    line-height: 1.6;
-  }
+
+  /* ---- Toolbar ---- */
   .glaze-collection__toolbar {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--g-line);
+    margin-bottom: 28px;
+  }
+  .glaze-collection__toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
   .glaze-collection__count {
     margin: 0;
-    color: var(--g-muted);
-    font-size: 14px;
-    flex: 1 1 100%;
-    text-align: center;
-    order: 3;
-  }
-  @media (min-width: 720px) {
-    .glaze-collection__count { flex: 0 1 auto; order: 0; }
-  }
-  .glaze-collection__sort select {
-    font: inherit;
-    background: var(--g-card-bg);
     color: var(--g-ink);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .glaze-collection__filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
     border: 1px solid var(--g-line);
     border-radius: var(--g-radius-pill);
-    padding: 8px 36px 8px 16px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    min-height: var(--g-touch);
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .glaze-collection__filter-toggle:hover {
+    background: var(--g-ink);
+    color: var(--g-bg, #fff);
+    border-color: var(--g-ink);
+  }
+
+  /* Custom-styled select with theme chevron */
+  .glaze-collection__sort select {
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    color: inherit;
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-pill);
+    padding: 10px 38px 10px 18px;
     min-height: var(--g-touch);
     cursor: pointer;
+    transition: border-color 0.25s ease, background-color 0.25s ease;
   }
-  .glaze-collection__sort select:focus { outline: 2px solid var(--g-rose); outline-offset: 2px; }
+  .glaze-collection__sort select:hover { border-color: var(--g-ink); }
+  .glaze-collection__sort select:focus-visible {
+    outline: 2px solid var(--g-ink);
+    outline-offset: 2px;
+    border-color: var(--g-ink);
+  }
+
+  /* ---- Layout (sidebar + grid) ---- */
   .glaze-collection__layout {
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
   }
   @media (min-width: 900px) {
-    .glaze-collection__layout { grid-template-columns: 240px 1fr; }
+    .glaze-collection__layout { grid-template-columns: 260px 1fr; gap: 40px; }
     .glaze-collection__filter-toggle { display: none; }
   }
+
+  /* ---- Filter sidebar ---- */
   .glaze-collection__filters {
-    background: var(--card-bg, var(--g-card-bg));
-    border-radius: var(--g-radius-md);
-    padding: 16px;
+    background: transparent;
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-lg, 20px);
+    padding: 4px 22px 22px;
+    align-self: start;
   }
-  .glaze-collection__filter + .glaze-collection__filter { border-top: 1px solid var(--g-line); }
+  .glaze-collection__filter-head {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 14px 0 12px;
+    border-bottom: 1px solid var(--g-line);
+    margin-bottom: 4px;
+  }
+  .glaze-collection__filter-head-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--g-muted);
+  }
+  .glaze-collection__filter-head-clear {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--g-ink);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    transition: opacity 0.2s ease;
+  }
+  .glaze-collection__filter-head-clear:hover { opacity: 0.7; }
+
+  .glaze-collection__filter + .glaze-collection__filter {
+    border-top: 1px solid var(--g-line);
+  }
   .glaze-collection__filter-summary {
     list-style: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 4px;
+    padding: 16px 0;
     font-weight: 600;
+    font-size: 14px;
+    color: var(--g-ink);
     min-height: var(--g-touch);
+    user-select: none;
   }
   .glaze-collection__filter-summary::-webkit-details-marker { display: none; }
-  .glaze-collection__filter[open] .glaze-collection__filter-caret { transform: rotate(45deg); }
   .glaze-collection__filter-caret {
-    transition: transform 0.18s ease;
-    display: inline-block;
-    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    color: var(--g-muted-strong);
+    transition: transform 0.25s var(--ease-out-expo, ease);
   }
-  .glaze-collection__filter-body { padding: 4px 4px 14px; }
-  .glaze-collection__filter-body ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .glaze-collection__filter[open] .glaze-collection__filter-caret {
+    transform: rotate(180deg);
+  }
+  .glaze-collection__filter-body { padding: 2px 0 18px; }
+  .glaze-collection__filter-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  /* Custom checkbox */
   .glaze-collection__filter-option {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     cursor: pointer;
-    min-height: 24px;
     font-size: 14px;
+    color: var(--g-ink);
+    user-select: none;
+    min-height: 28px;
   }
-  .glaze-collection__filter-count { color: var(--g-muted); }
+  .glaze-collection__filter-option input[type="checkbox"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  .glaze-collection__filter-checkbox {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--g-muted);
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--g-bg, #fff);
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .glaze-collection__filter-checkbox svg { width: 12px; height: 12px; opacity: 0; transition: opacity 0.15s ease; }
+  .glaze-collection__filter-option input:checked ~ .glaze-collection__filter-checkbox {
+    background: var(--g-ink);
+    border-color: var(--g-ink);
+  }
+  .glaze-collection__filter-option input:checked ~ .glaze-collection__filter-checkbox svg { opacity: 1; }
+  .glaze-collection__filter-option input:focus-visible ~ .glaze-collection__filter-checkbox {
+    outline: 2px solid var(--g-ink);
+    outline-offset: 2px;
+  }
+  .glaze-collection__filter-option input:disabled ~ .glaze-collection__filter-checkbox {
+    opacity: 0.4;
+  }
+  .glaze-collection__filter-option input:disabled ~ .glaze-collection__filter-label {
+    opacity: 0.55;
+  }
+  .glaze-collection__filter-label { line-height: 1.3; }
+  .glaze-collection__filter-count {
+    color: var(--g-muted);
+    margin-left: 2px;
+    font-size: 13px;
+  }
+
+  /* Price range inputs with currency prefix */
   .glaze-collection__price-range {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 10px;
   }
   .glaze-collection__price-range label {
     display: grid;
-    gap: 4px;
-    font-size: 12px;
+    gap: 6px;
+  }
+  .glaze-collection__price-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
     color: var(--g-muted);
   }
-  .glaze-collection__price-range input {
-    font: inherit;
-    background: var(--g-card-bg);
-    border: 1px solid var(--g-line);
-    border-radius: var(--g-radius-md);
-    padding: 8px 10px;
-    min-height: var(--g-touch);
-    color: var(--g-ink);
-  }
-  .glaze-collection__filter-actions {
+  .glaze-collection__price-field {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 12px;
+    align-items: center;
+    gap: 4px;
+    background: var(--g-bg, #fff);
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-pill, 100px);
+    padding: 0 10px;
+    min-height: 40px;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
   }
-  .glaze-collection__filter-actions .glaze-btn { flex: 1 1 auto; padding: 10px 18px; }
+  .glaze-collection__price-field:focus-within {
+    border-color: var(--g-ink);
+  }
+  .glaze-collection__price-prefix {
+    color: var(--g-muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .glaze-collection__price-range input {
+    flex: 1 1 0;
+    min-width: 0;
+    width: 100%;
+    font: inherit;
+    font-size: 13px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--g-ink);
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .glaze-collection__price-range input:focus { outline: none; }
+  .glaze-collection__price-range input::-webkit-outer-spin-button,
+  .glaze-collection__price-range input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Rating filter — radio list of "N & up" options */
+  .glaze-collection__rating-filter {
+    display: grid;
+    gap: 6px;
+  }
+  .glaze-collection__rating-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 0;
+    color: var(--g-ink);
+    font-size: 13px;
+  }
+  .glaze-collection__rating-option input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  .glaze-collection__rating-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    color: #f5b631;
+  }
+  .glaze-collection__rating-stars svg { width: 14px; height: 14px; }
+  .glaze-collection__rating-stars .is-empty { color: var(--g-muted); }
+  .glaze-collection__rating-option:hover .glaze-collection__rating-stars { filter: brightness(1.05); }
+  .glaze-collection__rating-option input:checked ~ .glaze-collection__rating-label {
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .glaze-collection__rating-option input:focus-visible ~ .glaze-collection__rating-stars {
+    outline: 2px solid var(--g-ink);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .glaze-collection__rating-label { color: var(--g-muted-strong, #555); }
+
+  .glaze-collection__filter-actions {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--g-line);
+  }
+  .glaze-collection__filter-actions .glaze-btn--full { width: 100%; }
+
+  /* ---- Product grid ---- */
   .glaze-collection__grid {
     list-style: none;
     padding: 0;
@@ -395,7 +719,217 @@
   @media (min-width: 1080px) {
     .glaze-collection__grid { grid-template-columns: repeat(var(--cols-d, 3), 1fr); gap: 24px; }
   }
-  /* .glaze-pcard family lives in assets/base.css */
+  /* .glaze-pcard family (incl. actions, rating) lives in assets/base.css */
+
+  /* ---- Quick-view modal (right slide) ---- */
+  .glaze-collection .pc-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 150;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+  }
+  .glaze-collection .pc-modal-overlay.is-open { opacity: 1; visibility: visible; }
+  .glaze-collection .pc-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 560px;
+    background: var(--g-bg, #fff);
+    color: var(--g-ink);
+    z-index: 160;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+  }
+  .glaze-collection .pc-modal.is-open { transform: translateX(0); }
+  .glaze-collection .pc-modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 40px; height: 40px;
+    border: 0; border-radius: 50%;
+    background: var(--g-bg, #fff); color: var(--g-ink);
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    cursor: pointer; z-index: 5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .glaze-collection .pc-modal-close:hover {
+    background: var(--g-ink); color: var(--g-bg, #fff); transform: rotate(90deg);
+  }
+  .glaze-collection .pc-modal-close svg { width: 14px; height: 14px; }
+  .glaze-collection .pc-modal-inner { flex: 1; overflow-y: auto; padding: 24px 32px 32px; }
+
+  /* Modal content (rendered by GlazeQuickView with cls="pc") */
+  .glaze-collection .pc-mslider { position: relative; margin-bottom: 16px; }
+  .glaze-collection .pc-mslider-viewport {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--g-cream-warm, #f5d8d5);
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+  }
+  .glaze-collection .pc-mslider-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .glaze-collection .pc-mslide { flex: 0 0 100%; height: 100%; box-sizing: border-box; }
+  .glaze-collection .pc-mslide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .glaze-collection .pc-mslider-nav {
+    display: flex;
+    align-items: center; justify-content: center;
+    gap: 16px;
+    margin-top: 10px;
+    color: var(--g-muted-strong, #555);
+    font-size: 13px;
+  }
+  .glaze-collection .pc-mslider-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%; border: 0;
+    background: transparent; color: var(--g-ink);
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .glaze-collection .pc-mslider-btn:hover { background: rgba(0,0,0,0.06); }
+  .glaze-collection .pc-mslider-btn[disabled] { opacity: 0.35; cursor: default; }
+  .glaze-collection .pc-mslider-btn svg { width: 14px; height: 14px; }
+  .glaze-collection .pc-mslider-count {
+    min-width: 32px; text-align: center; font-variant-numeric: tabular-nums;
+  }
+
+  .glaze-collection .pc-modal-title {
+    font-family: var(--g-display-font);
+    font-size: 28px; font-weight: 600;
+    margin: 18px 0 10px; line-height: 1.2;
+  }
+  .glaze-collection .pc-modal-price { font-size: 20px; font-weight: 600; margin: 0 0 6px; }
+  .glaze-collection .pc-modal-price-compare {
+    font-size: 15px; color: var(--g-muted); text-decoration: line-through;
+    margin-left: 8px; font-weight: 400;
+  }
+  .glaze-collection .pc-modal-desc {
+    font-size: 14px; line-height: 1.6;
+    color: var(--g-muted-strong, #333);
+    margin: 8px 0 22px;
+  }
+
+  .glaze-collection .pc-modal-opt { margin-bottom: 18px; }
+  .glaze-collection .pc-modal-opt-label { font-size: 14px; font-weight: 600; margin: 0 0 10px; }
+  .glaze-collection .pc-modal-opt-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .glaze-collection .pc-modal-opt-btn {
+    padding: 10px 18px;
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-pill, 999px);
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--g-ink);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .glaze-collection .pc-modal-opt-btn:hover { border-color: var(--g-ink); }
+  .glaze-collection .pc-modal-opt-btn.is-active {
+    background: var(--g-ink); color: var(--g-bg, #fff); border-color: var(--g-ink);
+  }
+
+  .glaze-collection .pc-modal-actions {
+    display: flex; gap: 10px; align-items: center; margin-top: 20px;
+  }
+  .glaze-collection .pc-modal-qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-pill, 999px);
+    overflow: hidden;
+    height: 48px;
+  }
+  .glaze-collection .pc-modal-qty-btn {
+    width: 40px;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--g-ink);
+  }
+  .glaze-collection .pc-modal-qty-btn:hover { background: rgba(0,0,0,0.04); }
+  .glaze-collection .pc-modal-qty-input {
+    width: 40px;
+    border: 0;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 500;
+    background: transparent;
+    color: var(--g-ink);
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .glaze-collection .pc-modal-qty-input::-webkit-outer-spin-button,
+  .glaze-collection .pc-modal-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .glaze-collection .pc-modal-atc {
+    flex: 1;
+    height: 48px;
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-radius-pill, 999px);
+    background: transparent;
+    color: var(--g-ink);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .glaze-collection .pc-modal-atc:hover:not([disabled]) {
+    background: var(--g-ink); color: var(--g-bg, #fff);
+  }
+  .glaze-collection .pc-modal-atc[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .glaze-collection .pc-modal-buy {
+    width: 100%;
+    margin-top: 10px;
+    height: 52px;
+    border: 0;
+    border-radius: var(--g-radius-pill, 999px);
+    background: var(--g-ink);
+    color: var(--g-bg, #fff);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  .glaze-collection .pc-modal-buy:hover { opacity: 0.88; }
+  .glaze-collection .pc-modal-full {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--g-line);
+    color: var(--g-ink);
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .glaze-collection .pc-modal-full:hover { text-decoration: underline; }
+
   .glaze-collection__empty {
     text-align: center;
     padding: 64px 24px;
@@ -406,11 +940,92 @@
     justify-items: center;
   }
   .glaze-collection__pagination {
-    margin-top: 32px;
+    margin-top: 48px;
     display: flex;
     justify-content: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--g-line);
   }
-  /* .pagination internals + .glaze-btn family + .visually-hidden live in assets/base.css */
+  .glaze-pager {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .glaze-pager__page,
+  .glaze-pager__nav,
+  .glaze-pager__gap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: var(--g-radius-pill, 999px);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--g-ink);
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    box-sizing: border-box;
+  }
+  .glaze-pager__page {
+    border-color: var(--g-line);
+  }
+  .glaze-pager__page:hover {
+    background: var(--g-ink);
+    color: #ffffff;
+    border-color: var(--g-ink);
+  }
+  .glaze-pager__page.is-current {
+    background: var(--g-ink);
+    color: #ffffff;
+    border-color: var(--g-ink);
+    cursor: default;
+  }
+  .glaze-pager__nav {
+    gap: 6px;
+    padding: 0 16px;
+    border-color: var(--g-line);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+  .glaze-pager__nav:hover {
+    background: var(--g-ink);
+    color: #ffffff;
+    border-color: var(--g-ink);
+  }
+  .glaze-pager__nav.is-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .glaze-pager__gap {
+    color: var(--g-muted);
+    cursor: default;
+    min-width: 24px;
+    padding: 0 4px;
+  }
+  @media (max-width: 599px) {
+    .glaze-pager__nav span { display: none; }
+    .glaze-pager__nav { padding: 0 12px; min-width: 40px; }
+    .glaze-pager { gap: 4px; }
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 899px) {
+    .glaze-collection { padding: 24px 0 80px; }
+    .glaze-collection__inner { padding: 0 16px; }
+    .glaze-collection__filters { padding: 4px 18px 18px; }
+    .glaze-collection .pc-modal-inner { padding: 20px 18px 24px; }
+    .glaze-collection .pc-modal-title { font-size: 22px; }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -420,16 +1035,12 @@
   "class": "section-collection",
   "settings": [
     {
-      "type": "checkbox",
-      "id": "show_image",
-      "label": "t:sections.collection.show_image",
-      "default": true
+      "type": "paragraph",
+      "content": "Header (breadcrumbs + title strip) ships as separate sections — see Breadcrumbs and Categories."
     },
     {
-      "type": "checkbox",
-      "id": "show_description",
-      "label": "t:sections.collection.show_description",
-      "default": true
+      "type": "header",
+      "content": "Products"
     },
     {
       "type": "checkbox",
@@ -447,11 +1058,12 @@
     {
       "type": "range",
       "id": "products_per_page",
-      "min": 8,
+      "min": 6,
       "max": 48,
-      "step": 4,
+      "step": 1,
       "label": "t:sections.collection.products_per_page",
-      "default": 24
+      "default": 12,
+      "info": "Pagination appears automatically when the collection has more products than this."
     },
     {
       "type": "range",
@@ -460,7 +1072,7 @@
       "max": 5,
       "step": 1,
       "label": "t:sections.collection.columns_desktop",
-      "default": 4
+      "default": 3
     },
     {
       "type": "header",
@@ -469,8 +1081,8 @@
     {
       "type": "color",
       "id": "bg_color",
-      "label": "t:sections.collection.bg_color",
-      "default": "#fbe9e8"
+      "label": "Page background",
+      "default": "#ffffff"
     },
     {
       "type": "color",

@@ -1118,19 +1118,26 @@
       });
     });
 
-    // Direct card ATC (no variants)
+    // Direct card ATC (no variants). Loading feedback lives on the card
+    // (dim image + spinner overlay via `.is-busy`), NOT on the small
+    // quick-add icon — a 22px spinner inside a 44px circle looks cramped.
+    // We deliberately DO NOT add `.is-loading` to the button so the
+    // universal button-loading overlay (base.css §19) never fires. The
+    // disabled attribute alone drives the button's visual feedback
+    // (opacity 0.4 + not-allowed cursor).
     root.querySelectorAll('[data-sfp-atc]').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.preventDefault(); e.stopPropagation();
         var id = btn.getAttribute('data-sfp-atc');
         if (!id) return;
-        btn.classList.add('is-loading');
+        var card = btn.closest('.sfp-mini, .sfp-hero');
         btn.setAttribute('disabled', 'disabled');
+        if (card) card.classList.add('is-busy');
         cartAdd(id, 1, btn, 'featured-product').catch(function (err) {
           console.error('[featured-product]', err);
         }).finally(function () {
-          btn.classList.remove('is-loading');
           btn.removeAttribute('disabled');
+          if (card) card.classList.remove('is-busy');
         });
       });
     });
@@ -1164,6 +1171,318 @@
   }
 
   // ----------------------------------------------------------------------
+  // highlight-statement — editorial spread with mask reveal, image parallax,
+  // 3D cursor tilt and cursor-follow spotlight. Section markup uses the
+  // data-anim-* attributes to opt features in/out individually.
+  // ----------------------------------------------------------------------
+  function initStmt(root) {
+    if (!root || root.hasAttribute('data-stmt-bound')) return;
+    root.setAttribute('data-stmt-bound', '');
+
+    var reduce       = prefersReducedMotion();
+    var animMask     = root.getAttribute('data-anim-mask') === 'true';
+    var animParallax = root.getAttribute('data-anim-parallax') === 'true' && !reduce;
+    var animTilt     = root.getAttribute('data-anim-tilt') === 'true' && !reduce;
+    var spotlightOn  = root.getAttribute('data-anim-spotlight') === 'true' && !reduce;
+
+    var lines = root.querySelectorAll('[data-stmt-line]');
+    var heroMask = root.querySelector('[data-stmt-hero-mask]');
+
+    function revealAll() {
+      lines.forEach(function (l) { l.classList.add('is-visible'); });
+      if (heroMask) heroMask.classList.add('is-visible');
+    }
+
+    if (!('IntersectionObserver' in window) || reduce || !animMask) {
+      revealAll();
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.18 });
+      lines.forEach(function (l) { io.observe(l); });
+      if (heroMask) {
+        var io2 = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              heroMask.classList.add('is-visible');
+              io2.unobserve(heroMask);
+            }
+          });
+        }, { threshold: 0.15 });
+        io2.observe(heroMask);
+      }
+    }
+
+    var echoEl = root.querySelector('[data-stmt-echo]');
+    if (animParallax) {
+      var images = root.querySelectorAll('[data-stmt-item="image"]');
+      var depths = [];
+      images.forEach(function (el, i) {
+        var d = ((i * 37) % 24) - 12;
+        depths.push(d || 6);
+      });
+      var ticking = false;
+      function update() {
+        var rect = root.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var center = rect.top + rect.height / 2;
+        var progress = (vh / 2 - center) / vh;
+        images.forEach(function (el, i) {
+          el.style.setProperty('--stmt-px', (progress * depths[i]).toFixed(1) + 'px');
+        });
+        if (echoEl) {
+          echoEl.style.setProperty('--echo-px', (progress * -40).toFixed(1) + 'px');
+        }
+        ticking = false;
+      }
+      function onScroll() {
+        if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+      }
+      var vis = false;
+      var vio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { vis = e.isIntersecting; });
+        if (vis) update();
+      }, { threshold: 0 });
+      vio.observe(root);
+      window.addEventListener('scroll', function () { if (vis) onScroll(); }, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+
+    if (animTilt) {
+      root.querySelectorAll('[data-stmt-item="image"]').forEach(function (el) {
+        var rect;
+        el.addEventListener('mouseenter', function () { rect = el.getBoundingClientRect(); });
+        el.addEventListener('mousemove', function (ev) {
+          rect = rect || el.getBoundingClientRect();
+          var x = (ev.clientX - rect.left) / rect.width;
+          var y = (ev.clientY - rect.top) / rect.height;
+          el.style.setProperty('--stmt-tilt-x', ((0.5 - y) * 8).toFixed(2) + 'deg');
+          el.style.setProperty('--stmt-tilt-y', ((x - 0.5) * 8).toFixed(2) + 'deg');
+        });
+        el.addEventListener('mouseleave', function () {
+          el.style.setProperty('--stmt-tilt-x', '0deg');
+          el.style.setProperty('--stmt-tilt-y', '0deg');
+          rect = null;
+        });
+      });
+    }
+
+    if (spotlightOn) {
+      var sp = root.querySelector('.glaze-stmt__spotlight');
+      if (sp) {
+        root.addEventListener('mousemove', function (ev) {
+          var rect = root.getBoundingClientRect();
+          sp.style.setProperty('--sx', ((ev.clientX - rect.left) / rect.width * 100).toFixed(1) + '%');
+          sp.style.setProperty('--sy', ((ev.clientY - rect.top) / rect.height * 100).toFixed(1) + '%');
+        });
+      }
+    }
+  }
+  function initStmts(root) {
+    var scope = root || document;
+    var els = scope.querySelectorAll('[data-glaze-stmt]');
+    Array.prototype.forEach.call(els, initStmt);
+    if (scope.matches && scope.matches('[data-glaze-stmt]')) initStmt(scope);
+  }
+
+  // ----------------------------------------------------------------------
+  // social-feed — vertical video carousel with phone frame on the active
+  // center slide, infinite auto-slide, dots/nav/swipe/keyboard, IO-gated.
+  // ----------------------------------------------------------------------
+  function initSocialFeed(root) {
+    if (!root || root.hasAttribute('data-soc-bound')) return;
+    root.setAttribute('data-soc-bound', '');
+
+    var track    = root.querySelector('[data-soc-track]');
+    var slides   = Array.prototype.slice.call(root.querySelectorAll('[data-soc-slide]'));
+    var dots     = Array.prototype.slice.call(root.querySelectorAll('[data-soc-dot]'));
+    var btnPrev  = root.querySelector('[data-soc-prev]');
+    var btnNext  = root.querySelector('[data-soc-next]');
+    var viewport = root.querySelector('[data-soc-viewport]');
+    if (!track || !slides.length) return;
+
+    var reduce       = prefersReducedMotion();
+    var autoplay     = root.getAttribute('data-autoplay') === 'true' && !reduce;
+    var autoplayMs   = parseInt(root.getAttribute('data-autoplay-ms'), 10) || 5000;
+    var pauseOnHover = root.getAttribute('data-pause-hover') === 'true';
+
+    var current = 0;
+    var timer = null;
+    var inView = false;
+    var hovering = false;
+    var dragging = false;
+    var dragStartX = 0;
+    var dragDelta = 0;
+
+    function applyCenter() {
+      slides.forEach(function (s, i) {
+        s.classList.toggle('is-center', i === current);
+      });
+      dots.forEach(function (d, i) {
+        var on = i === current;
+        d.classList.toggle('is-active', on);
+        d.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+
+    function slideWidth() {
+      if (!slides[0]) return 0;
+      var s0 = slides[0].getBoundingClientRect();
+      var cs = window.getComputedStyle(track);
+      var gap = parseFloat(cs.columnGap || cs.gap || '0') || 0;
+      return s0.width + gap;
+    }
+
+    function goTo(index, instant) {
+      var n = slides.length;
+      current = ((index % n) + n) % n;
+      var vpW = viewport.getBoundingClientRect().width;
+      var sw  = slideWidth();
+      var offset = (vpW / 2) - (sw * current) - (slides[current].getBoundingClientRect().width / 2);
+      track.style.transition = instant ? 'none' : '';
+      track.style.transform = 'translate3d(' + offset.toFixed(2) + 'px, 0, 0)';
+      applyCenter();
+      slides.forEach(function (s, i) {
+        var v = s.querySelector('[data-soc-video]');
+        if (v && i !== current && !v.paused) v.pause();
+      });
+      if (instant) {
+        // eslint-disable-next-line no-unused-expressions
+        track.offsetWidth;
+        track.style.transition = '';
+      }
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    function startAuto() {
+      if (!autoplay || timer) return;
+      timer = window.setInterval(function () {
+        if (!inView || dragging) return;
+        if (pauseOnHover && hovering) return;
+        next();
+      }, autoplayMs);
+    }
+    function stopAuto() {
+      if (timer) { window.clearInterval(timer); timer = null; }
+    }
+
+    dots.forEach(function (d) {
+      d.addEventListener('click', function () {
+        var i = parseInt(d.getAttribute('data-soc-dot'), 10);
+        if (!isNaN(i)) { stopAuto(); goTo(i); startAuto(); }
+      });
+    });
+    if (btnPrev) btnPrev.addEventListener('click', function () { stopAuto(); prev(); startAuto(); });
+    if (btnNext) btnNext.addEventListener('click', function () { stopAuto(); next(); startAuto(); });
+
+    slides.forEach(function (s, i) {
+      s.addEventListener('click', function (ev) {
+        if (ev.target.closest('[data-soc-play], a')) return;
+        if (i !== current) { stopAuto(); goTo(i); startAuto(); }
+      });
+    });
+
+    root.querySelectorAll('[data-soc-play]').forEach(function (btn) {
+      btn.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var slide = btn.closest('[data-soc-slide]');
+        if (!slide) return;
+        var idx = slides.indexOf(slide);
+        if (idx !== -1 && idx !== current) { stopAuto(); goTo(idx); }
+        var v = slide.querySelector('[data-soc-video]');
+        if (!v) return;
+        if (v.paused) {
+          v.muted = false;
+          v.play().then(function () {
+            slide.classList.add('is-playing');
+          }).catch(function () {
+            v.muted = true;
+            v.play();
+            slide.classList.add('is-playing');
+          });
+        } else {
+          v.pause();
+          slide.classList.remove('is-playing');
+        }
+      });
+    });
+
+    if (pauseOnHover) {
+      root.addEventListener('mouseenter', function () { hovering = true; });
+      root.addEventListener('mouseleave', function () { hovering = false; });
+    }
+
+    function onPointerDown(ev) {
+      dragging = true;
+      dragStartX = (ev.touches ? ev.touches[0].clientX : ev.clientX);
+      dragDelta = 0;
+      track.style.transition = 'none';
+    }
+    function onPointerMove(ev) {
+      if (!dragging) return;
+      var x = (ev.touches ? ev.touches[0].clientX : ev.clientX);
+      dragDelta = x - dragStartX;
+      var cur = track.style.transform.match(/-?[\d.]+px/);
+      var base = parseFloat(cur ? cur[0] : '0') || 0;
+      track.style.transform = 'translate3d(' + (base + dragDelta).toFixed(2) + 'px, 0, 0)';
+    }
+    function onPointerUp() {
+      if (!dragging) return;
+      dragging = false;
+      track.style.transition = '';
+      var threshold = 50;
+      if (dragDelta < -threshold) next();
+      else if (dragDelta > threshold) prev();
+      else goTo(current);
+    }
+    viewport.addEventListener('touchstart', onPointerDown, { passive: true });
+    viewport.addEventListener('touchmove',  onPointerMove,  { passive: true });
+    viewport.addEventListener('touchend',   onPointerUp);
+
+    root.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft')  { stopAuto(); prev(); startAuto(); }
+      if (e.key === 'ArrowRight') { stopAuto(); next(); startAuto(); }
+    });
+    root.setAttribute('tabindex', '0');
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          inView = e.isIntersecting;
+          if (inView) startAuto();
+          else stopAuto();
+        });
+      }, { threshold: 0.2 });
+      io.observe(root);
+    } else {
+      inView = true;
+      startAuto();
+    }
+
+    var rzT = null;
+    window.addEventListener('resize', function () {
+      if (rzT) window.clearTimeout(rzT);
+      rzT = window.setTimeout(function () { goTo(current, true); }, 120);
+    });
+
+    window.requestAnimationFrame(function () { goTo(0, true); });
+  }
+  function initSocialFeeds(root) {
+    var scope = root || document;
+    var els = scope.querySelectorAll('[data-glaze-social]');
+    Array.prototype.forEach.call(els, initSocialFeed);
+    if (scope.matches && scope.matches('[data-glaze-social]')) initSocialFeed(scope);
+  }
+
+  // ----------------------------------------------------------------------
   // Auto-initialize on DOMContentLoaded + observe future DOM (sections
   // injected by the theme editor or by AJAX cart updates).
   // ----------------------------------------------------------------------
@@ -1180,6 +1499,8 @@
     initProductBundles(root);
     initStickyCollectionsAll(root);
     initFeaturedProducts(root);
+    initStmts(root);
+    initSocialFeeds(root);
   }
 
   ready(function () {
@@ -1205,6 +1526,8 @@
     productBundle: initProductBundle,
     stickyCollections: initStickyCollections,
     featuredProduct: initFeaturedProduct,
+    stmt: initStmt,
+    socialFeed: initSocialFeed,
     cartAdd: cartAdd,
     initAll: initAll
   };

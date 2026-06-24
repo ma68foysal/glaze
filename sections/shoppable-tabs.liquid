@@ -143,9 +143,18 @@
                           {% if v.available == false %}disabled{% endif %}
                         {% endif %}
                       >
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8zM9 8a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        {% if has_variants %}
+                          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                            <circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.6"/>
+                          </svg>
+                        {% else %}
+                          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M3 4h2.5l2 12h11l1.8-8H7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="9" cy="20" r="1.4" stroke="currentColor" stroke-width="1.6"/>
+                            <circle cx="17" cy="20" r="1.4" stroke="currentColor" stroke-width="1.6"/>
+                          </svg>
+                        {% endif %}
                       </button>
                     </div>
                   </a>

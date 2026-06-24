@@ -1,0 +1,100 @@
+{%- comment -%}
+  Featured product — mini card.
+
+  4 per tab. Portrait 4:5, colour-block surface (1 of 4 rotating —
+  cream / blush / sage / ivory), image floats centred on the colour
+  block with padding so the surface shows through (very editorial),
+  small title + price below, always-visible quick-add cart icon in
+  the corner. No hover-reveal CTA.
+
+  Inputs:
+    product     : Shopify product drop
+    section     : the calling section
+    color_index : 0..3, picks which surface colour to apply
+{%- endcomment -%}
+
+{%- assign primary = product.featured_image -%}
+{%- assign color_n = color_index | modulo: 4 | plus: 1 -%}
+
+{%- assign is_sale = false -%}
+{%- if product.compare_at_price > product.price -%}
+  {%- assign is_sale = true -%}
+  {%- assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round -%}
+{%- endif -%}
+
+{%- assign is_new = false -%}
+{%- assign is_hot = false -%}
+{%- if product.tags contains 'new' or product.tags contains 'New' -%}{%- assign is_new = true -%}{%- endif -%}
+{%- if product.tags contains 'hot' or product.tags contains 'Selling fast' or product.tags contains 'selling-fast' -%}{%- assign is_hot = true -%}{%- endif -%}
+
+{%- assign has_variants = false -%}
+{%- if product.variants.size > 1 or product.has_only_default_variant == false -%}{%- assign has_variants = true -%}{%- endif -%}
+
+<article class="sfp-mini" data-color-block="{{ color_n }}" data-product-handle="{{ product.handle }}">
+  <a href="{{ product.url }}" class="sfp-mini__media" aria-label="{{ product.title | escape }}">
+    {%- if primary -%}
+      <img
+        class="sfp-mini__img"
+        loading="lazy"
+        src="{{ primary | image_url: width: 600 }}"
+        srcset="{{ primary | image_url: width: 300 }} 300w, {{ primary | image_url: width: 480 }} 480w, {{ primary | image_url: width: 600 }} 600w"
+        sizes="(min-width: 990px) 22vw, 45vw"
+        alt="{{ primary.alt | default: product.title | escape }}"
+        width="{{ primary.width }}"
+        height="{{ primary.height }}"
+      >
+    {%- endif -%}
+  </a>
+
+  <div class="sfp-card-badges sfp-mini__badges">
+    {%- if is_sale -%}<span class="sfp-badge sfp-badge--sale">-{{ discount }}%</span>{%- endif -%}
+    {%- if is_new -%}<span class="sfp-badge sfp-badge--new">New</span>{%- endif -%}
+    {%- if is_hot -%}<span class="sfp-badge sfp-badge--hot">Popular</span>{%- endif -%}
+  </div>
+
+  {%- if has_variants -%}
+    {%- comment -%} Variants → opens quick-view (eye icon) {%- endcomment -%}
+    <button
+      type="button"
+      class="sfp-mini__quickadd"
+      data-sfp-quickview="{{ product.handle }}"
+      aria-label="{{ section.settings.choose_options_label | default: 'Choose Options' | escape }} — {{ product.title | escape }}"
+    >
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.6"/>
+      </svg>
+    </button>
+  {%- else -%}
+    {%- comment -%} No variants → direct add to cart (cart icon) {%- endcomment -%}
+    <button
+      type="button"
+      class="sfp-mini__quickadd"
+      data-sfp-atc="{{ product.variants.first.id }}"
+      aria-label="{{ section.settings.atc_label | default: 'Add To Cart' | escape }} — {{ product.title | escape }}"
+      {% if product.available == false %}disabled{% endif %}
+    >
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M3 4h2.5l2 12h11l1.8-8H7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="9" cy="20" r="1.4" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="17" cy="20" r="1.4" stroke="currentColor" stroke-width="1.6"/>
+      </svg>
+    </button>
+  {%- endif -%}
+
+  <a href="{{ product.url }}" class="sfp-mini__body">
+    <p class="sfp-mini__title">{{ product.title | escape }}</p>
+    <p class="sfp-mini__price">
+      {%- if product.price_varies -%}From {% endif -%}
+      {{ product.price | money }}
+      {%- if is_sale -%}
+        <span class="sfp-mini__price-compare">{{ product.compare_at_price | money }}</span>
+      {%- endif -%}
+    </p>
+  </a>
+
+  {%- comment -%} Product JSON for quick-view modal {%- endcomment -%}
+  <script type="application/json" data-sfp-product="{{ product.handle }}">
+    {{ product | json }}
+  </script>
+</article>

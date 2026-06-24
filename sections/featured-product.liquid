@@ -1,32 +1,25 @@
 {%- liquid
   assign section_id = 'glaze-fp-' | append: section.id
-  assign per_tab = section.settings.products_per_tab
-  assign cols = section.settings.columns_desktop
-  if cols > 3
-    assign cols_tablet = 3
-  else
-    assign cols_tablet = cols
-  endif
 -%}
 
 {%- comment -%}
   Per-instance CSS variables. Structural styles live in assets/base.css
-  under "S12. Featured product".
+  under "S12. Featured product". Editorial bento layout — one large hero
+  product + 4 smaller portrait cards on the side, colour-block surfaces
+  rotating across the small cards.
 {%- endcomment -%}
 <style>
   #{{ section_id }} {
     --sfp-bg: {{ section.settings.bg_color }};
     --sfp-fg: {{ section.settings.text_color }};
     --sfp-muted: {{ section.settings.muted_color }};
-    --sfp-card-bg: {{ section.settings.card_bg }};
-    --sfp-radius: {{ section.settings.card_radius }}px;
-    --sfp-cols: {{ cols }};
-    --sfp-cols-tablet: {{ cols_tablet }};
     --sfp-pad-top: {{ section.settings.padding_top }}px;
     --sfp-pad-bottom: {{ section.settings.padding_bottom }}px;
+    --sfp-radius: {{ section.settings.card_radius }}px;
     --sfp-tab-active: {{ section.settings.tab_active_color }};
     --sfp-tab-inactive: {{ section.settings.tab_inactive_color }};
     --sfp-tab-size: {{ section.settings.tab_font_size }}px;
+    --sfp-eyebrow-c: {{ section.settings.eyebrow_color }};
     --sfp-title-color: {{ section.settings.title_color }};
     --sfp-title-size: {{ section.settings.title_font_size }}px;
     --sfp-type-color: {{ section.settings.type_color }};
@@ -45,6 +38,10 @@
     --sfp-btn-fg: {{ section.settings.btn_fg }};
     --sfp-btn-hover-bg: {{ section.settings.btn_hover_bg }};
     --sfp-btn-hover-fg: {{ section.settings.btn_hover_fg }};
+    --sfp-hero-c1: {{ section.settings.hero_color_1 }};
+    --sfp-hero-c2: {{ section.settings.hero_color_2 }};
+    --sfp-hero-c3: {{ section.settings.hero_color_3 }};
+    --sfp-hero-c4: {{ section.settings.hero_color_4 }};
   }
 </style>
 
@@ -78,6 +75,9 @@
       {%- if section.settings.show_shop_all and section.settings.shop_all_link != blank -%}
         <a href="{{ section.settings.shop_all_link }}" class="sfp-shop-all">
           {{ section.settings.shop_all_label | default: 'Shop All Products' }}
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+            <path d="M1 8h13M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </a>
       {%- endif -%}
     </div>
@@ -87,129 +87,40 @@
       {%- for block in section.blocks -%}
         {%- if block.type == 'tab' -%}
         {%- assign coll = block.settings.collection -%}
+        {%- assign hero_pos = block.settings.hero_position | default: 'left' -%}
         <div
           class="sfp-panel{% if panel_index == 0 %} is-active{% endif %}"
           role="tabpanel"
           data-sfp-panel="{{ panel_index }}"
         >
-          <div class="sfp-grid">
-            {%- if coll != blank and coll.products.size > 0 -%}
-              {%- for product in coll.products limit: per_tab -%}
-                {%- assign primary = product.featured_image -%}
-                {%- assign secondary = nil -%}
-                {%- if product.images.size > 1 -%}
-                  {%- assign secondary = product.images[1] -%}
-                {%- endif -%}
+          {%- if coll != blank and coll.products.size > 0 -%}
+            <div class="sfp-bento" data-hero-pos="{{ hero_pos }}">
 
-                {%- assign is_sale = false -%}
-                {%- if product.compare_at_price > product.price -%}
-                  {%- assign is_sale = true -%}
-                  {%- assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round -%}
-                {%- endif -%}
+              {%- comment -%} ============ HERO CARD (product[0]) ============ {%- endcomment -%}
+              {%- assign hero = coll.products[0] -%}
+              {%- if hero -%}
+                {%- render 'fp-hero-card',
+                    product: hero,
+                    section: section,
+                    block: block
+                -%}
+              {%- endif -%}
 
-                {%- assign is_new = false -%}
-                {%- assign is_hot = false -%}
-                {%- if product.tags contains 'new' or product.tags contains 'New' -%}
-                  {%- assign is_new = true -%}
-                {%- endif -%}
-                {%- if product.tags contains 'hot' or product.tags contains 'Selling fast' or product.tags contains 'selling-fast' -%}
-                  {%- assign is_hot = true -%}
-                {%- endif -%}
+              {%- comment -%} ============ MINI CARDS (products[1..4]) ============ {%- endcomment -%}
+              <div class="sfp-mini-grid">
+                {%- for product in coll.products limit: 4 offset: 1 -%}
+                  {%- render 'fp-mini-card',
+                      product: product,
+                      section: section,
+                      color_index: forloop.index0
+                  -%}
+                {%- endfor -%}
+              </div>
 
-                {%- assign has_variants = false -%}
-                {%- if product.variants.size > 1 or product.has_only_default_variant == false -%}
-                  {%- assign has_variants = true -%}
-                {%- endif -%}
-
-                <div class="sfp-card" data-product-handle="{{ product.handle }}" data-product-url="{{ product.url }}">
-                  <div class="sfp-card-media">
-                    <a href="{{ product.url }}" class="sfp-card-img is-primary" aria-label="{{ product.title }}">
-                      {%- if primary -%}
-                        {{ primary | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title, widths: '300,400,600,800' }}
-                      {%- endif -%}
-                    </a>
-                    {%- if secondary -%}
-                      <a href="{{ product.url }}" class="sfp-card-img is-secondary" tabindex="-1" aria-hidden="true">
-                        {{ secondary | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title, widths: '300,400,600,800' }}
-                      </a>
-                    {%- endif -%}
-
-                    <div class="sfp-card-badges">
-                      {%- if is_sale -%}
-                        <span class="sfp-badge sfp-badge--sale">-{{ discount }}%</span>
-                      {%- endif -%}
-                      {%- if is_new -%}
-                        <span class="sfp-badge sfp-badge--new">New</span>
-                      {%- endif -%}
-                      {%- if is_hot -%}
-                        <span class="sfp-badge sfp-badge--hot">Popular</span>
-                      {%- endif -%}
-                    </div>
-
-                    <button
-                      type="button"
-                      class="sfp-card-search"
-                      data-sfp-quickview="{{ product.handle }}"
-                      aria-label="Quick view {{ product.title }}"
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
-                        <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                      </svg>
-                    </button>
-
-                    {%- if has_variants -%}
-                      <button
-                        type="button"
-                        class="sfp-card-cta"
-                        data-sfp-quickview="{{ product.handle }}"
-                      >
-                        <span class="sfp-card-cta-label">{{ section.settings.choose_options_label | default: 'Choose Options' }}</span>
-                        <span class="sfp-card-cta-icon" aria-hidden="true">
-                          <svg viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8zM9 8a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </span>
-                      </button>
-                    {%- else -%}
-                      <button
-                        type="button"
-                        class="sfp-card-cta"
-                        data-sfp-atc="{{ product.variants.first.id }}"
-                        {% if product.available == false %}disabled{% endif %}
-                      >
-                        <span class="sfp-card-cta-label">{%- if product.available -%}{{ section.settings.atc_label | default: 'Add To Cart' }}{%- else -%}Sold out{%- endif -%}</span>
-                        <span class="sfp-card-cta-icon" aria-hidden="true">
-                          <svg viewBox="0 0 24 24" fill="none"><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8zM9 8a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </span>
-                      </button>
-                    {%- endif -%}
-                  </div>
-
-                  <a href="{{ product.url }}" class="sfp-card-body" style="text-decoration: none; color: inherit;">
-                    {%- if product.type != blank -%}
-                      <p class="sfp-card-type">{{ product.type }}</p>
-                    {%- endif -%}
-                    <p class="sfp-card-title">{{ product.title }}</p>
-                    <p class="sfp-card-price">
-                      {%- if product.price_varies -%}From {% endif -%}
-                      {{ product.price | money }}
-                      {%- if is_sale -%}
-                        <span class="sfp-card-price-compare">{{ product.compare_at_price | money }}</span>
-                      {%- endif -%}
-                    </p>
-                  </a>
-
-                  {%- comment -%} Product JSON for quick-view modal {%- endcomment -%}
-                  <script type="application/json" data-sfp-product="{{ product.handle }}">
-                    {{ product | json }}
-                  </script>
-                </div>
-              {%- endfor -%}
-            {%- else -%}
-              <p style="grid-column: 1 / -1; color: var(--sfp-muted); padding: 40px 0; text-align: center;">
-                No products in this collection.
-              </p>
-            {%- endif -%}
-          </div>
+            </div>
+          {%- else -%}
+            <p class="sfp-empty">No products in this collection.</p>
+          {%- endif -%}
         </div>
         {%- assign panel_index = panel_index | plus: 1 -%}
         {%- endif -%}
@@ -288,25 +199,8 @@
     },
     {
       "type": "header",
-      "content": "Grid"
-    },
-    {
-      "type": "range",
-      "id": "columns_desktop",
-      "min": 2,
-      "max": 5,
-      "step": 1,
-      "label": "Columns on desktop",
-      "default": 4
-    },
-    {
-      "type": "range",
-      "id": "products_per_tab",
-      "min": 2,
-      "max": 16,
-      "step": 1,
-      "label": "Products per tab",
-      "default": 8
+      "content": "Layout",
+      "info": "Bento layout shows 1 large hero product + 4 smaller cards per tab."
     },
     {
       "type": "range",
@@ -317,6 +211,57 @@
       "unit": "px",
       "label": "Card radius",
       "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Hero card"
+    },
+    {
+      "type": "text",
+      "id": "hero_eyebrow",
+      "label": "Eyebrow text",
+      "default": "Editor's pick"
+    },
+    {
+      "type": "text",
+      "id": "hero_cta_label",
+      "label": "Hero CTA label",
+      "default": "Shop the ritual"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow colour",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Mini card colour blocks",
+      "info": "Each of the 4 smaller cards rotates through these surface colours for editorial variety."
+    },
+    {
+      "type": "color",
+      "id": "hero_color_1",
+      "label": "Surface 1 (cream)",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "hero_color_2",
+      "label": "Surface 2 (blush)",
+      "default": "#f5d8d5"
+    },
+    {
+      "type": "color",
+      "id": "hero_color_3",
+      "label": "Surface 3 (sage)",
+      "default": "#e3e7d4"
+    },
+    {
+      "type": "color",
+      "id": "hero_color_4",
+      "label": "Surface 4 (ivory)",
+      "default": "#fdf6f1"
     },
     {
       "type": "header",
@@ -355,12 +300,6 @@
       "id": "muted_color",
       "label": "Muted text",
       "default": "#a0a0a0"
-    },
-    {
-      "type": "color",
-      "id": "card_bg",
-      "label": "Card background",
-      "default": "#f4f4f4"
     },
     {
       "type": "header",
@@ -506,31 +445,31 @@
     },
     {
       "type": "header",
-      "content": "Hover button"
+      "content": "Quick-add icon"
     },
     {
       "type": "color",
       "id": "btn_bg",
-      "label": "Button background",
-      "default": "#ffffff"
+      "label": "Icon background",
+      "default": "#1a1a1a"
     },
     {
       "type": "color",
       "id": "btn_fg",
-      "label": "Button text",
-      "default": "#111111"
+      "label": "Icon colour",
+      "default": "#ffffff"
     },
     {
       "type": "color",
       "id": "btn_hover_bg",
-      "label": "Button hover background",
-      "default": "#111111"
+      "label": "Icon hover background",
+      "default": "#ffffff"
     },
     {
       "type": "color",
       "id": "btn_hover_fg",
-      "label": "Button hover text",
-      "default": "#ffffff"
+      "label": "Icon hover colour",
+      "default": "#1a1a1a"
     },
     {
       "type": "header",
@@ -571,7 +510,19 @@
         {
           "type": "collection",
           "id": "collection",
-          "label": "Collection"
+          "label": "Collection",
+          "info": "First product becomes the hero card; next 4 fill the small cards."
+        },
+        {
+          "type": "select",
+          "id": "hero_position",
+          "label": "Hero position",
+          "options": [
+            { "value": "left",  "label": "Left" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "left",
+          "info": "Alternate left / right across tabs for editorial rhythm."
         }
       ]
     },
@@ -581,9 +532,9 @@
     {
       "name": "Featured product",
       "blocks": [
-        { "type": "tab", "settings": { "tab_label": "What's hot" } },
-        { "type": "tab", "settings": { "tab_label": "Best sellers" } },
-        { "type": "tab", "settings": { "tab_label": "Sale" } }
+        { "type": "tab", "settings": { "tab_label": "What's hot", "hero_position": "left" } },
+        { "type": "tab", "settings": { "tab_label": "Best sellers", "hero_position": "right" } },
+        { "type": "tab", "settings": { "tab_label": "Sale", "hero_position": "left" } }
       ]
     }
   ]
