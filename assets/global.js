@@ -1,14 +1,14 @@
 /* eslint-disable no-console */
 /**
- * Glaze — global theme utilities. Loaded on every page before cart.js.
+ * Skinova — global theme utilities. Loaded on every page before cart.js.
  *
- * Exposes `window.Glaze` with:
+ * Exposes `window.Skinova` with:
  *   utils        : debounce, throttle, ready, money, prefersReducedMotion
  *   reveal       : IntersectionObserver-driven [data-reveal] animations
  *   stagger      : auto-assigns --stagger-index on children of [data-stagger]
- *   accordion    : keyboard-accessible accordion for [data-glaze-accordion]
+ *   accordion    : keyboard-accessible accordion for [data-skinova-accordion]
  *   tabsIndicator: smooth sliding underline between tab buttons
- *   hero         : slideshow controller for [data-glaze-hero] sections
+ *   hero         : slideshow controller for [data-skinova-hero] sections
  *
  * Auto-init on DOMContentLoaded for any element matching the corresponding
  * data-attributes. Sections opt in declaratively rather than writing JS.
@@ -144,19 +144,19 @@
   // ----------------------------------------------------------------------
   // accordion — keyboard-accessible vertical accordion. Single instance
   // can have multiple expandable items; only one open at a time unless
-  // [data-glaze-accordion="multiple"] is set.
+  // [data-skinova-accordion="multiple"] is set.
   //
   // Markup:
-  //   <div data-glaze-accordion>
+  //   <div data-skinova-accordion>
   //     <button data-acc-trigger aria-expanded="false" aria-controls="p1">…</button>
   //     <div id="p1" data-acc-panel hidden>…</div>
   //     …
   //   </div>
   // ----------------------------------------------------------------------
   function initAccordion(root) {
-    (root || document).querySelectorAll('[data-glaze-accordion]:not([data-glaze-accordion-bound])').forEach(function (acc) {
-      acc.setAttribute('data-glaze-accordion-bound', '');
-      var multiple = acc.getAttribute('data-glaze-accordion') === 'multiple';
+    (root || document).querySelectorAll('[data-skinova-accordion]:not([data-skinova-accordion-bound])').forEach(function (acc) {
+      acc.setAttribute('data-skinova-accordion-bound', '');
+      var multiple = acc.getAttribute('data-skinova-accordion') === 'multiple';
       var triggers = acc.querySelectorAll('[data-acc-trigger]');
       triggers.forEach(function (trigger) {
         trigger.addEventListener('click', function () {
@@ -193,7 +193,7 @@
   // its transform + width.
   //
   // Markup:
-  //   <div data-glaze-tabs>
+  //   <div data-skinova-tabs>
   //     <button data-tab="0" aria-selected="true">A</button>
   //     <button data-tab="1">B</button>
   //     <span data-tab-indicator></span>   ← positioned by JS
@@ -204,8 +204,8 @@
   // (--tab-x, --tab-w) so the transition lives in the section's CSS.
   // ----------------------------------------------------------------------
   function initTabsIndicator(root) {
-    (root || document).querySelectorAll('[data-glaze-tabs]:not([data-glaze-tabs-bound])').forEach(function (group) {
-      group.setAttribute('data-glaze-tabs-bound', '');
+    (root || document).querySelectorAll('[data-skinova-tabs]:not([data-skinova-tabs-bound])').forEach(function (group) {
+      group.setAttribute('data-skinova-tabs-bound', '');
       var indicator = group.querySelector('[data-tab-indicator]');
       if (!indicator) return;
       var tabs = group.querySelectorAll('[data-tab]');
@@ -240,7 +240,7 @@
   }
 
   // ----------------------------------------------------------------------
-  // hero — editorial slideshow controller for [data-glaze-hero] sections.
+  // hero — editorial slideshow controller for [data-skinova-hero] sections.
   //
   // Crossfade transitions, autoplay with pause-on-hover / pause-on-focus /
   // pause-out-of-viewport, keyboard ArrowLeft/Right, touch swipe with
@@ -249,14 +249,14 @@
   // are supported — each is initialised independently.
   // ----------------------------------------------------------------------
   function initHero(root) {
-    if (!root || root.hasAttribute('data-glaze-hero-bound')) return;
-    root.setAttribute('data-glaze-hero-bound', '');
+    if (!root || root.hasAttribute('data-skinova-hero-bound')) return;
+    root.setAttribute('data-skinova-hero-bound', '');
 
     var stage = root.querySelector('[data-hero-stage]');
-    var slides = stage ? stage.querySelectorAll('.glaze-hero__slide') : [];
+    var slides = stage ? stage.querySelectorAll('.skinova-hero__slide') : [];
     if (slides.length === 0) return;
 
-    var dots = root.querySelectorAll('.glaze-hero__dot');
+    var dots = root.querySelectorAll('.skinova-hero__dot');
     var toggle = root.querySelector('[data-hero-toggle]');
     var live = root.querySelector('[data-hero-live]');
     var autoplay = root.getAttribute('data-autoplay') === 'true';
@@ -331,7 +331,7 @@
 
     function restartProgress() {
       if (!dots[current]) return;
-      var bar = dots[current].querySelector('.glaze-hero__progress-bar');
+      var bar = dots[current].querySelector('.skinova-hero__progress-bar');
       if (!bar) return;
       bar.style.animation = 'none';
       bar.getBoundingClientRect();
@@ -419,11 +419,11 @@
 
   function initHeroes(root) {
     var scope = root || document;
-    var heroes = scope.querySelectorAll('[data-glaze-hero]');
+    var heroes = scope.querySelectorAll('[data-skinova-hero]');
     Array.prototype.forEach.call(heroes, initHero);
     // shopify:section:load fires with e.target === the section itself,
     // which may BE the hero rather than contain one.
-    if (scope.matches && scope.matches('[data-glaze-hero]')) initHero(scope);
+    if (scope.matches && scope.matches('[data-skinova-hero]')) initHero(scope);
   }
 
   // ----------------------------------------------------------------------
@@ -435,9 +435,9 @@
   // `data-url` and inject the inner HTML.
   // ----------------------------------------------------------------------
   if (window.customElements && !customElements.get('product-recommendations')) {
-    customElements.define('product-recommendations', class GlazeProductRecommendations extends HTMLElement {
+    customElements.define('product-recommendations', class SkinovaProductRecommendations extends HTMLElement {
       connectedCallback() {
-        if (this.querySelector('.glaze-recs__inner')) return;
+        if (this.querySelector('.skinova-recs__inner')) return;
         var url = this.dataset.url;
         if (!url) return;
         var self = this;
@@ -459,8 +459,8 @@
   // which triggers the staggered character animation defined in S8.
   // ----------------------------------------------------------------------
   function initHti(root) {
-    if (!root || root.hasAttribute('data-glaze-hti-bound')) return;
-    root.setAttribute('data-glaze-hti-bound', '');
+    if (!root || root.hasAttribute('data-skinova-hti-bound')) return;
+    root.setAttribute('data-skinova-hti-bound', '');
     var wrap = root.querySelector('[data-hti-wrap]');
     if (!wrap) return;
     if (!('IntersectionObserver' in window)) {
@@ -479,20 +479,20 @@
   }
   function initHtis(root) {
     var scope = root || document;
-    var els = scope.querySelectorAll('[data-glaze-hti]');
+    var els = scope.querySelectorAll('[data-skinova-hti]');
     Array.prototype.forEach.call(els, initHti);
-    if (scope.matches && scope.matches('[data-glaze-hti]')) initHti(scope);
+    if (scope.matches && scope.matches('[data-skinova-hti]')) initHti(scope);
   }
 
   // ----------------------------------------------------------------------
   // shoppable-tabs — sticky left tabs + product grid panels on right.
   // Tab activation also drives a mobile <select> mirror + a description
   // pulled from the selected tab's hidden .st-tab-desc child. The bag
-  // button delegates ATC to Glaze.addToCart (lives in cart.js).
+  // button delegates ATC to Skinova.addToCart (lives in cart.js).
   // ----------------------------------------------------------------------
   function initShoppableTabs(root) {
-    if (!root || root.hasAttribute('data-glaze-st-bound')) return;
-    root.setAttribute('data-glaze-st-bound', '');
+    if (!root || root.hasAttribute('data-skinova-st-bound')) return;
+    root.setAttribute('data-skinova-st-bound', '');
 
     var tabs = root.querySelectorAll('[data-st-tab]');
     var panels = root.querySelectorAll('[data-st-panel]');
@@ -556,9 +556,9 @@
   }
   function initShoppableTabsAll(root) {
     var scope = root || document;
-    var els = scope.querySelectorAll('[data-glaze-st]');
+    var els = scope.querySelectorAll('[data-skinova-st]');
     Array.prototype.forEach.call(els, initShoppableTabs);
-    if (scope.matches && scope.matches('[data-glaze-st]')) initShoppableTabs(scope);
+    if (scope.matches && scope.matches('[data-skinova-st]')) initShoppableTabs(scope);
   }
 
   // ----------------------------------------------------------------------
@@ -567,8 +567,8 @@
   // breakpoint) tells JS how many cards are visible at once.
   // ----------------------------------------------------------------------
   function initCollectionList(root) {
-    if (!root || root.hasAttribute('data-glaze-cl-bound')) return;
-    root.setAttribute('data-glaze-cl-bound', '');
+    if (!root || root.hasAttribute('data-skinova-cl-bound')) return;
+    root.setAttribute('data-skinova-cl-bound', '');
 
     var track = root.querySelector('[data-scl-track]');
     var cards = track ? track.querySelectorAll('.scl-card') : [];
@@ -647,9 +647,9 @@
   }
   function initCollectionLists(root) {
     var scope = root || document;
-    var els = scope.querySelectorAll('[data-glaze-cl]');
+    var els = scope.querySelectorAll('[data-skinova-cl]');
     Array.prototype.forEach.call(els, initCollectionList);
-    if (scope.matches && scope.matches('[data-glaze-cl]')) initCollectionList(scope);
+    if (scope.matches && scope.matches('[data-skinova-cl]')) initCollectionList(scope);
   }
 
   // ----------------------------------------------------------------------
@@ -658,15 +658,41 @@
   // labels come from data-atc-label / data-sold-out-label on the root.
   // ----------------------------------------------------------------------
   function initMainProduct(root) {
-    if (!root || root.hasAttribute('data-glaze-mp-bound')) return;
-    root.setAttribute('data-glaze-mp-bound', '');
+    if (!root || root.hasAttribute('data-skinova-mp-bound')) return;
+    root.setAttribute('data-skinova-mp-bound', '');
 
     var atcAvailableLabel = root.getAttribute('data-atc-label') || 'Add to Cart';
     var atcSoldOutLabel   = root.getAttribute('data-sold-out-label') || 'Sold out';
 
+    // Gallery media in DOM order. Arrows + swipe step through this list;
+    // thumbs jump directly. The active index is derived from the DOM each
+    // time, so variant-driven media changes (updateForVariant) stay in sync.
+    var mediaEls  = Array.prototype.slice.call(root.querySelectorAll('[data-mp-media-id]'));
+    var mediaIds  = mediaEls.map(function (el) { return el.getAttribute('data-mp-media-id'); });
+    var prevBtn   = root.querySelector('[data-mp-prev]');
+    var nextBtn   = root.querySelector('[data-mp-next]');
+    var thumbsBox = root.querySelector('.mp__thumbs');
+
+    function currentIndex() {
+      for (var i = 0; i < mediaEls.length; i++) {
+        if (!mediaEls[i].hasAttribute('hidden')) return i;
+      }
+      return 0;
+    }
+    function updateNav() {
+      var idx = currentIndex();
+      if (prevBtn) prevBtn.disabled = idx <= 0;
+      if (nextBtn) nextBtn.disabled = idx >= mediaIds.length - 1;
+    }
+    function scrollThumbIntoView(idStr) {
+      if (!thumbsBox) return;
+      var t = thumbsBox.querySelector('[data-mp-thumb-id="' + idStr + '"]');
+      if (t && t.scrollIntoView) t.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+
     function showMedia(mediaId) {
       var idStr = String(mediaId);
-      root.querySelectorAll('[data-mp-media-id]').forEach(function (el) {
+      mediaEls.forEach(function (el) {
         var match = el.getAttribute('data-mp-media-id') === idStr;
         if (match) { el.removeAttribute('hidden'); el.classList.add('is-active'); }
         else { el.setAttribute('hidden', ''); el.classList.remove('is-active'); }
@@ -676,12 +702,39 @@
         btn.classList.toggle('is-active', match);
         btn.setAttribute('aria-selected', match ? 'true' : 'false');
       });
+      scrollThumbIntoView(idStr);
+      updateNav();
     }
+    function step(delta) {
+      var idx = currentIndex() + delta;
+      if (idx < 0) idx = 0;
+      if (idx > mediaIds.length - 1) idx = mediaIds.length - 1;
+      showMedia(mediaIds[idx]);
+    }
+
     root.querySelectorAll('[data-mp-thumb-id]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         showMedia(btn.getAttribute('data-mp-thumb-id'));
       });
     });
+    if (prevBtn) prevBtn.addEventListener('click', function () { step(-1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { step(1); });
+    updateNav();
+
+    // Touch swipe on the main image (all viewports) — horizontal gesture steps media.
+    var stage = root.querySelector('[data-mp-stage]');
+    if (stage && mediaIds.length > 1) {
+      var sx = 0, sy = 0, tracking = false;
+      stage.addEventListener('touchstart', function (e) {
+        var t = e.touches[0]; sx = t.clientX; sy = t.clientY; tracking = true;
+      }, { passive: true });
+      stage.addEventListener('touchend', function (e) {
+        if (!tracking) return; tracking = false;
+        var t = e.changedTouches[0];
+        var dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { step(dx < 0 ? 1 : -1); }
+      }, { passive: true });
+    }
 
     var variantData = [];
     var dataEl = root.querySelector('[data-mp-variant-data]');
@@ -691,6 +744,9 @@
     var idInput = root.querySelector('[data-mp-id-input]');
     var priceCurrentEl = root.querySelector('[data-mp-price-current]');
     var priceCompareEl = root.querySelector('[data-mp-price-compare]');
+    var unitWrapEl = root.querySelector('[data-mp-unit-price]');
+    var unitValueEl = root.querySelector('[data-mp-unit-price-value]');
+    var unitUnitEl = root.querySelector('[data-mp-unit-price-unit]');
     var atcBtn = root.querySelector('.mp__atc');
 
     function getSelectedOptions() {
@@ -712,6 +768,10 @@
       }
       return null;
     }
+    function getSelectedPlan() {
+      var checked = root.querySelector('[data-mp-plan]:checked');
+      return checked ? checked.value : '';
+    }
     function updateForVariant(v) {
       if (!v) {
         if (atcBtn) { atcBtn.setAttribute('disabled', ''); atcBtn.textContent = atcSoldOutLabel; }
@@ -719,8 +779,22 @@
         return;
       }
       if (idInput) idInput.value = v.id;
-      if (priceCurrentEl) priceCurrentEl.textContent = v.price;
+      var plan = getSelectedPlan();
+      var shownPrice = v.price;
+      if (plan && v.selling_plan_prices && v.selling_plan_prices[plan]) {
+        shownPrice = v.selling_plan_prices[plan];
+      }
+      if (priceCurrentEl) priceCurrentEl.textContent = shownPrice;
       if (priceCompareEl) priceCompareEl.textContent = v.compare_at_price || '';
+      if (unitWrapEl) {
+        if (v.unit_price) {
+          if (unitValueEl) unitValueEl.textContent = v.unit_price;
+          if (unitUnitEl) unitUnitEl.textContent = v.unit_price_unit || '';
+          unitWrapEl.removeAttribute('hidden');
+        } else {
+          unitWrapEl.setAttribute('hidden', '');
+        }
+      }
       if (atcBtn) {
         if (v.available) { atcBtn.removeAttribute('disabled'); atcBtn.textContent = atcAvailableLabel; }
         else { atcBtn.setAttribute('disabled', ''); atcBtn.textContent = atcSoldOutLabel; }
@@ -750,6 +824,16 @@
       radio.addEventListener('change', onOptionChange);
     });
 
+    // Selling-plan (subscription) selector — re-prices the current variant.
+    root.querySelectorAll('[data-mp-plan]').forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        root.querySelectorAll('.mp__plan').forEach(function (l) { l.classList.remove('is-active'); });
+        var lbl = radio.closest('.mp__plan');
+        if (lbl) lbl.classList.add('is-active');
+        updateForVariant(findVariant(getSelectedOptions()));
+      });
+    });
+
     var qtyInput = root.querySelector('[data-mp-qty-input]');
     if (qtyInput) {
       root.querySelectorAll('[data-mp-qty-step]').forEach(function (btn) {
@@ -763,9 +847,9 @@
   }
   function initMainProducts(root) {
     var scope = root || document;
-    var els = scope.querySelectorAll('[data-glaze-mp]');
+    var els = scope.querySelectorAll('[data-skinova-mp]');
     Array.prototype.forEach.call(els, initMainProduct);
-    if (scope.matches && scope.matches('[data-glaze-mp]')) initMainProduct(scope);
+    if (scope.matches && scope.matches('[data-skinova-mp]')) initMainProduct(scope);
   }
 
   // ----------------------------------------------------------------------
@@ -774,8 +858,8 @@
   // calls (drawer opens once at the end, not per item).
   // ----------------------------------------------------------------------
   function initProductBundle(root) {
-    if (!root || root.hasAttribute('data-glaze-pb-bound')) return;
-    root.setAttribute('data-glaze-pb-bound', '');
+    if (!root || root.hasAttribute('data-skinova-pb-bound')) return;
+    root.setAttribute('data-skinova-pb-bound', '');
 
     var items = root.querySelectorAll('.pb-item');
     var dots  = root.querySelectorAll('.pb-dot');
@@ -850,8 +934,8 @@
         variantIds.forEach(function (id, idx) {
           var isLast = idx === variantIds.length - 1;
           promise = promise.then(function () {
-            if (window.GlazeCart && typeof window.GlazeCart.addToCart === 'function') {
-              return window.GlazeCart.addToCart(id, {
+            if (window.SkinovaCart && typeof window.SkinovaCart.addToCart === 'function') {
+              return window.SkinovaCart.addToCart(id, {
                 quantity: 1,
                 sourceButton: isLast ? btn : null,
                 openDrawer: isLast,
@@ -877,14 +961,14 @@
   }
   function initProductBundles(root) {
     var scope = root || document;
-    var els = scope.querySelectorAll('[data-glaze-pb]');
+    var els = scope.querySelectorAll('[data-skinova-pb]');
     Array.prototype.forEach.call(els, initProductBundle);
-    if (scope.matches && scope.matches('[data-glaze-pb]')) initProductBundle(scope);
+    if (scope.matches && scope.matches('[data-skinova-pb]')) initProductBundle(scope);
   }
 
   // ----------------------------------------------------------------------
   // (Quick-view modal renderer moved to assets/quick-view.js — accessed
-  // via window.GlazeQuickView. Two sections use it: sticky-collections
+  // via window.SkinovaQuickView. Two sections use it: sticky-collections
   // and featured-product. See quick-view.js for the contract.)
   // ----------------------------------------------------------------------
 
@@ -894,8 +978,8 @@
   // ATC adds the variant; the magnifying-glass button opens the modal.
   // ----------------------------------------------------------------------
   function initStickyCollections(root) {
-    if (!root || root.hasAttribute('data-glaze-stc-bound')) return;
-    root.setAttribute('data-glaze-stc-bound', '');
+    if (!root || root.hasAttribute('data-skinova-stc-bound')) return;
+    root.setAttribute('data-skinova-stc-bound', '');
 
     root.querySelectorAll('[data-stc-coll]').forEach(function (coll) {
       var track = coll.querySelector('[data-stc-track]');
@@ -1003,10 +1087,10 @@
       btn.addEventListener('click', function (e) {
         e.preventDefault(); e.stopPropagation();
         var p = getProductData(btn.getAttribute('data-stc-quickview'));
-        if (!p || !modalBody || !window.GlazeQuickView) return;
-        modalBody.innerHTML = window.GlazeQuickView.render(p, 'stc');
+        if (!p || !modalBody || !window.SkinovaQuickView) return;
+        modalBody.innerHTML = window.SkinovaQuickView.render(p, 'stc');
         openModal();
-        window.GlazeQuickView.bind(modalBody, p, { cls: 'stc', source: 'sticky-collections', onClose: closeModal });
+        window.SkinovaQuickView.bind(modalBody, p, { cls: 'stc', source: 'sticky-collections', onClose: closeModal });
       });
     });
 
@@ -1028,9 +1112,9 @@
   }
   function initStickyCollectionsAll(root) {
     var scope = root || document;
-    var els = scope.querySelectorAll('[data-glaze-stc]');
+    var els = scope.querySelectorAll('[data-skinova-stc]');
     Array.prototype.forEach.call(els, initStickyCollections);
-    if (scope.matches && scope.matches('[data-glaze-stc]')) initStickyCollections(scope);
+    if (scope.matches && scope.matches('[data-skinova-stc]')) initStickyCollections(scope);
   }
 
   // ----------------------------------------------------------------------
@@ -1040,8 +1124,8 @@
   // the modal via the QuickView extras hook.
   // ----------------------------------------------------------------------
   function initFeaturedProduct(root) {
-    if (!root || root.hasAttribute('data-glaze-fp-bound')) return;
-    root.setAttribute('data-glaze-fp-bound', '');
+    if (!root || root.hasAttribute('data-skinova-fp-bound')) return;
+    root.setAttribute('data-skinova-fp-bound', '');
 
     // Tabs
     var tabs   = root.querySelectorAll('[data-sfp-tab]');
@@ -1111,10 +1195,10 @@
         e.preventDefault(); e.stopPropagation();
         var handle = btn.getAttribute('data-sfp-quickview');
         var p = getProductData(handle);
-        if (!p || !modalBody || !window.GlazeQuickView) return;
-        modalBody.innerHTML = window.GlazeQuickView.render(p, 'sfp', buildExtras(p));
+        if (!p || !modalBody || !window.SkinovaQuickView) return;
+        modalBody.innerHTML = window.SkinovaQuickView.render(p, 'sfp', buildExtras(p));
         openModal();
-        window.GlazeQuickView.bind(modalBody, p, { cls: 'sfp', source: 'featured-product', onClose: closeModal });
+        window.SkinovaQuickView.bind(modalBody, p, { cls: 'sfp', source: 'featured-product', onClose: closeModal });
       });
     });
 
@@ -1144,22 +1228,22 @@
   }
   function initFeaturedProducts(root) {
     var scope = root || document;
-    var els = scope.querySelectorAll('[data-glaze-fp]');
+    var els = scope.querySelectorAll('[data-skinova-fp]');
     Array.prototype.forEach.call(els, initFeaturedProduct);
-    if (scope.matches && scope.matches('[data-glaze-fp]')) initFeaturedProduct(scope);
+    if (scope.matches && scope.matches('[data-skinova-fp]')) initFeaturedProduct(scope);
   }
 
   // ----------------------------------------------------------------------
   // Shared ATC delegate — every card-style ATC across sections funnels
-  // through here. Calls window.GlazeCart.addToCart when cart.js is loaded;
+  // through here. Calls window.SkinovaCart.addToCart when cart.js is loaded;
   // otherwise falls back to a native POST + redirect to /cart.
   // ----------------------------------------------------------------------
   function cartAdd(id, quantity, sourceBtn, source) {
-    if (window.GlazeCart && typeof window.GlazeCart.addToCart === 'function') {
-      return window.GlazeCart.addToCart(id, {
+    if (window.SkinovaCart && typeof window.SkinovaCart.addToCart === 'function') {
+      return window.SkinovaCart.addToCart(id, {
         quantity: quantity,
         sourceButton: sourceBtn || null,
-        source: source || 'glaze'
+        source: source || 'skinova'
       });
     }
     var url = (window.routes && window.routes.cart_add_url) || '/cart/add.js';
@@ -1274,7 +1358,7 @@
     }
 
     if (spotlightOn) {
-      var sp = root.querySelector('.glaze-stmt__spotlight');
+      var sp = root.querySelector('.skinova-stmt__spotlight');
       if (sp) {
         root.addEventListener('mousemove', function (ev) {
           var rect = root.getBoundingClientRect();
@@ -1286,9 +1370,9 @@
   }
   function initStmts(root) {
     var scope = root || document;
-    var els = scope.querySelectorAll('[data-glaze-stmt]');
+    var els = scope.querySelectorAll('[data-skinova-stmt]');
     Array.prototype.forEach.call(els, initStmt);
-    if (scope.matches && scope.matches('[data-glaze-stmt]')) initStmt(scope);
+    if (scope.matches && scope.matches('[data-skinova-stmt]')) initStmt(scope);
   }
 
   // ----------------------------------------------------------------------
@@ -1312,7 +1396,9 @@
     var autoplayMs   = parseInt(root.getAttribute('data-autoplay-ms'), 10) || 5000;
     var pauseOnHover = root.getAttribute('data-pause-hover') === 'true';
 
-    var current = 0;
+    var realSlides = slides;              // the n authored slides
+    var n = realSlides.length;
+    var current = 0;                      // logical real index (drives dots / aria)
     var timer = null;
     var inView = false;
     var hovering = false;
@@ -1320,47 +1406,97 @@
     var dragStartX = 0;
     var dragDelta = 0;
 
-    function applyCenter() {
-      slides.forEach(function (s, i) {
-        s.classList.toggle('is-center', i === current);
+    // Build a seamless infinite loop by cloning the FULL set on both sides:
+    // track becomes [clones][reals][clones] (period n). Any position p and
+    // p±n show an identical viewport, so we can animate INTO a clone and then
+    // snap back by n with no visible jump — always moving forward, never a
+    // reverse jump to the start. Clones are inert visual fillers.
+    var allSlides = realSlides;
+    var position = 0;
+    if (n > 1) {
+      var before = document.createDocumentFragment();
+      var after  = document.createDocumentFragment();
+      realSlides.forEach(function (s) {
+        var c1 = s.cloneNode(true);
+        var c2 = s.cloneNode(true);
+        [c1, c2].forEach(function (c) {
+          c.classList.add('is-clone');
+          c.setAttribute('aria-hidden', 'true');
+          c.removeAttribute('data-soc-slide');
+          c.querySelectorAll('video, [data-soc-play]').forEach(function (el) { el.remove(); });
+        });
+        before.appendChild(c1);
+        after.appendChild(c2);
       });
+      track.insertBefore(before, realSlides[0]);
+      track.appendChild(after);
+      allSlides = Array.prototype.slice.call(track.querySelectorAll('.skinova-social__slide'));
+      position = n;                       // centre the first real slide (2 clones fill the left)
+    }
+
+    function slideWidth() {
+      var ref = allSlides[0];
+      if (!ref) return 0;
+      var w = ref.getBoundingClientRect().width; // ref is never the centre slide → unscaled
+      var cs = window.getComputedStyle(track);
+      var gap = parseFloat(cs.columnGap || cs.gap || '0') || 0;
+      return w + gap;
+    }
+
+    function applyTransform(pos, instant) {
+      var vpW = viewport.getBoundingClientRect().width;
+      var sw  = slideWidth();
+      var offset = (vpW / 2) - (sw * pos) - (sw / 2);
+      track.style.transition = instant ? 'none' : '';
+      track.style.transform = 'translate3d(' + offset.toFixed(2) + 'px, 0, 0)';
+      if (instant) {
+        // eslint-disable-next-line no-unused-expressions
+        track.offsetWidth;                // flush so the snap doesn't animate
+        track.style.transition = '';
+      }
+    }
+
+    function setCurrent(pos) {
+      var base = n > 1 ? n : 0;
+      current = (((pos - base) % n) + n) % n;
+      allSlides.forEach(function (s, i) { s.classList.toggle('is-center', i === pos); });
       dots.forEach(function (d, i) {
         var on = i === current;
         d.classList.toggle('is-active', on);
         d.setAttribute('aria-selected', on ? 'true' : 'false');
       });
-    }
-
-    function slideWidth() {
-      if (!slides[0]) return 0;
-      var s0 = slides[0].getBoundingClientRect();
-      var cs = window.getComputedStyle(track);
-      var gap = parseFloat(cs.columnGap || cs.gap || '0') || 0;
-      return s0.width + gap;
-    }
-
-    function goTo(index, instant) {
-      var n = slides.length;
-      current = ((index % n) + n) % n;
-      var vpW = viewport.getBoundingClientRect().width;
-      var sw  = slideWidth();
-      var offset = (vpW / 2) - (sw * current) - (slides[current].getBoundingClientRect().width / 2);
-      track.style.transition = instant ? 'none' : '';
-      track.style.transform = 'translate3d(' + offset.toFixed(2) + 'px, 0, 0)';
-      applyCenter();
-      slides.forEach(function (s, i) {
+      allSlides.forEach(function (s, i) {
         var v = s.querySelector('[data-soc-video]');
-        if (v && i !== current && !v.paused) v.pause();
+        if (v && i !== pos && !v.paused) v.pause();
       });
-      if (instant) {
-        // eslint-disable-next-line no-unused-expressions
-        track.offsetWidth;
-        track.style.transition = '';
-      }
     }
 
-    function next() { goTo(current + 1); }
-    function prev() { goTo(current - 1); }
+    function goToPosition(pos, instant) {
+      position = pos;
+      applyTransform(position, instant);
+      setCurrent(position);
+    }
+
+    // After an animated move that lands in a clone zone, jump by one period
+    // (no transition) to the matching real slide — invisible because the
+    // neighbourhood is identical.
+    function normalize() {
+      if (n <= 1) return;
+      if (position < n) goToPosition(position + n, true);
+      else if (position >= 2 * n) goToPosition(position - n, true);
+    }
+    track.addEventListener('transitionend', function (e) {
+      if (e.target !== track) return;
+      if (e.propertyName && e.propertyName.indexOf('transform') === -1) return;
+      normalize();
+    });
+
+    function next() { goToPosition(position + 1); }
+    function prev() { goToPosition(position - 1); }
+    function goToReal(i) {
+      var base = n > 1 ? n : 0;
+      goToPosition(base + (((i % n) + n) % n));
+    }
 
     function startAuto() {
       if (!autoplay || timer) return;
@@ -1377,17 +1513,18 @@
     dots.forEach(function (d) {
       d.addEventListener('click', function () {
         var i = parseInt(d.getAttribute('data-soc-dot'), 10);
-        if (!isNaN(i)) { stopAuto(); goTo(i); startAuto(); }
+        if (!isNaN(i)) { stopAuto(); goToReal(i); startAuto(); }
       });
     });
     if (btnPrev) btnPrev.addEventListener('click', function () { stopAuto(); prev(); startAuto(); });
     if (btnNext) btnNext.addEventListener('click', function () { stopAuto(); next(); startAuto(); });
 
-    slides.forEach(function (s, i) {
-      s.addEventListener('click', function (ev) {
-        if (ev.target.closest('[data-soc-play], a')) return;
-        if (i !== current) { stopAuto(); goTo(i); startAuto(); }
-      });
+    track.addEventListener('click', function (ev) {
+      if (ev.target.closest('[data-soc-play], a')) return;
+      var slide = ev.target.closest('.skinova-social__slide');
+      if (!slide) return;
+      var idx = allSlides.indexOf(slide);
+      if (idx !== -1 && idx !== position) { stopAuto(); goToPosition(idx); startAuto(); }
     });
 
     root.querySelectorAll('[data-soc-play]').forEach(function (btn) {
@@ -1395,8 +1532,8 @@
         ev.stopPropagation();
         var slide = btn.closest('[data-soc-slide]');
         if (!slide) return;
-        var idx = slides.indexOf(slide);
-        if (idx !== -1 && idx !== current) { stopAuto(); goTo(idx); }
+        var idx = allSlides.indexOf(slide);
+        if (idx !== -1 && idx !== position) { stopAuto(); goToPosition(idx); }
         var v = slide.querySelector('[data-soc-video]');
         if (!v) return;
         if (v.paused) {
@@ -1441,7 +1578,7 @@
       var threshold = 50;
       if (dragDelta < -threshold) next();
       else if (dragDelta > threshold) prev();
-      else goTo(current);
+      else goToPosition(position);
     }
     viewport.addEventListener('touchstart', onPointerDown, { passive: true });
     viewport.addEventListener('touchmove',  onPointerMove,  { passive: true });
@@ -1470,16 +1607,16 @@
     var rzT = null;
     window.addEventListener('resize', function () {
       if (rzT) window.clearTimeout(rzT);
-      rzT = window.setTimeout(function () { goTo(current, true); }, 120);
+      rzT = window.setTimeout(function () { applyTransform(position, true); }, 120);
     });
 
-    window.requestAnimationFrame(function () { goTo(0, true); });
+    window.requestAnimationFrame(function () { goToPosition(position, true); });
   }
   function initSocialFeeds(root) {
     var scope = root || document;
-    var els = scope.querySelectorAll('[data-glaze-social]');
+    var els = scope.querySelectorAll('[data-skinova-social]');
     Array.prototype.forEach.call(els, initSocialFeed);
-    if (scope.matches && scope.matches('[data-glaze-social]')) initSocialFeed(scope);
+    if (scope.matches && scope.matches('[data-skinova-social]')) initSocialFeed(scope);
   }
 
   // ----------------------------------------------------------------------
@@ -1512,7 +1649,7 @@
   });
 
   // Expose the API for section code that needs ad-hoc bindings.
-  window.Glaze = {
+  window.Skinova = {
     utils: { debounce: debounce, throttle: throttle, ready: ready, money: money, prefersReducedMotion: prefersReducedMotion },
     reveal: initReveal,
     stagger: initStagger,

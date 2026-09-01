@@ -38,8 +38,8 @@
       <img
         class="sfp-hero__img is-primary"
         loading="lazy"
-        src="{{ primary | image_url: width: 1200 }}"
-        srcset="{{ primary | image_url: width: 600 }} 600w, {{ primary | image_url: width: 900 }} 900w, {{ primary | image_url: width: 1200 }} 1200w, {{ primary | image_url: width: 1600 }} 1600w"
+        src="{{ primary | image_url: width: 1600 }}"
+        srcset="{{ primary | image_url: width: 600 }} 600w, {{ primary | image_url: width: 900 }} 900w, {{ primary | image_url: width: 1200 }} 1200w, {{ primary | image_url: width: 1600 }} 1600w, {{ primary | image_url: width: 2000 }} 2000w, {{ primary | image_url: width: 2400 }} 2400w"
         sizes="(min-width: 990px) 45vw, 100vw"
         alt="{{ primary.alt | default: product.title | escape }}"
         width="{{ primary.width }}"
@@ -50,8 +50,8 @@
       <img
         class="sfp-hero__img is-secondary"
         loading="lazy"
-        src="{{ secondary | image_url: width: 1200 }}"
-        srcset="{{ secondary | image_url: width: 600 }} 600w, {{ secondary | image_url: width: 1200 }} 1200w"
+        src="{{ secondary | image_url: width: 1600 }}"
+        srcset="{{ secondary | image_url: width: 600 }} 600w, {{ secondary | image_url: width: 900 }} 900w, {{ secondary | image_url: width: 1200 }} 1200w, {{ secondary | image_url: width: 1600 }} 1600w, {{ secondary | image_url: width: 2000 }} 2000w"
         sizes="(min-width: 990px) 45vw, 100vw"
         alt=""
         aria-hidden="true"

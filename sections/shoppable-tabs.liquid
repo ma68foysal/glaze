@@ -1,5 +1,5 @@
 {%- liquid
-  assign section_id = 'glaze-st-' | append: section.id
+  assign section_id = 'skinova-st-' | append: section.id
 -%}
 
 {%- comment -%}
@@ -41,7 +41,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="glaze-st" data-glaze-st>
+<div id="{{ section_id }}" class="skinova-st" data-skinova-st>
   <div class="st-wrap">
 
     {%- if section.settings.eyebrow != blank or section.settings.title != blank -%}
@@ -170,14 +170,14 @@
 </div>
 
 {%- comment -%}
-  Tab switcher + ATC handler live in assets/global.js as Glaze.shoppableTabs,
-  auto-initialised on the [data-glaze-st] root element above.
+  Tab switcher + ATC handler live in assets/global.js as Skinova.shoppableTabs,
+  auto-initialised on the [data-skinova-st] root element above.
 {%- endcomment -%}
 
 {% schema %}
 {
   "name": "Shoppable tabs",
-  "class": "section-shoppable-tabs-glaze",
+  "class": "section-shoppable-tabs-skinova",
   "tag": "section",
   "max_blocks": 6,
   "settings": [

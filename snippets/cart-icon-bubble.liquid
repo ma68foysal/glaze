@@ -12,13 +12,13 @@
   Same source of truth, two callers — keeps the count in lockstep.
 {%- endcomment -%}
 
-<svg class="glaze-cart-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+<svg class="skinova-cart-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
   <path d="M3 4h2.5l2 12h11l1.8-8H7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   <circle cx="9" cy="20" r="1.4" stroke="currentColor" stroke-width="1.6"/>
   <circle cx="17" cy="20" r="1.4" stroke="currentColor" stroke-width="1.6"/>
 </svg>
 <span class="visually-hidden">{{ 'cart.title' | t }}</span>
 {%- if cart.item_count > 0 -%}
-  <span class="glaze-cart-count" aria-hidden="true">{{ cart.item_count }}</span>
+  <span class="skinova-cart-count" aria-hidden="true">{{ cart.item_count }}</span>
   <span class="visually-hidden">{{ 'cart.count_aria' | t: count: cart.item_count }}</span>
 {%- endif -%}

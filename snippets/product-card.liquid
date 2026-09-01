@@ -1,5 +1,5 @@
 {% comment %}
-  Glaze universal product card.
+  Skinova universal product card.
 
   Reusable across collection, search, recommendations, sticky-collections,
   featured-product, etc. App-block friendly: exposes a rating slot that
@@ -73,9 +73,9 @@
   endif
 -%}
 
-<article class="glaze-pcard" data-pc-handle="{{ product.handle }}">
-  <div class="glaze-pcard__media-wrap">
-    <a class="glaze-pcard__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+<article class="skinova-pcard" data-pc-handle="{{ product.handle }}">
+  <div class="skinova-pcard__media-wrap">
+    <a class="skinova-pcard__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
       {%- if product.featured_image -%}
         {{ product.featured_image | image_url: width: 800 | image_tag:
             loading: image_loading,
@@ -87,20 +87,20 @@
 
       {%- if show_badges -%}
         {%- if on_sale -%}
-          <span class="glaze-pcard__badge glaze-pcard__badge--sale">{{ 'collection.sale_badge' | t }}</span>
+          <span class="skinova-pcard__badge skinova-pcard__badge--sale">{{ 'collection.sale_badge' | t }}</span>
         {%- endif -%}
         {%- if product.available == false -%}
-          <span class="glaze-pcard__badge glaze-pcard__badge--soldout">{{ 'collection.soldout_badge' | t }}</span>
+          <span class="skinova-pcard__badge skinova-pcard__badge--soldout">{{ 'collection.soldout_badge' | t }}</span>
         {%- endif -%}
       {%- endif -%}
     </a>
 
     {%- if show_actions -%}
-      <div class="glaze-pcard__actions">
+      <div class="skinova-pcard__actions">
         {%- if has_variants and show_quick_view -%}
           <button
             type="button"
-            class="glaze-pcard__action"
+            class="skinova-pcard__action"
             data-pc-quickview="{{ product.handle }}"
             aria-label="{{ 'collection.quick_view' | t: title: product.title }}"
           >
@@ -112,7 +112,7 @@
         {%- elsif show_atc -%}
           <button
             type="button"
-            class="glaze-pcard__action"
+            class="skinova-pcard__action"
             data-pc-atc="{{ product.variants.first.id }}"
             aria-label="{{ 'collection.add_to_cart' | t: title: product.title }}"
             {% if product.available == false %}disabled{% endif %}
@@ -128,24 +128,24 @@
     {%- endif -%}
   </div>
 
-  <div class="glaze-pcard__body">
+  <div class="skinova-pcard__body">
     {%- if show_vendor and product.vendor != blank -%}
-      <p class="glaze-pcard__vendor">{{ product.vendor | escape }}</p>
+      <p class="skinova-pcard__vendor">{{ product.vendor | escape }}</p>
     {%- endif -%}
 
-    <a class="glaze-pcard__title" href="{{ product.url }}">{{ product.title | escape }}</a>
+    <a class="skinova-pcard__title" href="{{ product.url }}">{{ product.title | escape }}</a>
 
-    <div class="glaze-pcard__prices">
+    <div class="skinova-pcard__prices">
       {%- if on_sale -%}
-        <s class="glaze-pcard__compare">{{ product.compare_at_price_max | money }}</s>
+        <s class="skinova-pcard__compare">{{ product.compare_at_price_max | money }}</s>
       {%- endif -%}
       {%- if product.price_varies -%}
-        <span class="glaze-pcard__price">{{ 'collection.from' | t }} {{ product.price_min | money }}</span>
+        <span class="skinova-pcard__price">{{ 'collection.from' | t }} {{ product.price_min | money }}</span>
       {%- else -%}
-        <span class="glaze-pcard__price">{{ product.price | money }}</span>
+        <span class="skinova-pcard__price">{{ product.price | money }}</span>
       {%- endif -%}
       {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
-        <span class="glaze-pcard__unit">
+        <span class="skinova-pcard__unit">
           {{ product.selected_or_first_available_variant.unit_price | money }}/{{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
         </span>
       {%- endif -%}
@@ -163,21 +163,21 @@
              into via their own JS selectors.
       {%- endcomment -%}
       {%- if product.metafields.judgeme.badge != blank -%}
-        <div class="glaze-pcard__rating jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}" data-auto-install="false">
+        <div class="skinova-pcard__rating jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}" data-auto-install="false">
           {{ product.metafields.judgeme.badge }}
         </div>
       {%- elsif product.metafields.loox.avg_rating != blank -%}
         {%- assign loox_value = product.metafields.loox.avg_rating | times: 1.0 -%}
         {%- assign loox_count = product.metafields.loox.num_reviews | plus: 0 -%}
-        <div class="glaze-pcard__rating loox-rating" data-rating="{{ loox_value }}" data-id="{{ product.id }}">
-          <span class="glaze-pcard__stars" aria-hidden="true">
+        <div class="skinova-pcard__rating loox-rating" data-rating="{{ loox_value }}" data-id="{{ product.id }}">
+          <span class="skinova-pcard__stars" aria-hidden="true">
             {%- assign full_stars = loox_value | floor -%}
             {%- for i in (1..full_stars) -%}
-              <svg viewBox="0 0 16 16" fill="currentColor" class="glaze-pcard__star is-full"><path d="M8 1.2l2.06 4.17 4.6.67-3.33 3.24.79 4.58L8 11.7l-4.12 2.17.79-4.58L1.34 6.04l4.6-.67L8 1.2z"/></svg>
+              <svg viewBox="0 0 16 16" fill="currentColor" class="skinova-pcard__star is-full"><path d="M8 1.2l2.06 4.17 4.6.67-3.33 3.24.79 4.58L8 11.7l-4.12 2.17.79-4.58L1.34 6.04l4.6-.67L8 1.2z"/></svg>
             {%- endfor -%}
           </span>
-          <span class="glaze-pcard__rating-value">{{ loox_value | round: 1 }}</span>
-          {%- if loox_count > 0 -%}<span class="glaze-pcard__rating-count">({{ loox_count }})</span>{%- endif -%}
+          <span class="skinova-pcard__rating-value">{{ loox_value | round: 1 }}</span>
+          {%- if loox_count > 0 -%}<span class="skinova-pcard__rating-count">({{ loox_count }})</span>{%- endif -%}
         </div>
       {%- elsif rating_value > 0 -%}
         {%- assign full_stars = rating_value | floor -%}
@@ -193,17 +193,17 @@
           {%- assign empty_stars = empty_stars | minus: 1 -%}
         {%- endif -%}
         <div
-          class="glaze-pcard__rating"
-          data-glaze-rating
+          class="skinova-pcard__rating"
+          data-skinova-rating
           data-product-id="{{ product.id }}"
           aria-label="Rated {{ rating_value | round: 1 }} out of 5{% if rating_count > 0 %} based on {{ rating_count }} reviews{% endif %}"
         >
-          <span class="glaze-pcard__stars" aria-hidden="true">
+          <span class="skinova-pcard__stars" aria-hidden="true">
             {%- for i in (1..full_stars) -%}
-              <svg viewBox="0 0 16 16" fill="currentColor" class="glaze-pcard__star is-full"><path d="M8 1.2l2.06 4.17 4.6.67-3.33 3.24.79 4.58L8 11.7l-4.12 2.17.79-4.58L1.34 6.04l4.6-.67L8 1.2z"/></svg>
+              <svg viewBox="0 0 16 16" fill="currentColor" class="skinova-pcard__star is-full"><path d="M8 1.2l2.06 4.17 4.6.67-3.33 3.24.79 4.58L8 11.7l-4.12 2.17.79-4.58L1.34 6.04l4.6-.67L8 1.2z"/></svg>
             {%- endfor -%}
             {%- if half_star -%}
-              <svg viewBox="0 0 16 16" class="glaze-pcard__star is-half">
+              <svg viewBox="0 0 16 16" class="skinova-pcard__star is-half">
                 <defs>
                   <linearGradient id="pcard-half-{{ product.id }}">
                     <stop offset="50%" stop-color="currentColor"/>
@@ -214,12 +214,12 @@
               </svg>
             {%- endif -%}
             {%- for i in (1..empty_stars) -%}
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="0.8" class="glaze-pcard__star is-empty"><path d="M8 1.2l2.06 4.17 4.6.67-3.33 3.24.79 4.58L8 11.7l-4.12 2.17.79-4.58L1.34 6.04l4.6-.67L8 1.2z"/></svg>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="0.8" class="skinova-pcard__star is-empty"><path d="M8 1.2l2.06 4.17 4.6.67-3.33 3.24.79 4.58L8 11.7l-4.12 2.17.79-4.58L1.34 6.04l4.6-.67L8 1.2z"/></svg>
             {%- endfor -%}
           </span>
-          <span class="glaze-pcard__rating-value">{{ rating_value | round: 1 }}</span>
+          <span class="skinova-pcard__rating-value">{{ rating_value | round: 1 }}</span>
           {%- if rating_count > 0 -%}
-            <span class="glaze-pcard__rating-count">({{ rating_count }})</span>
+            <span class="skinova-pcard__rating-count">({{ rating_count }})</span>
           {%- endif -%}
         </div>
       {%- else -%}
@@ -231,11 +231,11 @@
             - Stamped       → .stamped-product-reviews-badge + data-id
             - Yotpo         → .yotpo.bottomLine + data-product-id
             - Okendo        → data-oke-star-rating + data-oke-reviews-product-id
-            - Generic       → data-glaze-rating
+            - Generic       → data-skinova-rating
         {%- endcomment -%}
         <div
-          class="glaze-pcard__rating glaze-pcard__rating--slot jdgm-widget jdgm-preview-badge stamped-product-reviews-badge yotpo bottomLine"
-          data-glaze-rating
+          class="skinova-pcard__rating skinova-pcard__rating--slot jdgm-widget jdgm-preview-badge stamped-product-reviews-badge yotpo bottomLine"
+          data-skinova-rating
           data-id="{{ product.id }}"
           data-product-id="{{ product.id }}"
           data-oke-star-rating
@@ -246,7 +246,7 @@
   </div>
 
   {%- if has_variants and show_actions and show_quick_view -%}
-    {%- comment -%} Product JSON consumed by window.GlazeQuickView when the modal opens {%- endcomment -%}
+    {%- comment -%} Product JSON consumed by window.SkinovaQuickView when the modal opens {%- endcomment -%}
     <script type="application/json" data-pc-product="{{ product.handle }}">
       {{ product | json }}
     </script>

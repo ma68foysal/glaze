@@ -6,10 +6,10 @@
   default storefront stays clean.
 
   Optional inputs:
-    class_prefix — root class for CSS scoping (default: 'glaze-localization').
+    class_prefix — root class for CSS scoping (default: 'skinova-localization').
 {%- endcomment -%}
 
-{%- assign cp = class_prefix | default: 'glaze-localization' -%}
+{%- assign cp = class_prefix | default: 'skinova-localization' -%}
 
 {%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
   <div class="{{ cp }}">

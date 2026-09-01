@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "general": {
     "search": "Search",
@@ -136,6 +145,8 @@
     "quantity": "Quantity",
     "qty_decrease": "Decrease quantity",
     "qty_increase": "Increase quantity",
+    "purchase_options": "Purchase options",
+    "one_time_purchase": "One-time purchase",
     "tax_included": "Tax included.",
     "tax_included_shipping_policy_html": "Tax included. <a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
     "gift_send_to_recipient": "Send as a gift",
@@ -144,6 +155,8 @@
     "gift_message": "Personal message (optional, max 200 characters)",
     "gift_send_on": "Schedule send date (optional)",
     "gallery_thumbs_aria": "Product media thumbnails",
+    "media_prev": "Previous media",
+    "media_next": "Next media",
     "thumb_image": "View image {{ index }}",
     "thumb_video": "Play video {{ index }}",
     "thumb_model": "View 3D model {{ index }}",

@@ -56,8 +56,8 @@
 
 <section
   id="{{ sid }}"
-  class="glaze-mp"
-  data-glaze-mp
+  class="skinova-mp"
+  data-skinova-mp
   data-atc-label="{{ section.settings.atc_label | default: 'Add to Cart' | escape }}"
   data-sold-out-label="{{ section.settings.sold_out_label | default: 'Sold out' | escape }}"
   aria-label="{{ product.title | escape }}"
@@ -66,11 +66,12 @@
     <div class="mp__grid">
 
       {%- comment -%} ============ GALLERY (rich media: image / video / external_video / 3D model) ============ {%- endcomment -%}
-      <div class="mp__gallery" data-mp-gallery>
+      <div class="mp__gallery" data-mp-gallery data-thumb-pos="{{ section.settings.gallery_thumb_position | default: 'left' }}">
         {%- assign first_media = current_variant.featured_media | default: product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
         {%- assign first_media_id = first_media.id | default: 0 -%}
         {%- assign has_model = false -%}
 
+        <div class="mp__stage" data-mp-stage>
         <div class="mp__gallery-main" data-mp-main>
           {%- if product.media.size > 0 -%}
             {%- for media in product.media -%}
@@ -156,7 +157,18 @@
           {%- endif -%}
         </div>
 
-        {%- if product.media.size > 1 -%}
+        {%- if section.settings.gallery_show_arrows and product.media.size > 1 -%}
+          <button type="button" class="mp__nav mp__nav--prev" data-mp-prev aria-label="{{ 'product.media_prev' | t }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button type="button" class="mp__nav mp__nav--next" data-mp-next aria-label="{{ 'product.media_next' | t }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        {%- endif -%}
+        </div>{%- comment -%} /.mp__stage {%- endcomment -%}
+
+        {%- if section.settings.gallery_show_thumbs and product.media.size > 1 -%}
+          <div class="mp__thumbs-col">
           <div class="mp__thumbs" role="tablist" aria-label="{{ 'product.gallery_thumbs_aria' | t }}">
             {%- for media in product.media -%}
               {%- assign is_first = false -%}
@@ -187,6 +199,7 @@
               </button>
             {%- endfor -%}
           </div>
+          </div>{%- comment -%} /.mp__thumbs-col {%- endcomment -%}
         {%- endif -%}
       </div>
 
@@ -237,6 +250,18 @@
         <div class="mp__price" data-mp-price>
           <span class="mp__price-current" data-mp-price-current>{{ current_variant.price | money }}</span>
           <span class="mp__price-compare" data-mp-price-compare>{%- if current_variant.compare_at_price > current_variant.price -%}{{ current_variant.compare_at_price | money }}{%- endif -%}</span>
+        </div>
+
+        {%- comment -%} Unit price (price per measurement) — Theme Store required when applicable {%- endcomment -%}
+        <div class="mp__unit-price" data-mp-unit-price{% unless current_variant.unit_price_measurement %} hidden{% endunless %}>
+          <span data-mp-unit-price-value>{%- if current_variant.unit_price_measurement -%}{{ current_variant.unit_price | money }}{%- endif -%}</span>
+          <span aria-hidden="true">/</span>
+          <span data-mp-unit-price-unit>
+            {%- if current_variant.unit_price_measurement -%}
+              {%- if current_variant.unit_price_measurement.reference_value != 1 -%}{{ current_variant.unit_price_measurement.reference_value }}{%- endif -%}
+              {{ current_variant.unit_price_measurement.reference_unit }}
+            {%- endif -%}
+          </span>
         </div>
 
         {%- comment -%} Tax-inclusive indicator (Theme Store required when applicable) {%- endcomment -%}
@@ -290,24 +315,59 @@
                 </div>
               </div>
             {%- endfor -%}
-
-            {%- comment -%} Variant JSON blob for JS lookup (one entry per variant: id, options array, price, compare, available, featured_media id) {%- endcomment -%}
-            <script type="application/json" data-mp-variant-data>
-              [
-                {%- for v in product.variants -%}
-                  {
-                    "id": {{ v.id }},
-                    "options": {{ v.options | json }},
-                    "price": {{ v.price | money | json }},
-                    "compare_at_price": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}""{% endif %},
-                    "available": {{ v.available }},
-                    "featured_media_id": {% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %}
-                  }{% unless forloop.last %},{% endunless %}
-                {%- endfor -%}
-              ]
-            </script>
           </div>
         {%- endunless -%}
+
+        {%- comment -%}
+          Variant data for JS lookup — emitted for ALL products (not just multi-variant)
+          so price, unit price and selling-plan switching also work on single-variant
+          products. selling_plan_prices maps a selling plan id to its allocated price.
+        {%- endcomment -%}
+        <script type="application/json" data-mp-variant-data>
+          [
+            {%- for v in product.variants -%}
+              {
+                "id": {{ v.id }},
+                "options": {{ v.options | json }},
+                "price": {{ v.price | money | json }},
+                "compare_at_price": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}""{% endif %},
+                "available": {{ v.available }},
+                "featured_media_id": {% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %},
+                {%- if v.unit_price_measurement -%}
+                  {%- capture unit_str -%}{% if v.unit_price_measurement.reference_value != 1 %}{{ v.unit_price_measurement.reference_value }}{% endif %}{{ v.unit_price_measurement.reference_unit }}{%- endcapture -%}
+                  "unit_price": {{ v.unit_price | money | json }},
+                  "unit_price_unit": {{ unit_str | json }},
+                {%- else -%}
+                  "unit_price": "",
+                  "unit_price_unit": "",
+                {%- endif -%}
+                "selling_plan_prices": {
+                  {%- for alloc in v.selling_plan_allocations -%}
+                    {{ alloc.selling_plan_id | json }}: {{ alloc.price | money | json }}{% unless forloop.last %},{% endunless %}
+                  {%- endfor -%}
+                }
+              }{% unless forloop.last %},{% endunless %}
+            {%- endfor -%}
+          ]
+        </script>
+
+        {%- comment -%} Selling plans (subscriptions) — Theme Store required when product offers them {%- endcomment -%}
+        {%- if product.selling_plan_groups.size > 0 -%}
+          <div class="mp__plans" data-mp-plans role="radiogroup" aria-label="{{ 'product.purchase_options' | t }}">
+            <label class="mp__plan is-active">
+              <input type="radio" name="selling_plan" value="" form="{{ product_form_id }}" data-mp-plan checked>
+              <span class="mp__plan-name">{{ 'product.one_time_purchase' | t }}</span>
+            </label>
+            {%- for group in product.selling_plan_groups -%}
+              {%- for plan in group.selling_plans -%}
+                <label class="mp__plan">
+                  <input type="radio" name="selling_plan" value="{{ plan.id }}" form="{{ product_form_id }}" data-mp-plan>
+                  <span class="mp__plan-name">{{ plan.name | escape }}</span>
+                </label>
+              {%- endfor -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
 
         {%- comment -%} Hidden variant id field, kept in sync by JS as options change {%- endcomment -%}
         <input type="hidden" name="id" form="{{ product_form_id }}" value="{{ current_variant.id }}" data-mp-id-input>
@@ -332,10 +392,10 @@
 
         {%- comment -%} Buy form: quantity, gift-card recipient (if applicable), payment_terms, ATC, payment_button.
                        The hidden id input lives just above (linked via form="…") so option changes can update it.
-                       Wrapped in <glaze-product-form> so cart.js can intercept the submit
+                       Wrapped in <skinova-product-form> so cart.js can intercept the submit
                        when cart_type == 'drawer' (posts to /cart/add.js + opens drawer instead of
                        navigating to /cart). Without the drawer the wrapper is inert — native submit. {%- endcomment -%}
-        <glaze-product-form>
+        <skinova-product-form>
         {%- form 'product', product, id: product_form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
           {%- comment -%} Quantity selector {%- endcomment -%}
           <div class="mp__qty">
@@ -399,7 +459,7 @@
           {%- comment -%} Accelerated checkout buttons (Apple Pay, Google Pay, Shop Pay) — Theme Store required {%- endcomment -%}
           <div class="mp__accelerated">{{ form | payment_button }}</div>
         {%- endform -%}
-        </glaze-product-form>
+        </skinova-product-form>
 
         {%- if section.settings.shipping_note != blank -%}
           <p class="mp__shipping">{{ section.settings.shipping_note }}</p>
@@ -482,8 +542,8 @@
 
 {%- comment -%}
   Gallery thumb switcher + variant picker + qty stepper live in
-  assets/global.js as Glaze.mainProduct, auto-initialised on the
-  [data-glaze-mp] root element above. ATC labels are passed through
+  assets/global.js as Skinova.mainProduct, auto-initialised on the
+  [data-skinova-mp] root element above. ATC labels are passed through
   data-atc-label / data-sold-out-label attributes.
 {%- endcomment -%}
 
@@ -502,6 +562,15 @@
     { "type": "range", "id": "radius_lg", "label": "Radius — large", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 24 },
     { "type": "range", "id": "thumb_size", "label": "Thumbnail size", "min": 48, "max": 120, "step": 4, "unit": "px", "default": 76 },
     { "type": "range", "id": "gallery_sticky_top", "label": "Gallery sticky top offset (desktop)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24, "info": "Distance from the viewport top while the gallery is pinned. Increase to clear a sticky header." },
+
+    { "type": "header", "content": "Gallery" },
+    { "type": "select", "id": "gallery_thumb_position", "label": "Thumbnail position (desktop)", "options": [
+      { "value": "left", "label": "Left (vertical)" },
+      { "value": "right", "label": "Right (vertical)" },
+      { "value": "below", "label": "Below (horizontal)" }
+    ], "default": "left", "info": "On mobile, thumbnails always appear as a horizontal strip below the image." },
+    { "type": "checkbox", "id": "gallery_show_thumbs", "label": "Show thumbnails", "default": true },
+    { "type": "checkbox", "id": "gallery_show_arrows", "label": "Show previous/next arrows on main image", "default": true },
 
     { "type": "header", "content": "Colors" },
     { "type": "color", "id": "bg_color", "label": "Section background", "default": "#fbe9e8" },

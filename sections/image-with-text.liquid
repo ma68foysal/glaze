@@ -1,5 +1,5 @@
 {%- liquid
-  assign section_id = 'glaze-iwt-' | append: section.id
+  assign section_id = 'skinova-iwt-' | append: section.id
 -%}
 
 {%- comment -%}
@@ -31,7 +31,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="glaze-iwt">
+<div id="{{ section_id }}" class="skinova-iwt">
   <div class="iwt-wrap">
     <div class="iwt-grid" data-image-side="{{ section.settings.image_side }}">
 
@@ -63,7 +63,7 @@
 {% schema %}
 {
   "name": "Image with text",
-  "class": "section-image-with-text-glaze",
+  "class": "section-image-with-text-skinova",
   "tag": "section",
   "settings": [
     {

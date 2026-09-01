@@ -77,6 +77,9 @@
         "radius_lg": 24,
         "thumb_size": 76,
         "gallery_sticky_top": 24,
+        "gallery_thumb_position": "left",
+        "gallery_show_thumbs": true,
+        "gallery_show_arrows": true,
         "bg_color": "#fbe9e8",
         "card_bg": "#ffffff",
         "text_color": "#1a1a1a",
@@ -612,7 +615,7 @@
       "type": "feature-rich",
       "settings": {
         "media_type": "image",
-        "image": "shopify://shop_images/3rd_Image_800x_aa099ab4-5a4d-46d_600x600_84a51882-b828-4d98-a449-02e8ef8506a6.webp",
+        "image": "shopify://shop_images/skinova-product-box.png",
         "video_url": "",
         "video_autoplay": true,
         "video_loop": true,

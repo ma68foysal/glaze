@@ -1,5 +1,5 @@
 {%- liquid
-    assign section_id = 'glaze-header-' | append: section.id
+    assign section_id = 'skinova-header-' | append: section.id
     assign sticky = section.settings.enable_sticky
     assign ann_speed = section.settings.ann_speed
     assign ann_direction = section.settings.ann_direction
@@ -17,25 +17,25 @@
 
   <style>
     /* ============================================================
-       Glaze Header — scoped styles
+       Skinova Header — scoped styles
        ============================================================ */
 
     #{{ section_id }} {
-      --glaze-bg: {{ section.settings.header_bg }};
-      --glaze-fg: {{ section.settings.header_fg }};
-      --glaze-accent: {{ section.settings.accent_color }};
-      --glaze-border: {{ section.settings.border_color }};
-      --glaze-mega-bg: {{ section.settings.mega_bg }};
-      --glaze-nav-size: {{ nav_font_size }}px;
-      --glaze-icon-size: {{ icon_size }}px;
-      --glaze-logo-width: {{ logo_width }}px;
-      --glaze-pad-top: {{ padding_top }}px;
-      --glaze-pad-bottom: {{ padding_bottom }}px;
-      --glaze-ann-bg: {{ section.settings.ann_bg }};
-      --glaze-ann-fg: {{ section.settings.ann_fg }};
-      --glaze-ann-size: {{ section.settings.ann_font_size }}px;
-      --glaze-ann-pad: {{ section.settings.ann_padding }}px;
-      --glaze-per-slide: 2;
+      --skinova-bg: {{ section.settings.header_bg }};
+      --skinova-fg: {{ section.settings.header_fg }};
+      --skinova-accent: {{ section.settings.accent_color }};
+      --skinova-border: {{ section.settings.border_color }};
+      --skinova-mega-bg: {{ section.settings.mega_bg }};
+      --skinova-nav-size: {{ nav_font_size }}px;
+      --skinova-icon-size: {{ icon_size }}px;
+      --skinova-logo-width: {{ logo_width }}px;
+      --skinova-pad-top: {{ padding_top }}px;
+      --skinova-pad-bottom: {{ padding_bottom }}px;
+      --skinova-ann-bg: {{ section.settings.ann_bg }};
+      --skinova-ann-fg: {{ section.settings.ann_fg }};
+      --skinova-ann-size: {{ section.settings.ann_font_size }}px;
+      --skinova-ann-pad: {{ section.settings.ann_padding }}px;
+      --skinova-per-slide: 2;
       display: block;
       position: relative;
       width: 100%;
@@ -49,8 +49,8 @@
       box-sizing: border-box;
     }
 
-    .shopify-section.section-glaze-header,
-    .section-glaze-header {
+    .shopify-section.section-skinova-header,
+    .section-skinova-header {
       margin: 0 !important;
       padding: 0 !important;
       position: relative;
@@ -63,26 +63,26 @@
     #{{ section_id }} ul { list-style: none; padding: 0; margin: 0; }
 
     /* -------- Announcement bar -------- */
-    .glaze-announcement {
-      background: var(--glaze-ann-bg);
-      color: var(--glaze-ann-fg);
-      padding: var(--glaze-ann-pad) 0;
+    .skinova-announcement {
+      background: var(--skinova-ann-bg);
+      color: var(--skinova-ann-fg);
+      padding: var(--skinova-ann-pad) 0;
       overflow: hidden;
       position: relative;
     }
 
-    .glaze-ann-track {
+    .skinova-ann-track {
       display: flex;
       gap: 60px;
       width: max-content;
-      animation: glaze-ann-slide {{ ann_speed }}s linear infinite;
+      animation: skinova-ann-slide {{ ann_speed }}s linear infinite;
       animation-direction: {% if ann_direction == 'right' %}reverse{% else %}normal{% endif %};
     }
 
-    .glaze-ann-track:hover { animation-play-state: paused; }
+    .skinova-ann-track:hover { animation-play-state: paused; }
 
-    .glaze-ann-item {
-      font-size: var(--glaze-ann-size);
+    .skinova-ann-item {
+      font-size: var(--skinova-ann-size);
       letter-spacing: 0.08em;
       text-transform: uppercase;
       font-weight: 600;
@@ -91,56 +91,56 @@
       padding: 0 30px;
     }
 
-    .glaze-ann-item a { color: inherit; }
+    .skinova-ann-item a { color: inherit; }
 
-    @keyframes glaze-ann-slide {
+    @keyframes skinova-ann-slide {
       from { transform: translateX(0); }
       to { transform: translateX(-50%); }
     }
 
     /* -------- Header shell -------- */
-    .glaze-header {
-      background: var(--glaze-bg);
-      color: var(--glaze-fg);
+    .skinova-header {
+      background: var(--skinova-bg);
+      color: var(--skinova-fg);
       border-bottom: 1px solid transparent;
       transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
       position: relative;
       z-index: 90;
     }
 
-    .glaze-header-inner {
+    .skinova-header-inner {
       max-width: 1440px;
       margin: 0 auto;
-      padding: var(--glaze-pad-top) 40px var(--glaze-pad-bottom);
+      padding: var(--skinova-pad-top) 40px var(--skinova-pad-bottom);
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
       gap: 24px;
     }
 
-    .glaze-logo {
+    .skinova-logo {
       justify-self: start;
       display: inline-flex;
       align-items: center;
       font-size: 28px;
       font-weight: 700;
       letter-spacing: -0.02em;
-      color: var(--glaze-fg);
+      color: var(--skinova-fg);
     }
 
-    .glaze-logo img { max-width: var(--glaze-logo-width); width: 100%; height: auto; display: block; }
-    .glaze-logo-dark { display: none; }
-    #{{ section_id }}.is-stuck .glaze-logo.has-dark-logo .glaze-logo-default { display: none; }
-    #{{ section_id }}.is-stuck .glaze-logo.has-dark-logo .glaze-logo-dark { display: block; }
+    .skinova-logo img { max-width: var(--skinova-logo-width); width: 100%; height: auto; display: block; }
+    .skinova-logo-dark { display: none; }
+    #{{ section_id }}.is-stuck .skinova-logo.has-dark-logo .skinova-logo-default { display: none; }
+    #{{ section_id }}.is-stuck .skinova-logo.has-dark-logo .skinova-logo-dark { display: block; }
 
-    .glaze-logo-text { font-size: 26px; font-family: 'Georgia', 'Times New Roman', serif; font-style: italic; }
+    .skinova-logo-text { font-size: 26px; font-family: 'Georgia', 'Times New Roman', serif; font-style: italic; }
 
     /* -------- Navigation -------- */
-    .glaze-nav {
+    .skinova-nav {
       justify-self: center;
     }
 
-    .glaze-nav > ul {
+    .skinova-nav > ul {
       display: flex;
       align-items: center;
       gap: 36px;
@@ -152,7 +152,7 @@
     /* padding-bottom + matching negative margin-bottom extends nav-item's hover
        box downward (closing the gap between the link and the mega/dropdown panel)
        without changing the visual layout. */
-    .glaze-nav-item {
+    .skinova-nav-item {
       position: static;
       list-style: none;
       padding-bottom: 18px;
@@ -160,22 +160,22 @@
     }
     /* Simple dropdowns anchor directly under their parent. Mega menus keep static so
        they can span the full header width. */
-    .glaze-nav-item.has-dropdown { position: relative; }
+    .skinova-nav-item.has-dropdown { position: relative; }
 
-    .glaze-nav-link {
+    .skinova-nav-link {
       position: relative;
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      font-size: var(--glaze-nav-size);
+      font-size: var(--skinova-nav-size);
       font-weight: 500;
       padding: 8px 0;
-      color: var(--glaze-fg);
+      color: var(--skinova-fg);
       cursor: pointer;
       transition: color 0.2s ease;
     }
 
-    .glaze-nav-link::after {
+    .skinova-nav-link::after {
       content: '';
       position: absolute;
       left: 0;
@@ -186,42 +186,42 @@
       transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .glaze-nav-item:hover > .glaze-nav-link::after,
-    .glaze-nav-link.is-active::after { width: 100%; }
+    .skinova-nav-item:hover > .skinova-nav-link::after,
+    .skinova-nav-link.is-active::after { width: 100%; }
 
-    .glaze-chevron {
+    .skinova-chevron {
       width: 10px;
       height: 10px;
       transition: transform 0.25s ease;
     }
 
-    .glaze-nav-item:hover .glaze-chevron { transform: rotate(180deg); }
+    .skinova-nav-item:hover .skinova-chevron { transform: rotate(180deg); }
 
     /* -------- Right icons -------- */
-    .glaze-actions {
+    .skinova-actions {
       display: flex;
       align-items: center;
       gap: 20px;
       justify-self: end;
     }
 
-    .glaze-icon-btn {
+    .skinova-icon-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      color: var(--glaze-fg);
+      color: var(--skinova-fg);
       transition: opacity 0.2s ease;
     }
 
-    .glaze-icon-btn:hover { opacity: 0.65; }
-    .glaze-icon-btn svg { width: var(--glaze-icon-size); height: var(--glaze-icon-size); }
+    .skinova-icon-btn:hover { opacity: 0.65; }
+    .skinova-icon-btn svg { width: var(--skinova-icon-size); height: var(--skinova-icon-size); }
 
-    .glaze-cart-count {
+    .skinova-cart-count {
       position: absolute;
       top: -4px;
       right: -6px;
-      background: var(--glaze-accent);
+      background: var(--skinova-accent);
       color: #fff;
       font-size: 10px;
       font-weight: 600;
@@ -235,7 +235,7 @@
     }
 
     /* -------- Hamburger (mobile) -------- */
-    .glaze-hamburger {
+    .skinova-hamburger {
       display: none;
       width: 28px;
       height: 22px;
@@ -243,7 +243,7 @@
       justify-self: start;
     }
 
-    .glaze-hamburger span {
+    .skinova-hamburger span {
       position: absolute;
       left: 0;
       width: 100%;
@@ -252,20 +252,20 @@
       transition: transform 0.3s ease, opacity 0.2s ease;
     }
 
-    .glaze-hamburger span:nth-child(1) { top: 4px; }
-    .glaze-hamburger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
-    .glaze-hamburger span:nth-child(3) { bottom: 4px; }
+    .skinova-hamburger span:nth-child(1) { top: 4px; }
+    .skinova-hamburger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .skinova-hamburger span:nth-child(3) { bottom: 4px; }
 
     /* -------- Mega menu: shared shell -------- */
-    .glaze-mega {
+    .skinova-mega {
       position: absolute;
       left: 0;
       right: 0;
       top: 100%;
-      background: var(--glaze-mega-bg);
+      background: var(--skinova-mega-bg);
       color: #1a1a1a;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-      border-top: 1px solid var(--glaze-border);
+      border-top: 1px solid var(--skinova-border);
       opacity: 0;
       visibility: hidden;
       transform: translateY(-12px);
@@ -277,7 +277,7 @@
     /* Invisible hover bridge — extends mega's hover area upward to meet
        the nav-item's padding-bottom, killing the dead zone between trigger
        and panel. */
-    .glaze-mega::before {
+    .skinova-mega::before {
       content: '';
       position: absolute;
       top: -40px;
@@ -287,29 +287,29 @@
       background: transparent;
     }
 
-    .glaze-nav-item:hover .glaze-mega,
-    .glaze-nav-item:focus-within .glaze-mega,
-    .glaze-nav-item.is-open .glaze-mega {
+    .skinova-nav-item:hover .skinova-mega,
+    .skinova-nav-item:focus-within .skinova-mega,
+    .skinova-nav-item.is-open .skinova-mega {
       opacity: 1;
       visibility: visible;
       transform: translateY(0);
       pointer-events: auto;
     }
 
-    .glaze-mega-inner {
+    .skinova-mega-inner {
       max-width: 1440px;
       margin: 0 auto;
       padding: 40px;
     }
 
     /* -------- Mega: card grid (Presets-style) -------- */
-    .glaze-mega-cards {
+    .skinova-mega-cards {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 20px;
     }
 
-    .glaze-card {
+    .skinova-card {
       display: flex;
       flex-direction: column;
       background: #f4f4f4;
@@ -320,41 +320,41 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .glaze-nav-item:hover .glaze-card,
-    .glaze-nav-item:focus-within .glaze-card,
-    .glaze-nav-item.is-open .glaze-card {
-      animation: glaze-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    .skinova-nav-item:hover .skinova-card,
+    .skinova-nav-item:focus-within .skinova-card,
+    .skinova-nav-item.is-open .skinova-card {
+      animation: skinova-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
-    .glaze-card:nth-child(1) { animation-delay: 0.05s; }
-    .glaze-card:nth-child(2) { animation-delay: 0.12s; }
-    .glaze-card:nth-child(3) { animation-delay: 0.19s; }
-    .glaze-card:nth-child(4) { animation-delay: 0.26s; }
-    .glaze-card:nth-child(5) { animation-delay: 0.33s; }
-    .glaze-card:nth-child(6) { animation-delay: 0.40s; }
+    .skinova-card:nth-child(1) { animation-delay: 0.05s; }
+    .skinova-card:nth-child(2) { animation-delay: 0.12s; }
+    .skinova-card:nth-child(3) { animation-delay: 0.19s; }
+    .skinova-card:nth-child(4) { animation-delay: 0.26s; }
+    .skinova-card:nth-child(5) { animation-delay: 0.33s; }
+    .skinova-card:nth-child(6) { animation-delay: 0.40s; }
 
-    @keyframes glaze-card-in {
+    @keyframes skinova-card-in {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .glaze-card:hover { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08); }
-    .glaze-card:hover .glaze-card-img img { transform: scale(1.04); }
+    .skinova-card:hover { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08); }
+    .skinova-card:hover .skinova-card-img img { transform: scale(1.04); }
 
-    .glaze-card-img {
+    .skinova-card-img {
       aspect-ratio: 1 / 1;
       overflow: hidden;
       background: #eee;
     }
 
-    .glaze-card-img img {
+    .skinova-card-img img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.5s ease;
     }
 
-    .glaze-card-body {
+    .skinova-card-body {
       padding: 18px 20px;
       display: flex;
       justify-content: space-between;
@@ -362,10 +362,10 @@
       gap: 12px;
     }
 
-    .glaze-card-title { font-size: 18px; font-weight: 600; margin: 0 0 2px; }
-    .glaze-card-sub { font-size: 13px; color: #7a7a7a; margin: 0; }
+    .skinova-card-title { font-size: 18px; font-weight: 600; margin: 0 0 2px; }
+    .skinova-card-sub { font-size: 13px; color: #7a7a7a; margin: 0; }
 
-    .glaze-card-arrow {
+    .skinova-card-arrow {
       width: 34px;
       height: 34px;
       border-radius: 50%;
@@ -377,39 +377,39 @@
       transition: transform 0.3s ease, background 0.3s ease;
     }
 
-    .glaze-card:hover .glaze-card-arrow { transform: translate(2px, -2px); background: var(--glaze-accent); color: #fff; }
-    .glaze-card-arrow svg { width: 14px; height: 14px; }
+    .skinova-card:hover .skinova-card-arrow { transform: translate(2px, -2px); background: var(--skinova-accent); color: #fff; }
+    .skinova-card-arrow svg { width: 14px; height: 14px; }
 
     /* -------- Mega: columns (Shop-style) -------- */
-    .glaze-mega-columns {
+    .skinova-mega-columns {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 1.6fr;
       gap: 48px;
     }
 
-    .glaze-col { opacity: 0; transform: translateY(10px); }
+    .skinova-col { opacity: 0; transform: translateY(10px); }
 
-    .glaze-nav-item:hover .glaze-col,
-    .glaze-nav-item:focus-within .glaze-col,
-    .glaze-nav-item.is-open .glaze-col {
-      animation: glaze-card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    .skinova-nav-item:hover .skinova-col,
+    .skinova-nav-item:focus-within .skinova-col,
+    .skinova-nav-item.is-open .skinova-col {
+      animation: skinova-card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
-    .glaze-col:nth-child(1) { animation-delay: 0.05s; }
-    .glaze-col:nth-child(2) { animation-delay: 0.12s; }
-    .glaze-col:nth-child(3) { animation-delay: 0.19s; }
-    .glaze-col:nth-child(4) { animation-delay: 0.26s; }
+    .skinova-col:nth-child(1) { animation-delay: 0.05s; }
+    .skinova-col:nth-child(2) { animation-delay: 0.12s; }
+    .skinova-col:nth-child(3) { animation-delay: 0.19s; }
+    .skinova-col:nth-child(4) { animation-delay: 0.26s; }
 
-    .glaze-col-title {
+    .skinova-col-title {
       font-size: 18px;
       font-weight: 600;
       margin: 0 0 16px;
       color: #1a1a1a;
     }
 
-    .glaze-col-links { display: flex; flex-direction: column; gap: 10px; }
+    .skinova-col-links { display: flex; flex-direction: column; gap: 10px; }
 
-    .glaze-col-link {
+    .skinova-col-link {
       position: relative;
       display: inline-block;
       width: fit-content;
@@ -419,7 +419,7 @@
       transition: color 0.2s ease;
     }
 
-    .glaze-col-link::after {
+    .skinova-col-link::after {
       content: '';
       position: absolute;
       left: 0;
@@ -430,24 +430,24 @@
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .glaze-col-link:hover { color: #000; }
-    .glaze-col-link:hover::after { width: 100%; }
+    .skinova-col-link:hover { color: #000; }
+    .skinova-col-link:hover::after { width: 100%; }
 
-    .glaze-col-link.is-feature { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
+    .skinova-col-link.is-feature { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
 
     /* -------- Mega: product slider -------- */
-    .glaze-pslider-wrap { position: relative; }
+    .skinova-pslider-wrap { position: relative; }
 
-    .glaze-pslider-head {
+    .skinova-pslider-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
     }
 
-    .glaze-pslider-title { font-size: 18px; font-weight: 600; margin: 0; }
+    .skinova-pslider-title { font-size: 18px; font-weight: 600; margin: 0; }
 
-    .glaze-pslider-nav {
+    .skinova-pslider-nav {
       display: inline-flex;
       align-items: center;
       gap: 12px;
@@ -455,7 +455,7 @@
       color: #555;
     }
 
-    .glaze-pslider-btn {
+    .skinova-pslider-btn {
       width: 26px;
       height: 26px;
       border-radius: 50%;
@@ -466,22 +466,22 @@
       transition: background 0.2s ease;
     }
 
-    .glaze-pslider-btn:hover { background: rgba(0, 0, 0, 0.06); }
-    .glaze-pslider-btn svg { width: 14px; height: 14px; }
-    .glaze-pslider-btn[disabled] { opacity: 0.3; cursor: default; }
+    .skinova-pslider-btn:hover { background: rgba(0, 0, 0, 0.06); }
+    .skinova-pslider-btn svg { width: 14px; height: 14px; }
+    .skinova-pslider-btn[disabled] { opacity: 0.3; cursor: default; }
 
-    .glaze-pslider-count { min-width: 28px; text-align: center; }
+    .skinova-pslider-count { min-width: 28px; text-align: center; }
 
-    .glaze-pslider-viewport { overflow: hidden; }
+    .skinova-pslider-viewport { overflow: hidden; }
 
-    .glaze-pslider-track {
+    .skinova-pslider-track {
       display: flex;
       gap: 14px;
       transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .glaze-pcard {
-      flex: 0 0 calc((100% - (var(--glaze-per-slide) - 1) * 14px) / var(--glaze-per-slide));
+    .skinova-pcard {
+      flex: 0 0 calc((100% - (var(--skinova-per-slide) - 1) * 14px) / var(--skinova-per-slide));
       background: #f4f4f4;
       border-radius: 12px;
       overflow: hidden;
@@ -489,24 +489,24 @@
       transition: box-shadow 0.3s ease;
     }
 
-    .glaze-pcard:hover { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); }
+    .skinova-pcard:hover { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); }
 
-    .glaze-pcard-img {
+    .skinova-pcard-img {
       aspect-ratio: 1 / 1;
       background: #ececec;
       overflow: hidden;
     }
 
-    .glaze-pcard-img img {
+    .skinova-pcard-img img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.5s ease;
     }
 
-    .glaze-pcard:hover .glaze-pcard-img img { transform: scale(1.04); }
+    .skinova-pcard:hover .skinova-pcard-img img { transform: scale(1.04); }
 
-    .glaze-pcard-badges {
+    .skinova-pcard-badges {
       position: absolute;
       top: 10px;
       left: 10px;
@@ -515,7 +515,7 @@
       flex-wrap: wrap;
     }
 
-    .glaze-pcard-badge {
+    .skinova-pcard-badge {
       font-size: 11px;
       font-weight: 600;
       padding: 4px 8px;
@@ -525,18 +525,18 @@
       letter-spacing: 0.03em;
     }
 
-    .glaze-pcard-badge.is-new { background: #2f9e4f; }
-    .glaze-pcard-badge.is-hot { background: #4a37d1; }
+    .skinova-pcard-badge.is-new { background: #2f9e4f; }
+    .skinova-pcard-badge.is-hot { background: #4a37d1; }
 
-    .glaze-pcard-body { padding: 12px 14px 14px; }
-    .glaze-pcard-type { font-size: 12px; color: #8a8a8a; margin: 0 0 2px; }
-    .glaze-pcard-title { font-size: 14px; font-weight: 500; margin: 0 0 6px; color: #1a1a1a; line-height: 1.3; }
+    .skinova-pcard-body { padding: 12px 14px 14px; }
+    .skinova-pcard-type { font-size: 12px; color: #8a8a8a; margin: 0 0 2px; }
+    .skinova-pcard-title { font-size: 14px; font-weight: 500; margin: 0 0 6px; color: #1a1a1a; line-height: 1.3; }
 
-    .glaze-pcard-price { font-size: 14px; font-weight: 600; color: #e23b3b; }
-    .glaze-pcard-compare { font-size: 13px; color: #888; text-decoration: line-through; margin-left: 6px; font-weight: 400; }
+    .skinova-pcard-price { font-size: 14px; font-weight: 600; color: #e23b3b; }
+    .skinova-pcard-compare { font-size: 13px; color: #888; text-decoration: line-through; margin-left: 6px; font-weight: 400; }
 
     /* -------- Mega: simple dropdown (Pages-style) -------- */
-    .glaze-dropdown {
+    .skinova-dropdown {
       position: absolute;
       top: 100%;
       left: 50%;
@@ -552,7 +552,7 @@
       pointer-events: none;
       z-index: 80;
     }
-    .glaze-dropdown::before {
+    .skinova-dropdown::before {
       content: '';
       position: absolute;
       top: -28px;
@@ -562,16 +562,16 @@
       background: transparent;
     }
 
-    .glaze-nav-item.has-dropdown:hover .glaze-dropdown,
-    .glaze-nav-item.has-dropdown.is-open .glaze-dropdown,
-    .glaze-nav-item.has-dropdown:focus-within .glaze-dropdown {
+    .skinova-nav-item.has-dropdown:hover .skinova-dropdown,
+    .skinova-nav-item.has-dropdown.is-open .skinova-dropdown,
+    .skinova-nav-item.has-dropdown:focus-within .skinova-dropdown {
       opacity: 1;
       visibility: visible;
       transform: translate(-50%, 0);
       pointer-events: auto;
     }
 
-    .glaze-dropdown-item {
+    .skinova-dropdown-item {
       position: relative;
       display: flex;
       align-items: center;
@@ -585,14 +585,14 @@
       transition: background 0.2s ease, color 0.2s ease;
     }
 
-    .glaze-dropdown-item:hover { background: #f4f4f4; color: #000; }
+    .skinova-dropdown-item:hover { background: #f4f4f4; color: #000; }
 
-    .glaze-dropdown-item-link {
+    .skinova-dropdown-item-link {
       position: relative;
       display: inline-block;
     }
 
-    .glaze-dropdown-item-link::after {
+    .skinova-dropdown-item-link::after {
       content: '';
       position: absolute;
       left: 0;
@@ -603,11 +603,11 @@
       transition: width 0.3s ease;
     }
 
-    .glaze-dropdown-item:hover .glaze-dropdown-item-link::after { width: 100%; }
+    .skinova-dropdown-item:hover .skinova-dropdown-item-link::after { width: 100%; }
 
-    .glaze-dropdown-caret { width: 10px; height: 10px; color: #555; }
+    .skinova-dropdown-caret { width: 10px; height: 10px; color: #555; }
 
-    .glaze-subdropdown {
+    .skinova-subdropdown {
       position: absolute;
       top: -18px;
       left: calc(100% + 8px);
@@ -623,7 +623,7 @@
       pointer-events: none;
     }
 
-    .glaze-dropdown-item.has-sub:hover > .glaze-subdropdown {
+    .skinova-dropdown-item.has-sub:hover > .skinova-subdropdown {
       opacity: 1;
       visibility: visible;
       transform: translateX(0);
@@ -636,25 +636,25 @@
       top: 0;
     }
 
-    #{{ section_id }}.is-stuck .glaze-header {
+    #{{ section_id }}.is-stuck .skinova-header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      background: var(--glaze-bg);
+      background: var(--skinova-bg);
       box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-      animation: glaze-stick-in 0.3s ease;
+      animation: skinova-stick-in 0.3s ease;
     }
 
-    #{{ section_id }}.is-stuck .glaze-announcement { display: none; }
+    #{{ section_id }}.is-stuck .skinova-announcement { display: none; }
 
-    @keyframes glaze-stick-in {
+    @keyframes skinova-stick-in {
       from { transform: translateY(-100%); }
       to { transform: translateY(0); }
     }
 
     /* -------- Mobile drawer -------- */
-    .glaze-drawer-overlay {
+    .skinova-drawer-overlay {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.4);
@@ -664,9 +664,9 @@
       z-index: 120;
     }
 
-    .glaze-drawer-overlay.is-open { opacity: 1; visibility: visible; }
+    .skinova-drawer-overlay.is-open { opacity: 1; visibility: visible; }
 
-    .glaze-drawer {
+    .skinova-drawer {
       position: fixed;
       top: 10px;
       bottom: 10px;
@@ -683,9 +683,9 @@
       overflow: hidden;
     }
 
-    .glaze-drawer.is-open { transform: translateX(0); }
+    .skinova-drawer.is-open { transform: translateX(0); }
 
-    .glaze-drawer-head {
+    .skinova-drawer-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -693,11 +693,11 @@
       flex-shrink: 0;
     }
 
-    .glaze-drawer-logo { font-size: 24px; font-weight: 700; font-family: 'Georgia', serif; font-style: italic; }
-    .glaze-drawer-close { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; }
-    .glaze-drawer-close svg { width: 100%; height: 100%; }
+    .skinova-drawer-logo { font-size: 24px; font-weight: 700; font-family: 'Georgia', serif; font-style: italic; }
+    .skinova-drawer-close { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; }
+    .skinova-drawer-close svg { width: 100%; height: 100%; }
 
-    .glaze-drawer-body {
+    .skinova-drawer-body {
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
@@ -705,7 +705,7 @@
       position: relative;
     }
 
-    .glaze-drawer-panel {
+    .skinova-drawer-panel {
       position: absolute;
       inset: 0;
       padding: 0 24px;
@@ -716,11 +716,11 @@
       background: #fff;
     }
 
-    .glaze-drawer-panel.is-active { transform: translateX(0); }
-    .glaze-drawer-panel.is-root { transform: translateX(0); }
-    .glaze-drawer-panel.is-root.is-pushed { transform: translateX(-100%); }
+    .skinova-drawer-panel.is-active { transform: translateX(0); }
+    .skinova-drawer-panel.is-root { transform: translateX(0); }
+    .skinova-drawer-panel.is-root.is-pushed { transform: translateX(-100%); }
 
-    .glaze-drawer-back {
+    .skinova-drawer-back {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -730,11 +730,11 @@
       margin-bottom: 8px;
     }
 
-    .glaze-drawer-back svg { width: 12px; height: 12px; }
+    .skinova-drawer-back svg { width: 12px; height: 12px; }
 
-    .glaze-drawer-divider { border-top: 1px solid #eee; margin: 14px 0; }
+    .skinova-drawer-divider { border-top: 1px solid #eee; margin: 14px 0; }
 
-    .glaze-drawer-link {
+    .skinova-drawer-link {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -744,9 +744,9 @@
       color: #1a1a1a;
     }
 
-    .glaze-drawer-link svg { width: 12px; height: 12px; color: #888; }
+    .skinova-drawer-link svg { width: 12px; height: 12px; color: #888; }
 
-    .glaze-drawer-footer {
+    .skinova-drawer-footer {
       padding: 20px 24px 28px;
       border-top: 1px solid #eee;
       display: flex;
@@ -758,17 +758,17 @@
 
     /* Real localization form selectors inside the mobile drawer.
        Native <select> styled to match the drawer typography. */
-    .glaze-localization {
+    .skinova-localization {
       display: grid;
       gap: 8px;
       width: 100%;
     }
-    .glaze-localization__form {
+    .skinova-localization__form {
       display: grid;
       gap: 8px;
       margin: 0;
     }
-    .glaze-localization__select {
+    .skinova-localization__select {
       appearance: none;
       -webkit-appearance: none;
       width: 100%;
@@ -785,12 +785,12 @@
       background-repeat: no-repeat;
       background-position: right 14px center;
     }
-    .glaze-localization__select:focus-visible {
+    .skinova-localization__select:focus-visible {
       outline: 2px solid currentColor;
       outline-offset: 2px;
     }
 
-    .glaze-drawer-btn {
+    .skinova-drawer-btn {
       width: 100%;
       padding: 16px;
       border-radius: 999px;
@@ -802,12 +802,12 @@
       display: block;
     }
 
-    .glaze-drawer-social {
+    .skinova-drawer-social {
       display: inline-flex;
       gap: 20px;
     }
 
-    .glaze-drawer-social a {
+    .skinova-drawer-social a {
       display: inline-flex;
       width: 22px;
       height: 22px;
@@ -816,31 +816,31 @@
       color: #1a1a1a;
     }
 
-    .glaze-drawer-social svg { width: 100%; height: 100%; }
+    .skinova-drawer-social svg { width: 100%; height: 100%; }
 
     /* -------- Mobile card grid (Presets drawer) -------- */
-    .glaze-drawer-cards {
+    .skinova-drawer-cards {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       padding-bottom: 20px;
     }
 
-    .glaze-drawer-card {
+    .skinova-drawer-card {
       background: #f4f4f4;
       border-radius: 12px;
       overflow: hidden;
     }
 
-    .glaze-drawer-card-img { aspect-ratio: 1 / 1; }
-    .glaze-drawer-card-img img { width: 100%; height: 100%; object-fit: cover; }
-    .glaze-drawer-card-body { padding: 12px 14px 14px; }
-    .glaze-drawer-card-title { font-size: 16px; font-weight: 600; margin: 0; }
-    .glaze-drawer-card-sub { font-size: 13px; color: #7a7a7a; margin: 2px 0 0; }
+    .skinova-drawer-card-img { aspect-ratio: 1 / 1; }
+    .skinova-drawer-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .skinova-drawer-card-body { padding: 12px 14px 14px; }
+    .skinova-drawer-card-title { font-size: 16px; font-weight: 600; margin: 0; }
+    .skinova-drawer-card-sub { font-size: 13px; color: #7a7a7a; margin: 2px 0 0; }
 
-    .glaze-drawer-trend { font-size: 18px; font-weight: 600; margin: 20px 0 12px; }
+    .skinova-drawer-trend { font-size: 18px; font-weight: 600; margin: 20px 0 12px; }
 
-    .glaze-drawer-pslider {
+    .skinova-drawer-pslider {
       display: flex;
       gap: 12px;
       overflow-x: auto;
@@ -848,9 +848,9 @@
       scrollbar-width: none;
     }
 
-    .glaze-drawer-pslider::-webkit-scrollbar { display: none; }
+    .skinova-drawer-pslider::-webkit-scrollbar { display: none; }
 
-    .glaze-drawer-pcard {
+    .skinova-drawer-pcard {
       flex: 0 0 70%;
       background: #f4f4f4;
       border-radius: 12px;
@@ -859,25 +859,25 @@
 
     /* -------- Responsive -------- */
     @media screen and (max-width: 989px) {
-      .glaze-header-inner {
+      .skinova-header-inner {
         grid-template-columns: auto 1fr auto;
         padding: 16px 16px;
         gap: 16px;
       }
 
-      .glaze-hamburger { display: block; }
-      .glaze-nav { display: none; }
-      .glaze-logo { justify-self: center; }
-      .glaze-actions { gap: 14px; }
+      .skinova-hamburger { display: block; }
+      .skinova-nav { display: none; }
+      .skinova-logo { justify-self: center; }
+      .skinova-actions { gap: 14px; }
 
       /* Search icon stays visible on mobile so search is reachable without opening the drawer */
-      .glaze-icon-btn.is-account { display: none; }
+      .skinova-icon-btn.is-account { display: none; }
     }
 
     /* ---------- Predictive search modal ---------- */
-    .glaze-icon-btn:focus-visible,
-    .glaze-search-toggle:focus-visible {
-      outline: 2px solid var(--glaze-accent);
+    .skinova-icon-btn:focus-visible,
+    .skinova-search-toggle:focus-visible {
+      outline: 2px solid var(--skinova-accent);
       outline-offset: 3px;
       border-radius: 8px;
     }
@@ -903,8 +903,8 @@
       width: min(720px, calc(100vw - 24px));
       max-height: calc(100vh - 24px);
       margin: 12px 0;
-      background: var(--glaze-bg);
-      color: var(--glaze-fg);
+      background: var(--skinova-bg);
+      color: var(--skinova-fg);
       border-radius: 18px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
       opacity: 0;
@@ -926,7 +926,7 @@
       align-items: center;
       gap: 12px;
       padding: 14px 18px;
-      border-bottom: 1px solid var(--glaze-border);
+      border-bottom: 1px solid var(--skinova-border);
     }
     .sf-search-form { flex: 1; display: flex; align-items: center; gap: 8px; }
     .sf-search-input {
@@ -935,17 +935,17 @@
       font-size: 16px;
       background: transparent;
       border: 0;
-      color: var(--glaze-fg);
+      color: var(--skinova-fg);
       padding: 8px 4px;
       min-height: 36px;
     }
-    .sf-search-input::placeholder { color: var(--glaze-muted, #888); }
+    .sf-search-input::placeholder { color: var(--skinova-muted, #888); }
     .sf-search-input:focus { outline: none; }
-    .sf-search-form:focus-within { outline: 2px solid var(--glaze-accent); outline-offset: 4px; border-radius: 8px; }
+    .sf-search-form:focus-within { outline: 2px solid var(--skinova-accent); outline-offset: 4px; border-radius: 8px; }
     .sf-search-submit, .sf-search-close {
       width: 40px; height: 40px;
       border: 0; background: transparent;
-      color: var(--glaze-fg);
+      color: var(--skinova-fg);
       border-radius: 50%;
       cursor: pointer;
       display: inline-flex; align-items: center; justify-content: center;
@@ -954,7 +954,7 @@
     .sf-search-submit:hover, .sf-search-close:hover { background: rgba(0,0,0,0.05); }
     .sf-search-submit svg, .sf-search-close svg { width: 18px; height: 18px; }
     .sf-search-submit:focus-visible, .sf-search-close:focus-visible {
-      outline: 2px solid var(--glaze-accent); outline-offset: 2px;
+      outline: 2px solid var(--skinova-accent); outline-offset: 2px;
     }
 
     .sf-search-results {
@@ -963,7 +963,7 @@
       padding: 12px 6px 18px;
       min-height: 120px;
     }
-    .sf-search-state { text-align: center; color: var(--glaze-fg); opacity: 0.7; padding: 36px 16px; font-size: 14px; margin: 0; }
+    .sf-search-state { text-align: center; color: var(--skinova-fg); opacity: 0.7; padding: 36px 16px; font-size: 14px; margin: 0; }
 
     .sf-search-group { padding: 8px 12px 4px; }
     .sf-search-group-title {
@@ -971,7 +971,7 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
       font-weight: 700;
-      color: var(--glaze-fg);
+      color: var(--skinova-fg);
       opacity: 0.55;
       margin: 0 0 6px;
     }
@@ -981,7 +981,7 @@
       align-items: center;
       gap: 12px;
       padding: 10px 12px;
-      color: var(--glaze-fg);
+      color: var(--skinova-fg);
       text-decoration: none;
       border-radius: 10px;
       min-height: 44px;
@@ -989,7 +989,7 @@
     .sf-search-link:hover { background: rgba(0,0,0,0.05); }
     .sf-search-link:focus-visible {
       background: rgba(0,0,0,0.05);
-      outline: 2px solid var(--glaze-accent);
+      outline: 2px solid var(--skinova-accent);
       outline-offset: -2px;
     }
     .sf-search-link[aria-current="true"] { background: rgba(0,0,0,0.05); }
@@ -1013,15 +1013,15 @@
     .sf-search-sub {
       display: block;
       font-size: 12px;
-      color: var(--glaze-fg);
+      color: var(--skinova-fg);
       opacity: 0.6;
     }
     .sf-search-viewall {
       display: block;
       margin: 10px 12px 0;
       padding: 12px 14px;
-      background: var(--glaze-fg);
-      color: var(--glaze-bg);
+      background: var(--skinova-fg);
+      color: var(--skinova-bg);
       border-radius: 10px;
       text-align: center;
       text-decoration: none;
@@ -1029,7 +1029,7 @@
       min-height: 44px;
       box-sizing: border-box;
     }
-    .sf-search-viewall:focus-visible { outline: 2px solid var(--glaze-accent); outline-offset: 2px; }
+    .sf-search-viewall:focus-visible { outline: 2px solid var(--skinova-accent); outline-offset: 2px; }
 
     /* Visually hidden helper for the dialog */
     predictive-search .visually-hidden {
@@ -1048,24 +1048,24 @@
     }
 
     @media screen and (min-width: 990px) {
-      .glaze-drawer-overlay,
-      .glaze-drawer { display: none; }
+      .skinova-drawer-overlay,
+      .skinova-drawer { display: none; }
     }
 
     @media screen and (max-width: 768px) {
-      .glaze-actions { gap: 12px; }
-      #{{ section_id }} { --glaze-ann-size: 11px; }
-      .glaze-ann-track { gap: 40px; }
+      .skinova-actions { gap: 12px; }
+      #{{ section_id }} { --skinova-ann-size: 11px; }
+      .skinova-ann-track { gap: 40px; }
     }
   </style>
 
-  <div id="{{ section_id }}" class="glaze-header-wrapper{% if sticky %} is-sticky{% endif %}" data-glaze-header>
+  <div id="{{ section_id }}" class="skinova-header-wrapper{% if sticky %} is-sticky{% endif %}" data-skinova-header>
     {%- if announcement_blocks.size > 0 -%}
-      <div class="glaze-announcement" role="region" aria-label="Announcements">
-        <div class="glaze-ann-track">
+      <div class="skinova-announcement" role="region" aria-label="Announcements">
+        <div class="skinova-ann-track">
           {%- for i in (1..2) -%}
             {%- for block in announcement_blocks -%}
-              <div class="glaze-ann-item" {{ block.shopify_attributes }}>
+              <div class="skinova-ann-item" {{ block.shopify_attributes }}>
                 {%- if block.settings.link != blank -%}
                   <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
                 {%- else -%}
@@ -1078,33 +1078,33 @@
       </div>
     {%- endif -%}
 
-    <header class="glaze-header" role="banner">
-      <div class="glaze-header-inner">
-        <button type="button" class="glaze-hamburger" aria-label="Open menu" data-glaze-open-drawer>
+    <header class="skinova-header" role="banner">
+      <div class="skinova-header-inner">
+        <button type="button" class="skinova-hamburger" aria-label="Open menu" data-skinova-open-drawer>
           <span></span><span></span><span></span>
         </button>
 
-        <a href="{{ routes.root_url }}" class="glaze-logo{% if section.settings.logo_dark != blank %} has-dark-logo{% endif %}" aria-label="{{ shop.name }}">
+        <a href="{{ routes.root_url }}" class="skinova-logo{% if section.settings.logo_dark != blank %} has-dark-logo{% endif %}" aria-label="{{ shop.name }}">
           {%- if section.settings.logo != blank -%}
             {{
               section.settings.logo
               | image_url: width: 600
-              | image_tag: class: 'glaze-logo-default', loading: 'eager', alt: shop.name, widths: '120,240,360,480,600'
+              | image_tag: class: 'skinova-logo-default', loading: 'eager', alt: shop.name, widths: '120,240,360,480,600'
             }}
           {%- endif -%}
           {%- if section.settings.logo_dark != blank -%}
             {{
               section.settings.logo_dark
               | image_url: width: 600
-              | image_tag: class: 'glaze-logo-dark', loading: 'eager', alt: shop.name, widths: '120,240,360,480,600'
+              | image_tag: class: 'skinova-logo-dark', loading: 'eager', alt: shop.name, widths: '120,240,360,480,600'
             }}
           {%- endif -%}
           {%- if section.settings.logo == blank and section.settings.logo_dark == blank -%}
-            <span class="glaze-logo-text">{{ shop.name }}</span>
+            <span class="skinova-logo-text">{{ shop.name }}</span>
           {%- endif -%}
         </a>
 
-        <nav class="glaze-nav" aria-label="Main">
+        <nav class="skinova-nav" aria-label="Main">
           <ul>
             {%- if section.settings.menu != blank -%}
               {%- for link in section.settings.menu.links -%}
@@ -1138,19 +1138,19 @@
                 {%- endfor -%}
 
                 {%- if card_block -%}
-                  <li class="glaze-nav-item has-mega has-cards">
+                  <li class="skinova-nav-item has-mega has-cards">
                     <a
                       href="{{ link.url }}"
-                      class="glaze-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
+                      class="skinova-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
                     >
                       {{ link.title }}
-                      <svg class="glaze-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                      <svg class="skinova-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
                         <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                       </svg>
                     </a>
-                    <div class="glaze-mega">
-                      <div class="glaze-mega-inner">
-                        <div class="glaze-mega-cards">
+                    <div class="skinova-mega">
+                      <div class="skinova-mega-inner">
+                        <div class="skinova-mega-cards">
                           {%- for i in (1..6) -%}
                             {%- assign title_key = 'card_' | append: i | append: '_title' -%}
                             {%- assign sub_key = 'card_' | append: i | append: '_sub' -%}
@@ -1161,8 +1161,8 @@
                             {%- assign img = card_block.settings[img_key] -%}
                             {%- assign c_link = card_block.settings[link_key] -%}
                             {%- if title != blank or img != blank -%}
-                              <a href="{{ c_link | default: '#' }}" class="glaze-card">
-                                <div class="glaze-card-img">
+                              <a href="{{ c_link | default: '#' }}" class="skinova-card">
+                                <div class="skinova-card-img">
                                   {%- if img != blank -%}
                                     {{
                                       img
@@ -1171,14 +1171,14 @@
                                     }}
                                   {%- endif -%}
                                 </div>
-                                <div class="glaze-card-body">
+                                <div class="skinova-card-body">
                                   <div>
-                                    <p class="glaze-card-title">{{ title }}</p>
+                                    <p class="skinova-card-title">{{ title }}</p>
                                     {%- if sub != blank -%}
-                                      <p class="glaze-card-sub">{{ sub }}</p>
+                                      <p class="skinova-card-sub">{{ sub }}</p>
                                     {%- endif -%}
                                   </div>
-                                  <span class="glaze-card-arrow" aria-hidden="true">
+                                  <span class="skinova-card-arrow" aria-hidden="true">
                                     <svg viewBox="0 0 14 14" fill="none">
                                       <path d="M3 11L11 3M11 3H5M11 3v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
@@ -1193,21 +1193,21 @@
                   </li>
 
                 {%- elsif column_block -%}
-                  <li class="glaze-nav-item has-mega has-columns">
+                  <li class="skinova-nav-item has-mega has-columns">
                     <a
                       href="{{ link.url }}"
-                      class="glaze-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
+                      class="skinova-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
                     >
                       {{ link.title }}
-                      <svg class="glaze-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                      <svg class="skinova-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
                         <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                       </svg>
                     </a>
-                    <div class="glaze-mega">
-                      <div class="glaze-mega-inner">
-                        <div class="glaze-mega-columns">
-                          <div class="glaze-col">
-                            <ul class="glaze-col-links">
+                    <div class="skinova-mega">
+                      <div class="skinova-mega-inner">
+                        <div class="skinova-mega-columns">
+                          <div class="skinova-col">
+                            <ul class="skinova-col-links">
                               {%- for i in (1..6) -%}
                                 {%- assign fl_t_key = 'feature_' | append: i | append: '_title' -%}
                                 {%- assign fl_l_key = 'feature_' | append: i | append: '_link' -%}
@@ -1215,7 +1215,7 @@
                                 {%- assign fl_link = column_block.settings[fl_l_key] -%}
                                 {%- if fl_title != blank -%}
                                   <li>
-                                    <a href="{{ fl_link | default: '#' }}" class="glaze-col-link is-feature">
+                                    <a href="{{ fl_link | default: '#' }}" class="skinova-col-link is-feature">
                                       {{- fl_title -}}
                                     </a>
                                   </li>
@@ -1229,14 +1229,14 @@
                             {%- assign col_m_key = 'col_' | append: col_idx | append: '_menu' -%}
                             {%- assign col_title = column_block.settings[col_t_key] -%}
                             {%- if col_title != blank -%}
-                              <div class="glaze-col">
-                                <h3 class="glaze-col-title">{{ col_title }}</h3>
-                                <ul class="glaze-col-links">
+                              <div class="skinova-col">
+                                <h3 class="skinova-col-title">{{ col_title }}</h3>
+                                <ul class="skinova-col-links">
                                   {%- assign col_menu = column_block.settings[col_m_key] -%}
                                   {%- if col_menu != blank -%}
                                     {%- for sub_link in linklists[col_menu].links -%}
                                       <li>
-                                        <a href="{{ sub_link.url }}" class="glaze-col-link">{{ sub_link.title }}</a>
+                                        <a href="{{ sub_link.url }}" class="skinova-col-link">{{ sub_link.title }}</a>
                                       </li>
                                     {%- endfor -%}
                                   {%- endif -%}
@@ -1247,17 +1247,17 @@
 
                           {%- assign trend_collection = column_block.settings.trend_collection -%}
                           {%- if trend_collection != blank -%}
-                            <div class="glaze-col">
+                            <div class="skinova-col">
                               {%- assign per_slide = column_block.settings.products_per_slide | default: 2 -%}
-                              <div class="glaze-pslider-wrap" data-pslider data-per-page="{{ per_slide }}" style="--glaze-per-slide: {{ per_slide }};">
-                                <div class="glaze-pslider-head">
-                                  <h3 class="glaze-pslider-title">
+                              <div class="skinova-pslider-wrap" data-pslider data-per-page="{{ per_slide }}" style="--skinova-per-slide: {{ per_slide }};">
+                                <div class="skinova-pslider-head">
+                                  <h3 class="skinova-pslider-title">
                                     {{ column_block.settings.trend_title | default: 'Trend This Week' }}
                                   </h3>
-                                  <div class="glaze-pslider-nav">
+                                  <div class="skinova-pslider-nav">
                                     <button
                                       type="button"
-                                      class="glaze-pslider-btn"
+                                      class="skinova-pslider-btn"
                                       data-pslider-prev
                                       aria-label="Previous"
                                     >
@@ -1265,22 +1265,22 @@
                                         <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                       </svg>
                                     </button>
-                                    <span class="glaze-pslider-count"
+                                    <span class="skinova-pslider-count"
                                       ><span data-pslider-current>1</span>/<span data-pslider-total>1</span></span
                                     >
-                                    <button type="button" class="glaze-pslider-btn" data-pslider-next aria-label="Next">
+                                    <button type="button" class="skinova-pslider-btn" data-pslider-next aria-label="Next">
                                       <svg viewBox="0 0 14 14" fill="none">
                                         <path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                       </svg>
                                     </button>
                                   </div>
                                 </div>
-                                <div class="glaze-pslider-viewport">
-                                  <div class="glaze-pslider-track" data-pslider-track>
+                                <div class="skinova-pslider-viewport">
+                                  <div class="skinova-pslider-track" data-pslider-track>
                                     {%- assign prods = collections[trend_collection].products -%}
                                     {%- for p in prods limit: 9 -%}
-                                      <a href="{{ p.url }}" class="glaze-pcard">
-                                        <div class="glaze-pcard-badges">
+                                      <a href="{{ p.url }}" class="skinova-pcard">
+                                        <div class="skinova-pcard-badges">
                                           {%- if p.compare_at_price > p.price -%}
                                             {%- assign discount = p.compare_at_price
                                               | minus: p.price
@@ -1288,16 +1288,16 @@
                                               | divided_by: p.compare_at_price
                                               | round
                                             -%}
-                                            <span class="glaze-pcard-badge">-{{ discount }}%</span>
+                                            <span class="skinova-pcard-badge">-{{ discount }}%</span>
                                           {%- endif -%}
                                           {%- if p.tags contains 'new' or p.tags contains 'New' -%}
-                                            <span class="glaze-pcard-badge is-new">New</span>
+                                            <span class="skinova-pcard-badge is-new">New</span>
                                           {%- endif -%}
                                           {%- if p.tags contains 'hot' or p.tags contains 'Selling fast' -%}
-                                            <span class="glaze-pcard-badge is-hot">Popular</span>
+                                            <span class="skinova-pcard-badge is-hot">Popular</span>
                                           {%- endif -%}
                                         </div>
-                                        <div class="glaze-pcard-img">
+                                        <div class="skinova-pcard-img">
                                           {%- if p.featured_image -%}
                                             {{
                                               p.featured_image
@@ -1306,16 +1306,16 @@
                                             }}
                                           {%- endif -%}
                                         </div>
-                                        <div class="glaze-pcard-body">
+                                        <div class="skinova-pcard-body">
                                           {%- if p.type != blank -%}
-                                            <p class="glaze-pcard-type">{{ p.type }}</p>
+                                            <p class="skinova-pcard-type">{{ p.type }}</p>
                                           {%- endif -%}
-                                          <p class="glaze-pcard-title">{{ p.title }}</p>
-                                          <div class="glaze-pcard-price">
+                                          <p class="skinova-pcard-title">{{ p.title }}</p>
+                                          <div class="skinova-pcard-price">
                                             {%- if p.price_varies -%}From {% endif -%}
                                             {{ p.price | money }}
                                             {%- if p.compare_at_price > p.price -%}
-                                              <span class="glaze-pcard-compare">{{ p.compare_at_price | money }}</span>
+                                              <span class="skinova-pcard-compare">{{ p.compare_at_price | money }}</span>
                                             {%- endif -%}
                                           </div>
                                         </div>
@@ -1332,17 +1332,17 @@
                   </li>
 
                 {%- elsif dropdown_block -%}
-                  <li class="glaze-nav-item has-dropdown">
+                  <li class="skinova-nav-item has-dropdown">
                     <a
                       href="{{ link.url }}"
-                      class="glaze-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
+                      class="skinova-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
                     >
                       {{ link.title }}
-                      <svg class="glaze-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                      <svg class="skinova-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
                         <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                       </svg>
                     </a>
-                    <div class="glaze-dropdown">
+                    <div class="skinova-dropdown">
                       <ul>
                         {%- for i in (1..8) -%}
                           {%- assign d_t_key = 'item_' | append: i | append: '_title' -%}
@@ -1352,17 +1352,17 @@
                           {%- assign d_link = dropdown_block.settings[d_l_key] -%}
                           {%- assign d_sub = dropdown_block.settings[d_s_key] -%}
                           {%- if d_title != blank -%}
-                            <li class="glaze-dropdown-item{% if d_sub != blank %} has-sub{% endif %}">
-                              <a href="{{ d_link | default: '#' }}" class="glaze-dropdown-item-link">{{ d_title }}</a>
+                            <li class="skinova-dropdown-item{% if d_sub != blank %} has-sub{% endif %}">
+                              <a href="{{ d_link | default: '#' }}" class="skinova-dropdown-item-link">{{ d_title }}</a>
                               {%- if d_sub != blank -%}
-                                <svg class="glaze-dropdown-caret" viewBox="0 0 10 10" fill="none">
+                                <svg class="skinova-dropdown-caret" viewBox="0 0 10 10" fill="none">
                                   <path d="M3 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
-                                <div class="glaze-subdropdown">
+                                <div class="skinova-subdropdown">
                                   <ul>
                                     {%- for sub_link in linklists[d_sub].links -%}
-                                      <li class="glaze-dropdown-item">
-                                        <a href="{{ sub_link.url }}" class="glaze-dropdown-item-link">
+                                      <li class="skinova-dropdown-item">
+                                        <a href="{{ sub_link.url }}" class="skinova-dropdown-item-link">
                                           {{- sub_link.title -}}
                                         </a>
                                       </li>
@@ -1378,21 +1378,21 @@
                   </li>
 
                 {%- elsif link.links.size > 0 -%}
-                  <li class="glaze-nav-item has-dropdown">
+                  <li class="skinova-nav-item has-dropdown">
                     <a
                       href="{{ link.url }}"
-                      class="glaze-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
+                      class="skinova-nav-link{% if link.active or link.child_active %} is-active{% endif %}"
                     >
                       {{ link.title }}
-                      <svg class="glaze-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                      <svg class="skinova-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
                         <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                       </svg>
                     </a>
-                    <div class="glaze-dropdown">
+                    <div class="skinova-dropdown">
                       <ul>
                         {%- for child in link.links -%}
-                          <li class="glaze-dropdown-item">
-                            <a href="{{ child.url }}" class="glaze-dropdown-item-link">{{ child.title }}</a>
+                          <li class="skinova-dropdown-item">
+                            <a href="{{ child.url }}" class="skinova-dropdown-item-link">{{ child.title }}</a>
                           </li>
                         {%- endfor -%}
                       </ul>
@@ -1400,8 +1400,8 @@
                   </li>
 
                 {%- else -%}
-                  <li class="glaze-nav-item">
-                    <a href="{{ link.url }}" class="glaze-nav-link{% if link.active %} is-active{% endif %}">
+                  <li class="skinova-nav-item">
+                    <a href="{{ link.url }}" class="skinova-nav-link{% if link.active %} is-active{% endif %}">
                       {{- link.title -}}
                     </a>
                   </li>
@@ -1411,11 +1411,11 @@
           </ul>
         </nav>
 
-        <div class="glaze-actions">
+        <div class="skinova-actions">
           {%- if section.settings.show_search -%}
             <button
               type="button"
-              class="glaze-icon-btn glaze-search-toggle"
+              class="skinova-icon-btn skinova-search-toggle"
               aria-label="{{ 'general.search' | t }}"
               aria-controls="{{ section_id }}-search"
               aria-expanded="false"
@@ -1431,7 +1431,7 @@
           {%- if section.settings.show_account -%}
             <a
               href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
-              class="glaze-icon-btn is-account"
+              class="skinova-icon-btn is-account"
               aria-label="Account"
             >
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1454,7 +1454,7 @@
           <a
             id="cart-icon-bubble"
             href="{{ routes.cart_url }}"
-            class="glaze-icon-btn is-cart"
+            class="skinova-icon-btn is-cart"
             aria-label="{{ 'cart.title' | t }}"
           >
             {% render 'cart-icon-bubble' %}
@@ -1464,11 +1464,11 @@
     </header>
 
     {%- comment -%} Mobile drawer {%- endcomment -%}
-    <div class="glaze-drawer-overlay" data-glaze-close-drawer></div>
+    <div class="skinova-drawer-overlay" data-skinova-close-drawer></div>
 
-    <aside class="glaze-drawer" aria-hidden="true" data-glaze-drawer>
-      <div class="glaze-drawer-head">
-        <span class="glaze-drawer-logo">
+    <aside class="skinova-drawer" aria-hidden="true" data-skinova-drawer>
+      <div class="skinova-drawer-head">
+        <span class="skinova-drawer-logo">
           {%- assign drawer_logo = section.settings.logo | default: section.settings.logo_dark -%}
           {%- if drawer_logo != blank -%}
             {{ drawer_logo | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120,180,240', sizes: '100px', alt: shop.name, style: 'max-width:100px' }}
@@ -1476,15 +1476,15 @@
             {{ shop.name }}
           {%- endif -%}
         </span>
-        <button type="button" class="glaze-drawer-close" data-glaze-close-drawer aria-label="Close menu">
+        <button type="button" class="skinova-drawer-close" data-skinova-close-drawer aria-label="Close menu">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
         </button>
       </div>
 
-      <div class="glaze-drawer-body">
-        <div class="glaze-drawer-panel is-root" data-panel="root">
+      <div class="skinova-drawer-body">
+        <div class="skinova-drawer-panel is-root" data-panel="root">
           <ul>
             {%- if section.settings.menu != blank -%}
               {%- for link in section.settings.menu.links -%}
@@ -1507,14 +1507,14 @@
 
                 <li>
                   {%- if has_panel -%}
-                    <button type="button" class="glaze-drawer-link" data-panel-open="{{ forloop.index }}">
+                    <button type="button" class="skinova-drawer-link" data-panel-open="{{ forloop.index }}">
                       {{ link.title }}
                       <svg viewBox="0 0 10 10" fill="none">
                         <path d="M3 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                       </svg>
                     </button>
                   {%- else -%}
-                    <a href="{{ link.url }}" class="glaze-drawer-link">{{ link.title }}</a>
+                    <a href="{{ link.url }}" class="skinova-drawer-link">{{ link.title }}</a>
                   {%- endif -%}
                 </li>
               {%- endfor -%}
@@ -1545,8 +1545,8 @@
             {%- endfor -%}
 
             {%- if card_b or col_b or dd_b or link.links.size > 0 -%}
-              <div class="glaze-drawer-panel" data-panel="{{ forloop.index }}">
-                <button type="button" class="glaze-drawer-back" data-panel-back>
+              <div class="skinova-drawer-panel" data-panel="{{ forloop.index }}">
+                <button type="button" class="skinova-drawer-back" data-panel-back>
                   <svg viewBox="0 0 10 10" fill="none">
                     <path d="M7 1L3 5l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
@@ -1554,7 +1554,7 @@
                 </button>
 
                 {%- if card_b -%}
-                  <div class="glaze-drawer-cards">
+                  <div class="skinova-drawer-cards">
                     {%- for i in (1..6) -%}
                       {%- assign c_t_key = 'card_' | append: i | append: '_title' -%}
                       {%- assign c_s_key = 'card_' | append: i | append: '_sub' -%}
@@ -1565,16 +1565,16 @@
                       {%- assign img = card_b.settings[c_i_key] -%}
                       {%- assign c_link = card_b.settings[c_l_key] -%}
                       {%- if title != blank or img != blank -%}
-                        <a href="{{ c_link | default: '#' }}" class="glaze-drawer-card">
-                          <div class="glaze-drawer-card-img">
+                        <a href="{{ c_link | default: '#' }}" class="skinova-drawer-card">
+                          <div class="skinova-drawer-card-img">
                             {%- if img != blank -%}
                               {{ img | image_url: width: 400 | image_tag: loading: 'lazy', alt: title }}
                             {%- endif -%}
                           </div>
-                          <div class="glaze-drawer-card-body">
-                            <p class="glaze-drawer-card-title">{{ title }}</p>
+                          <div class="skinova-drawer-card-body">
+                            <p class="skinova-drawer-card-title">{{ title }}</p>
                             {%- if sub != blank -%}
-                              <p class="glaze-drawer-card-sub">{{ sub }}</p>
+                              <p class="skinova-drawer-card-sub">{{ sub }}</p>
                             {%- endif -%}
                           </div>
                         </a>
@@ -1592,7 +1592,7 @@
                       {%- assign fl_link = col_b.settings[dfl_l_key] -%}
                       {%- if fl_title != blank -%}
                         <li>
-                          <a href="{{ fl_link | default: '#' }}" class="glaze-drawer-link">{{ fl_title }}</a>
+                          <a href="{{ fl_link | default: '#' }}" class="skinova-drawer-link">{{ fl_title }}</a>
                         </li>
                       {%- endif -%}
                     {%- endfor -%}
@@ -1605,7 +1605,7 @@
                         <li>
                           <button
                             type="button"
-                            class="glaze-drawer-link"
+                            class="skinova-drawer-link"
                             data-panel-open="{{ forloop.parentloop.index }}-{{ col_idx }}"
                           >
                             {{ col_title }}
@@ -1620,25 +1620,25 @@
 
                   {%- assign trend_collection = col_b.settings.trend_collection -%}
                   {%- if trend_collection != blank -%}
-                    <p class="glaze-drawer-trend">{{ col_b.settings.trend_title | default: 'Trend This Week' }}</p>
-                    <div class="glaze-drawer-pslider">
+                    <p class="skinova-drawer-trend">{{ col_b.settings.trend_title | default: 'Trend This Week' }}</p>
+                    <div class="skinova-drawer-pslider">
                       {%- for p in collections[trend_collection].products limit: 8 -%}
-                        <a href="{{ p.url }}" class="glaze-drawer-pcard">
-                          <div class="glaze-pcard-img">
+                        <a href="{{ p.url }}" class="skinova-drawer-pcard">
+                          <div class="skinova-pcard-img">
                             {%- if p.featured_image -%}
                               {{ p.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: p.title }}
                             {%- endif -%}
                           </div>
-                          <div class="glaze-pcard-body">
+                          <div class="skinova-pcard-body">
                             {%- if p.type != blank -%}
-                              <p class="glaze-pcard-type">{{ p.type }}</p>
+                              <p class="skinova-pcard-type">{{ p.type }}</p>
                             {%- endif -%}
-                            <p class="glaze-pcard-title">{{ p.title }}</p>
-                            <div class="glaze-pcard-price">
+                            <p class="skinova-pcard-title">{{ p.title }}</p>
+                            <div class="skinova-pcard-price">
                               {%- if p.price_varies -%}From {% endif -%}
                               {{ p.price | money }}
                               {%- if p.compare_at_price > p.price -%}
-                                <span class="glaze-pcard-compare">{{ p.compare_at_price | money }}</span>
+                                <span class="skinova-pcard-compare">{{ p.compare_at_price | money }}</span>
                               {%- endif -%}
                             </div>
                           </div>
@@ -1657,7 +1657,7 @@
                       {%- assign d_link = dd_b.settings[dd_l_key] -%}
                       {%- if d_title != blank -%}
                         <li>
-                          <a href="{{ d_link | default: '#' }}" class="glaze-drawer-link">{{ d_title }}</a>
+                          <a href="{{ d_link | default: '#' }}" class="skinova-drawer-link">{{ d_title }}</a>
                         </li>
                       {%- endif -%}
                     {%- endfor -%}
@@ -1668,7 +1668,7 @@
                   <ul>
                     {%- for child in link.links -%}
                       <li>
-                        <a href="{{ child.url }}" class="glaze-drawer-link">{{ child.title }}</a>
+                        <a href="{{ child.url }}" class="skinova-drawer-link">{{ child.title }}</a>
                       </li>
                     {%- endfor -%}
                   </ul>
@@ -1679,14 +1679,14 @@
         {%- endif -%}
       </div>
 
-      <div class="glaze-drawer-footer">
+      <div class="skinova-drawer-footer">
         {%- if section.settings.show_country_selector -%}
-          {% render 'localization-form', class_prefix: 'glaze-localization' %}
+          {% render 'localization-form', class_prefix: 'skinova-localization' %}
         {%- endif -%}
 
         <a
           href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
-          class="glaze-drawer-btn"
+          class="skinova-drawer-btn"
         >
           {%- if customer -%}
             {{ 'customer.account.title' | t }}
@@ -1696,7 +1696,7 @@
         </a>
 
         {%- if section.settings.show_social_mobile -%}
-          <div class="glaze-drawer-social">
+          <div class="skinova-drawer-social">
             {%- if section.settings.social_facebook != blank -%}
               <a href="{{ section.settings.social_facebook }}" aria-label="Facebook">
                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -1803,7 +1803,7 @@
 
       // Sticky on scroll
       {% if sticky %}
-      var header = root.querySelector('.glaze-header');
+      var header = root.querySelector('.skinova-header');
       var lastY = 0;
       var ticking = false;
       function onScroll() {
@@ -1825,9 +1825,9 @@
       {% endif %}
 
       // Drawer
-      var drawer = root.querySelector('[data-glaze-drawer]');
-      var overlay = root.querySelector('.glaze-drawer-overlay');
-      root.querySelectorAll('[data-glaze-open-drawer]').forEach(function (btn) {
+      var drawer = root.querySelector('[data-skinova-drawer]');
+      var overlay = root.querySelector('.skinova-drawer-overlay');
+      root.querySelectorAll('[data-skinova-open-drawer]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           drawer.classList.add('is-open');
           overlay.classList.add('is-open');
@@ -1835,14 +1835,14 @@
           document.body.style.overflow = 'hidden';
         });
       });
-      root.querySelectorAll('[data-glaze-close-drawer]').forEach(function (btn) {
+      root.querySelectorAll('[data-skinova-close-drawer]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           drawer.classList.remove('is-open');
           overlay.classList.remove('is-open');
           drawer.setAttribute('aria-hidden', 'true');
           document.body.style.overflow = '';
           // reset panels
-          drawer.querySelectorAll('.glaze-drawer-panel').forEach(function (p) {
+          drawer.querySelectorAll('.skinova-drawer-panel').forEach(function (p) {
             p.classList.remove('is-active');
             p.classList.remove('is-pushed');
           });
@@ -1863,7 +1863,7 @@
       });
       drawer.querySelectorAll('[data-panel-back]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          var panel = btn.closest('.glaze-drawer-panel');
+          var panel = btn.closest('.skinova-drawer-panel');
           if (panel) panel.classList.remove('is-active');
           var root_panel = drawer.querySelector('[data-panel="root"]');
           if (root_panel) root_panel.classList.remove('is-pushed');
@@ -2004,7 +2004,7 @@
         if (total) total.textContent = pages;
 
         function update() {
-          var viewport = slider.querySelector('.glaze-pslider-viewport');
+          var viewport = slider.querySelector('.skinova-pslider-viewport');
           var vw = viewport ? viewport.clientWidth : 0;
           track.style.transform = 'translateX(' + (-page * vw) + 'px)';
           if (current) current.textContent = (page + 1);
@@ -2023,7 +2023,7 @@
 {% schema %}
 {
   "name": "Header",
-  "class": "section-glaze-header",
+  "class": "section-skinova-header",
   "tag": "section",
 
   "settings": [

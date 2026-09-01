@@ -1,5 +1,5 @@
 {%- liquid
-  assign section_id = 'glaze-stc-' | append: section.id
+  assign section_id = 'skinova-stc-' | append: section.id
 -%}
 
 {%- comment -%}
@@ -59,7 +59,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="glaze-stc" data-glaze-stc>
+<div id="{{ section_id }}" class="skinova-stc" data-skinova-stc>
   <div class="stc-wrap">
 
     {%- if section.settings.head_title != blank or section.settings.head_desc != blank or section.settings.head_link_label != blank -%}
@@ -81,7 +81,7 @@
       <div class="stc-left">
         <div class="stc-image-card" data-pos="{{ section.settings.image_content_position }}">
           {%- if section.settings.image != blank -%}
-            {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: section.settings.image_title, widths: '400,600,800,1000,1200' }}
+            {{ section.settings.image | image_url: width: 2000 | image_tag: loading: 'lazy', alt: section.settings.image_title, widths: '600,800,1000,1200,1600,2000', sizes: '(min-width: 750px) 50vw, 100vw' }}
           {%- endif -%}
           {%- if section.settings.eyebrow != blank or section.settings.image_title != blank or section.settings.btn_label != blank -%}
             <div class="stc-image-overlay">
@@ -224,15 +224,15 @@
 
 {%- comment -%}
   Collection sliders + quick-view modal controller live in assets/global.js
-  as Glaze.stickyCollections, auto-initialised on the [data-glaze-stc] root
-  element above. Quick-view content is rendered by window.GlazeQuickView
+  as Skinova.stickyCollections, auto-initialised on the [data-skinova-stc] root
+  element above. Quick-view content is rendered by window.SkinovaQuickView
   from assets/quick-view.js using the "stc" class prefix.
 {%- endcomment -%}
 
 {% schema %}
 {
   "name": "Sticky collections",
-  "class": "section-sticky-collections-glaze",
+  "class": "section-sticky-collections-skinova",
   "tag": "section",
   "max_blocks": 6,
   "settings": [

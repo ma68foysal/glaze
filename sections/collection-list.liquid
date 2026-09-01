@@ -1,5 +1,5 @@
 {%- liquid
-  assign section_id = 'glaze-cl-' | append: section.id
+  assign section_id = 'skinova-cl-' | append: section.id
   assign per_view = section.settings.cards_per_view
   if per_view > 2
     assign per_view_tablet = 2
@@ -45,7 +45,7 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="glaze-cl" data-glaze-cl>
+<div id="{{ section_id }}" class="skinova-cl" data-skinova-cl>
   <div class="scl-wrap">
 
     <div class="scl-info">
@@ -138,14 +138,14 @@
 </div>
 
 {%- comment -%}
-  Carousel controller lives in assets/global.js as Glaze.collectionList,
-  auto-initialised on the [data-glaze-cl] root element above.
+  Carousel controller lives in assets/global.js as Skinova.collectionList,
+  auto-initialised on the [data-skinova-cl] root element above.
 {%- endcomment -%}
 
 {% schema %}
 {
   "name": "Collection list",
-  "class": "section-collection-list-glaze",
+  "class": "section-collection-list-skinova",
   "tag": "section",
   "max_blocks": 16,
   "settings": [

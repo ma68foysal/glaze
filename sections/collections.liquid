@@ -9,24 +9,24 @@
 
 <section
   id="{{ section_id }}"
-  class="glaze-collections full-width"
+  class="skinova-collections full-width"
   style="
     --bg: {{ bg_color }};
     --fg: {{ text_color }};
     --cols-d: {{ columns_desktop }};
   "
 >
-  <div class="glaze-collections__inner">
-    <header class="glaze-collections__header">
-      <h1 class="glaze-collections__title">{{ heading | default: 'collections.title' | t | escape }}</h1>
+  <div class="skinova-collections__inner">
+    <header class="skinova-collections__header">
+      <h1 class="skinova-collections__title">{{ heading | default: 'collections.title' | t | escape }}</h1>
     </header>
 
     {%- if collections.size > 0 -%}
-      <ul class="glaze-collections__grid" role="list">
+      <ul class="skinova-collections__grid" role="list">
         {%- for collection in collections -%}
-          <li class="glaze-ccard">
-            <a class="glaze-ccard__link" href="{{ collection.url }}" aria-label="{{ collection.title | escape }}">
-              <div class="glaze-ccard__media">
+          <li class="skinova-ccard">
+            <a class="skinova-ccard__link" href="{{ collection.url }}" aria-label="{{ collection.title | escape }}">
+              <div class="skinova-ccard__media">
                 {%- if collection.featured_image -%}
                   {{ collection.featured_image | image_url: width: 800 | image_tag:
                       loading: 'lazy',
@@ -35,48 +35,48 @@
                       alt: collection.featured_image.alt | default: collection.title | escape
                   }}
                 {%- else -%}
-                  <span class="glaze-ccard__placeholder" aria-hidden="true">{{ collection.title | slice: 0 | upcase }}</span>
+                  <span class="skinova-ccard__placeholder" aria-hidden="true">{{ collection.title | slice: 0 | upcase }}</span>
                 {%- endif -%}
               </div>
-              <div class="glaze-ccard__body">
-                <h2 class="glaze-ccard__title">{{ collection.title | escape }}</h2>
+              <div class="skinova-ccard__body">
+                <h2 class="skinova-ccard__title">{{ collection.title | escape }}</h2>
                 {%- if show_description and collection.description != blank -%}
-                  <p class="glaze-ccard__description">{{ collection.description | strip_html | truncatewords: 18 }}</p>
+                  <p class="skinova-ccard__description">{{ collection.description | strip_html | truncatewords: 18 }}</p>
                 {%- endif -%}
-                <span class="glaze-ccard__count">{{ 'collection.product_count' | t: count: collection.products_count }}</span>
+                <span class="skinova-ccard__count">{{ 'collection.product_count' | t: count: collection.products_count }}</span>
               </div>
             </a>
           </li>
         {%- endfor -%}
       </ul>
     {%- else -%}
-      <p class="glaze-collections__empty">{{ 'collections.empty' | t }}</p>
+      <p class="skinova-collections__empty">{{ 'collections.empty' | t }}</p>
     {%- endif -%}
   </div>
 </section>
 
 {% stylesheet %}
-  .glaze-collections {
+  .skinova-collections {
     background: var(--bg, var(--g-cream));
     color: var(--fg, var(--g-ink));
     font-family: var(--g-body-font);
     padding: 64px 24px 96px;
   }
-  .glaze-collections__inner {
+  .skinova-collections__inner {
     max-width: 1280px;
     margin: 0 auto;
   }
-  .glaze-collections__header {
+  .skinova-collections__header {
     text-align: center;
     margin-bottom: 32px;
   }
-  .glaze-collections__title {
+  .skinova-collections__title {
     font-family: var(--g-display-font);
     font-size: clamp(28px, 4vw, 44px);
     font-weight: 600;
     margin: 0;
   }
-  .glaze-collections__grid {
+  .skinova-collections__grid {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -85,32 +85,32 @@
     gap: 16px;
   }
   @media (min-width: 720px) {
-    .glaze-collections__grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .skinova-collections__grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
   }
   @media (min-width: 1080px) {
-    .glaze-collections__grid { grid-template-columns: repeat(var(--cols-d, 3), 1fr); gap: 24px; }
+    .skinova-collections__grid { grid-template-columns: repeat(var(--cols-d, 3), 1fr); gap: 24px; }
   }
-  .glaze-ccard__link {
+  .skinova-ccard__link {
     display: block;
     color: var(--g-ink);
     text-decoration: none;
   }
-  .glaze-ccard__link:focus-visible { outline: 2px solid var(--g-rose); outline-offset: 4px; border-radius: var(--g-radius-md); }
-  .glaze-ccard__media {
+  .skinova-ccard__link:focus-visible { outline: 2px solid var(--g-rose); outline-offset: 4px; border-radius: var(--g-radius-md); }
+  .skinova-ccard__media {
     aspect-ratio: 4 / 5;
     border-radius: var(--g-radius-md);
     overflow: hidden;
     background: var(--g-cream-warm);
     position: relative;
   }
-  .glaze-ccard__media img {
+  .skinova-ccard__media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.4s ease;
   }
-  .glaze-ccard__link:hover .glaze-ccard__media img { transform: scale(1.04); }
-  .glaze-ccard__placeholder {
+  .skinova-ccard__link:hover .skinova-ccard__media img { transform: scale(1.04); }
+  .skinova-ccard__placeholder {
     position: absolute;
     inset: 0;
     display: grid;
@@ -120,28 +120,28 @@
     font-weight: 700;
     color: var(--g-rose);
   }
-  .glaze-ccard__body {
+  .skinova-ccard__body {
     padding: 12px 4px 0;
     display: grid;
     gap: 4px;
   }
-  .glaze-ccard__title {
+  .skinova-ccard__title {
     font-family: var(--g-display-font);
     font-size: 18px;
     font-weight: 600;
     margin: 0;
   }
-  .glaze-ccard__description {
+  .skinova-ccard__description {
     margin: 0;
     color: var(--g-muted-strong);
     font-size: 13px;
     line-height: 1.5;
   }
-  .glaze-ccard__count {
+  .skinova-ccard__count {
     color: var(--g-muted);
     font-size: 12px;
   }
-  .glaze-collections__empty {
+  .skinova-collections__empty {
     text-align: center;
     color: var(--g-muted);
     padding: 64px 24px;

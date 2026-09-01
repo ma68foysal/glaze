@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /**
- * Glaze quick-view — shared product quick-view modal renderer.
+ * Skinova quick-view — shared product quick-view modal renderer.
  *
  * Two sections currently use it: sticky-collections (cls: "stc") and
  * featured-product (cls: "sfp"). Each section provides its own modal
@@ -13,12 +13,12 @@
  * `.sfp-modal-*` etc. under their respective S12/S13 blocks).
  *
  * Exposes:
- *   window.GlazeQuickView = {
+ *   window.SkinovaQuickView = {
  *     render(productJson, cls)         → string of HTML
  *     bind(modalBodyEl, productJson, { cls, source, onClose })
  *   }
  *
- * Depends on window.Glaze.utils.money + window.Glaze.cartAdd from
+ * Depends on window.Skinova.utils.money + window.Skinova.cartAdd from
  * assets/global.js — both are accessed at click time, so load order is:
  *   <script defer src="global.js"></script>
  *   <script defer src="quick-view.js"></script>
@@ -27,18 +27,18 @@
   'use strict';
 
   function money(cents) {
-    if (window.Glaze && window.Glaze.utils && window.Glaze.utils.money) {
-      return window.Glaze.utils.money(cents);
+    if (window.Skinova && window.Skinova.utils && window.Skinova.utils.money) {
+      return window.Skinova.utils.money(cents);
     }
     var n = parseInt(cents, 10) || 0;
     return '$' + (n / 100).toFixed(2);
   }
 
   function cartAdd(id, qty, btn, source) {
-    if (window.Glaze && typeof window.Glaze.cartAdd === 'function') {
-      return window.Glaze.cartAdd(id, qty, btn, source);
+    if (window.Skinova && typeof window.Skinova.cartAdd === 'function') {
+      return window.Skinova.cartAdd(id, qty, btn, source);
     }
-    return Promise.reject(new Error('Glaze.cartAdd not loaded'));
+    return Promise.reject(new Error('Skinova.cartAdd not loaded'));
   }
 
   function render(p, cls, extras) {
@@ -197,8 +197,8 @@
     buyBtn.addEventListener('click', function () {
       var v = findVariant(); if (!v || !v.available) return;
       buyBtn.classList.add('is-loading');
-      if (window.GlazeCart && typeof window.GlazeCart.addToCart === 'function') {
-        window.GlazeCart.addToCart(v.id, { quantity: state.qty, sourceButton: buyBtn, openDrawer: false, source: sourceLabel + ':buy-now' })
+      if (window.SkinovaCart && typeof window.SkinovaCart.addToCart === 'function') {
+        window.SkinovaCart.addToCart(v.id, { quantity: state.qty, sourceButton: buyBtn, openDrawer: false, source: sourceLabel + ':buy-now' })
           .then(function () { window.location.href = '/checkout'; })
           .catch(function (err) { console.error('[' + sourceLabel + ']', err); buyBtn.classList.remove('is-loading'); });
       } else {
@@ -211,5 +211,5 @@
     refresh();
   }
 
-  window.GlazeQuickView = { render: render, bind: bind };
+  window.SkinovaQuickView = { render: render, bind: bind };
 })();

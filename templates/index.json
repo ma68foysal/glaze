@@ -9,7 +9,7 @@
  */
 {
   "sections": {
-    "slideshow_glaze_x7W6aQ": {
+    "slideshow_skinova_x7W6aQ": {
       "type": "slideshow",
       "blocks": {
         "slide_RLe74U": {
@@ -78,7 +78,7 @@
         "aria_label": "Featured stories"
       }
     },
-    "marquee_glaze_f8tiN3": {
+    "marquee_skinova_f8tiN3": {
       "type": "marquee",
       "blocks": {
         "item_tRy3x9": {
@@ -142,7 +142,7 @@
         "border_bottom_color": "#e6e6e6"
       }
     },
-    "featured_product_glaze_w7prWB": {
+    "featured_product_skinova_w7prWB": {
       "type": "featured-product",
       "blocks": {
         "tab_pddiiP": {
@@ -218,7 +218,7 @@
         "padding_bottom": 60
       }
     },
-    "highlight_text_image_glaze_AKKafm": {
+    "highlight_text_image_skinova_AKKafm": {
       "type": "highlight-text-image",
       "blocks": {
         "text_YM84tm": {
@@ -509,7 +509,7 @@
         "side_padding": 32
       }
     },
-    "collection_list_glaze_cTyQ8H": {
+    "collection_list_skinova_cTyQ8H": {
       "type": "collection-list",
       "blocks": {
         "collection_qnYMJp": {
@@ -593,7 +593,7 @@
         "padding_bottom": 80
       }
     },
-    "product_bundle_glaze_CM3gnJ": {
+    "product_bundle_skinova_CM3gnJ": {
       "type": "product-bundle",
       "blocks": {
         "product_M8i8mc": {
@@ -610,7 +610,7 @@
           "settings": {
             "product": "dream-bio-retinol",
             "title_override": "Dream Bio Retinol",
-            "dot_x": 70,
+            "dot_x": 90,
             "dot_y": 45
           }
         },
@@ -619,8 +619,8 @@
           "settings": {
             "product": "protective-day-oil",
             "title_override": "",
-            "dot_x": 20,
-            "dot_y": 38
+            "dot_x": 14,
+            "dot_y": 31
           }
         }
       },
@@ -631,7 +631,7 @@
       ],
       "name": "Product bundle",
       "settings": {
-        "image": "shopify://shop_images/product-bundle-min.webp",
+        "image": "shopify://shop_images/skinova-7.png",
         "media_radius": 16,
         "eyebrow": "Shop Skincare Set",
         "title": "Build your complete daily skin ritual",
@@ -663,7 +663,7 @@
         "padding_bottom": 80
       }
     },
-    "sticky_collections_glaze_H8XPUd": {
+    "sticky_collections_skinova_H8XPUd": {
       "type": "sticky-collections",
       "blocks": {
         "collection_MfnXLf": {
@@ -710,7 +710,7 @@
         "head_link_color": "#111111",
         "head_link_size": 14,
         "head_align": "center",
-        "image": "shopify://shop_images/image-card.webp",
+        "image": "shopify://shop_images/skinova-8.png",
         "image_content_position": "top",
         "image_radius": 16,
         "eyebrow": "Formulated With Care",
@@ -761,11 +761,11 @@
         "padding_bottom": 80
       }
     },
-    "image_with_text_glaze_3hQB3m": {
+    "image_with_text_skinova_3hQB3m": {
       "type": "image-with-text",
       "name": "Image with text",
       "settings": {
-        "image": "shopify://shop_images/image-with-text-min.webp",
+        "image": "shopify://shop_images/skinova-9.png",
         "image_side": "right",
         "eyebrow": "Gentle And Considered",
         "title": "Skincare that respects your skin",
@@ -794,7 +794,7 @@
         "side_padding": 40
       }
     },
-    "shoppable_tabs_glaze_PwcPDF": {
+    "shoppable_tabs_skinova_PwcPDF": {
       "type": "shoppable-tabs",
       "blocks": {
         "tab_Tdjqi3": {
@@ -876,7 +876,7 @@
         "padding_bottom": 80
       }
     },
-    "featured_press_glaze_XWhbnq": {
+    "featured_press_skinova_XWhbnq": {
       "type": "featured-press",
       "blocks": {
         "press_9wwXw9": {
@@ -932,7 +932,7 @@
         "padding_bottom": 72
       }
     },
-    "features_glaze_xphNB6": {
+    "features_skinova_xphNB6": {
       "type": "features",
       "blocks": {
         "feature_H7xchU": {
@@ -1010,7 +1010,7 @@
         "padding_bottom": 56
       }
     },
-    "faq_glaze_JcNjzx": {
+    "faq_skinova_JcNjzx": {
       "type": "faq-grid",
       "blocks": {
         "faq_MDpDEJ": {
@@ -1067,7 +1067,7 @@
         "btn_fg": "#ffffff",
         "btn_hover_bg": "#333333",
         "btn_hover_fg": "#ffffff",
-        "image": "shopify://shop_images/image_806_1_6b4cd02f-1a3e-49ac-b41c-f5075a23047e.webp",
+        "image": "shopify://shop_images/skinova-2.png",
         "image_radius": 0,
         "item_bg": "#ffffff",
         "item_border_color": "#e8e2d8",
@@ -1084,7 +1084,7 @@
         "padding_bottom": 80
       }
     },
-    "about_glaze_rmM4PF": {
+    "about_skinova_rmM4PF": {
       "type": "about",
       "blocks": {
         "card_4NHQw4": {
@@ -1150,19 +1150,19 @@
     }
   },
   "order": [
-    "slideshow_glaze_x7W6aQ",
-    "marquee_glaze_f8tiN3",
-    "featured_product_glaze_w7prWB",
-    "highlight_text_image_glaze_AKKafm",
+    "slideshow_skinova_x7W6aQ",
+    "marquee_skinova_f8tiN3",
+    "featured_product_skinova_w7prWB",
+    "highlight_text_image_skinova_AKKafm",
     "highlight_statement_YFmqWy",
-    "collection_list_glaze_cTyQ8H",
-    "product_bundle_glaze_CM3gnJ",
-    "sticky_collections_glaze_H8XPUd",
-    "image_with_text_glaze_3hQB3m",
-    "shoppable_tabs_glaze_PwcPDF",
-    "featured_press_glaze_XWhbnq",
-    "features_glaze_xphNB6",
-    "faq_glaze_JcNjzx",
-    "about_glaze_rmM4PF"
+    "collection_list_skinova_cTyQ8H",
+    "product_bundle_skinova_CM3gnJ",
+    "sticky_collections_skinova_H8XPUd",
+    "image_with_text_skinova_3hQB3m",
+    "shoppable_tabs_skinova_PwcPDF",
+    "featured_press_skinova_XWhbnq",
+    "features_skinova_xphNB6",
+    "faq_skinova_JcNjzx",
+    "about_skinova_rmM4PF"
   ]
 }

@@ -43,7 +43,7 @@
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
 
     {% comment %}
-      Global Glaze design-system styles (buttons, product cards, pagination, RTE prose, form fields).
+      Global Skinova design-system styles (buttons, product cards, pagination, RTE prose, form fields).
       Loads once theme-wide so individual sections don't re-emit duplicated rules.
     {% endcomment %}
     {{ 'base.css' | asset_url | stylesheet_tag }}
@@ -90,7 +90,7 @@
     {%- comment -%}
       global.js — theme-wide utilities (reveal observer, accordion, tab
       indicator, hero slideshow controller, money/debounce helpers).
-      Loaded BEFORE cart.js so window.Glaze is available to cart code if
+      Loaded BEFORE cart.js so window.Skinova is available to cart code if
       needed. Both are deferred so they run after the parser hits </body>.
     {%- endcomment -%}
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
@@ -98,7 +98,7 @@
     {%- comment -%}
       quick-view.js — product quick-view modal renderer, shared by
       sections that open a quick-view (sticky-collections, featured-product).
-      Depends on window.Glaze.utils.money + window.Glaze.cartAdd from
+      Depends on window.Skinova.utils.money + window.Skinova.cartAdd from
       global.js, so loads after it.
     {%- endcomment -%}
     <script src="{{ 'quick-view.js' | asset_url }}" defer="defer"></script>
@@ -132,7 +132,7 @@
 
             // Pause/resume around modals + drawers
             function refreshLockedState() {
-              const hasOpen = document.querySelector('predictive-search[open], .glaze-drawer.is-open, dialog[open]');
+              const hasOpen = document.querySelector('predictive-search[open], .skinova-drawer.is-open, dialog[open]');
               if (hasOpen) { lenis.stop(); } else { lenis.start(); }
             }
             const mo = new MutationObserver(refreshLockedState);

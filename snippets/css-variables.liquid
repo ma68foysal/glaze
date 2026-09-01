@@ -21,7 +21,7 @@
     --color-foreground: {{ settings.foreground_color }};
     --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
 
-    /* Glaze design tokens — drive section defaults (404, cart, collection, etc.)
+    /* Skinova design tokens — drive section defaults (404, cart, collection, etc.)
        so the theme inherits merchant colour choices without per-section duplication.
        The hardcoded fallbacks (#fbe9e8 etc.) are only used if a setting is blank. */
     --g-bg: {{ settings.background_color | default: '#ffffff' }};

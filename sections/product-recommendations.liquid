@@ -12,7 +12,7 @@
 
 <product-recommendations
   id="{{ section_id }}"
-  class="glaze-recs full-width"
+  class="skinova-recs full-width"
   data-url="{{ recs_url }}"
   style="
     --bg: {{ bg_color }};
@@ -23,12 +23,12 @@
 >
   {%- if recommendations.performed -%}
     {%- if recommendations.products_count > 0 -%}
-      <div class="glaze-recs__inner">
-        <h2 class="glaze-recs__heading">{{ heading | escape }}</h2>
-        <ul class="glaze-recs__grid" role="list">
+      <div class="skinova-recs__inner">
+        <h2 class="skinova-recs__heading">{{ heading | escape }}</h2>
+        <ul class="skinova-recs__grid" role="list">
           {%- for product in recommendations.products -%}
-            <li class="glaze-pcard">
-              <a class="glaze-pcard__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+            <li class="skinova-pcard">
+              <a class="skinova-pcard__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
                 {%- if product.featured_image -%}
                   {{ product.featured_image | image_url: width: 600 | image_tag:
                       loading: 'lazy',
@@ -38,25 +38,25 @@
                   }}
                 {%- endif -%}
                 {%- if product.compare_at_price_max > product.price -%}
-                  <span class="glaze-pcard__badge glaze-pcard__badge--sale">{{ 'collection.sale_badge' | t }}</span>
+                  <span class="skinova-pcard__badge skinova-pcard__badge--sale">{{ 'collection.sale_badge' | t }}</span>
                 {%- endif -%}
                 {%- if product.available == false -%}
-                  <span class="glaze-pcard__badge glaze-pcard__badge--soldout">{{ 'collection.soldout_badge' | t }}</span>
+                  <span class="skinova-pcard__badge skinova-pcard__badge--soldout">{{ 'collection.soldout_badge' | t }}</span>
                 {%- endif -%}
               </a>
-              <div class="glaze-pcard__body">
+              <div class="skinova-pcard__body">
                 {%- if product.vendor != blank -%}
-                  <p class="glaze-pcard__vendor">{{ product.vendor | escape }}</p>
+                  <p class="skinova-pcard__vendor">{{ product.vendor | escape }}</p>
                 {%- endif -%}
-                <a class="glaze-pcard__title" href="{{ product.url }}">{{ product.title | escape }}</a>
-                <div class="glaze-pcard__prices">
+                <a class="skinova-pcard__title" href="{{ product.url }}">{{ product.title | escape }}</a>
+                <div class="skinova-pcard__prices">
                   {%- if product.compare_at_price_max > product.price -%}
-                    <s class="glaze-pcard__compare">{{ product.compare_at_price_max | money }}</s>
+                    <s class="skinova-pcard__compare">{{ product.compare_at_price_max | money }}</s>
                   {%- endif -%}
                   {%- if product.price_varies -%}
-                    <span class="glaze-pcard__price">{{ 'collection.from' | t }} {{ product.price_min | money }}</span>
+                    <span class="skinova-pcard__price">{{ 'collection.from' | t }} {{ product.price_min | money }}</span>
                   {%- else -%}
-                    <span class="glaze-pcard__price">{{ product.price | money }}</span>
+                    <span class="skinova-pcard__price">{{ product.price | money }}</span>
                   {%- endif -%}
                 </div>
               </div>

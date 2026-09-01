@@ -36,8 +36,8 @@
       <img
         class="sfp-mini__img"
         loading="lazy"
-        src="{{ primary | image_url: width: 600 }}"
-        srcset="{{ primary | image_url: width: 300 }} 300w, {{ primary | image_url: width: 480 }} 480w, {{ primary | image_url: width: 600 }} 600w"
+        src="{{ primary | image_url: width: 900 }}"
+        srcset="{{ primary | image_url: width: 300 }} 300w, {{ primary | image_url: width: 480 }} 480w, {{ primary | image_url: width: 600 }} 600w, {{ primary | image_url: width: 800 }} 800w, {{ primary | image_url: width: 1000 }} 1000w, {{ primary | image_url: width: 1200 }} 1200w"
         sizes="(min-width: 990px) 22vw, 45vw"
         alt="{{ primary.alt | default: product.title | escape }}"
         width="{{ primary.width }}"

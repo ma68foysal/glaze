@@ -1,5 +1,5 @@
 {%- liquid
-  assign sid = 'glaze-hero-' | append: section.id
+  assign sid = 'skinova-hero-' | append: section.id
   assign autoplay = section.settings.autoplay
   assign speed = section.settings.speed | default: 6
   assign h_desk = section.settings.height_desktop | default: 720
@@ -10,7 +10,7 @@
 -%}
 
 {% comment %}
-  Glaze editorial hero — asymmetric magazine-spread slideshow.
+  Skinova editorial hero — asymmetric magazine-spread slideshow.
   Image takes one side, cream-textured content panel takes the other.
   Slides crossfade (not horizontal slide), text reveals with mask wipes,
   numbered nav with autoplay progress bars at the side.
@@ -22,15 +22,15 @@
 
 <section
   id="{{ sid }}"
-  class="glaze-hero"
-  data-glaze-hero
+  class="skinova-hero"
+  data-skinova-hero
   data-autoplay="{{ autoplay }}"
   data-speed="{{ speed }}"
   aria-roledescription="carousel"
   aria-label="{{ section.settings.aria_label | default: 'Featured stories' }}"
   style="--hero-h-desk: {{ h_desk }}px; --hero-h-mob: {{ h_mob }}px;"
 >
-  <div class="glaze-hero__stage" data-hero-stage>
+  <div class="skinova-hero__stage" data-hero-stage>
     {%- for block in section.blocks -%}
       {%- if block.type == 'slide' -%}
         {%- assign theme = block.settings.theme_preset | default: 'cream' -%}
@@ -41,7 +41,7 @@
           {%- assign has_video = true -%}
         {%- endif -%}
         <article
-          class="glaze-hero__slide {% if forloop.first %}is-active{% endif %}"
+          class="skinova-hero__slide {% if forloop.first %}is-active{% endif %}"
           data-slide-index="{{ forloop.index0 }}"
           data-theme="{{ theme }}"
           data-align="{{ align }}"
@@ -53,8 +53,8 @@
           {% if theme == 'custom' %}style="--hero-surface: {{ block.settings.bg_color }}; --hero-ink: {{ block.settings.text_color }};"{% endif %}
           {{ block.shopify_attributes }}
         >
-          <div class="glaze-hero__media">
-            <div class="glaze-hero__media-inner" data-parallax style="--parallax-strength: {{ parallax }};">
+          <div class="skinova-hero__media">
+            <div class="skinova-hero__media-inner" data-parallax style="--parallax-strength: {{ parallax }};">
               {%- if has_video -%}
                 {%- comment -%}
                   Shopify-hosted video. Image (if set) doubles as poster so
@@ -67,7 +67,7 @@
                 {% capture vid_preload %}{% if forloop.first %}auto{% else %}metadata{% endif %}{% endcapture %}
                 {% # theme-check-disable RemoteAsset %}
                 <video
-                  class="glaze-hero__img glaze-hero__video"
+                  class="skinova-hero__img skinova-hero__video"
                   autoplay
                   muted
                   loop
@@ -93,46 +93,46 @@
                     fetchpriority: img_fetchpriority,
                     widths: '600, 900, 1200, 1600, 2000, 2400',
                     sizes: '(min-width: 900px) 62vw, 100vw',
-                    class: 'glaze-hero__img',
+                    class: 'skinova-hero__img',
                     alt: img_alt
                 }}
               {%- else -%}
-                <div class="glaze-hero__img glaze-hero__img--placeholder" aria-hidden="true">
+                <div class="skinova-hero__img skinova-hero__img--placeholder" aria-hidden="true">
                   {{ 'lifestyle-1' | placeholder_svg_tag }}
                 </div>
               {%- endif -%}
             </div>
           </div>
 
-          <div class="glaze-hero__panel glaze-grain">
-            <div class="glaze-hero__panel-inner">
+          <div class="skinova-hero__panel skinova-grain">
+            <div class="skinova-hero__panel-inner">
               {%- if block.settings.eyebrow != blank -%}
-                <span class="glaze-eyebrow glaze-hero__eyebrow" data-reveal="mask">
+                <span class="skinova-eyebrow skinova-hero__eyebrow" data-reveal="mask">
                   {{ block.settings.eyebrow | escape }}
                 </span>
               {%- endif -%}
 
               {%- if block.settings.heading != blank -%}
-                <h2 class="glaze-display glaze-hero__heading" data-reveal="mask" style="--stagger-index: 1;">
+                <h2 class="skinova-display skinova-hero__heading" data-reveal="mask" style="--stagger-index: 1;">
                   {{ block.settings.heading | escape }}
                 </h2>
               {%- endif -%}
 
               {%- if block.settings.body != blank -%}
-                <p class="glaze-lede glaze-hero__body" data-reveal="fade" style="--stagger-index: 2;">
+                <p class="skinova-lede skinova-hero__body" data-reveal="fade" style="--stagger-index: 2;">
                   {{ block.settings.body }}
                 </p>
               {%- endif -%}
 
               {%- if block.settings.button_label != blank -%}
                 <a
-                  class="glaze-hero__cta"
+                  class="skinova-hero__cta"
                   data-reveal="fade"
                   style="--stagger-index: 3;"
                   href="{{ block.settings.button_link | default: '#' }}"
                 >
-                  <span class="glaze-hero__cta-label">{{ block.settings.button_label | escape }}</span>
-                  <span class="glaze-hero__cta-arrow" aria-hidden="true">
+                  <span class="skinova-hero__cta-label">{{ block.settings.button_label | escape }}</span>
+                  <span class="skinova-hero__cta-arrow" aria-hidden="true">
                     <svg viewBox="0 0 24 16" width="24" height="16" fill="none">
                       <path d="M1 8h21M16 1l7 7-7 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -141,10 +141,10 @@
               {%- endif -%}
 
               {%- if show_counter and section.blocks.size > 1 -%}
-                <span class="glaze-hero__counter" aria-hidden="true">
-                  <span class="glaze-hero__counter-current">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
-                  <span class="glaze-hero__counter-sep">/</span>
-                  <span class="glaze-hero__counter-total">{% if section.blocks.size < 10 %}0{% endif %}{{ section.blocks.size }}</span>
+                <span class="skinova-hero__counter" aria-hidden="true">
+                  <span class="skinova-hero__counter-current">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+                  <span class="skinova-hero__counter-sep">/</span>
+                  <span class="skinova-hero__counter-total">{% if section.blocks.size < 10 %}0{% endif %}{{ section.blocks.size }}</span>
                 </span>
               {%- endif -%}
             </div>
@@ -155,22 +155,22 @@
   </div>
 
   {%- if section.blocks.size > 1 -%}
-    <nav class="glaze-hero__nav" aria-label="Slide controls">
-      <ol class="glaze-hero__dots" role="tablist">
+    <nav class="skinova-hero__nav" aria-label="Slide controls">
+      <ol class="skinova-hero__dots" role="tablist">
         {%- for block in section.blocks -%}
           {%- if block.type == 'slide' -%}
             <li role="presentation">
               <button
                 type="button"
-                class="glaze-hero__dot {% if forloop.first %}is-active{% endif %}"
+                class="skinova-hero__dot {% if forloop.first %}is-active{% endif %}"
                 data-go-to="{{ forloop.index0 }}"
                 role="tab"
                 aria-label="Go to slide {{ forloop.index }}"
                 {% if forloop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}
               >
-                <span class="glaze-hero__dot-num">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+                <span class="skinova-hero__dot-num">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
                 {%- if show_progress -%}
-                  <span class="glaze-hero__progress" aria-hidden="true"><span class="glaze-hero__progress-bar"></span></span>
+                  <span class="skinova-hero__progress" aria-hidden="true"><span class="skinova-hero__progress-bar"></span></span>
                 {%- endif -%}
               </button>
             </li>
@@ -178,11 +178,11 @@
         {%- endfor -%}
       </ol>
 
-      <button type="button" class="glaze-hero__pause" data-hero-toggle aria-label="Pause slideshow" aria-pressed="false">
-        <svg class="glaze-hero__pause-icon glaze-hero__pause-icon--pause" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+      <button type="button" class="skinova-hero__pause" data-hero-toggle aria-label="Pause slideshow" aria-pressed="false">
+        <svg class="skinova-hero__pause-icon skinova-hero__pause-icon--pause" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
           <rect x="2" y="1" width="3" height="10" fill="currentColor"/><rect x="7" y="1" width="3" height="10" fill="currentColor"/>
         </svg>
-        <svg class="glaze-hero__pause-icon glaze-hero__pause-icon--play" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+        <svg class="skinova-hero__pause-icon skinova-hero__pause-icon--play" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
           <path d="M2 1l9 5-9 5z" fill="currentColor"/>
         </svg>
       </button>
@@ -196,8 +196,8 @@
 {%- comment -%}
   This section ships no inline CSS or JS:
     - Styles live in assets/base.css under "S1. Hero slideshow"
-    - Controller lives in assets/global.js as `Glaze.hero`, auto-initialising
-      any element with [data-glaze-hero] (also re-runs on
+    - Controller lives in assets/global.js as `Skinova.hero`, auto-initialising
+      any element with [data-skinova-hero] (also re-runs on
       shopify:section:load so theme-editor reloads work).
   Per-instance values (height, autoplay speed, parallax strength) pass
   through inline `style="--hero-h-desk: …"` on the section element.
@@ -207,7 +207,7 @@
 {
   "name": "Slideshow",
   "tag": "section",
-  "class": "section-slideshow-glaze",
+  "class": "section-slideshow-skinova",
   "max_blocks": 6,
   "settings": [
     {

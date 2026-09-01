@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "header",
   "name": "t:general.header",
@@ -52,7 +61,8 @@
             "col_2_title": "Makeup",
             "col_2_menu": "main-menu",
             "trend_title": "Trend This Week",
-            "trend_collection": "mens"
+            "trend_collection": "mens",
+            "products_per_slide": 2
           }
         },
         "menu_dropdown": {
@@ -114,6 +124,7 @@
         "ann_3"
       ],
       "settings": {
+        "logo": "shopify://shop_images/skinova_primary_2x_3693fdc0-34ed-46ee-adb1-c58aeb5408a3.png",
         "logo_width": 120,
         "menu": "main-menu",
         "nav_font_size": 15,
