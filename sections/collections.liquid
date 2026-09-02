@@ -18,7 +18,9 @@
 >
   <div class="skinova-collections__inner">
     <header class="skinova-collections__header">
-      <h1 class="skinova-collections__title">{{ heading | default: 'collections.title' | t | escape }}</h1>
+      <h1 class="skinova-collections__title">
+        {%- if heading != blank -%}{{ heading | escape }}{%- else -%}{{ 'collections.title' | t }}{%- endif -%}
+      </h1>
     </header>
 
     {%- if collections.size > 0 -%}

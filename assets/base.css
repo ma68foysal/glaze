@@ -2484,13 +2484,23 @@ a.is-loading::after {
     gap: 28px;
     padding: 0 0 0 24px;
   }
-  .skinova-cl .scl-info { padding: 0 24px 0 0; }
+  .skinova-cl .scl-info {
+    padding: 0 24px 0 0;
+    /* Once the grid stacks, this column is as wide as the card track inside
+       .scl-slider, so the heading and description inherit that width and run
+       off-screen. Clamp the TEXT block to the viewport only. The card slider
+       is meant to overflow and is deliberately left untouched.
+       24px = .scl-wrap padding-left at this breakpoint. */
+    max-width: calc(100vw - 24px);
+  }
   .skinova-cl .scl-desc { max-width: 100%; }
   .skinova-cl .scl-nav  { margin-top: 4px; }
 }
 @media screen and (max-width: 749px) {
   .skinova-cl { --scl-per-view: 1.4; }
   .skinova-cl .scl-wrap { padding: 0 0 0 16px; }
+  /* .scl-wrap padding-left drops to 16px here, so the text clamp follows it. */
+  .skinova-cl .scl-info { max-width: calc(100vw - 16px); }
   .skinova-cl .scl-nav  { display: none; }
   .skinova-cl .scl-card-media { aspect-ratio: 1 / 1; }
   .skinova-cl .scl-card-body  { padding: 12px 14px 14px; }
@@ -4352,14 +4362,19 @@ a.is-loading::after {
 @media screen and (max-width: 989px) {
   .skinova-stc .stc-grid { grid-template-columns: 1fr; gap: 20px; }
   .skinova-stc .stc-left { position: static; top: auto; width: 100%; }
-  .skinova-stc .stc-image-card { aspect-ratio: 4 / 3; width: 100%; max-width: 100%; margin: 0; }
+  /* Once .stc-grid stacks, this column is as wide as the card track inside
+     .stc-right, so a percentage max-width still resolves to more than the
+     screen. Clamp the banner to the viewport instead.
+     40px = .stc-wrap padding (20px each side) at this breakpoint. */
+  .skinova-stc .stc-image-card { aspect-ratio: 4 / 3; width: 100%; max-width: calc(100vw - 40px); margin: 0; }
   .skinova-stc .stc-wrap { padding: 0 20px; }
   .skinova-stc .stc-head { margin-bottom: 24px; }
   .skinova-stc .stc-head-title { font-size: 28px; }
 }
 @media screen and (max-width: 749px) {
   .skinova-stc .stc-wrap { padding: 0 16px; }
-  .skinova-stc .stc-image-card { aspect-ratio: 4 / 3; max-width: 60%; margin: 0; }
+  /* 32px = .stc-wrap padding (16px each side) at this breakpoint. */
+  .skinova-stc .stc-image-card { aspect-ratio: 4 / 3; max-width: calc(100vw - 32px); margin: 0; }
   .skinova-stc .stc-coll-head { max-width: 60%; margin: 0; width: 100%; }
   .skinova-stc .stc-image-overlay { padding: 20px 18px; gap: 8px; }
   .skinova-stc .stc-image-title { font-size: 22px; margin-bottom: 4px; }

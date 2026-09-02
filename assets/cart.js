@@ -1,12 +1,7 @@
 /* eslint-disable no-console */
-// Toggle [data-debug-cart] on <body> to silence logs in production. Default ON
-// while we're stabilising the cart system; flip to false before submission.
-var SKINOVA_CART_DEBUG = true;
-function clog() {
-  if (!SKINOVA_CART_DEBUG) return;
-  var args = ['[skinova-cart]'].concat(Array.prototype.slice.call(arguments));
-  try { console.log.apply(console, args); } catch (e) {}
-}
+// Diagnostic warnings only. These fire when the cart markup or a Section
+// Rendering response is not what the theme expects — i.e. a real fault worth
+// seeing in a merchant console. No verbose request tracing ships.
 function cwarn() {
   var args = ['[skinova-cart]'].concat(Array.prototype.slice.call(arguments));
   try { console.warn.apply(console, args); } catch (e) {}
@@ -142,10 +137,10 @@ function cwarn() {
       cwarn('applyCartSections: no sections in response — Section Rendering API likely missing sections_url param OR Shopify error');
       return false;
     }
-    clog('applyCartSections received sections:', Object.keys(sectionsObj));
     var anySwapped = false;
 
     if (sectionsObj['cart-drawer']) {
+      // Absent when cart_type is "page" — no drawer is mounted by design.
       var drawer = document.querySelector('skinova-cart-drawer');
       if (drawer) {
         var doc = new DOMParser().parseFromString(sectionsObj['cart-drawer'], 'text/html');
@@ -155,13 +150,10 @@ function cwarn() {
           // Mirror the empty/non-empty class flag from the freshly rendered server HTML
           if (freshDrawer.classList.contains('is-empty')) drawer.classList.add('is-empty');
           else drawer.classList.remove('is-empty');
-          clog('swapped cart-drawer (' + freshDrawer.innerHTML.length + ' chars)');
           anySwapped = true;
         } else {
           cwarn('cart-drawer section HTML had no <skinova-cart-drawer> element inside');
         }
-      } else {
-        cwarn('no <skinova-cart-drawer> in DOM to swap into — cart_type may not be "drawer"');
       }
     }
 
@@ -174,7 +166,6 @@ function cwarn() {
         var wrap = doc3.querySelector('.shopify-section') || doc3.body;
         if (wrap) {
           iconLink.innerHTML = wrap.innerHTML;
-          clog('swapped cart-icon-bubble');
           anySwapped = true;
         }
       } else {
@@ -271,7 +262,6 @@ function cwarn() {
         });
       }
       open(triggeredBy) {
-        clog('drawer.open()');
         this._triggeredBy = triggeredBy || null;
         this.setAttribute('open', '');
         this.setAttribute('aria-hidden', 'false');
@@ -283,7 +273,6 @@ function cwarn() {
         setTimeout(function () { if (focusEl) focusEl.focus(); }, 30);
       }
       close() {
-        clog('drawer.close()');
         this.removeAttribute('open');
         this.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
@@ -308,7 +297,6 @@ function cwarn() {
         ];
       }
       renderContents(data) {
-        clog('drawer.renderContents() from legacy ATC, has sections?', !!(data && data.sections));
         if (data && data.sections) {
           this.renderFromSections(data.sections);
         }
@@ -341,7 +329,6 @@ function cwarn() {
       updateLine(key, quantity, sourceInput) {
         var self = this;
         var isOnCartPage = !this.closest('skinova-cart-drawer');
-        clog('updateLine →', { key: key, quantity: quantity, onCartPage: isOnCartPage });
 
         // Find the item being mutated. Could be either the drawer-styled element
         // or the cart-page-styled element — both carry data-key.
@@ -365,7 +352,6 @@ function cwarn() {
             sections_url: window.location.pathname
           })
         }).then(function (res) {
-          clog('updateLine response', { item_count: res.item_count, total_price: res.total_price, has_sections: !!res.sections });
           var swapped = applyCartSections(res.sections);
           if (!swapped && item && !isOnCartPage) item.classList.remove('is-loading');
           publish('cart:update', { source: 'cart-items', data: res });
@@ -393,7 +379,6 @@ function cwarn() {
             var current = document.querySelector('.skinova-cart__inner');
             if (fresh && current) {
               current.innerHTML = fresh.innerHTML;
-              clog('cart page swapped (.skinova-cart__inner)');
             } else {
               cwarn('cart page swap: .skinova-cart__inner not found, reloading');
               window.location.reload();
@@ -468,11 +453,9 @@ function cwarn() {
       }
       onSubmit(e) {
         if (!this.cartMailbox) {
-          clog('product-form: no drawer mounted — letting native submit fire (page mode)');
           return; // fall through to native submit (page mode)
         }
         e.preventDefault();
-        clog('product-form: intercepting submit, drawer mode active');
         if (this.submitBtn) { this.submitBtn.setAttribute('aria-disabled', 'true'); this.submitBtn.classList.add('is-loading'); }
         var formData = new FormData(this.form);
         formData.append('sections', sectionsToRender().join(','));
@@ -494,7 +477,6 @@ function cwarn() {
             });
           })
           .then(function (data) {
-            clog('product-form ATC response', { key: data.key, quantity: data.quantity, has_sections: !!data.sections });
             // Shopify response: { id, key, quantity, ..., sections: { 'cart-drawer': '...', 'cart-icon-bubble': '...' } }
             if (data.sections) {
               self.cartMailbox.renderFromSections(data.sections);
@@ -524,6 +506,11 @@ function cwarn() {
   //   SkinovaCart.addToCart(123456789)
   //   SkinovaCart.addToCart(123456789, { quantity: 2, sourceButton: btn })
   //   SkinovaCart.addToCart({ id: 123, quantity: 2, properties: {...} })
+  //   SkinovaCart.addToCart({ items: [{ id: 1, quantity: 1 }, { id: 2, quantity: 1 }] })
+  //
+  // The items[] form adds every line in ONE /cart/add.js call. Prefer it over
+  // chaining single adds: in page mode each call redirects to /cart, so a chain
+  // would navigate away before the later adds were sent.
   //
   // Options:
   //   sourceButton        — element clicked (used for focus return + setActiveElement)
@@ -553,7 +540,6 @@ function cwarn() {
     body.sections = sectionsToRender().join(',');
     body.sections_url = window.location.pathname;
 
-    clog('SkinovaCart.addToCart →', body);
 
     var cartAddUrl = cartJsUrl(window.routes && window.routes.cart_add_url, '/cart/add.js');
     return fetch(cartAddUrl, {
@@ -577,7 +563,6 @@ function cwarn() {
         });
       })
       .then(function (data) {
-        clog('SkinovaCart.addToCart ✓', { key: data.key, qty: data.quantity, has_sections: !!data.sections });
 
         if (drawer) {
           if (data.sections) drawer.renderFromSections(data.sections);

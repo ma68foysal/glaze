@@ -20,7 +20,9 @@
 >
   <div class="skinova-404__inner">
     <p class="skinova-404__eyebrow" aria-hidden="true">404</p>
-    <h1 class="skinova-404__heading">{{ heading | default: '404.title' | t | escape }}</h1>
+    <h1 class="skinova-404__heading">
+      {%- if heading != blank -%}{{ heading | escape }}{%- else -%}{{ '404.title' | t }}{%- endif -%}
+    </h1>
     <p class="skinova-404__subheading">{{ subheading | escape }}</p>
 
     <div class="skinova-404__ctas">

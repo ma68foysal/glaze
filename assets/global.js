@@ -929,28 +929,32 @@
         btn.setAttribute('disabled', 'disabled');
         btn.classList.add('is-loading');
 
-        // Sequence the adds so the drawer only opens on the FINAL one.
-        var promise = Promise.resolve(null);
-        variantIds.forEach(function (id, idx) {
-          var isLast = idx === variantIds.length - 1;
-          promise = promise.then(function () {
-            if (window.SkinovaCart && typeof window.SkinovaCart.addToCart === 'function') {
-              return window.SkinovaCart.addToCart(id, {
-                quantity: 1,
-                sourceButton: isLast ? btn : null,
-                openDrawer: isLast,
-                source: 'product-bundle'
-              });
-            }
-            var url = (window.routes && window.routes.cart_add_url) || '/cart/add.js';
-            return fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-              body: JSON.stringify({ id: id, quantity: 1 })
-            }).then(function (r) { return r.json(); });
+        // One request for the whole bundle. /cart/add.js accepts an `items`
+        // array, so all lines are added atomically.
+        //
+        // This previously chained one addToCart per item. That silently dropped
+        // everything after the first: with cart_type "page" (the theme default)
+        // no drawer is mounted, so the first add hit addToCart's
+        // redirectIfNoDrawer branch, sent the browser to /cart, and the page
+        // unloaded before adds 2..n were ever sent.
+        var items = variantIds.map(function (id) { return { id: id, quantity: 1 }; });
+
+        var request;
+        if (window.SkinovaCart && typeof window.SkinovaCart.addToCart === 'function') {
+          request = window.SkinovaCart.addToCart({ items: items }, {
+            sourceButton: btn,
+            source: 'product-bundle'
           });
-        });
-        promise.catch(function (err) {
+        } else {
+          var url = (window.routes && window.routes.cart_add_url) || '/cart/add.js';
+          request = fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ items: items })
+          }).then(function (r) { return r.json(); });
+        }
+
+        request.catch(function (err) {
           console.error('[product-bundle]', err);
         }).finally(function () {
           btn.removeAttribute('disabled');
@@ -1186,7 +1190,13 @@
       var stockHtml = stockAvail
         ? '<p class="sfp-modal-stock"><span class="sfp-modal-stock-dot"></span>' + (stockCount > 0 ? stockCount + ' in stock' : 'In stock') + '</p>'
         : '<p class="sfp-modal-stock is-out"><span class="sfp-modal-stock-dot"></span>Out of stock</p>';
-      var shippingHtml = '<p class="sfp-modal-shipping"><a href="/policies/shipping-policy">Shipping</a> calculated at checkout.</p>';
+      // Locale-aware policy URL supplied by the section; blank when the merchant
+      // has published no shipping policy, in which case we drop the link rather
+      // than emit a dead /policies/ path.
+      var policyUrl = root.getAttribute('data-shipping-policy-url') || '';
+      var shippingHtml = policyUrl
+        ? '<p class="sfp-modal-shipping"><a href="' + policyUrl + '">Shipping</a> calculated at checkout.</p>'
+        : '<p class="sfp-modal-shipping">Shipping calculated at checkout.</p>';
       return { afterPriceHtml: shippingHtml + stockHtml };
     }
 

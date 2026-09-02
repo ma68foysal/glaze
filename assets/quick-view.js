@@ -198,7 +198,10 @@
       var v = findVariant(); if (!v || !v.available) return;
       buyBtn.classList.add('is-loading');
       if (window.SkinovaCart && typeof window.SkinovaCart.addToCart === 'function') {
-        window.SkinovaCart.addToCart(v.id, { quantity: state.qty, sourceButton: buyBtn, openDrawer: false, source: sourceLabel + ':buy-now' })
+        // redirectIfNoDrawer must be false: without it, page-mode carts send the
+        // browser to /cart inside addToCart and the .then() below never runs,
+        // so "Buy It Now" landed on the cart page instead of checkout.
+        window.SkinovaCart.addToCart(v.id, { quantity: state.qty, sourceButton: buyBtn, openDrawer: false, redirectIfNoDrawer: false, source: sourceLabel + ':buy-now' })
           .then(function () { window.location.href = '/checkout'; })
           .catch(function (err) { console.error('[' + sourceLabel + ']', err); buyBtn.classList.remove('is-loading'); });
       } else {

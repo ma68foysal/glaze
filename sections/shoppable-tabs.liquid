@@ -106,20 +106,25 @@
               {%- if coll != blank and coll.products.size > 0 -%}
                 {%- for product in coll.products limit: count -%}
                   {%- assign v = product.selected_or_first_available_variant -%}
-                  {%- assign lifestyle = product.images[1] | default: product.featured_image -%}
+                  {%- comment -%}
+                    The large media and the small thumbnail in the label row both
+                    use the product's first (featured) image, so one card never
+                    shows two different photos of the same product.
+                  {%- endcomment -%}
+                  {%- assign card_image = product.featured_image -%}
                   {%- assign has_variants = false -%}
                   {%- if product.variants.size > 1 or product.has_only_default_variant == false -%}{%- assign has_variants = true -%}{%- endif -%}
 
                   <a href="{{ product.url }}" class="st-card" data-handle="{{ product.handle }}">
                     <div class="st-card-media">
-                      {%- if lifestyle -%}
-                        {{ lifestyle | image_url: width: 800 | image_tag: loading: 'lazy', alt: product.title, widths: '300,500,700,800' }}
+                      {%- if card_image -%}
+                        {{ card_image | image_url: width: 800 | image_tag: loading: 'lazy', alt: product.title, widths: '300,500,700,800' }}
                       {%- endif -%}
                     </div>
                     <div class="st-prod">
                       <div class="st-prod-thumb">
-                        {%- if product.featured_image -%}
-                          {{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: product.title, widths: '80,120,160' }}
+                        {%- if card_image -%}
+                          {{ card_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: product.title, widths: '80,120,160' }}
                         {%- endif -%}
                       </div>
                       <div class="st-prod-info">

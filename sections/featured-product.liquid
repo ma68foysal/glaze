@@ -45,7 +45,17 @@
   }
 </style>
 
-<div id="{{ section_id }}" class="skinova-fp" data-skinova-fp>
+{%- comment -%}
+  shop.shipping_policy.url is locale-aware and is blank when the merchant has
+  not published a shipping policy. global.js reads it to build the quick-view
+  modal footnote, and omits the link entirely when it is blank.
+{%- endcomment -%}
+<div
+  id="{{ section_id }}"
+  class="skinova-fp"
+  data-skinova-fp
+  data-shipping-policy-url="{{ shop.shipping_policy.url }}"
+>
   <div class="sfp-wrap">
 
     <div class="sfp-head">
