@@ -19,7 +19,7 @@
         "cat_1": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Light_Work_Rosehip_toner_01.webp",
+            "image": "",
             "title": "Skin Transforming",
             "link": "",
             "bg_color": "#fad248",
@@ -30,7 +30,7 @@
         "cat_2": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Nutrient_Face_Oil_01.webp",
+            "image": "",
             "title": "Facial Cleanser",
             "link": "",
             "bg_color": "#f5e0d6",
@@ -41,7 +41,7 @@
         "cat_3": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Rose_Quartz_Facial_Polish_01_a91d497d-2d9c-4b4c-92e7-17d78f0f51ae.webp",
+            "image": "",
             "title": "Toner & Mist",
             "link": "",
             "bg_color": "#fbcb1a",
@@ -52,7 +52,7 @@
         "cat_4": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Hydrating_serum_01.webp",
+            "image": "",
             "title": "Serums",
             "link": "",
             "bg_color": "#e8e8e8",
@@ -69,7 +69,7 @@
       ],
       "settings": {
         "title": "",
-        "description": "Lorem ipsum dolor sit amet consectetur. Consequat massa dolor lacus suspendisse morbi.",
+        "description": "Shop by skin type and concern. Every formula is dermatologist-tested, fragrance-free and made to sit well on sensitive skin.",
         "bg_color": "#fbe9e8",
         "tile_size": 90
       }

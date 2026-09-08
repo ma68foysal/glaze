@@ -46,13 +46,15 @@
           <p class="iwt-desc">{{ section.settings.description }}</p>
         {%- endif -%}
         {%- if section.settings.btn_label != blank -%}
-          <a href="{{ section.settings.btn_link | default: '#' }}" class="iwt-btn">{{ section.settings.btn_label }}</a>
+          {%- if section.settings.btn_link != blank -%}<a href="{{ section.settings.btn_link }}" class="iwt-btn">{{ section.settings.btn_label }}</a>{%- endif -%}
         {%- endif -%}
       </div>
 
       <div class="iwt-image">
         {%- if section.settings.image != blank -%}
           {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: section.settings.title, widths: '400,600,800,1000,1200' }}
+        {%- else -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
         {%- endif -%}
       </div>
 

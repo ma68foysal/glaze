@@ -71,7 +71,7 @@
           <p class="stc-head-desc">{{ section.settings.head_desc }}</p>
         {%- endif -%}
         {%- if section.settings.head_link_label != blank -%}
-          <a href="{{ section.settings.head_link_url | default: '#' }}" class="stc-head-link">{{ section.settings.head_link_label }}</a>
+          {%- if section.settings.head_link_url != blank -%}<a href="{{ section.settings.head_link_url }}" class="stc-head-link">{{ section.settings.head_link_label }}</a>{%- endif -%}
         {%- endif -%}
       </div>
     {%- endif -%}
@@ -82,6 +82,9 @@
         <div class="stc-image-card" data-pos="{{ section.settings.image_content_position }}">
           {%- if section.settings.image != blank -%}
             {{ section.settings.image | image_url: width: 2000 | image_tag: loading: 'lazy', alt: section.settings.image_title, widths: '600,800,1000,1200,1600,2000', sizes: '(min-width: 750px) 50vw, 100vw' }}
+          {%- else -%}
+            {%- comment -%} Image carries overlaid text, so the docs call for a lifestyle placeholder. {%- endcomment -%}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
           {%- endif -%}
           {%- if section.settings.eyebrow != blank or section.settings.image_title != blank or section.settings.btn_label != blank -%}
             <div class="stc-image-overlay">
@@ -92,7 +95,7 @@
                 <h2 class="stc-image-title">{{ section.settings.image_title }}</h2>
               {%- endif -%}
               {%- if section.settings.btn_label != blank -%}
-                <a href="{{ section.settings.btn_link | default: '#' }}" class="stc-image-btn">{{ section.settings.btn_label }}</a>
+                {%- if section.settings.btn_link != blank -%}<a href="{{ section.settings.btn_link }}" class="stc-image-btn">{{ section.settings.btn_label }}</a>{%- endif -%}
               {%- endif -%}
             </div>
           {%- endif -%}
@@ -200,6 +203,25 @@
                       <script type="application/json" data-stc-product="{{ product.handle }}">
                         {{ product | json }}
                       </script>
+                    </div>
+                  {%- endfor -%}
+                {%- else -%}
+                  {%- comment -%}
+                    No collection on this block yet — show the card layout rather
+                    than an empty track.
+                  {%- endcomment -%}
+                  {%- for i in (1..per) -%}
+                    {%- assign ph_index = i | modulo: 6 | plus: 1 -%}
+                    {%- assign ph_name = 'product-' | append: ph_index -%}
+                    <div class="stc-card stc-card--placeholder" aria-hidden="true">
+                      <div class="stc-card-media">
+                        {{ ph_name | placeholder_svg_tag: 'placeholder-svg' }}
+                      </div>
+                      {%- comment -%} stc-card-body carries the card padding. {%- endcomment -%}
+                      <div class="stc-card-body">
+                        <p class="stc-card-title">{{ 'onboarding.product_title' | t }}</p>
+                        <p class="stc-card-price">{{ 1999 | money }}</p>
+                      </div>
                     </div>
                   {%- endfor -%}
                 {%- endif -%}

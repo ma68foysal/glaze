@@ -129,7 +129,9 @@
     }
 
     .skinova-logo img { max-width: var(--skinova-logo-width); width: 100%; height: auto; display: block; }
-    .skinova-logo-dark { display: none; }
+    /* Must out-specify ".skinova-logo img" above (0,1,1), or the scrolled logo
+       stays visible and both render side by side in the resting state. */
+    .skinova-logo img.skinova-logo-dark { display: none; }
     #{{ section_id }}.is-stuck .skinova-logo.has-dark-logo .skinova-logo-default { display: none; }
     #{{ section_id }}.is-stuck .skinova-logo.has-dark-logo .skinova-logo-dark { display: block; }
 
@@ -155,8 +157,12 @@
     .skinova-nav-item {
       position: static;
       list-style: none;
-      padding-bottom: 18px;
-      margin-bottom: -18px;
+      /* Extends the hover area down to where the mega panel starts, so moving
+         the cursor from link to panel never crosses a dead zone. Scoped to this
+         item's own width — a sibling link stays hoverable while a mega is open.
+         Matches the header padding so the bridge is never short or overlong. */
+      padding-bottom: var(--skinova-pad-bottom);
+      margin-bottom: calc(var(--skinova-pad-bottom) * -1);
     }
     /* Simple dropdowns anchor directly under their parent. Mega menus keep static so
        they can span the full header width. */
@@ -274,21 +280,8 @@
       z-index: 80;
     }
 
-    /* Invisible hover bridge — extends mega's hover area upward to meet
-       the nav-item's padding-bottom, killing the dead zone between trigger
-       and panel. */
-    .skinova-mega::before {
-      content: '';
-      position: absolute;
-      top: -40px;
-      left: 0;
-      right: 0;
-      height: 40px;
-      background: transparent;
-    }
-
     .skinova-nav-item:hover .skinova-mega,
-    .skinova-nav-item:focus-within .skinova-mega,
+    .skinova-nav-item:has(:focus-visible) .skinova-mega,
     .skinova-nav-item.is-open .skinova-mega {
       opacity: 1;
       visibility: visible;
@@ -1161,7 +1154,11 @@
                             {%- assign img = card_block.settings[img_key] -%}
                             {%- assign c_link = card_block.settings[link_key] -%}
                             {%- if title != blank or img != blank -%}
-                              <a href="{{ c_link | default: '#' }}" class="skinova-card">
+                              {%- if c_link != blank -%}
+                                <a href="{{ c_link }}" class="skinova-card">
+                              {%- else -%}
+                                <div class="skinova-card">
+                              {%- endif -%}
                                 <div class="skinova-card-img">
                                   {%- if img != blank -%}
                                     {{
@@ -1169,6 +1166,8 @@
                                       | image_url: width: 500
                                       | image_tag: loading: 'lazy', alt: title, widths: '200,300,500'
                                     }}
+                                  {%- else -%}
+                                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
                                   {%- endif -%}
                                 </div>
                                 <div class="skinova-card-body">
@@ -1184,7 +1183,7 @@
                                     </svg>
                                   </span>
                                 </div>
-                              </a>
+                              {%- if c_link != blank -%}</a>{%- else -%}</div>{%- endif -%}
                             {%- endif -%}
                           {%- endfor -%}
                         </div>
@@ -1215,9 +1214,11 @@
                                 {%- assign fl_link = column_block.settings[fl_l_key] -%}
                                 {%- if fl_title != blank -%}
                                   <li>
-                                    <a href="{{ fl_link | default: '#' }}" class="skinova-col-link is-feature">
-                                      {{- fl_title -}}
-                                    </a>
+                                    {%- if fl_link != blank -%}
+                                      <a href="{{ fl_link }}" class="skinova-col-link is-feature">{{- fl_title -}}</a>
+                                    {%- else -%}
+                                      <span class="skinova-col-link is-feature">{{- fl_title -}}</span>
+                                    {%- endif -%}
                                   </li>
                                 {%- endif -%}
                               {%- endfor -%}
@@ -1353,7 +1354,11 @@
                           {%- assign d_sub = dropdown_block.settings[d_s_key] -%}
                           {%- if d_title != blank -%}
                             <li class="skinova-dropdown-item{% if d_sub != blank %} has-sub{% endif %}">
-                              <a href="{{ d_link | default: '#' }}" class="skinova-dropdown-item-link">{{ d_title }}</a>
+                              {%- if d_link != blank -%}
+                                <a href="{{ d_link }}" class="skinova-dropdown-item-link">{{ d_title }}</a>
+                              {%- else -%}
+                                <span class="skinova-dropdown-item-link">{{ d_title }}</span>
+                              {%- endif -%}
                               {%- if d_sub != blank -%}
                                 <svg class="skinova-dropdown-caret" viewBox="0 0 10 10" fill="none">
                                   <path d="M3 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1565,10 +1570,16 @@
                       {%- assign img = card_b.settings[c_i_key] -%}
                       {%- assign c_link = card_b.settings[c_l_key] -%}
                       {%- if title != blank or img != blank -%}
-                        <a href="{{ c_link | default: '#' }}" class="skinova-drawer-card">
+                        {%- if c_link != blank -%}
+                          <a href="{{ c_link }}" class="skinova-drawer-card">
+                        {%- else -%}
+                          <div class="skinova-drawer-card">
+                        {%- endif -%}
                           <div class="skinova-drawer-card-img">
                             {%- if img != blank -%}
                               {{ img | image_url: width: 400 | image_tag: loading: 'lazy', alt: title }}
+                            {%- else -%}
+                              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
                             {%- endif -%}
                           </div>
                           <div class="skinova-drawer-card-body">
@@ -1577,7 +1588,7 @@
                               <p class="skinova-drawer-card-sub">{{ sub }}</p>
                             {%- endif -%}
                           </div>
-                        </a>
+                        {%- if c_link != blank -%}</a>{%- else -%}</div>{%- endif -%}
                       {%- endif -%}
                     {%- endfor -%}
                   </div>
@@ -1592,7 +1603,11 @@
                       {%- assign fl_link = col_b.settings[dfl_l_key] -%}
                       {%- if fl_title != blank -%}
                         <li>
-                          <a href="{{ fl_link | default: '#' }}" class="skinova-drawer-link">{{ fl_title }}</a>
+                          {%- if fl_link != blank -%}
+                            <a href="{{ fl_link }}" class="skinova-drawer-link">{{ fl_title }}</a>
+                          {%- else -%}
+                            <span class="skinova-drawer-link">{{ fl_title }}</span>
+                          {%- endif -%}
                         </li>
                       {%- endif -%}
                     {%- endfor -%}
@@ -1657,7 +1672,11 @@
                       {%- assign d_link = dd_b.settings[dd_l_key] -%}
                       {%- if d_title != blank -%}
                         <li>
-                          <a href="{{ d_link | default: '#' }}" class="skinova-drawer-link">{{ d_title }}</a>
+                          {%- if d_link != blank -%}
+                            <a href="{{ d_link }}" class="skinova-drawer-link">{{ d_title }}</a>
+                          {%- else -%}
+                            <span class="skinova-drawer-link">{{ d_title }}</span>
+                          {%- endif -%}
                         </li>
                       {%- endif -%}
                     {%- endfor -%}
@@ -2306,7 +2325,8 @@
           "type": "text",
           "id": "menu_handle",
           "label": "Parent menu item title",
-          "default": "Presets"
+          "info": "Must match a top-level item in your menu exactly, e.g. Catalog. If it doesn't match, this mega menu won't appear.",
+          "default": "Catalog"
         },
         { "type": "header", "content": "Card 1" },
         { "type": "image_picker", "id": "card_1_image", "label": "Image" },
@@ -2353,7 +2373,8 @@
           "type": "text",
           "id": "menu_handle",
           "label": "Parent menu item title",
-          "default": "Shop"
+          "info": "Must match a top-level item in your menu exactly, e.g. Catalog. If it doesn't match, this mega menu won't appear.",
+          "default": "Contact"
         },
         { "type": "header", "content": "Feature links (left column)" },
         { "type": "text", "id": "feature_1_title", "label": "Link 1 title", "default": "Best Sellers" },
@@ -2401,7 +2422,8 @@
           "type": "text",
           "id": "menu_handle",
           "label": "Parent menu item title",
-          "default": "Pages"
+          "info": "Must match a top-level item in your menu exactly, e.g. Catalog. If it doesn't match, this mega menu won't appear.",
+          "default": "Home"
         },
         { "type": "header", "content": "Item 1" },
         { "type": "text", "id": "item_1_title", "label": "Title" },

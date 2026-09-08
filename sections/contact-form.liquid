@@ -1,5 +1,11 @@
 {%- liquid
   assign section_id = 'contact-form-' | append: section.id
+  comment
+    The form tag does not evaluate filters in its arguments — a pipe there
+    makes Liquid read the form type as the filter operand and throw
+    "Invalid form type". Build the id up front and pass a plain variable.
+  endcomment
+  assign form_id = section_id | append: '-form'
   assign heading = section.settings.heading
   assign subheading = section.settings.subheading
   assign submit_label = section.settings.submit_label
@@ -37,7 +43,7 @@
       <p class="contact-form-subheading">{{ subheading | escape }}</p>
     {%- endif -%}
 
-    {%- form 'contact', id: section_id | append: '-form', class: 'contact-form' -%}
+    {%- form 'contact', id: form_id, class: 'contact-form' -%}
       {%- if form.posted_successfully? -%}
         <p class="contact-form-success" role="status">{{ 'contact.success' | t }}</p>
       {%- endif -%}

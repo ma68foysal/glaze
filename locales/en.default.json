@@ -96,6 +96,10 @@
       "title": "Login"
     }
   },
+  "onboarding": {
+    "product_title": "Example product",
+    "collection_title": "Example collection"
+  },
   "collection": {
     "eyebrow": "Collection",
     "filters_toggle": "Filter and sort",
@@ -118,6 +122,8 @@
     "pagination_next": "Next",
     "pagination_page": "Page {{ page }}",
     "empty": "No products match those filters yet.",
+    "empty_collection": "There are no products in this collection yet.",
+    "browse_all": "Browse all products",
     "quick_view": "Quick view {{ title }}",
     "add_to_cart": "Add {{ title }} to cart"
   },

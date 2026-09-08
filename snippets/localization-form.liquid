@@ -10,10 +10,12 @@
 {%- endcomment -%}
 
 {%- assign cp = class_prefix | default: 'skinova-localization' -%}
+{%- comment -%} Same reason as contact-form: no filters inside a form tag. {%- endcomment -%}
+{%- assign form_class = cp | append: '__form' -%}
 
 {%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
   <div class="{{ cp }}">
-    {%- form 'localization', class: cp | append: '__form' -%}
+    {%- form 'localization', class: form_class -%}
       {%- if localization.available_countries.size > 1 -%}
         <div class="{{ cp }}__field">
           <label for="{{ cp }}-country" class="visually-hidden">{{ 'general.country_label' | t }}</label>

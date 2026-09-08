@@ -181,6 +181,18 @@
               {%- endunless -%}
             {%- elsif section.settings.image != blank -%}
               {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', widths: '400,700,1000,1400', sizes: '(min-width: 750px) 50vw, 100vw', alt: img_alt }}
+            {%- else -%}
+              {%- comment -%}
+                No video and no poster image. The Theme Store asks for a default
+                YouTube video as the placeholder for video content.
+              {%- endcomment -%}
+              <iframe
+                src="https://www.youtube.com/embed/_9VUPq3SxOc?autoplay=0&mute=1&controls=0&modestbranding=1&playsinline=1"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+                frameborder="0"
+                title="{{ iframe_title }}"
+              ></iframe>
             {%- endif -%}
           {%- when 'video_url' -%}
             {%- if section.settings.video_url != blank -%}
@@ -192,6 +204,18 @@
               {%- endif -%}
             {%- elsif section.settings.image != blank -%}
               {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', widths: '400,700,1000,1400', sizes: '(min-width: 750px) 50vw, 100vw', alt: img_alt }}
+            {%- else -%}
+              {%- comment -%}
+                No video and no poster image. The Theme Store asks for a default
+                YouTube video as the placeholder for video content.
+              {%- endcomment -%}
+              <iframe
+                src="https://www.youtube.com/embed/_9VUPq3SxOc?autoplay=0&mute=1&controls=0&modestbranding=1&playsinline=1"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+                frameborder="0"
+                title="{{ iframe_title }}"
+              ></iframe>
             {%- endif -%}
           {%- else -%}
             {%- if section.settings.image != blank -%}
@@ -228,7 +252,7 @@
         {%- endif -%}
 
         {%- if section.settings.btn_label != blank -%}
-          <a href="{{ section.settings.btn_link | default: '#' }}" class="fr__cta reveal reveal-d2">{{ section.settings.btn_label }}</a>
+          {%- if section.settings.btn_link != blank -%}<a href="{{ section.settings.btn_link }}" class="fr__cta reveal reveal-d2">{{ section.settings.btn_label }}</a>{%- endif -%}
         {%- endif -%}
       </div>
 

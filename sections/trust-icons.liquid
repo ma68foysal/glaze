@@ -44,6 +44,8 @@
     overflow: hidden;
   }
   #{{ sid }} .ti__icon img { width: 60%; height: 60%; object-fit: contain; }
+  /* Match the uploaded-icon sizing so the circle looks the same either way. */
+  #{{ sid }} .ti__icon-ph { width: 60%; height: 60%; opacity: 0.5; }
   #{{ sid }} .ti__icon-emoji { font-size: {{ section.settings.icon_size | times: 0.5 | round }}px; line-height: 1; }
   #{{ sid }} .ti__label {
     font-family: var(--font-b);
@@ -66,6 +68,12 @@
                 {{ b.settings.icon | image_url: width: 120 | image_tag: loading: 'lazy', alt: icon_alt }}
               {%- elsif b.settings.emoji != blank -%}
                 <span class="ti__icon-emoji">{{ b.settings.emoji }}</span>
+              {%- else -%}
+                {%- comment -%}
+                  Neither an uploaded icon nor an emoji: fall back to the generic
+                  image placeholder so the row never renders as empty circles.
+                {%- endcomment -%}
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg ti__icon-ph' }}
               {%- endif -%}
             </div>
             <div class="ti__label">{{ b.settings.label }}</div>

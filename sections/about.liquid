@@ -45,7 +45,7 @@
           <h2 class="ab-title">{{ section.settings.title }}</h2>
         {%- endif -%}
         {%- if section.settings.link_label != blank -%}
-          <a href="{{ section.settings.link_url | default: '#' }}" class="ab-link">{{ section.settings.link_label }}</a>
+          {%- if section.settings.link_url != blank -%}<a href="{{ section.settings.link_url }}" class="ab-link">{{ section.settings.link_label }}</a>{%- endif -%}
         {%- endif -%}
       </div>
     {%- endif -%}
@@ -56,6 +56,8 @@
           <div class="ab-card-media">
             {%- if block.settings.image != blank -%}
               {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: block.settings.title, widths: '300,500,700,800' }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
             {%- endif -%}
           </div>
           <div class="ab-card-content">
@@ -320,7 +322,7 @@
       "blocks": [
         { "type": "card", "settings": { "title": "News, tips, reviews", "btn_label": "View Our Blog", "bg_color": "#ebebeb" } },
         { "type": "card", "settings": { "title": "Stores near you", "btn_label": "Find A Store", "bg_color": "#c9b49a" } },
-        { "type": "card", "settings": { "title": "On the gram", "btn_label": "@Glossy_store", "bg_color": "#e9cbcb" } }
+        { "type": "card", "settings": { "title": "On the gram", "btn_label": "@skinova", "bg_color": "#e9cbcb" } }
       ]
     }
   ]

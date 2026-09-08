@@ -495,7 +495,7 @@
                   <p class="sf-about-desc">{{ block.settings.description }}</p>
                 {%- endif -%}
                 {%- if block.settings.btn_label != blank -%}
-                  <a href="{{ block.settings.btn_link | default: '#' }}" class="sf-about-btn">{{ block.settings.btn_label }}</a>
+                  {%- if block.settings.btn_link != blank -%}<a href="{{ block.settings.btn_link }}" class="sf-about-btn">{{ block.settings.btn_label }}</a>{%- endif -%}
                 {%- endif -%}
               </div>
           {%- endcase -%}

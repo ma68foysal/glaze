@@ -16,12 +16,12 @@
           "type": "slide",
           "settings": {
             "media_type": "image",
-            "image": "shopify://shop_images/slide-show-2-min.webp",
+            "image": "",
             "eyebrow": "Edit 01",
             "heading": "Get the skin you want to feel",
             "body": "Thoughtful, clean formulas built for everyday rituals — made to perform without performance.",
             "button_label": "Shop the edit",
-            "button_link": "",
+            "button_link": "/collections/all",
             "content_align": "right",
             "theme_preset": "cream",
             "bg_color": "#fbe9e8",
@@ -32,12 +32,12 @@
           "type": "slide",
           "settings": {
             "media_type": "image",
-            "image": "shopify://shop_images/slide-show-1-min.webp",
+            "image": "",
             "eyebrow": "Edit 02",
             "heading": "Quiet ingredients. Loud results.",
             "body": "Made with bio-active actives and the kind of restraint that lets your skin do the talking.",
             "button_label": "Discover the ritual",
-            "button_link": "",
+            "button_link": "/collections/all",
             "content_align": "left",
             "theme_preset": "blush",
             "bg_color": "#fbe9e8",
@@ -48,12 +48,12 @@
           "type": "slide",
           "settings": {
             "media_type": "image",
-            "image": "shopify://shop_images/slide-show-3-min.webp",
+            "image": "",
             "eyebrow": "Edit 03",
             "heading": "Skin first. Always.",
             "body": "Dermatologist-approved formulas designed for sensitive routines, gentle on every skin type.",
             "button_label": "Browse all",
-            "button_link": "",
+            "button_link": "/collections/all",
             "content_align": "right",
             "theme_preset": "sage",
             "bg_color": "#fbe9e8",
@@ -84,7 +84,7 @@
         "item_tRy3x9": {
           "type": "item",
           "settings": {
-            "image": "shopify://shop_images/scrolling-2.avif",
+            "image": "",
             "text": "Toxin-Free Formulas",
             "link": ""
           }
@@ -92,7 +92,7 @@
         "item_baYJfF": {
           "type": "item",
           "settings": {
-            "image": "shopify://shop_images/scrolling-3.webp",
+            "image": "",
             "text": "Skin Transformation",
             "link": ""
           }
@@ -100,7 +100,7 @@
         "item_BqJ3ce": {
           "type": "item",
           "settings": {
-            "image": "shopify://shop_images/scrolling-4.webp",
+            "image": "",
             "text": "Made With Intention",
             "link": ""
           }
@@ -108,7 +108,7 @@
         "item_EnykLy": {
           "type": "item",
           "settings": {
-            "image": "shopify://shop_images/scrolling-1.avif",
+            "image": "",
             "text": "New Season Arrivals",
             "link": ""
           }
@@ -139,7 +139,8 @@
         "border_top_width": 1,
         "border_top_color": "#e6e6e6",
         "border_bottom_width": 1,
-        "border_bottom_color": "#e6e6e6"
+        "border_bottom_color": "#e6e6e6",
+        "show_images": true
       }
     },
     "featured_product_skinova_w7prWB": {
@@ -149,7 +150,7 @@
           "type": "tab",
           "settings": {
             "tab_label": "What's hot",
-            "collection": "sleek",
+            "collection": "frontpage",
             "hero_position": "left"
           }
         },
@@ -157,7 +158,7 @@
           "type": "tab",
           "settings": {
             "tab_label": "Best sellers",
-            "collection": "sleek",
+            "collection": "frontpage",
             "hero_position": "right"
           }
         },
@@ -165,7 +166,7 @@
           "type": "tab",
           "settings": {
             "tab_label": "Sale",
-            "collection": "sleek",
+            "collection": "frontpage",
             "hero_position": "left"
           }
         }
@@ -179,7 +180,7 @@
       "settings": {
         "show_shop_all": true,
         "shop_all_label": "Shop All Products",
-        "shop_all_link": "shopify://collections/frontpage",
+        "shop_all_link": "/collections/all",
         "card_radius": 16,
         "hero_eyebrow": "Editor's pick",
         "hero_cta_label": "Shop the ritual",
@@ -218,106 +219,6 @@
         "padding_bottom": 60
       }
     },
-    "highlight_text_image_skinova_AKKafm": {
-      "type": "highlight-text-image",
-      "blocks": {
-        "text_YM84tm": {
-          "type": "text",
-          "settings": {
-            "text": "Make your skin",
-            "style": "normal",
-            "color": ""
-          }
-        },
-        "image_d6dXLR": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/text-with-image-1-min.avif",
-            "alt": "",
-            "shape": "pill",
-            "width": 140,
-            "height": 68,
-            "custom_radius": 16,
-            "image_bg": ""
-          }
-        },
-        "text_LxzjME": {
-          "type": "text",
-          "disabled": true,
-          "settings": {
-            "text": "and",
-            "style": "normal",
-            "color": ""
-          }
-        },
-        "text_nGiP3Y": {
-          "type": "text",
-          "settings": {
-            "text": "feel nourished",
-            "style": "normal",
-            "color": ""
-          }
-        },
-        "image_WtFG7h": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/text-with-image-2-min.webp",
-            "alt": "",
-            "shape": "pill",
-            "width": 160,
-            "height": 68,
-            "custom_radius": 16,
-            "image_bg": ""
-          }
-        },
-        "text_DCRNGT": {
-          "type": "text",
-          "settings": {
-            "text": "and glowing",
-            "style": "normal",
-            "color": ""
-          }
-        },
-        "image_Rr8Hq6": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/text-with-image-3-min.avif",
-            "alt": "",
-            "shape": "pill",
-            "width": 140,
-            "height": 68,
-            "custom_radius": 16,
-            "image_bg": ""
-          }
-        }
-      },
-      "block_order": [
-        "text_YM84tm",
-        "image_d6dXLR",
-        "text_LxzjME",
-        "text_nGiP3Y",
-        "image_WtFG7h",
-        "text_DCRNGT",
-        "image_Rr8Hq6"
-      ],
-      "disabled": true,
-      "name": "Highlight text and image",
-      "settings": {
-        "text_align": "center",
-        "max_width": 1100,
-        "item_gap": 12,
-        "font_size_desktop": 64,
-        "font_size_mobile": 32,
-        "font_weight": 600,
-        "line_height": 1.3,
-        "letter_spacing": -1,
-        "bg_color": "#ffffff",
-        "text_color": "#111111",
-        "padding_top": 80,
-        "padding_bottom": 80,
-        "side_padding": 40
-      }
-    },
     "highlight_statement_YFmqWy": {
       "type": "highlight-statement",
       "blocks": {
@@ -333,7 +234,7 @@
         "image_CMDJmH": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/scrolling-2.avif",
+            "image": "",
             "alt": "",
             "label": "",
             "shape": "pill",
@@ -363,7 +264,7 @@
         "image_dB6p3A": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/text-with-image-3-min.avif",
+            "image": "",
             "alt": "",
             "label": "",
             "shape": "rounded",
@@ -389,7 +290,7 @@
         "image_kt78jE": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/text-with-image-1-min.avif",
+            "image": "",
             "alt": "",
             "label": "",
             "shape": "circle",
@@ -506,7 +407,8 @@
         "marquee_color": "#111111",
         "padding_top": 96,
         "padding_bottom": 96,
-        "side_padding": 32
+        "side_padding": 32,
+        "show_hero": false
       }
     },
     "collection_list_skinova_cTyQ8H": {
@@ -515,8 +417,8 @@
         "collection_qnYMJp": {
           "type": "collection",
           "settings": {
-            "collection": "mens",
-            "image": "shopify://shop_images/c1.webp",
+            "collection": "frontpage",
+            "image": "",
             "title": "Moisturisers",
             "count_text": "",
             "link": ""
@@ -526,7 +428,7 @@
           "type": "collection",
           "settings": {
             "collection": "frontpage",
-            "image": "shopify://shop_images/c4.webp",
+            "image": "",
             "title": "",
             "count_text": "",
             "link": ""
@@ -535,8 +437,8 @@
         "collection_JRDLAY": {
           "type": "collection",
           "settings": {
-            "collection": "womens",
-            "image": "shopify://shop_images/c2.webp",
+            "collection": "frontpage",
+            "image": "",
             "title": "Serums",
             "count_text": "",
             "link": ""
@@ -545,8 +447,8 @@
         "collection_VGxX8Q": {
           "type": "collection",
           "settings": {
-            "collection": "mens",
-            "image": "shopify://shop_images/c1.webp",
+            "collection": "frontpage",
+            "image": "",
             "title": "Moisturisers",
             "count_text": "",
             "link": ""
@@ -631,7 +533,7 @@
       ],
       "name": "Product bundle",
       "settings": {
-        "image": "shopify://shop_images/skinova-7.png",
+        "image": "",
         "media_radius": 16,
         "eyebrow": "Shop Skincare Set",
         "title": "Build your complete daily skin ritual",
@@ -669,7 +571,7 @@
         "collection_MfnXLf": {
           "type": "collection",
           "settings": {
-            "collection": "sleek",
+            "collection": "frontpage",
             "title_override": "Sale 30% off",
             "products_count": 8
           }
@@ -677,7 +579,7 @@
         "collection_ck67AF": {
           "type": "collection",
           "settings": {
-            "collection": "sleek",
+            "collection": "frontpage",
             "title_override": "Travel & Minis",
             "products_count": 8
           }
@@ -685,7 +587,7 @@
         "collection_ae6yKd": {
           "type": "collection",
           "settings": {
-            "collection": "sleek",
+            "collection": "frontpage",
             "title_override": "Under 29$",
             "products_count": 8
           }
@@ -706,11 +608,11 @@
         "head_desc_color": "#444444",
         "head_desc_size": 15,
         "head_link_label": "Shop All Products",
-        "head_link_url": "",
+        "head_link_url": "/collections/all",
         "head_link_color": "#111111",
         "head_link_size": 14,
         "head_align": "center",
-        "image": "shopify://shop_images/skinova-8.png",
+        "image": "",
         "image_content_position": "top",
         "image_radius": 16,
         "eyebrow": "Formulated With Care",
@@ -721,7 +623,7 @@
         "image_title_size": 34,
         "image_title_weight": 600,
         "btn_label": "Shop All Products",
-        "btn_link": "",
+        "btn_link": "/collections/all",
         "image_btn_bg": "#ffffff",
         "image_btn_fg": "#111111",
         "sticky_offset": 80,
@@ -765,13 +667,13 @@
       "type": "image-with-text",
       "name": "Image with text",
       "settings": {
-        "image": "shopify://shop_images/skinova-9.png",
+        "image": "",
         "image_side": "right",
         "eyebrow": "Gentle And Considered",
         "title": "Skincare that respects your skin",
         "description": "We formulate without compromise — no harsh chemicals, no unnecessary fillers. Just clean, effective ingredients your skin can trust every day.",
         "btn_label": "Shop Now",
-        "btn_link": "",
+        "btn_link": "/collections/all",
         "radius": 20,
         "min_height": 520,
         "text_gap": 16,
@@ -802,7 +704,7 @@
           "settings": {
             "tab_title": "Sensitive Skin",
             "tab_description": "<p>We're careful about every ingredient that goes in — and just as careful about what we keep out. No irritants, no unnecessary fragrance, no compromise on your skin's comfort.</p>",
-            "collection": "sleek",
+            "collection": "frontpage",
             "products_count": 4
           }
         },
@@ -811,7 +713,7 @@
           "settings": {
             "tab_title": "Dry Skin",
             "tab_description": "<p>Deep, lasting hydration that works beneath the surface. Our dry skin range is formulated to restore your skin's natural moisture barrier and keep it protected throughout the day.</p>",
-            "collection": "sleek",
+            "collection": "frontpage",
             "products_count": 4
           }
         },
@@ -820,7 +722,7 @@
           "settings": {
             "tab_title": "Organic Formulas",
             "tab_description": "<p>Where it's possible to use certified organic ingredients without affecting efficacy, we do. Because what's good for your skin should also be good for the planet.</p>",
-            "collection": "sleek",
+            "collection": "frontpage",
             "products_count": 4
           }
         },
@@ -829,7 +731,7 @@
           "settings": {
             "tab_title": "Prestige Skincare",
             "tab_description": "<p>Professional-grade ingredients. Accessible price points. Our premium range delivers results you'd expect from a high-end skin clinic, without the clinic price tag.</p>",
-            "collection": "sleek",
+            "collection": "frontpage",
             "products_count": 4
           }
         }
@@ -882,7 +784,7 @@
         "press_9wwXw9": {
           "type": "press",
           "settings": {
-            "logo": "shopify://shop_images/press-item-1.avif",
+            "logo": "",
             "alt": "",
             "quote": "\"An edit of skincare that genuinely performs. Clean, considered and worth every penny.\"",
             "link": ""
@@ -891,7 +793,7 @@
         "press_zUDCNK": {
           "type": "press",
           "settings": {
-            "logo": "shopify://shop_images/press-item-2.avif",
+            "logo": "",
             "alt": "",
             "quote": "\"Thoughtfully formulated products with results-driven ingredients. A brand to watch.\"",
             "link": ""
@@ -900,7 +802,7 @@
         "press_8CqWh8": {
           "type": "press",
           "settings": {
-            "logo": "shopify://shop_images/press-item-3.webp",
+            "logo": "",
             "alt": "",
             "quote": "\"Looking to simplify your skincare without compromising on quality? This is where to start.\"",
             "link": ""
@@ -1067,7 +969,7 @@
         "btn_fg": "#ffffff",
         "btn_hover_bg": "#333333",
         "btn_hover_fg": "#ffffff",
-        "image": "shopify://shop_images/skinova-2.png",
+        "image": "",
         "image_radius": 0,
         "item_bg": "#ffffff",
         "item_border_color": "#e8e2d8",
@@ -1090,7 +992,7 @@
         "card_4NHQw4": {
           "type": "card",
           "settings": {
-            "image": "shopify://shop_images/card-1.webp",
+            "image": "",
             "bg_color": "#ebebeb",
             "title": "News, tips, reviews",
             "btn_label": "View Our Blog",
@@ -1100,7 +1002,7 @@
         "card_4M3wA3": {
           "type": "card",
           "settings": {
-            "image": "shopify://shop_images/image-card-5-min.webp",
+            "image": "",
             "bg_color": "#c9b49a",
             "title": "Stores near you",
             "btn_label": "Find A Store",
@@ -1110,10 +1012,10 @@
         "card_4AgeeW": {
           "type": "card",
           "settings": {
-            "image": "shopify://shop_images/img-card2.webp",
+            "image": "",
             "bg_color": "#e9cbcb",
             "title": "On the gram",
-            "btn_label": "@Glossy_store",
+            "btn_label": "@skinova",
             "link": ""
           }
         }
@@ -1130,7 +1032,7 @@
         "title_size": 34,
         "title_weight": 600,
         "link_label": "About Us",
-        "link_url": "shopify://pages/about-us",
+        "link_url": "",
         "link_color": "#111111",
         "link_size": 14,
         "columns_desktop": 3,
@@ -1153,7 +1055,6 @@
     "slideshow_skinova_x7W6aQ",
     "marquee_skinova_f8tiN3",
     "featured_product_skinova_w7prWB",
-    "highlight_text_image_skinova_AKKafm",
     "highlight_statement_YFmqWy",
     "collection_list_skinova_cTyQ8H",
     "product_bundle_skinova_CM3gnJ",

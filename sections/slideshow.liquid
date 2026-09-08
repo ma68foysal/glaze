@@ -124,12 +124,13 @@
                 </p>
               {%- endif -%}
 
-              {%- if block.settings.button_label != blank -%}
+              {%- comment -%} Both halves required — a labelled button with no URL is a dead link. {%- endcomment -%}
+              {%- if block.settings.button_label != blank and block.settings.button_link != blank -%}
                 <a
                   class="skinova-hero__cta"
                   data-reveal="fade"
                   style="--stagger-index: 3;"
-                  href="{{ block.settings.button_link | default: '#' }}"
+                  href="{{ block.settings.button_link }}"
                 >
                   <span class="skinova-hero__cta-label">{{ block.settings.button_label | escape }}</span>
                   <span class="skinova-hero__cta-arrow" aria-hidden="true">
@@ -409,7 +410,7 @@
   ],
   "presets": [
     {
-      "name": "Editorial hero",
+      "name": "Slideshow",
       "blocks": [
         {
           "type": "slide",

@@ -31,6 +31,15 @@
     --fpr-border-c: {{ section.settings.border_color }};
     --fpr-border-w: {{ section.settings.border_width }}px;
   }
+
+  /* Logo placeholder. .placeholder-svg in base.css is 100%x100%; a logo should
+     keep its aspect and sit at the row height instead of filling the cell. */
+  #{{ section_id }} .fpr-item-logo__ph {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    opacity: 0.5;
+  }
 </style>
 
 <div id="{{ section_id }}" class="skinova-fpr">
@@ -47,6 +56,13 @@
           <div class="fpr-item-logo">
             {%- if block.settings.logo != blank -%}
               {{ block.settings.logo | image_url: width: 400 | image_tag: loading: 'lazy', alt: block.settings.alt, widths: '120,180,240,320,400' }}
+            {%- else -%}
+              {%- comment -%}
+                Theme Store requires placeholder content for logo lists. The
+                placeholder_svg_tag filter has no logo illustration, so we use
+                the generic 'image' icon at the same height as a real logo.
+              {%- endcomment -%}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg fpr-item-logo__ph' }}
             {%- endif -%}
           </div>
           {%- if block.settings.quote != blank -%}
@@ -69,6 +85,13 @@
           <div class="fpr-item-logo">
             {%- if block.settings.logo != blank -%}
               {{ block.settings.logo | image_url: width: 400 | image_tag: loading: 'lazy', alt: block.settings.alt, widths: '120,180,240,320,400' }}
+            {%- else -%}
+              {%- comment -%}
+                Theme Store requires placeholder content for logo lists. The
+                placeholder_svg_tag filter has no logo illustration, so we use
+                the generic 'image' icon at the same height as a real logo.
+              {%- endcomment -%}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg fpr-item-logo__ph' }}
             {%- endif -%}
           </div>
           {%- if block.settings.quote != blank -%}

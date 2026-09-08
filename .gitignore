@@ -15,3 +15,7 @@ node_modules/
 ## Release files
 release
 *.zip
+
+# Documentation site (Next.js). Built and deployed separately from the theme —
+# not part of the Shopify theme package.
+ultimate-doc/

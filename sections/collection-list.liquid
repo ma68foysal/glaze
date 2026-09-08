@@ -105,19 +105,25 @@
               {%- assign card_count = collection.products_count | append: ' items' -%}
             {%- endif -%}
 
-            <a
-              href="{{ card_url | default: '#' }}"
-              class="scl-card"
-              {{ block.shopify_attributes }}
-            >
+            {%- comment -%}
+              With no collection chosen the card would render as an empty box
+              linking nowhere, so fall back to a placeholder and a neutral title.
+            {%- endcomment -%}
+            {%- assign ph_index = forloop.index0 | modulo: 6 | plus: 1 -%}
+            {%- assign ph_name = 'collection-' | append: ph_index -%}
+            {%- capture card_inner -%}
               <div class="scl-card-media">
                 {%- if card_image != blank -%}
                   {{ card_image | image_url: width: 800 | image_tag: loading: 'lazy', alt: card_title, widths: '300,400,600,800,1000' }}
+                {%- else -%}
+                  {{ ph_name | placeholder_svg_tag: 'placeholder-svg' }}
                 {%- endif -%}
               </div>
               <div class="scl-card-body">
                 <div class="scl-card-info">
-                  <p class="scl-card-title">{{ card_title }}</p>
+                  <p class="scl-card-title">
+                    {%- if card_title != blank -%}{{ card_title }}{%- else -%}{{ 'onboarding.collection_title' | t }}{%- endif -%}
+                  </p>
                   {%- if card_count != blank -%}
                     <p class="scl-card-count">{{ card_count }}</p>
                   {%- endif -%}
@@ -128,7 +134,13 @@
                   </svg>
                 </span>
               </div>
-            </a>
+            {%- endcapture -%}
+
+            {%- if card_url != blank -%}
+              <a href="{{ card_url }}" class="scl-card" {{ block.shopify_attributes }}>{{ card_inner }}</a>
+            {%- else -%}
+              <div class="scl-card scl-card--placeholder" {{ block.shopify_attributes }}>{{ card_inner }}</div>
+            {%- endif -%}
           {%- endfor -%}
         </div>
       </div>

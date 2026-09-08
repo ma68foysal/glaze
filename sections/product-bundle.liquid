@@ -44,19 +44,35 @@
       <div class="pb-media">
         {%- if section.settings.image != blank -%}
           {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', alt: section.settings.title, widths: '400,600,800,1000,1400' }}
+        {%- else -%}
+          {%- comment -%} The hotspot dots are absolutely positioned over this, so it must never be empty. {%- endcomment -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
         {%- endif -%}
 
         {%- for block in section.blocks -%}
           {%- assign product = block.settings.product -%}
-          {%- assign p_url = product.url | default: '#' -%}
-          <a
-            href="{{ p_url }}"
-            class="pb-dot"
-            data-pb-idx="{{ forloop.index0 }}"
-            style="left: {{ block.settings.dot_x }}%; top: {{ block.settings.dot_y }}%;"
-            aria-label="View {{ product.title | default: 'product' }}"
-            {{ block.shopify_attributes }}
-          >{{ forloop.index }}</a>
+          {%- comment -%}
+            Before a product is chosen the dot has nowhere to go, so render it as
+            a plain marker rather than a link to "#".
+          {%- endcomment -%}
+          {%- if product != blank -%}
+            <a
+              href="{{ product.url }}"
+              class="pb-dot"
+              data-pb-idx="{{ forloop.index0 }}"
+              style="left: {{ block.settings.dot_x }}%; top: {{ block.settings.dot_y }}%;"
+              aria-label="{{ product.title | escape }}"
+              {{ block.shopify_attributes }}
+            >{{ forloop.index }}</a>
+          {%- else -%}
+            <span
+              class="pb-dot"
+              data-pb-idx="{{ forloop.index0 }}"
+              style="left: {{ block.settings.dot_x }}%; top: {{ block.settings.dot_y }}%;"
+              aria-hidden="true"
+              {{ block.shopify_attributes }}
+            >{{ forloop.index }}</span>
+          {%- endif -%}
         {%- endfor -%}
       </div>
 
@@ -71,7 +87,26 @@
         <div class="pb-items">
           {%- for block in section.blocks -%}
             {%- assign product = block.settings.product -%}
-            {%- if product != blank -%}
+            {%- if product == blank -%}
+              {%- comment -%}
+                No product picked yet. Show the row layout so the section reads
+                as a bundle on a fresh install rather than a lone button.
+              {%- endcomment -%}
+              {%- assign ph_index = forloop.index | modulo: 6 | plus: 1 -%}
+              {%- assign ph_name = 'product-' | append: ph_index -%}
+              <div class="pb-item pb-item--placeholder" aria-hidden="true" {{ block.shopify_attributes }}>
+                <span class="pb-item-num">{{ forloop.index }}</span>
+                <span class="pb-item-image">
+                  {{ ph_name | placeholder_svg_tag: 'placeholder-svg' }}
+                </span>
+                <div class="pb-item-details">
+                  <div class="pb-item-head">
+                    <span class="pb-item-title">{{ 'onboarding.product_title' | t }}</span>
+                    <div class="pb-item-price">{{ 1999 | money }}</div>
+                  </div>
+                </div>
+              </div>
+            {%- else -%}
               {%- assign override_title = block.settings.title_override -%}
               {%- assign disp_title = override_title | default: product.title -%}
               {%- assign first_variant = product.selected_or_first_available_variant -%}

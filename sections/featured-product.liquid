@@ -129,7 +129,29 @@
 
             </div>
           {%- else -%}
-            <p class="sfp-empty">No products in this collection.</p>
+            {%- comment -%}
+              No collection picked yet, or it has no products. Render the bento
+              layout with placeholders so a fresh install shows the shape of the
+              section rather than a bare line of text.
+            {%- endcomment -%}
+            <div class="sfp-bento sfp-bento--placeholder" data-hero-pos="{{ hero_pos }}" aria-hidden="true">
+              <article class="sfp-hero sfp-hero--placeholder">
+                <span class="sfp-hero__media">
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                </span>
+              </article>
+              <div class="sfp-mini-grid">
+                {%- for i in (1..4) -%}
+                  {%- assign ph_index = i | plus: 1 -%}
+                  {%- assign ph_name = 'product-' | append: ph_index -%}
+                  <article class="sfp-mini sfp-mini--placeholder" data-color-block="{{ forloop.index0 }}">
+                    <span class="sfp-mini__media">
+                      {{ ph_name | placeholder_svg_tag: 'placeholder-svg' }}
+                    </span>
+                  </article>
+                {%- endfor -%}
+              </div>
+            </div>
           {%- endif -%}
         </div>
         {%- assign panel_index = panel_index | plus: 1 -%}

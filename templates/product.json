@@ -114,7 +114,7 @@
         "atc_padding_x": 24,
         "atc_radius": 100,
         "show_verified": true,
-        "verified_avatar": "shopify://shop_images/Progetto_senza_titolo_47.webp",
+        "verified_avatar": "",
         "verified_name": "Louise S.",
         "verified_meta": "Verified Buyer · Sydney",
         "verified_text": "I cannot tell you how much I love this serum! Healthier, longer, fuller lashes — exactly what I was hoping for.",
@@ -138,7 +138,7 @@
         "ti_1": {
           "type": "item",
           "settings": {
-            "icon": "shopify://shop_images/Drawing_3_300x_300x_61a10059-a5b2-44fa-bd81-4db6c7c1d4e9.avif",
+            "icon": "",
             "emoji": "👁",
             "label": "Visible results in 4 weeks"
           }
@@ -146,7 +146,7 @@
         "ti_2": {
           "type": "item",
           "settings": {
-            "icon": "shopify://shop_images/Drawing_1_300x_300x_83b82f01-4bc7-4c6e-b6c1-d740ac50c932.avif",
+            "icon": "",
             "emoji": "🌿",
             "label": "Zero side effects"
           }
@@ -154,7 +154,7 @@
         "ti_3": {
           "type": "item",
           "settings": {
-            "icon": "shopify://shop_images/Light_Work_Rosehip_toner_01.webp",
+            "icon": "",
             "emoji": "💰",
             "label": "Less than the price of a salon visit"
           }
@@ -162,7 +162,7 @@
         "ti_4": {
           "type": "item",
           "settings": {
-            "icon": "shopify://shop_images/Drawing_2_300x_300x_95aef1b5-9e76-481a-8585-4ea61bce9f1c.avif",
+            "icon": "",
             "emoji": "⏱",
             "label": "30-second daily application"
           }
@@ -280,7 +280,7 @@
       "type": "feature-rich",
       "settings": {
         "media_type": "image",
-        "image": "shopify://shop_images/FLORA-Eyelash_Serum_Application-eeb32682_600x600_3d48bf96-5d34-492f-bc45-3fab6c4d1f91.webp",
+        "image": "",
         "video_url": "",
         "video_autoplay": true,
         "video_loop": true,
@@ -360,7 +360,7 @@
       ],
       "settings": {
         "media_type": "image",
-        "image": "shopify://shop_images/FLORA-Luxe_Eyelash_Application-5bddf331_300x_93527537-8058-4773-9c85-961266be3776.avif",
+        "image": "",
         "video_url": "",
         "video_autoplay": true,
         "video_loop": true,
@@ -452,7 +452,10 @@
         "aria_label": "",
         "btn_label": "",
         "btn_link": "",
-        "image": "shopify://shop_images/5_optimized_500x_600x600_ae5391b2-16f8-4afd-91f5-66f665d5d387.webp",
+        "image_before": "",
+        "image_after": "",
+        "media_layout": "side-by-side",
+        "media_gap": 4,
         "media_aspect": "4 / 5",
         "media_radius": 16,
         "media_bg": "#f5d8d5",
@@ -508,7 +511,6 @@
       "type": "feature-rich",
       "settings": {
         "media_type": "video",
-        "video": "shopify://files/videos/80ed154a393949c5a6842a2e72658910.mp4",
         "video_url": "",
         "video_autoplay": true,
         "video_loop": true,
@@ -554,7 +556,7 @@
         "s1": {
           "type": "step",
           "settings": {
-            "image": "shopify://shop_images/FLORA-Image-dbc898e9_600x600_7b8eb6fd-7e99-4eec-90e5-32825f284f37.webp",
+            "image": "",
             "index": "",
             "title": "Remove Makeup",
             "text": "Wipe off any eye makeup with a soft cleanser."
@@ -563,7 +565,7 @@
         "s2": {
           "type": "step",
           "settings": {
-            "image": "shopify://shop_images/FLORA-Luxe_Eyelash_Application-5bddf331_300x_93527537-8058-4773-9c85-961266be3776.avif",
+            "image": "",
             "index": "",
             "title": "Apply One Thin Line",
             "text": "Just one thin line along the upper lash line — like an eyeliner. One coat, no double-dipping."
@@ -572,7 +574,7 @@
         "s3": {
           "type": "step",
           "settings": {
-            "image": "shopify://shop_images/FLORA-Peaceful_Bedroom_Scene-05f7724c_300x_e8d5e7d0-ecda-466f-a5ca-c9c67180bfe1.avif",
+            "image": "",
             "index": "",
             "title": "Go To Sleep",
             "text": "The serum works overnight while you rest."
@@ -615,7 +617,7 @@
       "type": "feature-rich",
       "settings": {
         "media_type": "image",
-        "image": "shopify://shop_images/skinova-product-box.png",
+        "image": "",
         "video_url": "",
         "video_autoplay": true,
         "video_loop": true,
@@ -661,35 +663,35 @@
         "g1": {
           "type": "shot",
           "settings": {
-            "image": "shopify://shop_images/2_optimized_600x_600x_4706aeba-4e97-401f-8e7e-224d7cb510a4.webp",
+            "image": "",
             "alt": "Customer result"
           }
         },
         "g2": {
           "type": "shot",
           "settings": {
-            "image": "shopify://shop_images/1_optimized_600x_600x_4b269924-f3c4-48da-8f7b-b3b328674efb.jpg",
+            "image": "",
             "alt": "Customer result"
           }
         },
         "g3": {
           "type": "shot",
           "settings": {
-            "image": "shopify://shop_images/4_optimized_600x_600x_bfc62d7f-f0c2-4e03-a9cd-faecd4625229.webp",
+            "image": "",
             "alt": "Customer result"
           }
         },
         "g4": {
           "type": "shot",
           "settings": {
-            "image": "shopify://shop_images/3_optimized_600x_600x_82d37b21-2577-4d0a-b1d6-4815ebb745b8.webp",
+            "image": "",
             "alt": "Customer result"
           }
         },
         "g5": {
           "type": "shot",
           "settings": {
-            "image": "shopify://shop_images/5_optimized_500x_600x600_ae5391b2-16f8-4afd-91f5-66f665d5d387.webp",
+            "image": "",
             "alt": "Customer result"
           }
         }
@@ -789,7 +791,7 @@
       "type": "feature-rich",
       "settings": {
         "media_type": "image",
-        "image": "shopify://shop_images/FLORA-Makeup_Removal_Routine-eeeed5c1_300x_854f7912-fbbe-42dd-82b6-a814bef05a5a.avif",
+        "image": "",
         "video_url": "",
         "video_autoplay": true,
         "video_loop": true,

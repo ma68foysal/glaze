@@ -251,9 +251,20 @@
             {%- endif -%}
 
           {%- else -%}
+            {%- comment -%}
+              Two different situations reach this branch. all_products_count
+              ignores active filters, so it separates "filters hid everything"
+              from "this collection has nothing in it" — offering Clear all on
+              an empty collection just sends the merchant in a circle.
+            {%- endcomment -%}
             <div class="skinova-collection__empty">
-              <p>{{ 'collection.empty' | t }}</p>
-              <a class="skinova-btn skinova-btn--solid" href="{{ collection.url }}">{{ 'collection.clear' | t }}</a>
+              {%- if collection.all_products_count > 0 -%}
+                <p>{{ 'collection.empty' | t }}</p>
+                <a class="skinova-btn skinova-btn--solid" href="{{ collection.url }}">{{ 'collection.clear' | t }}</a>
+              {%- else -%}
+                <p>{{ 'collection.empty_collection' | t }}</p>
+                <a class="skinova-btn skinova-btn--solid" href="{{ routes.all_products_collection_url }}">{{ 'collection.browse_all' | t }}</a>
+              {%- endif -%}
             </div>
           {%- endif -%}
         </div>

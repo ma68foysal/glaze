@@ -47,9 +47,11 @@
             endif
           -%}
           <li {{ block.shopify_attributes }}>
-            <a
+            {%- assign cat_tag = 'div' -%}
+            {%- if b_link != blank -%}{%- assign cat_tag = 'a' -%}{%- endif -%}
+            <{{ cat_tag }}
               class="skinova-cats__item"
-              href="{{ b_link | default: '#' }}"
+              {% if b_link != blank %}href="{{ b_link }}"{% endif %}
               style="--ci-bg: {{ b_bg }}; --ci-radius: {{ b_radius }}%; --ci-size: {{ b_size }}px;"
             >
               <span class="skinova-cats__img">
@@ -67,7 +69,7 @@
               {%- if b_title != blank -%}
                 <span class="skinova-cats__label">{{ b_title | escape }}</span>
               {%- endif -%}
-            </a>
+            </{{ cat_tag }}>
           </li>
         {%- endfor -%}
       </ul>
@@ -196,7 +198,7 @@
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "Lorem ipsum dolor sit amet consectetur. Consequat massa dolor lacus suspendisse morbi."
+      "default": "Shop by skin type and concern. Every formula is dermatologist-tested, fragrance-free and made to sit well on sensitive skin."
     },
     {
       "type": "color",

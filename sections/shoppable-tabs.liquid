@@ -164,6 +164,29 @@
                     </div>
                   </a>
                 {%- endfor -%}
+              {%- else -%}
+                {%- comment -%}
+                  No collection picked yet. Render placeholder cards so a fresh
+                  install shows the layout instead of an empty panel.
+                {%- endcomment -%}
+                {%- for i in (1..count) -%}
+                  {%- assign ph_index = i | modulo: 6 | plus: 1 -%}
+                  {%- assign ph_name = 'product-' | append: ph_index -%}
+                  <div class="st-card st-card--placeholder" aria-hidden="true">
+                    <div class="st-card-media">
+                      {{ ph_name | placeholder_svg_tag: 'placeholder-svg' }}
+                    </div>
+                    <div class="st-prod">
+                      <div class="st-prod-thumb">
+                        {{ ph_name | placeholder_svg_tag: 'placeholder-svg' }}
+                      </div>
+                      <div class="st-prod-info">
+                        <p class="st-prod-title">{{ 'onboarding.product_title' | t }}</p>
+                        <p class="st-prod-price">{{ 1999 | money }}</p>
+                      </div>
+                    </div>
+                  </div>
+                {%- endfor -%}
               {%- endif -%}
             </div>
           </div>

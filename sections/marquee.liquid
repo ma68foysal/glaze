@@ -45,6 +45,10 @@
               <span class="mq-image">
                 {{ block.settings.image | image_url: width: 200 | image_tag: loading: 'lazy', alt: block.settings.text, widths: '80,120,160,200' }}
               </span>
+            {%- elsif section.settings.show_images -%}
+              <span class="mq-image mq-image--placeholder">
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              </span>
             {%- endif -%}
             {%- if block.settings.text != blank -%}
               <span class="mq-text">{{ block.settings.text }}</span>
@@ -69,6 +73,13 @@
   "tag": "section",
   "max_blocks": 20,
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_images",
+      "label": "Show images between items",
+      "info": "Turn off for a text-only marquee. Items without an image show a placeholder while this is on.",
+      "default": true
+    },
     {
       "type": "header",
       "content": "Animation"
@@ -294,6 +305,7 @@
   "presets": [
     {
       "name": "Marquee",
+      "settings": { "show_images": false },
       "blocks": [
         { "type": "item", "settings": { "text": "Rescue Your Skin" } },
         { "type": "item", "settings": { "text": "Made with love" } },
