@@ -77,8 +77,10 @@ says where the rebuild stands.
   commands (the CLI's store auth is stored under it) and for admin login. It
   holds the fashion catalogue (10
   collections, 12 products, vendor "Oblique"); the skincare products are Draft.
-  The unpublished **"Oblique demo"** theme (ID 167169687792) carries the store
-  image references. It's built from a copy of the repo outside the repo, so
+  The **"Oblique demo"** theme (ID 167169687792) carries the store image
+  references; it was published as the live theme on 2026-10-16 (the old
+  skinova-1-0-0 theme is kept unpublished). Publish with the Admin API
+  `themePublish` mutation; `shopify theme publish` asks for a fresh login. It's built from a copy of the repo outside the repo, so
   `shopify://shop_images` references never get committed. Photo sources are in
   `docs/demo-images.md`.
 - **Never run `shopify auth logout`.** The CLI holds several Partner logins;
