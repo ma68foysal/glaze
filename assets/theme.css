@@ -348,13 +348,14 @@ a.k-card__qa { display: flex; align-items: center; justify-content: center; text
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   padding-top: 14px;
   font-size: 15px;
   font-weight: 600;
 }
-.k-card__title { min-width: 0; overflow-wrap: anywhere; }
-.k-card__price { flex: none; text-align: right; }
+.k-card__title { flex: 1 1 9ch; min-width: 0; overflow-wrap: break-word; }
+.k-card__price { flex: none; margin-left: auto; text-align: right; }
 .k-card__price s { font-weight: 400; color: var(--color-muted); margin-right: 6px; }
 .k-card__unit { margin: 4px 0 0; font-size: var(--text-sm); color: var(--color-muted); text-align: right; }
 .k-card__swatches { display: flex; gap: 6px; padding-top: 10px; }
