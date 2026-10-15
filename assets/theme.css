@@ -682,8 +682,8 @@ body:has(.k-pdp__bar.is-visible) .k-totop { bottom: calc(100px + env(safe-area-i
 /* ---------- "View" cursor (settings.custom_cursor) ----------
    Mouse users only; buttons inside photos keep the normal pointer. */
 @media (hover: hover) and (pointer: fine) {
-  [data-cursor] :is(.k-card__media, a .k-media, a.k-media, .k-tile, .k-look__image, .k-acard__img),
-  [data-cursor] :is(.k-card__media, a .k-media, a.k-media, .k-tile, .k-look__image, .k-acard__img) :not(button, [data-quick-add], .k-look__pin, .k-details__pin, .k-card__qa, .k-card__qa *) { cursor: none; }
+  [data-cursor] :is(.k-card__media, a .k-media, a.k-media, .k-tile, .k-acard__img),
+  [data-cursor] :is(.k-card__media, a .k-media, a.k-media, .k-tile, .k-acard__img) :not(button, [data-quick-add], .k-look__pin, .k-details__pin, .k-card__qa, .k-card__qa *) { cursor: none; }
 }
 .k-cursor { position: fixed; left: 0; top: 0; z-index: 80; pointer-events: none; will-change: transform; }
 .k-cursor__dot {
@@ -747,6 +747,7 @@ body:has(.k-pdp__bar.is-visible) .k-totop { bottom: calc(100px + env(safe-area-i
 .k-pdp__values { clear: both; display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
 .k-pdp__values--swatch { display: flex; flex-wrap: wrap; gap: 12px; }
 .k-pdp__size {
+  position: relative;
   display: grid; place-items: center;
   min-height: 52px; padding: 0 10px;
   border: 1.5px solid var(--color-line);

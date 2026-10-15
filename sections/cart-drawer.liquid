@@ -173,7 +173,7 @@
                 {%- elsif p.has_only_default_variant -%}
                   <button type="button" class="k-drawer__look-btn" data-k-drawer-add="{{ p.selected_or_first_available_variant.id }}" aria-label="{{ 'collection.add_to_cart' | t: title: p.title | escape }}">{{ 'cart.look_add' | t }}</button>
                 {%- else -%}
-                  <a class="k-drawer__look-btn" href="{{ p.url }}">{{ 'products.choose_options' | t }}</a>
+                  <a class="k-drawer__look-btn" href="{{ p.url }}"{% if settings.quick_view %} data-quick-view aria-haspopup="dialog"{% endif %}>{% if settings.quick_view %}{{ 'cart.look_add' | t }}{% else %}{{ 'products.choose_options' | t }}{% endif %}<span class="visually-hidden">: {{ p.title }}</span></a>
                 {%- endif -%}
               </li>
             {%- endfor -%}

@@ -40,6 +40,8 @@
               <button type="button" class="k-pdp__pair-add" data-quick-add="{{ rv.id }}">
                 <span>{{ 'products.add_short' | t }}</span><span class="visually-hidden"> {{ rec.title }}</span>
               </button>
+            {%- elsif rec.available and settings.quick_view -%}
+              <a class="k-pdp__pair-add" href="{{ rec.url }}" data-quick-view aria-haspopup="dialog">{{ 'products.add_short' | t }}<span class="visually-hidden"> {{ rec.title }}</span></a>
             {%- else -%}
               <a class="k-pdp__pair-add" href="{{ rec.url }}">{{ 'products.view_short' | t }}<span class="visually-hidden"> {{ rec.title }}</span></a>
             {%- endif -%}

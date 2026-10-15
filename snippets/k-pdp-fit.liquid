@@ -1,0 +1,128 @@
+{%- comment -%}
+  Fit block for the product page: a fit scale, a model note, and a size
+  finder that recommends a size from three answers (height, usual size, fit
+  preference) and the merchant's size chart. Every setting can be connected
+  to a product metafield in the theme editor.
+
+  Accepts: block, product, form_id
+{%- endcomment -%}
+{%- liquid
+  assign size_position = 0
+  for option in product.options_with_values
+    assign oname = option.name | downcase
+    if oname contains 'size' or oname contains 'taille' or oname contains 'größe' or oname contains 'talla' or oname contains 'taglia'
+      assign size_position = option.position
+    endif
+  endfor
+  assign scale = block.settings.fit_scale | default: 3 | plus: 0
+  assign scale_pct = scale | minus: 1 | times: 25
+  assign chart = block.settings.size_chart | strip | newline_to_br | split: '<br />'
+  assign uid = form_id | append: '-fit'
+-%}
+<k-fit class="k-fit" data-form-id="{{ form_id }}" data-scale="{{ scale }}" data-size-position="{{ size_position }}" {{ block.shopify_attributes }}>
+  <div class="k-fit__scale">
+    <div class="k-fit__head">
+      <strong>{{ 'products.fit.title' | t }}</strong>
+      {%- if block.settings.fit_text != blank -%}<span class="k-muted">{{ block.settings.fit_text }}</span>{%- endif -%}
+    </div>
+    <div class="k-fit__track" role="img" aria-label="{{ 'products.fit.scale_aria' | t: value: scale }}">
+      <i style="left: 0%"></i><i style="left: 25%"></i><i style="left: 50%"></i><i style="left: 75%"></i><i style="left: 100%"></i>
+      <b style="left: {{ scale_pct }}%"></b>
+    </div>
+    <div class="k-fit__ends k-label k-muted" aria-hidden="true">
+      <span>{{ 'products.fit.runs_small' | t }}</span><span>{{ 'products.fit.true' | t }}</span><span>{{ 'products.fit.runs_large' | t }}</span>
+    </div>
+  </div>
+
+  {%- if block.settings.model_note != blank -%}
+    <p class="k-fit__model">
+      {%- render 'k-icon', icon: 'person', size: 20 -%}
+      <span>{{ block.settings.model_note }}</span>
+    </p>
+  {%- endif -%}
+
+  {%- if block.settings.show_finder and size_position > 0 and chart.size > 1 -%}
+    <button type="button" class="k-fit__open" data-fit-open aria-expanded="false" aria-controls="{{ uid }}">{{ 'products.fit.find' | t }}</button>
+    <div class="k-fit__finder" id="{{ uid }}" data-fit-finder hidden>
+      <script type="application/json" data-fit-chart>
+        [
+          {%- for row in chart -%}
+            {%- assign parts = row | split: ':' -%}
+            {%- assign size = parts[0] | strip -%}
+            {%- assign range = parts[1] | strip | split: '-' -%}
+            {%- if size != blank and range.size == 2 -%}
+              {"size": {{ size | json }}, "min": {{ range[0] | strip | plus: 0 }}, "max": {{ range[1] | strip | plus: 0 }}}{% unless forloop.last %},{% endunless %}
+            {%- endif -%}
+          {%- endfor -%}
+        ]
+      </script>
+      <div class="k-fit__steps" aria-hidden="true"><span class="is-on"></span><span></span><span></span></div>
+
+      <div class="k-fit__step" data-step="1">
+        <label class="k-fit__q" for="{{ uid }}-h">{{ 'products.fit.q_height' | t }}</label>
+        <p class="k-fit__big"><span data-fit-h-out>170</span> <span class="k-fit__unit">cm</span></p>
+        <input type="range" id="{{ uid }}-h" min="145" max="205" value="170" step="1" data-fit-h>
+      </div>
+      <fieldset class="k-fit__step" data-step="2" hidden>
+        <legend class="k-fit__q">{{ 'products.fit.q_usual' | t }}</legend>
+        <div class="k-fit__chips" data-fit-usual></div>
+      </fieldset>
+      <fieldset class="k-fit__step" data-step="3" hidden>
+        <legend class="k-fit__q">{{ 'products.fit.q_pref' | t }}</legend>
+        <div class="k-fit__chips">
+          <label><input type="radio" name="{{ uid }}-pref" value="-1"><span>{{ 'products.fit.closer' | t }}</span></label>
+          <label><input type="radio" name="{{ uid }}-pref" value="0" checked><span>{{ 'products.fit.as_designed' | t }}</span></label>
+          <label><input type="radio" name="{{ uid }}-pref" value="1"><span>{{ 'products.fit.roomier' | t }}</span></label>
+        </div>
+      </fieldset>
+      <div class="k-fit__step k-fit__result" data-step="4" hidden aria-live="polite">
+        <span class="k-fit__size" data-fit-size></span>
+        <div>
+          <p class="k-fit__res-title" data-fit-title data-template="{{ 'products.fit.result' | t: size: '[size]' | escape }}"></p>
+          <p class="k-muted">{{ 'products.fit.result_note' | t }}</p>
+        </div>
+      </div>
+
+      <div class="k-fit__nav">
+        <button type="button" class="k-btn k-btn--secondary" data-fit-back>{{ 'general.close' | t }}</button>
+        <button type="button" class="k-btn k-btn--primary" data-fit-next data-label-next="{{ 'products.fit.next' | t }}" data-label-use="{{ 'products.fit.use' | t: size: '[size]' | escape }}">{{ 'products.fit.next' | t }}</button>
+      </div>
+      <span hidden data-fit-label-back>{{ 'products.fit.back' | t }}</span>
+      <span hidden data-fit-label-close>{{ 'general.close' | t }}</span>
+      <span hidden data-fit-label-for-you>{{ 'products.fit.for_you' | t }}</span>
+    </div>
+  {%- endif -%}
+</k-fit>
+
+{% stylesheet %}
+  .k-fit { display: grid; gap: 14px; padding-block: 16px; border-block: 1px solid var(--color-line); }
+  .k-fit__head { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; }
+  .k-fit__track { position: relative; height: 2px; margin: 16px 8px 6px; background: var(--color-text); }
+  .k-fit__track i { position: absolute; top: -5px; width: 2px; height: 12px; background: var(--color-text); transform: translateX(-50%); }
+  .k-fit__track b { position: absolute; top: -9px; width: 20px; height: 20px; border-radius: 999px; background: var(--color-accent); transform: translateX(-50%); box-shadow: 0 0 0 5px var(--color-bg); }
+  .k-fit__ends { display: flex; justify-content: space-between; gap: 8px; }
+  .k-fit__model { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 15px; }
+  .k-fit__open { justify-self: start; min-height: 32px; padding: 0; border: 0; background: none; color: inherit; font: 600 14px var(--font-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .k-fit__finder { display: grid; gap: 16px; padding: 18px; border: 1.5px solid var(--color-text); animation: k-rise-in 0.45s var(--ease-out) both; }
+  .k-fit__finder[hidden] { display: none; }
+  .k-fit__steps { display: flex; gap: 6px; }
+  .k-fit__steps span { flex: 1; height: 3px; background: var(--color-line); transition: background-color 0.3s; }
+  .k-fit__steps span.is-on { background: var(--color-text); }
+  .k-fit__step { display: grid; gap: 12px; margin: 0; padding: 0; border: 0; min-width: 0; }
+  .k-fit__q { padding: 0; font-weight: 700; }
+  .k-fit__big { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: 44px; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .k-fit__unit { font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; font-size: 26px; }
+  .k-fit__step input[type="range"] { width: 100%; accent-color: var(--color-accent); }
+  .k-fit__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .k-fit__chips input { position: absolute; opacity: 0; pointer-events: none; }
+  .k-fit__chips span { display: inline-flex; align-items: center; min-height: 46px; padding: 0 16px; border: 1.5px solid var(--color-line); border-radius: 999px; font-weight: 600; cursor: pointer; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+  .k-fit__chips input:checked + span { background: var(--color-text); border-color: var(--color-text); color: var(--color-bg); }
+  .k-fit__chips input:focus-visible + span { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  .k-fit__result { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 18px; }
+  .k-fit__result p { margin: 0; font-size: 14px; }
+  .k-fit__res-title { font-weight: 700; font-size: 18px !important; }
+  .k-fit__size { display: grid; place-items: center; width: 88px; height: 88px; border-radius: 999px; background: var(--color-accent); color: #fff; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: 36px; }
+  .k-fit__nav { display: flex; justify-content: space-between; gap: 8px; }
+  .k-fit__nav .k-btn { min-height: 44px; }
+  .k-pdp__fit-tag { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); padding: 1px 6px; border-radius: 999px; background: var(--color-accent); color: #fff; font-family: var(--font-label); font-size: 10px; letter-spacing: 0.06em; white-space: nowrap; pointer-events: none; }
+{% endstylesheet %}

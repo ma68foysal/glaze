@@ -94,6 +94,14 @@
           "settings": {
             "label": "Share"
           }
+        },
+        "fit": {
+          "type": "fit",
+          "settings": {
+            "fit_scale": 3,
+            "fit_text": "True to size",
+            "show_finder": true
+          }
         }
       },
       "block_order": [
@@ -101,6 +109,7 @@
         "title",
         "price",
         "description",
+        "fit",
         "variant_picker",
         "inventory",
         "buy_buttons",

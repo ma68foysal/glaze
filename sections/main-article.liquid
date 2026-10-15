@@ -74,7 +74,7 @@
                     {%- if p.has_only_default_variant and pv.available -%}
                       <button type="button" class="k-art__sp-add" data-quick-add="{{ pv.id }}"><span>{{ 'products.add_to_cart' | t }}</span><span class="visually-hidden"> {{ p.title }}</span></button>
                     {%- else -%}
-                      <a class="k-art__sp-add" href="{{ p.url }}">{{ 'products.choose_options' | t }}<span class="visually-hidden"> {{ p.title }}</span></a>
+                      <a class="k-art__sp-add" href="{{ p.url }}"{% if settings.quick_view %} data-quick-view aria-haspopup="dialog"{% endif %}>{% if settings.quick_view %}{{ 'products.quick_add' | t }}{% else %}{{ 'products.choose_options' | t }}{% endif %}<span class="visually-hidden"> {{ p.title }}</span></a>
                     {%- endif -%}
                   </div>
                 </li>

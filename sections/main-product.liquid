@@ -336,6 +336,10 @@
                 </div>
               </details>
 
+            {%- when 'fit' -%}
+
+              {%- render 'k-pdp-fit', block: block, product: product, form_id: form_id -%}
+
             {%- when 'inventory' -%}
 
               {%- render 'k-pdp-inventory', block: block, variant: current_variant -%}
@@ -691,6 +695,19 @@
         { "type": "richtext", "id": "content", "label": "Content", "default": "<p>Describe the fit, materials or care.</p>" },
         { "type": "page", "id": "page", "label": "Page content", "info": "Shown after the content above." },
         { "type": "checkbox", "id": "open", "label": "Open by default", "default": false }
+      ]
+    },
+    {
+      "type": "fit",
+      "name": "Fit and size finder",
+      "limit": 1,
+      "settings": [
+        { "type": "paragraph", "content": "Connect these to product metafields (the database icon next to each setting) so every product shows its own fit." },
+        { "type": "range", "id": "fit_scale", "label": "Fit", "min": 1, "max": 5, "step": 1, "default": 3, "info": "1 runs small, 3 true to size, 5 runs large." },
+        { "type": "text", "id": "fit_text", "label": "Fit note", "default": "True to size" },
+        { "type": "text", "id": "model_note", "label": "Model note", "info": "For example: Model is 178 cm and wears S." },
+        { "type": "checkbox", "id": "show_finder", "label": "Show size finder", "default": true, "info": "Needs an option named Size and a size chart." },
+        { "type": "textarea", "id": "size_chart", "label": "Size chart (height in cm)", "default": "XS: 150-160\nS: 158-168\nM: 166-176\nL: 174-184\nXL: 182-194", "info": "One size per line as Size: shortest-tallest. Size names must match the product's size option." }
       ]
     },
     {

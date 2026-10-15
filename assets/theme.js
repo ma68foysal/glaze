@@ -700,7 +700,8 @@
   (function () {
     var label = document.documentElement.dataset.cursor;
     if (!label || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    var TARGETS = '.k-card__media, a .k-media, a.k-media, .k-tile, .k-look__image, .k-acard__img';
+    // Only photos that open something; the lookbook photo holds hotspots, not a link.
+    var TARGETS = '.k-card__media, a .k-media, a.k-media, .k-tile, .k-acard__img';
     var SKIP = 'button, input, select, textarea, [data-quick-add], .k-look__pin, .k-details__pin, .k-card__qa';
     var el = document.createElement('div');
     el.className = 'k-cursor';
@@ -1100,3 +1101,102 @@
   // Adding to the bag hands over to the cart drawer, so close the window first.
   dialog.addEventListener('submit', function () { setTimeout(close, 0); });
 })();
+
+/* <k-fit>: size finder on the product page (snippets/k-pdp-fit). Three steps,
+   then a recommendation that selects the size in the variant picker. */
+if (!customElements.get('k-fit')) {
+  customElements.define('k-fit', class extends HTMLElement {
+    connectedCallback() {
+      this.finder = this.querySelector('[data-fit-finder]');
+      if (!this.finder) return;
+      try { this.chart = JSON.parse(this.querySelector('[data-fit-chart]').textContent); } catch (e) { this.chart = []; }
+      if (this.chart.length < 2) return;
+      this.openBtn = this.querySelector('[data-fit-open]');
+      this.steps = Array.from(this.finder.querySelectorAll('[data-step]'));
+      this.bars = Array.from(this.finder.querySelectorAll('.k-fit__steps span'));
+      this.next = this.finder.querySelector('[data-fit-next]');
+      this.back = this.finder.querySelector('[data-fit-back]');
+      this.range = this.finder.querySelector('[data-fit-h]');
+      this.step = 1;
+      var usual = this.finder.querySelector('[data-fit-usual]');
+      var name = this.finder.id + '-usual';
+      this.chart.forEach((row, i) => {
+        var label = document.createElement('label');
+        var input = document.createElement('input');
+        input.type = 'radio'; input.name = name; input.value = String(i);
+        if (i === Math.floor(this.chart.length / 2)) input.checked = true;
+        var span = document.createElement('span');
+        span.textContent = row.size;
+        label.appendChild(input); label.appendChild(span);
+        usual.appendChild(label);
+      });
+      this.range.addEventListener('input', () => { this.finder.querySelector('[data-fit-h-out]').textContent = this.range.value; });
+      this.openBtn.addEventListener('click', () => this.toggle(this.finder.hidden));
+      this.next.addEventListener('click', () => { if (this.step < 4) this.go(this.step + 1); else this.use(); });
+      this.back.addEventListener('click', () => { if (this.step > 1 && this.step < 4) this.go(this.step - 1); else this.toggle(false); });
+    }
+    toggle(open) {
+      this.finder.hidden = !open;
+      this.openBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) { this.go(1); this.range.focus(); } else this.openBtn.focus();
+    }
+    go(n) {
+      this.step = n;
+      this.steps.forEach((s) => { s.hidden = s.dataset.step !== String(n); });
+      this.bars.forEach((b, i) => b.classList.toggle('is-on', i < Math.min(n, 3)));
+      this.finder.querySelector('.k-fit__steps').hidden = n === 4;
+      this.back.textContent = (n > 1 && n < 4 ? this.finder.querySelector('[data-fit-label-back]') : this.finder.querySelector('[data-fit-label-close]')).textContent;
+      if (n === 4) {
+        this.size = this.recommend();
+        this.finder.querySelector('[data-fit-size]').textContent = this.size;
+        var title = this.finder.querySelector('[data-fit-title]');
+        title.textContent = title.dataset.template.replace('[size]', this.size);
+        this.next.textContent = this.next.dataset.labelUse.replace('[size]', this.size);
+      } else {
+        this.next.textContent = this.next.dataset.labelNext;
+      }
+    }
+    recommend() {
+      var h = parseInt(this.range.value, 10);
+      var chart = this.chart;
+      // The row whose range centre is closest to the height.
+      var byHeight = 0, best = Infinity;
+      chart.forEach(function (row, i) {
+        var d = Math.abs(h - (row.min + row.max) / 2);
+        if (d < best) { best = d; byHeight = i; }
+      });
+      var usualInput = this.finder.querySelector('[data-fit-usual] input:checked');
+      var usual = usualInput ? parseInt(usualInput.value, 10) : byHeight;
+      var idx = Math.round((byHeight + usual) / 2);
+      var scale = parseInt(this.dataset.scale, 10) || 3;
+      if (scale >= 4) idx -= 1;      // runs large: size down
+      if (scale <= 2) idx += 1;      // runs small: size up
+      var pref = this.finder.querySelector('input[name$="-pref"]:checked');
+      idx += pref ? parseInt(pref.value, 10) : 0;
+      idx = Math.max(0, Math.min(chart.length - 1, idx));
+      return chart[idx].size;
+    }
+    use() {
+      var form = document.getElementById(this.dataset.formId);
+      var scope = (form && form.closest('.k-pdp')) || document;
+      var fs = scope.querySelector('k-variant-picker [data-option-position="' + this.dataset.sizePosition + '"]');
+      if (fs) {
+        var target = this.size.toLowerCase();
+        fs.querySelectorAll('.k-pdp__fit-tag').forEach(function (t) { t.remove(); });
+        var input = Array.from(fs.querySelectorAll('[data-option-value]')).find(function (i) { return i.value.toLowerCase() === target; });
+        if (input) {
+          input.checked = true;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+          var label = fs.querySelector('label[for="' + input.id + '"]');
+          if (label) {
+            var tag = document.createElement('span');
+            tag.className = 'k-pdp__fit-tag';
+            tag.textContent = this.finder.querySelector('[data-fit-label-for-you]').textContent;
+            label.appendChild(tag);
+          }
+        }
+      }
+      this.toggle(false);
+    }
+  });
+}

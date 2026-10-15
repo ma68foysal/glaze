@@ -318,7 +318,27 @@
     "in_stock": "Auf Lager, sofort versandbereit",
     "add_short": "Hinzufügen +",
     "view_short": "Ansehen",
-    "price_from": "Ab {{ price }}"
+    "price_from": "Ab {{ price }}",
+    "fit": {
+      "title": "Passform",
+      "scale_aria": "Passform {{ value }} auf einer Skala von 1, fällt klein aus, bis 5, fällt groß aus",
+      "runs_small": "Fällt klein aus",
+      "true": "Normale Größe",
+      "runs_large": "Fällt groß aus",
+      "find": "Meine Größe finden",
+      "q_height": "Wie groß sind Sie?",
+      "q_usual": "Welche Größe kaufen Sie normalerweise?",
+      "q_pref": "Wie soll es sitzen?",
+      "closer": "Enger",
+      "as_designed": "Wie gedacht",
+      "roomier": "Weiter",
+      "next": "Weiter",
+      "back": "Zurück",
+      "use": "{{ size }} wählen",
+      "result": "Wir empfehlen {{ size }}",
+      "result_note": "Basierend auf Ihrer Körpergröße, Ihrer üblichen Größe, der Passform dieses Teils und Ihrer Vorliebe.",
+      "for_you": "Für Sie"
+    }
   },
   "sections": {
     "category_columns": {

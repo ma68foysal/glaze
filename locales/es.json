@@ -318,7 +318,27 @@
     "in_stock": "En stock, listo para enviar",
     "add_short": "Añadir +",
     "view_short": "Ver",
-    "price_from": "Desde {{ price }}"
+    "price_from": "Desde {{ price }}",
+    "fit": {
+      "title": "Ajuste",
+      "scale_aria": "Ajuste {{ value }} en una escala de 1, talla pequeño, a 5, talla grande",
+      "runs_small": "Talla pequeño",
+      "true": "Talla normal",
+      "runs_large": "Talla grande",
+      "find": "Encontrar mi talla",
+      "q_height": "¿Cuánto mides?",
+      "q_usual": "¿Qué talla sueles comprar?",
+      "q_pref": "¿Cómo te gusta que quede?",
+      "closer": "Más ajustado",
+      "as_designed": "Como está pensado",
+      "roomier": "Más holgado",
+      "next": "Siguiente",
+      "back": "Atrás",
+      "use": "Elegir {{ size }}",
+      "result": "Te recomendamos la {{ size }}",
+      "result_note": "Según tu altura, tu talla habitual, el ajuste de esta prenda y cómo te gusta llevarla.",
+      "for_you": "Para ti"
+    }
   },
   "sections": {
     "category_columns": {

@@ -318,7 +318,27 @@
     "in_stock": "En stock, prêt à être expédié",
     "add_short": "Ajouter +",
     "view_short": "Voir",
-    "price_from": "À partir de {{ price }}"
+    "price_from": "À partir de {{ price }}",
+    "fit": {
+      "title": "Coupe",
+      "scale_aria": "Coupe {{ value }} sur une échelle de 1, taille petit, à 5, taille grand",
+      "runs_small": "Taille petit",
+      "true": "Taille normalement",
+      "runs_large": "Taille grand",
+      "find": "Trouver ma taille",
+      "q_height": "Quelle est votre taille ?",
+      "q_usual": "Quelle taille portez-vous d’habitude ?",
+      "q_pref": "Comment aimez-vous le porter ?",
+      "closer": "Plus ajusté",
+      "as_designed": "Comme prévu",
+      "roomier": "Plus ample",
+      "next": "Suivant",
+      "back": "Retour",
+      "use": "Choisir {{ size }}",
+      "result": "Nous conseillons {{ size }}",
+      "result_note": "D’après votre taille, votre taille habituelle, la coupe de cette pièce et l’aisance que vous aimez.",
+      "for_you": "Pour vous"
+    }
   },
   "sections": {
     "category_columns": {

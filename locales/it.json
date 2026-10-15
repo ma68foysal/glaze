@@ -318,7 +318,27 @@
     "in_stock": "Disponibile, pronto per la spedizione",
     "add_short": "Aggiungi +",
     "view_short": "Vedi",
-    "price_from": "Da {{ price }}"
+    "price_from": "Da {{ price }}",
+    "fit": {
+      "title": "Vestibilità",
+      "scale_aria": "Vestibilità {{ value }} su una scala da 1, veste piccolo, a 5, veste grande",
+      "runs_small": "Veste piccolo",
+      "true": "Veste regolare",
+      "runs_large": "Veste grande",
+      "find": "Trova la mia taglia",
+      "q_height": "Quanto sei alto?",
+      "q_usual": "Che taglia compri di solito?",
+      "q_pref": "Come ti piace che vesta?",
+      "closer": "Più aderente",
+      "as_designed": "Come previsto",
+      "roomier": "Più ampio",
+      "next": "Avanti",
+      "back": "Indietro",
+      "use": "Scegli {{ size }}",
+      "result": "Ti consigliamo la {{ size }}",
+      "result_note": "In base alla tua altezza, alla taglia che porti di solito, alla vestibilità del capo e a come ti piace indossarlo.",
+      "for_you": "Per te"
+    }
   },
   "sections": {
     "category_columns": {

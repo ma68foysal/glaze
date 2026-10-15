@@ -72,7 +72,7 @@
                   </button>
                   <p class="visually-hidden" data-quick-add-error role="alert" hidden></p>
                 {%- elsif p.available -%}
-                  <a class="k-btn k-btn--primary" href="{{ p.url }}">{{ 'products.choose_options' | t }}</a>
+                  <a class="k-btn k-btn--primary" href="{{ p.url }}"{% if settings.quick_view %} data-quick-view aria-haspopup="dialog"{% endif %}>{% if settings.quick_view %}{{ 'products.quick_add' | t }}{% else %}{{ 'products.choose_options' | t }}{% endif %}<span class="visually-hidden">: {{ p.title }}</span></a>
                 {%- else -%}
                   <button type="button" class="k-btn k-btn--primary" disabled>{{ 'products.sold_out' | t }}</button>
                 {%- endif -%}
