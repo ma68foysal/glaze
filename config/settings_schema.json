@@ -206,6 +206,52 @@
         "label": "t:labels.enable_smooth_scroll",
         "info": "t:labels.enable_smooth_scroll_info",
         "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "page_transitions",
+        "label": "Animate page changes",
+        "info": "Pages cross-fade and product photos move into the product page. Browsers without support change pages as usual.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "stretch_headings",
+        "label": "Stretch headings while scrolling",
+        "info": "Only at the Full motion level.",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Images",
+    "settings": [
+      {
+        "type": "select",
+        "id": "photo_treatment",
+        "label": "Photo treatment",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "mono",
+            "label": "Monochrome"
+          },
+          {
+            "value": "duotone",
+            "label": "Duotone"
+          }
+        ],
+        "default": "none",
+        "info": "Gives mixed photography one look. Colour returns on hover. Product pages and the cart always show true colour."
+      },
+      {
+        "type": "checkbox",
+        "id": "photo_grain",
+        "label": "Film grain on photos",
+        "default": false
       }
     ]
   },

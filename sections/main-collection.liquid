@@ -171,10 +171,11 @@
     margin: 0;
     font-family: var(--font-heading);
     font-weight: var(--font-heading-weight-black);
-    font-size: calc(clamp(56px, 10vw, 168px) * var(--heading-scale));
+    font-size: calc(clamp(56px, 8vw, 150px) * var(--heading-scale));
     line-height: 0.86;
     letter-spacing: -0.04em;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
   .k-col__count {
     display: inline-grid; place-items: center;

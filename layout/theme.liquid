@@ -1,8 +1,13 @@
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}" data-motion="{{ settings.motion_level | default: 'full' }}">
+<html lang="{{ request.locale.iso_code }}" data-motion="{{ settings.motion_level | default: 'full' }}"{% if settings.photo_treatment != 'none' %} data-ink="{{ settings.photo_treatment }}"{% endif %}{% if settings.photo_grain %} data-grain{% endif %}{% if settings.stretch_headings %} data-stretch{% endif %}>
   <head>
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
+
+    {%- if settings.page_transitions and settings.motion_level != 'off' -%}
+      {%- comment -%} Cross-page view transitions; browsers without support navigate normally. {%- endcomment -%}
+      <style>@media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }</style>
+    {%- endif -%}
 
     {%- comment -%}
       Favicon. Shopify scales whatever the merchant uploads to 32x32, so we
@@ -77,6 +82,24 @@
   </head>
 
   <body class="k-scope color-{{ settings.color_schemes.first.id | default: 'scheme-1' }}">
+    {%- if settings.photo_treatment == 'duotone' -%}
+      {%- liquid
+        assign duo = settings.color_schemes.first.settings.accent
+        assign duo_r = duo.red | divided_by: 255.0 | round: 3
+        assign duo_g = duo.green | divided_by: 255.0 | round: 3
+        assign duo_b = duo.blue | divided_by: 255.0 | round: 3
+      -%}
+      <svg class="visually-hidden" width="0" height="0" aria-hidden="true" focusable="false">
+        <filter id="k-duotone" color-interpolation-filters="sRGB">
+          <feColorMatrix type="matrix" values="0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0 0 0 1 0"/>
+          <feComponentTransfer>
+            <feFuncR type="table" tableValues="{{ duo_r }} 1"/>
+            <feFuncG type="table" tableValues="{{ duo_g }} 1"/>
+            <feFuncB type="table" tableValues="{{ duo_b }} 1"/>
+          </feComponentTransfer>
+        </filter>
+      </svg>
+    {%- endif -%}
     <a class="skip-to-content" href="#main-content">{{ 'general.skip_to_content' | t }}</a>
 
     {% sections 'header-group' %}

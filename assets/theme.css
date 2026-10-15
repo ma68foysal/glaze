@@ -601,3 +601,53 @@ input:focus-visible + .k-col__pill, input:focus-visible + .k-col__swatch { outli
 .k-searchbar .k-icon { flex: none; }
 .k-searchbar input[type="search"] { flex: 1; min-width: 0; min-height: 52px; border: 0; background: transparent; color: inherit; font: 500 18px var(--font-body); }
 .k-searchbar input[type="search"]::placeholder { color: var(--color-muted); }
+
+/* ---------- Page transitions (settings.page_transitions) ----------
+   The header holds still, pages cross-fade, and theme.js names one photo
+   "k-photo" so it travels between a card and the product page. */
+.k-header { view-transition-name: k-header; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.4s; animation-timing-function: var(--ease-out); }
+.k-pdp__media.is-active .k-media img { view-transition-name: k-photo; }
+.k-vt-card .k-pdp__media .k-media img { view-transition-name: none; }
+::view-transition-group(k-photo) { animation-duration: 0.6s; animation-timing-function: var(--ease-out); }
+::view-transition-old(k-photo), ::view-transition-new(k-photo) { height: 100%; object-fit: cover; overflow: clip; }
+
+/* ---------- Photo treatment (settings.photo_treatment, photo_grain) ----------
+   Applies to section and card photos; product pages, the cart and search
+   thumbnails keep true colour. Hover brings the colour back. */
+[data-ink] :is(.k-media, .k-card__media) img:not(.k-card__swatch img) {
+  transition: filter 0.7s var(--ease-out), transform 1.2s var(--ease-out), opacity 0.4s;
+}
+[data-ink="mono"] :is(.k-media, .k-card__media) img { filter: grayscale(1) contrast(1.06); }
+[data-ink="duotone"] :is(.k-media, .k-card__media) img { filter: url(#k-duotone) contrast(1.04); }
+[data-ink] :is(.k-card:hover, a:hover, .k-media:hover, .k-card__media:hover) img,
+[data-ink] :is(.k-pdp, .k-cart, skinova-cart-drawer, .k-pdp__bar, .k-ps__thumb, .k-cart__img) img { filter: none; }
+
+[data-grain] :is(.k-media, .k-card__media)::after {
+  content: ""; position: absolute; inset: -50%; z-index: 1; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.16; mix-blend-mode: overlay;
+  animation: k-grain 1.2s steps(6) infinite;
+}
+[data-grain] :is(.k-pdp, .k-cart, skinova-cart-drawer, .k-ps) :is(.k-media, .k-card__media)::after { content: none; }
+@keyframes k-grain {
+  0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-4%, 3%); } 40% { transform: translate(3%, -5%); }
+  60% { transform: translate(-6%, 2%); } 80% { transform: translate(5%, 4%); }
+}
+
+/* ---------- Stretching headings (settings.stretch_headings) ----------
+   Section headings widen as they scroll into view. Full motion only. */
+@supports (animation-timeline: view()) {
+  [data-stretch][data-motion="full"] .k-h2 {
+    transform-origin: var(--stretch-origin, 0 100%);
+    animation: k-stretch linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 45%;
+  }
+  [data-stretch][data-motion="full"] :is(.k-sec-head--center, [style*="text-align: center"]) .k-h2 { --stretch-origin: 50% 100%; }
+}
+@keyframes k-stretch { from { transform: scaleX(0.78); opacity: 0.4; } to { transform: none; opacity: 1; } }
+.motion-paused .k-h2, .motion-paused :is(.k-media, .k-card__media)::after { animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  [data-stretch] .k-h2, [data-grain] :is(.k-media, .k-card__media)::after { animation: none !important; }
+}

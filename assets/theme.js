@@ -636,6 +636,39 @@
   }
   window.ObliqueHighlight = highlight;
 
+  // ------------------------------------------------------------------
+  // Page transitions: the clicked card's photo is named "k-photo" so the
+  // browser moves it into the product page, whose main photo carries the
+  // same name in CSS. The product photo's name is dropped while a card on
+  // the product page travels, so the name is never used twice.
+  // ------------------------------------------------------------------
+  (function () {
+    if (!('onpageswap' in window)) return;
+    var html = document.documentElement;
+    var still = function () { return html.dataset.motion === 'off' || html.classList.contains('motion-paused') || reduceMotion.matches; };
+    var named = null;
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest('a[href*="/products/"]');
+      if (!link || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || link.target === '_blank') return;
+      var card = link.closest('.k-card, .k-ps__pr, .k-pdp__pair, .k-art__sp');
+      var img = card && card.querySelector('img');
+      if (!img) return;
+      if (named) named.style.viewTransitionName = '';
+      html.classList.add('k-vt-card');
+      img.style.viewTransitionName = 'k-photo';
+      named = img;
+    }, true);
+    window.addEventListener('pageswap', function (e) {
+      if (e.viewTransition && still()) e.viewTransition.skipTransition();
+    });
+    // Coming back from the browser cache: clear the travelling photo.
+    window.addEventListener('pageshow', function (e) {
+      if (!e.persisted) return;
+      html.classList.remove('k-vt-card');
+      if (named) { named.style.viewTransitionName = ''; named = null; }
+    });
+  })();
+
   // "/" opens the header search from anywhere outside a text field.
   document.addEventListener('keydown', function (e) {
     if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
