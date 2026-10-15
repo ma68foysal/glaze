@@ -10,8 +10,18 @@
 {
   "sections": {
     "main": {
-      "type": "search",
-      "settings": {}
+      "type": "main-search",
+      "settings": {
+        "per_page": 16,
+        "columns": 4,
+        "quick_add": true,
+        "show_filters": true,
+        "show_sort": true,
+        "color_scheme": "scheme-1",
+        "drawer_color_scheme": "scheme-1",
+        "padding_top": "medium",
+        "padding_bottom": "large"
+      }
     }
   },
   "order": [

@@ -34,7 +34,20 @@
     "previous": "Previous",
     "next": "Next",
     "link_copied": "Link copied",
-    "opens_new_window": "(opens in a new window)"
+    "opens_new_window": "(opens in a new window)",
+    "search_results": "Search suggestions",
+    "search_suggestions": "Suggestions",
+    "collections": "Collections",
+    "pages": "Pages",
+    "articles": "Stories",
+    "products": "Products",
+    "search_no_results": "No results for “{{ terms }}”",
+    "search_for": "Search for “{{ terms }}”",
+    "search_results_count": {
+      "one": "{{ count }} result found",
+      "other": "{{ count }} results found"
+    },
+    "search_hint": "Suggestions appear as you type. Use the up and down arrow keys to move through them."
   },
   "404": {
     "title": "404",
@@ -228,10 +241,22 @@
     "title": "Search",
     "placeholder": "Search products, articles, or pages",
     "submit": "Search",
-    "no_results_html": "No results found for &ldquo;{{ terms }}&rdquo;.",
-    "results_for_html": "{{ count }} results for &ldquo;{{ terms }}&rdquo;.",
+    "no_results_html": "No results for <em>“{{ terms }}”</em>",
+    "results_for_html": "Results for <em>“{{ terms }}”</em>",
     "prompt": "Start typing to search the store.",
-    "view_all_html": "View all results for &ldquo;{{ terms }}&rdquo; →"
+    "view_all_html": "View all results for &ldquo;{{ terms }}&rdquo; →",
+    "no_results_hint": "Check the spelling, try a broader word, or browse everything we have.",
+    "results_count": {
+      "one": "{{ count }} result",
+      "other": "{{ count }} results"
+    },
+    "start": "Type what you're looking for: a product, a story or a page.",
+    "types_label": "Result type",
+    "type_all": "All",
+    "type_product": "Products",
+    "type_article": "Stories",
+    "type_page": "Pages",
+    "label_page": "Page"
   },
   "products": {
     "sold_out": "Sold out",
@@ -257,7 +282,8 @@
     "low_stock": "Low stock — only a few left",
     "in_stock": "In stock, ready to ship",
     "add_short": "Add +",
-    "view_short": "View"
+    "view_short": "View",
+    "price_from": "From {{ price }}"
   },
   "sections": {
     "category_columns": {
@@ -340,5 +366,12 @@
     "comment": "Comment",
     "post_comment": "Post comment",
     "all_stories": "All stories"
+  },
+  "templates": {
+    "404": {
+      "title": "Page not found",
+      "home": "Back to home",
+      "popular": "Popular collections"
+    }
   }
 }

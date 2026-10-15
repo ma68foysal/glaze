@@ -611,6 +611,144 @@
   });
 
   // ------------------------------------------------------------------
+  // <k-predictive-search> — header search suggestions from the Predictive
+  // Search API. The input is an ARIA combobox; results are a listbox
+  // rendered by sections/predictive-search.liquid.
+  // ------------------------------------------------------------------
+  define('k-predictive-search', class extends HTMLElement {
+    connectedCallback() {
+      this.input = this.querySelector('[data-predictive-input]');
+      this.results = this.querySelector('[data-predictive-results]');
+      this.status = this.querySelector('[data-predictive-status]');
+      if (!this.input || !this.results) return;
+      this.cache = {};
+      var timer;
+      this.input.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => this.search(this.input.value.trim()), 250);
+      });
+      this.input.addEventListener('focus', () => {
+        if (this.results.innerHTML.trim() && this.input.value.trim()) this.open();
+      });
+      this.input.addEventListener('keydown', (e) => this.onKey(e));
+      this.addEventListener('focusout', () => {
+        setTimeout(() => { if (!this.contains(document.activeElement)) this.close(); }, 0);
+      });
+    }
+    search(q) {
+      this.term = q;
+      if (!q) { this.close(); this.results.innerHTML = ''; return; }
+      if (this.cache[q] != null) { this.render(this.cache[q]); return; }
+      if (this.controller) this.controller.abort();
+      this.controller = new AbortController();
+      var base = (window.routes && window.routes.predictive_search_url) || '/search/suggest';
+      var url = base + '?q=' + encodeURIComponent(q) +
+        '&section_id=' + encodeURIComponent(this.dataset.sectionId) +
+        '&resources[type]=product,collection,article,page,query' +
+        '&resources[limit]=4&resources[limit_scope]=each&resources[options][prefix]=last';
+      this.setAttribute('aria-busy', 'true');
+      fetch(url, { signal: this.controller.signal })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then((html) => {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var list = doc.querySelector('#predictive-search-listbox');
+          var markup = list ? list.outerHTML : '';
+          this.cache[q] = markup;
+          if (q === this.term) this.render(markup);
+        })
+        .catch((err) => { if (err.name !== 'AbortError') this.close(); })
+        .finally(() => this.removeAttribute('aria-busy'));
+    }
+    render(markup) {
+      this.results.innerHTML = markup;
+      if (!markup) { this.close(); return; }
+      var status = this.results.querySelector('[data-ps-status]');
+      if (this.status && status) this.status.textContent = status.textContent;
+      this.open();
+    }
+    options() { return Array.prototype.slice.call(this.results.querySelectorAll('[role="option"]')); }
+    open() {
+      this.results.hidden = false;
+      this.input.setAttribute('aria-expanded', 'true');
+    }
+    close() {
+      this.results.hidden = true;
+      this.input.setAttribute('aria-expanded', 'false');
+      this.input.removeAttribute('aria-activedescendant');
+      this.options().forEach(function (o) { o.setAttribute('aria-selected', 'false'); });
+    }
+    select(index) {
+      var opts = this.options();
+      if (!opts.length) return;
+      var i = (index + opts.length) % opts.length;
+      opts.forEach(function (o, j) { o.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
+      this.input.setAttribute('aria-activedescendant', opts[i].id);
+      opts[i].scrollIntoView({ block: 'nearest' });
+    }
+    onKey(e) {
+      var expanded = !this.results.hidden;
+      var opts = this.options();
+      var current = opts.findIndex(function (o) { return o.getAttribute('aria-selected') === 'true'; });
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        if (!opts.length) return;
+        e.preventDefault();
+        if (!expanded) this.open();
+        if (e.key === 'ArrowDown') this.select(current + 1);
+        else this.select(current === -1 ? opts.length - 1 : current - 1);
+      } else if (e.key === 'Enter' && expanded && current > -1) {
+        e.preventDefault();
+        opts[current].click();
+      } else if (e.key === 'Escape' && expanded) {
+        // Close the suggestions first; a second Escape closes the search panel.
+        e.preventDefault();
+        e.stopPropagation();
+        this.close();
+      }
+    }
+  });
+
+  // ------------------------------------------------------------------
+  // <k-filter-drawer> — the filter panel from snippets/k-facets.
+  // Opened by [data-filter-open][aria-controls]; Escape and a focus trap.
+  // ------------------------------------------------------------------
+  define('k-filter-drawer', class extends HTMLElement {
+    connectedCallback() {
+      this.panel = this.querySelector('[role="dialog"]');
+      this.querySelectorAll('[data-filter-close]').forEach((b) => b.addEventListener('click', () => this.close()));
+      this.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') { e.preventDefault(); this.close(); }
+        if (e.key !== 'Tab') return;
+        var f = this.panel.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select');
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      });
+    }
+    open(trigger) {
+      this.trigger = trigger;
+      this.hidden = false;
+      document.body.style.overflow = 'hidden';
+      var first = this.panel.querySelector('button, input');
+      if (first) setTimeout(function () { first.focus(); }, 30);
+    }
+    close() {
+      this.hidden = true;
+      document.body.style.overflow = '';
+      if (this.trigger) this.trigger.focus();
+    }
+  });
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-filter-open]');
+    if (!btn) return;
+    var drawer = document.getElementById(btn.getAttribute('aria-controls'));
+    if (drawer && drawer.open) drawer.open(btn);
+  });
+  document.addEventListener('change', function (e) {
+    if (e.target.matches('[data-sort-select]')) e.target.form.submit();
+  });
+
+  // ------------------------------------------------------------------
   // <k-modal> — wraps a <details> used as a modal (menu drawer, search).
   // Adds Escape, focus trap, scroll lock and focus return.
   // ------------------------------------------------------------------

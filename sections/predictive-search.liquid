@@ -1,0 +1,135 @@
+{%- comment -%}
+  Results for the header search, fetched from /search/suggest with
+  section_id=predictive-search and shown in a listbox under the search input.
+  Not addable in the editor: it only renders for the Predictive Search API.
+{%- endcomment -%}
+{%- if predictive_search.performed -%}
+  {%- liquid
+    assign r = predictive_search.resources
+    assign total = r.products.size | plus: r.collections.size | plus: r.pages.size | plus: r.articles.size
+    assign terms = predictive_search.terms
+    assign q_encoded = terms | url_encode
+    assign search_url = routes.search_url | append: '?q=' | append: q_encoded | append: '&options%5Bprefix%5D=last'
+  -%}
+  <div class="k-ps" role="listbox" id="predictive-search-listbox" aria-label="{{ 'general.search_results' | t }}" data-count="{{ total }}">
+    {%- if total > 0 or r.queries.size > 0 -%}
+      <div class="k-ps__grid">
+        <div class="k-ps__side">
+          {%- if r.queries.size > 0 -%}
+            <div class="k-ps__group" role="group" aria-label="{{ 'general.search_suggestions' | t }}">
+              <p class="k-label k-muted k-ps__h" aria-hidden="true">{{ 'general.search_suggestions' | t }}</p>
+              {%- for query in r.queries -%}
+                <a class="k-ps__opt k-ps__query" id="ps-query-{{ forloop.index }}" role="option" aria-selected="false" href="{{ query.url }}" tabindex="-1">
+                  <span>{{ query.styled_text }}</span>
+                </a>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+          {%- if r.collections.size > 0 -%}
+            <div class="k-ps__group" role="group" aria-label="{{ 'general.collections' | t }}">
+              <p class="k-label k-muted k-ps__h" aria-hidden="true">{{ 'general.collections' | t }}</p>
+              {%- for c in r.collections -%}
+                <a class="k-ps__opt" id="ps-collection-{{ forloop.index }}" role="option" aria-selected="false" href="{{ c.url }}" tabindex="-1">{{ c.title }}</a>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+          {%- if r.pages.size > 0 -%}
+            <div class="k-ps__group" role="group" aria-label="{{ 'general.pages' | t }}">
+              <p class="k-label k-muted k-ps__h" aria-hidden="true">{{ 'general.pages' | t }}</p>
+              {%- for p in r.pages -%}
+                <a class="k-ps__opt" id="ps-page-{{ forloop.index }}" role="option" aria-selected="false" href="{{ p.url }}" tabindex="-1">{{ p.title }}</a>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+          {%- if r.articles.size > 0 -%}
+            <div class="k-ps__group" role="group" aria-label="{{ 'general.articles' | t }}">
+              <p class="k-label k-muted k-ps__h" aria-hidden="true">{{ 'general.articles' | t }}</p>
+              {%- for a in r.articles -%}
+                <a class="k-ps__opt" id="ps-article-{{ forloop.index }}" role="option" aria-selected="false" href="{{ a.url }}" tabindex="-1">{{ a.title }}</a>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- if r.products.size > 0 -%}
+          <div class="k-ps__group k-ps__products" role="group" aria-label="{{ 'general.products' | t }}">
+            <p class="k-label k-muted k-ps__h" aria-hidden="true">{{ 'general.products' | t }}</p>
+            <div class="k-ps__product-list">
+              {%- for product in r.products -%}
+                <a class="k-ps__opt k-ps__product" id="ps-product-{{ forloop.index }}" role="option" aria-selected="false" href="{{ product.url }}" tabindex="-1">
+                  <span class="k-ps__img k-media">
+                    {%- if product.featured_media -%}
+                      {{ product.featured_media | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 240', sizes: '96px', alt: '' }}
+                    {%- else -%}
+                      {{ 'product-1' | placeholder_svg_tag: 'k-ph' }}
+                    {%- endif -%}
+                  </span>
+                  <span class="k-ps__product-text">
+                    <span class="k-ps__product-title">{{ product.title }}</span>
+                    <span class="k-ps__price">
+                      {%- if product.compare_at_price > product.price -%}
+                        <span class="visually-hidden">{{ 'products.sale_price' | t }}</span>
+                        {{ product.price | money }}
+                        <span class="visually-hidden">{{ 'products.regular_price' | t }}</span>
+                        <s class="k-muted">{{ product.compare_at_price | money }}</s>
+                      {%- elsif product.price_varies -%}
+                        {%- assign min_price = product.price_min | money -%}
+                        {{ 'products.price_from' | t: price: min_price }}
+                      {%- else -%}
+                        {{ product.price | money }}
+                      {%- endif -%}
+                    </span>
+                  </span>
+                </a>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- else -%}
+      <p class="k-ps__empty">{{ 'general.search_no_results' | t: terms: terms }}</p>
+    {%- endif -%}
+
+    <a class="k-ps__opt k-ps__all" id="ps-all" role="option" aria-selected="false" href="{{ search_url }}" tabindex="-1">
+      <span>{{ 'general.search_for' | t: terms: terms }}</span>
+      {%- render 'k-icon', icon: 'arrow', size: 18 -%}
+    </a>
+    <span hidden data-ps-status>{{ 'general.search_results_count' | t: count: total }}</span>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .k-ps { padding-top: 20px; }
+  .k-ps__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 32px; }
+  .k-ps__grid:not(:has(.k-ps__products)) { grid-template-columns: minmax(0, 1fr); }
+  .k-ps__side { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+  .k-ps__side:empty { display: none; }
+  .k-ps__group { display: flex; flex-direction: column; min-width: 0; }
+  .k-ps__h { margin: 0 0 8px; }
+  .k-ps__opt {
+    display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 6px 10px; margin-inline: -10px;
+    border-radius: 12px; color: inherit; font-size: 16px; font-weight: 500;
+    transition: background-color var(--dur-fast);
+  }
+  .k-ps__opt:hover, .k-ps__opt[aria-selected="true"] { background: rgba(var(--color-text-rgb), 0.07); }
+  .k-ps__opt[aria-selected="true"] { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  .k-ps__query mark { background: none; color: inherit; font-weight: 700; }
+  .k-ps__query span { font-weight: 400; }
+  .k-ps__product-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 16px; }
+  .k-ps__product { align-items: center; padding: 8px 10px; }
+  .k-ps__img { flex: none; width: 64px; aspect-ratio: 4 / 5; border-radius: 8px; }
+  .k-ps__product-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .k-ps__product-title { font-weight: 600; overflow-wrap: break-word; }
+  .k-ps__price { font-size: 14px; font-weight: 400; }
+  .k-ps__price s { margin-left: 4px; }
+  .k-ps__empty { margin: 0 0 8px; font-size: 18px; }
+  .k-ps__all {
+    justify-content: space-between; margin: 16px -10px 0; padding: 14px 10px;
+    border-top: 1px solid var(--color-line); border-radius: 0 0 12px 12px; font-weight: 600;
+  }
+  @media (max-width: 900px) {
+    .k-ps__grid { grid-template-columns: 1fr; gap: 20px; }
+    .k-ps__products { order: -1; }
+    .k-ps__product-list { grid-template-columns: 1fr; }
+  }
+{% endstylesheet %}

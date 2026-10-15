@@ -1,0 +1,99 @@
+{%- liquid
+  assign links = section.blocks | where: 'type', 'link'
+  assign big = section.settings.big_text | strip
+  assign letters = big | split: ''
+-%}
+<section class="k-404 k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap k-404__inner">
+    {%- if big != blank -%}
+      <p class="k-404__big" aria-hidden="true">
+        <span class="k-kinetic k-404__kinetic">
+          {%- for l in letters -%}<span class="k-kinetic__l" style="--i: {{ forloop.index0 }};">{{ l }}</span>{%- endfor -%}
+        </span>
+      </p>
+    {%- endif -%}
+    <h1 class="k-404__title">{{ 'templates.404.title' | t }}</h1>
+    {%- if section.settings.text != blank -%}<div class="k-rte k-404__text">{{ section.settings.text }}</div>{%- endif -%}
+
+    {%- if section.settings.show_search -%}
+      <form action="{{ routes.search_url }}" method="get" role="search" class="k-searchbar k-404__search">
+        <label for="{{ section.id }}-q" class="visually-hidden">{{ 'search.placeholder' | t }}</label>
+        {%- render 'k-icon', icon: 'search', size: 22 -%}
+        <input type="search" id="{{ section.id }}-q" name="q" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off">
+        <input type="hidden" name="options[prefix]" value="last">
+        <button type="submit" class="k-btn k-btn--primary">{{ 'search.submit' | t }}</button>
+      </form>
+    {%- endif -%}
+
+    <div class="k-404__actions">
+      <a class="k-btn k-btn--primary" href="{{ routes.root_url }}"><span>{{ 'templates.404.home' | t }}</span>{% render 'k-icon', icon: 'arrow', size: 18 %}</a>
+      <a class="k-btn k-btn--secondary" href="{{ routes.all_products_collection_url }}">{{ 'sections.collection.shop_all' | t }}</a>
+    </div>
+
+    {%- if links.size > 0 -%}
+      <nav class="k-404__links" aria-label="{{ 'templates.404.popular' | t }}">
+        <p class="k-label k-muted">{{ 'templates.404.popular' | t }}</p>
+        <ul role="list">
+          {%- for block in links -%}
+            {%- assign c = block.settings.collection -%}
+            {%- if c != blank -%}
+              <li {{ block.shopify_attributes }}><a class="k-chip" href="{{ c.url }}">{{ c.title }}</a></li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-404__inner { display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+  .k-404__big {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(140px, 30vw, 420px) * var(--heading-scale));
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    color: var(--color-accent);
+  }
+  .k-404__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(36px, 5vw, 72px) * var(--heading-scale));
+    letter-spacing: -0.035em;
+    line-height: 0.95;
+  }
+  .k-404__text { max-width: 520px; font-size: 18px; line-height: 1.5; opacity: 0.85; }
+  .k-404__search { width: min(560px, 100%); text-align: left; }
+  .k-404__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .k-404__links { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 16px; }
+  .k-404__links p { margin: 0; }
+  .k-404__links ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Page not found",
+  "tag": "div",
+  "class": "k-404-section",
+  "settings": [
+    { "type": "text", "id": "big_text", "label": "Large text", "default": "404" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>The page you were looking for has moved or no longer exists. Try a search, or start from one of these.</p>" },
+    { "type": "checkbox", "id": "show_search", "label": "Show search", "default": true },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Collection link",
+      "limit": 6,
+      "settings": [ { "type": "collection", "id": "collection", "label": "Collection" } ]
+    }
+  ],
+  "enabled_on": { "templates": ["404"] }
+}
+{% endschema %}

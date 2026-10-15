@@ -125,24 +125,35 @@
               {% render 'k-icon', icon: 'search' %}
             </summary>
             <div class="k-modal__panel k-search color-{{ section.settings.color_scheme }}" role="dialog" aria-modal="true" aria-label="{{ 'general.search' | t }}">
-              <form action="{{ routes.search_url }}" method="get" role="search" class="k-wrap k-search__form">
-                <label for="k-search-{{ section.id }}" class="visually-hidden">{{ 'general.search' | t }}</label>
-                <input
-                  id="k-search-{{ section.id }}"
-                  class="k-search__input"
-                  type="search"
-                  name="q"
-                  value="{{ search.terms | escape }}"
-                  placeholder="{{ 'general.search_placeholder' | t }}"
-                  autocomplete="off"
-                  data-modal-focus
-                >
-                <input type="hidden" name="options[prefix]" value="last">
-                <button type="submit" class="k-btn k-btn--primary">{{ 'general.search' | t }}</button>
-                <button type="button" class="k-icon-btn" data-modal-close aria-label="{{ 'general.close' | t }}">
-                  {% render 'k-icon', icon: 'close', size: 24 %}
-                </button>
-              </form>
+              <k-predictive-search class="k-wrap k-search__inner" data-section-id="predictive-search">
+                <form action="{{ routes.search_url }}" method="get" role="search" class="k-search__form">
+                  <label for="k-search-{{ section.id }}" class="visually-hidden">{{ 'general.search' | t }}</label>
+                  <input
+                    id="k-search-{{ section.id }}"
+                    class="k-search__input"
+                    type="search"
+                    name="q"
+                    value="{{ search.terms | escape }}"
+                    placeholder="{{ 'general.search_placeholder' | t }}"
+                    autocomplete="off"
+                    role="combobox"
+                    aria-expanded="false"
+                    aria-controls="predictive-search-listbox"
+                    aria-autocomplete="list"
+                    aria-describedby="k-search-hint-{{ section.id }}"
+                    data-modal-focus
+                    data-predictive-input
+                  >
+                  <input type="hidden" name="options[prefix]" value="last">
+                  <button type="submit" class="k-btn k-btn--primary">{{ 'general.search' | t }}</button>
+                  <button type="button" class="k-icon-btn" data-modal-close aria-label="{{ 'general.close' | t }}">
+                    {% render 'k-icon', icon: 'close', size: 24 %}
+                  </button>
+                </form>
+                <p id="k-search-hint-{{ section.id }}" class="visually-hidden">{{ 'general.search_hint' | t }}</p>
+                <div class="k-search__results" data-predictive-results hidden></div>
+                <p class="visually-hidden" role="status" aria-live="polite" data-predictive-status></p>
+              </k-predictive-search>
             </div>
             <button type="button" class="k-modal__scrim" data-modal-close tabindex="-1" aria-label="{{ 'general.close' | t }}"></button>
           </details>
@@ -247,7 +258,10 @@
   }
 
   /* Modals */
-  .k-search { inset: 0 0 auto 0; padding: 20px 0; border-bottom: 1px solid var(--color-line); animation: k-fade 0.3s both; }
+  .k-search { inset: 0 0 auto 0; max-height: 100vh; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 20px 0; border-bottom: 1px solid var(--color-line); animation: k-fade 0.3s both; }
+  k-predictive-search { display: block; }
+  .k-search__results { padding-bottom: 8px; }
+  .k-search__input::-webkit-search-cancel-button { -webkit-appearance: none; }
   .k-search__form { display: flex; align-items: center; gap: 12px; }
   .k-search__input {
     flex: 1; min-width: 0; min-height: 56px;

@@ -29,10 +29,13 @@ says where the rebuild stands.
   `window.Skinova` stay until their sections are rebuilt or deleted.
 - **Rebuilt to the canvas:** home, collection, product (thumbnails gallery,
   details hotspots, story with steps, recently viewed, sticky add-to-bag),
-  cart, contact, blog and article. **Still to rebuild:** search, 404. Delete
-  the unused old sections (`highlight-statement`, `sticky-collections` and
-  others), which still trip `ExcessiveSettingsCount`. Predictive search is a
-  Theme Store requirement and is still missing.
+  cart, contact, blog and article, search (with faceted filters) and 404.
+  Predictive search lives in the header search panel
+  (`sections/predictive-search.liquid`, `k-predictive-search` in theme.js).
+  Collection and search share their filter bar, sort and drawer through
+  `snippets/k-facets.liquid`. Delete the unused old sections
+  (`highlight-statement`, `sticky-collections` and others), which still trip
+  `ExcessiveSettingsCount`.
 - **Two previews:** `127.0.0.1:9293` serves the repo (no demo images);
   `127.0.0.1:9294` serves the demo copy and syncs into the "Oblique demo"
   theme. The demo copy lives outside the repo; copy repo changes into it with
