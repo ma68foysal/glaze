@@ -206,61 +206,295 @@
   "tag": "section",
   "class": "section section--master-ba",
   "settings": [
-    { "type": "header", "content": "Content" },
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "What To Expect, Week by Week" },
-    { "type": "text", "id": "aria_label", "label": "ARIA label" },
-    { "type": "text", "id": "btn_label", "label": "Button label" },
-    { "type": "url", "id": "btn_link", "label": "Button link" },
-
-    { "type": "header", "content": "Media" },
-    { "type": "image_picker", "id": "image_before", "label": "Before image" },
-    { "type": "image_picker", "id": "image_after", "label": "After image" },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What To Expect, Week by Week"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "ARIA label"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_before",
+      "label": "Before image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_after",
+      "label": "After image"
+    },
     {
       "type": "select",
       "id": "media_layout",
       "label": "Image layout",
       "options": [
-        { "value": "side-by-side", "label": "Side by side" },
-        { "value": "stacked", "label": "Stacked" }
+        {
+          "value": "side-by-side",
+          "label": "Side by side"
+        },
+        {
+          "value": "stacked",
+          "label": "Stacked"
+        }
       ],
       "default": "side-by-side",
       "info": "Side by side stacks automatically on small phones."
     },
-    { "type": "range", "id": "media_gap", "label": "Gap between images", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 4 },
-    { "type": "text", "id": "media_aspect", "label": "Aspect ratio", "default": "4 / 5" },
-    { "type": "range", "id": "media_radius", "label": "Media radius", "min": 0, "max": 32, "step": 1, "unit": "px", "default": 16 },
-    { "type": "color", "id": "media_bg", "label": "Media bg fallback", "default": "#f5d8d5" },
-    { "type": "checkbox", "id": "show_labels", "label": "Show Before / After labels", "default": true },
-    { "type": "text", "id": "before_label", "label": "Before label", "default": "Before" },
-    { "type": "text", "id": "after_label", "label": "After label", "default": "After" },
-    { "type": "color", "id": "label_bg", "label": "Label bg", "default": "#1a1a1a" },
-    { "type": "color", "id": "label_color", "label": "Label text", "default": "#ffffff" },
-    { "type": "range", "id": "label_size", "label": "Label font size", "min": 10, "max": 18, "step": 1, "unit": "px", "default": 12 },
-    { "type": "range", "id": "label_offset", "label": "Label offset (from edge)", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 16 },
-
-    { "type": "header", "content": "Colors" },
-    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
-    { "type": "color", "id": "text_color", "label": "Text", "default": "#1a1a1a" },
-    { "type": "color", "id": "title_color", "label": "Heading color", "default": "#1a1a1a" },
-    { "type": "color", "id": "muted_color", "label": "Muted", "default": "#7a7a7a" },
-    { "type": "color", "id": "body_color", "label": "Body color", "default": "#555555" },
-    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#e8a5a0" },
-    { "type": "color", "id": "btn_bg", "label": "Button bg", "default": "#1a1a1a" },
-    { "type": "color", "id": "btn_color", "label": "Button text", "default": "#ffffff" },
-    { "type": "color", "id": "btn_hover_bg", "label": "Button hover bg", "default": "#000000" },
-
-    { "type": "header", "content": "Typography" },
-    { "type": "range", "id": "heading_size_min", "label": "Heading min", "min": 22, "max": 40, "step": 1, "unit": "px", "default": 26 },
-    { "type": "range", "id": "heading_size_vw", "label": "Heading fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
-    { "type": "range", "id": "heading_size_max", "label": "Heading max", "min": 30, "max": 56, "step": 1, "unit": "px", "default": 36 },
-    { "type": "range", "id": "week_size", "label": "Week text size", "min": 13, "max": 18, "step": 1, "unit": "px", "default": 14 },
-
-    { "type": "header", "content": "Layout" },
-    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
-    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 1000, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
-    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 }
+    {
+      "type": "range",
+      "id": "media_gap",
+      "label": "Gap between images",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "media_aspect",
+      "label": "Aspect ratio",
+      "default": "4 / 5"
+    },
+    {
+      "type": "range",
+      "id": "media_radius",
+      "label": "Media radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "media_bg",
+      "label": "Media bg fallback",
+      "default": "#f5d8d5"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_labels",
+      "label": "Show Before / After labels",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "before_label",
+      "label": "Before label",
+      "default": "Before"
+    },
+    {
+      "type": "text",
+      "id": "after_label",
+      "label": "After label",
+      "default": "After"
+    },
+    {
+      "type": "color",
+      "id": "label_bg",
+      "label": "Label bg",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Label font size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "label_offset",
+      "label": "Label offset (from edge)",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section bg",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Heading color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted",
+      "default": "#7a7a7a"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body color",
+      "default": "#555555"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#e8a5a0"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Button bg",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "btn_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Button hover bg",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_min",
+      "label": "Heading min",
+      "min": 22,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "heading_size_vw",
+      "label": "Heading fluid (vw)",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "vw",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "heading_size_max",
+      "label": "Heading max",
+      "min": 30,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "week_size",
+      "label": "Week text size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Inner max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
   ],
   "blocks": [
     {
@@ -268,20 +502,18 @@
       "name": "Week milestone",
       "limit": 6,
       "settings": [
-        { "type": "text", "id": "title", "label": "Week label", "default": "Week 1" },
-        { "type": "textarea", "id": "text", "label": "Text", "default": "Lashes feel softer and stronger as the conditioning peptides take effect." }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Before and after",
-      "blocks": [
-        { "type": "week", "settings": { "title": "Week 1", "text": "You'll start seeing noticeably stronger lashes as our peptide complex strengthens your natural fibers." } },
-        { "type": "week", "settings": { "title": "Week 2", "text": "A more dense, fuller lash line forms as new growth pushes through. No flaking, no irritation." } },
-        { "type": "week", "settings": { "title": "Week 3", "text": "You can see clear length gains: 1-2mm longer lashes naturally. No mascara needed for a 'done' look." } },
-        { "type": "week", "settings": { "title": "Week 4", "text": "33 results: noticeably longer lashes with full density. Maintain with a 3-times-a-week routine from here." } },
-        { "type": "week", "settings": { "title": "Important", "text": "Results require daily use until you see results, then once-every-two-days maintenance for the rest of the year." } }
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Week label",
+          "default": "Week 1"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Lashes feel softer and stronger as the conditioning peptides take effect."
+        }
       ]
     }
   ]

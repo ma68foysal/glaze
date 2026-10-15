@@ -550,24 +550,22 @@
           "id": "hero_position",
           "label": "Hero position",
           "options": [
-            { "value": "left",  "label": "Left" },
-            { "value": "right", "label": "Right" }
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
           ],
           "default": "left",
           "info": "Alternate left / right across tabs for editorial rhythm."
         }
       ]
     },
-    { "type": "@app" }
-  ],
-  "presets": [
     {
-      "name": "Featured product",
-      "blocks": [
-        { "type": "tab", "settings": { "tab_label": "What's hot", "hero_position": "left" } },
-        { "type": "tab", "settings": { "tab_label": "Best sellers", "hero_position": "right" } },
-        { "type": "tab", "settings": { "tab_label": "Sale", "hero_position": "left" } }
-      ]
+      "type": "@app"
     }
   ]
 }

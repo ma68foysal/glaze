@@ -287,78 +287,356 @@
   "tag": "section",
   "class": "section section--master-feature",
   "settings": [
-    { "type": "header", "content": "Media" },
+    {
+      "type": "header",
+      "content": "Media"
+    },
     {
       "type": "select",
       "id": "media_type",
       "label": "Media type",
       "options": [
-        { "value": "image", "label": "Image" },
-        { "value": "video", "label": "Shopify hosted video" },
-        { "value": "video_url", "label": "Video URL (YouTube / Vimeo)" }
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Shopify hosted video"
+        },
+        {
+          "value": "video_url",
+          "label": "Video URL (YouTube / Vimeo)"
+        }
       ],
       "default": "image"
     },
-    { "type": "image_picker", "id": "image", "label": "Image (or video poster fallback)" },
-    { "type": "video", "id": "video", "label": "Shopify-hosted video" },
-    { "type": "video_url", "id": "video_url", "label": "Video URL", "accept": ["youtube", "vimeo"] },
-    { "type": "checkbox", "id": "video_autoplay", "label": "Autoplay video (muted)", "default": true },
-    { "type": "checkbox", "id": "video_loop", "label": "Loop video", "default": true },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image (or video poster fallback)"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Shopify-hosted video"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "Video URL",
+      "accept": [
+        "youtube",
+        "vimeo"
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "video_autoplay",
+      "label": "Autoplay video (muted)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "video_loop",
+      "label": "Loop video",
+      "default": true
+    },
     {
       "type": "select",
       "id": "media_side",
       "label": "Media side (desktop)",
       "options": [
-        { "value": "left",  "label": "Left" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "left"
     },
-    { "type": "text", "id": "media_aspect", "label": "Media aspect ratio", "default": "4 / 5", "info": "e.g. '1 / 1', '4 / 5', '16 / 9'." },
-    { "type": "range", "id": "media_radius", "label": "Media radius", "min": 0, "max": 40, "step": 1, "unit": "px", "default": 16 },
-    { "type": "color", "id": "media_bg", "label": "Media background", "default": "#f5d8d5" },
-
-    { "type": "header", "content": "Content" },
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
-    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "You're Not Imagining It: Your Lashes Are Getting Shorter" },
-    { "type": "richtext", "id": "text", "label": "Body text", "default": "<p>Lash extensions, harsh mascaras and the natural ageing process all weaken your lashes over time. <strong>Most women lose 30% of their lash density</strong> by their late 30s without realising it.</p><p>That's where Luxe comes in. A nightly serum that brings the bounce, length and fullness back to your natural lash line in 4 weeks.</p>" },
-    { "type": "text", "id": "aria_label", "label": "ARIA label" },
-
-    { "type": "header", "content": "Bullets (optional, via blocks)" },
-    { "type": "range", "id": "bullet_size", "label": "Bullet font size", "min": 13, "max": 18, "step": 1, "unit": "px", "default": 15 },
-
-    { "type": "header", "content": "Button (optional)" },
-    { "type": "text", "id": "btn_label", "label": "Button label" },
-    { "type": "url", "id": "btn_link", "label": "Button link" },
-    { "type": "color", "id": "btn_bg", "label": "Button bg", "default": "#1a1a1a" },
-    { "type": "color", "id": "btn_color", "label": "Button text", "default": "#ffffff" },
-    { "type": "color", "id": "btn_hover_bg", "label": "Button hover bg", "default": "#000000" },
-    { "type": "range", "id": "btn_size", "label": "Button font size", "min": 11, "max": 16, "step": 1, "unit": "px", "default": 13 },
-    { "type": "range", "id": "btn_padding_y", "label": "Button vertical padding", "min": 8, "max": 24, "step": 1, "unit": "px", "default": 14 },
-    { "type": "range", "id": "btn_padding_x", "label": "Button horizontal padding", "min": 14, "max": 48, "step": 2, "unit": "px", "default": 28 },
-    { "type": "range", "id": "btn_radius", "label": "Button radius", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 100 },
-
-    { "type": "header", "content": "Colors" },
-    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
-    { "type": "color", "id": "text_color", "label": "Text base", "default": "#1a1a1a" },
-    { "type": "color", "id": "text_color_body", "label": "Body text", "default": "#555555" },
-    { "type": "color", "id": "title_color", "label": "Heading color", "default": "#1a1a1a" },
-    { "type": "color", "id": "muted_color", "label": "Muted", "default": "#7a7a7a" },
-    { "type": "color", "id": "accent_color", "label": "Accent (eyebrow / bullet dot)", "default": "#e8a5a0" },
-    { "type": "color", "id": "border_color", "label": "Border", "default": "rgba(0,0,0,0.08)" },
-
-    { "type": "header", "content": "Typography" },
-    { "type": "range", "id": "eyebrow_size", "label": "Eyebrow size", "min": 10, "max": 16, "step": 1, "unit": "px", "default": 12 },
-    { "type": "range", "id": "heading_size_min", "label": "Heading min", "min": 22, "max": 40, "step": 1, "unit": "px", "default": 26 },
-    { "type": "range", "id": "heading_size_vw", "label": "Heading fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
-    { "type": "range", "id": "heading_size_max", "label": "Heading max", "min": 30, "max": 64, "step": 1, "unit": "px", "default": 40 },
-    { "type": "range", "id": "text_size", "label": "Body size", "min": 13, "max": 20, "step": 1, "unit": "px", "default": 15 },
-
-    { "type": "header", "content": "Layout" },
-    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
-    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 1000, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
-    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 }
+    {
+      "type": "text",
+      "id": "media_aspect",
+      "label": "Media aspect ratio",
+      "default": "4 / 5",
+      "info": "e.g. '1 / 1', '4 / 5', '16 / 9'."
+    },
+    {
+      "type": "range",
+      "id": "media_radius",
+      "label": "Media radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "media_bg",
+      "label": "Media background",
+      "default": "#f5d8d5"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You're Not Imagining It: Your Lashes Are Getting Shorter"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Body text",
+      "default": "<p>Lash extensions, harsh mascaras and the natural ageing process all weaken your lashes over time. <strong>Most women lose 30% of their lash density</strong> by their late 30s without realising it.</p><p>That's where Luxe comes in. A nightly serum that brings the bounce, length and fullness back to your natural lash line in 4 weeks.</p>"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "ARIA label"
+    },
+    {
+      "type": "header",
+      "content": "Bullets (optional, via blocks)"
+    },
+    {
+      "type": "range",
+      "id": "bullet_size",
+      "label": "Bullet font size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Button (optional)"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Button bg",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "btn_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Button hover bg",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "btn_size",
+      "label": "Button font size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_y",
+      "label": "Button vertical padding",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_x",
+      "label": "Button horizontal padding",
+      "min": 14,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "btn_radius",
+      "label": "Button radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section bg",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text base",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color_body",
+      "label": "Body text",
+      "default": "#555555"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Heading color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted",
+      "default": "#7a7a7a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent (eyebrow / bullet dot)",
+      "default": "#e8a5a0"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "rgba(0,0,0,0.08)"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "label": "Eyebrow size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "heading_size_min",
+      "label": "Heading min",
+      "min": 22,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "heading_size_vw",
+      "label": "Heading fluid (vw)",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "vw",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "heading_size_max",
+      "label": "Heading max",
+      "min": 30,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Body size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Inner max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
   ],
   "blocks": [
     {
@@ -366,14 +644,18 @@
       "name": "Bullet",
       "limit": 8,
       "settings": [
-        { "type": "text", "id": "title", "label": "Bullet title (optional bold lead-in)" },
-        { "type": "text", "id": "text", "label": "Bullet text", "default": "Strengthens lashes from the root" }
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Bullet title (optional bold lead-in)"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Bullet text",
+          "default": "Strengthens lashes from the root"
+        }
       ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Feature rich"
     }
   ]
 }

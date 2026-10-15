@@ -90,23 +90,119 @@
   "tag": "section",
   "class": "section section--master-trust",
   "settings": [
-    { "type": "text", "id": "aria_label", "label": "ARIA label", "default": "Product highlights" },
-
-    { "type": "header", "content": "Layout" },
-    { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 6, "step": 1, "default": 4 },
-    { "type": "range", "id": "icon_size", "label": "Icon size", "min": 32, "max": 96, "step": 2, "unit": "px", "default": 56 },
-    { "type": "range", "id": "label_size", "label": "Label size", "min": 11, "max": 18, "step": 1, "unit": "px", "default": 13 },
-    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
-    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 800, "max": 1600, "step": 20, "unit": "px", "default": 1100 },
-    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 },
-
-    { "type": "header", "content": "Colors" },
-    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
-    { "type": "color", "id": "text_color", "label": "Text", "default": "#1a1a1a" },
-    { "type": "color", "id": "label_color", "label": "Label color", "default": "#1a1a1a" },
-    { "type": "color", "id": "accent_color", "label": "Icon accent", "default": "#e8a5a0" },
-    { "type": "color", "id": "icon_bg", "label": "Icon bubble bg", "default": "#ffffff" }
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "ARIA label",
+      "default": "Product highlights"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 32,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Label size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Inner max width",
+      "min": 800,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section bg",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Icon accent",
+      "default": "#e8a5a0"
+    },
+    {
+      "type": "color",
+      "id": "icon_bg",
+      "label": "Icon bubble bg",
+      "default": "#ffffff"
+    }
   ],
   "blocks": [
     {
@@ -114,20 +210,23 @@
       "name": "Icon item",
       "limit": 8,
       "settings": [
-        { "type": "image_picker", "id": "icon", "label": "Icon (recommended: 60×60 PNG/SVG)" },
-        { "type": "text", "id": "emoji", "label": "Emoji fallback", "default": "✨" },
-        { "type": "text", "id": "label", "label": "Label", "default": "Visible results" }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Trust icons",
-      "blocks": [
-        { "type": "item", "settings": { "emoji": "👁",   "label": "Visible results in 4 weeks" } },
-        { "type": "item", "settings": { "emoji": "🌿",   "label": "Zero side effects" } },
-        { "type": "item", "settings": { "emoji": "💰",   "label": "Less than the price of a salon visit" } },
-        { "type": "item", "settings": { "emoji": "⏱",   "label": "30-second daily application" } }
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon (recommended: 60×60 PNG/SVG)"
+        },
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji fallback",
+          "default": "✨"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Visible results"
+        }
       ]
     }
   ]

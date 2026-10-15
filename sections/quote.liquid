@@ -88,34 +88,156 @@
   "tag": "section",
   "class": "section section--master-quote",
   "settings": [
-    { "type": "header", "content": "Content" },
-    { "type": "textarea", "id": "quote", "label": "Quote", "default": "I bought this with a lot of hesitation, but to my surprise it worked really well. Best results I've had. I rarely use mascara now." },
-    { "type": "text", "id": "author", "label": "Author name", "default": "Emma D." },
-    { "type": "text", "id": "author_meta", "label": "Author meta", "default": "Verified buyer" },
-    { "type": "image_picker", "id": "avatar", "label": "Author avatar" },
-    { "type": "text", "id": "aria_label", "label": "ARIA label" },
-
-    { "type": "header", "content": "Colors" },
-    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
-    { "type": "color", "id": "text_color", "label": "Body text", "default": "#1a1a1a" },
-    { "type": "color", "id": "quote_color", "label": "Quote color", "default": "#1a1a1a" },
-    { "type": "color", "id": "muted_color", "label": "Cite color", "default": "#7a7a7a" },
-    { "type": "color", "id": "accent_color", "label": "Quote marks accent", "default": "#e8a5a0" },
-    { "type": "color", "id": "avatar_text_color", "label": "Avatar initial color", "default": "#ffffff" },
-
-    { "type": "header", "content": "Typography" },
-    { "type": "range", "id": "quote_size_min", "label": "Quote min size", "min": 20, "max": 40, "step": 1, "unit": "px", "default": 24 },
-    { "type": "range", "id": "quote_size_vw", "label": "Quote fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
-    { "type": "range", "id": "quote_size_max", "label": "Quote max size", "min": 28, "max": 56, "step": 1, "unit": "px", "default": 34 },
-
-    { "type": "header", "content": "Layout" },
-    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
-    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 600, "max": 1200, "step": 20, "unit": "px", "default": 900 },
-    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 }
-  ],
-  "presets": [
-    { "name": "Pull quote" }
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Quote",
+      "default": "I bought this with a lot of hesitation, but to my surprise it worked really well. Best results I've had. I rarely use mascara now."
+    },
+    {
+      "type": "text",
+      "id": "author",
+      "label": "Author name",
+      "default": "Emma D."
+    },
+    {
+      "type": "text",
+      "id": "author_meta",
+      "label": "Author meta",
+      "default": "Verified buyer"
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar",
+      "label": "Author avatar"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "ARIA label"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section bg",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "quote_color",
+      "label": "Quote color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Cite color",
+      "default": "#7a7a7a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Quote marks accent",
+      "default": "#e8a5a0"
+    },
+    {
+      "type": "color",
+      "id": "avatar_text_color",
+      "label": "Avatar initial color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "quote_size_min",
+      "label": "Quote min size",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "quote_size_vw",
+      "label": "Quote fluid (vw)",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "vw",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "quote_size_max",
+      "label": "Quote max size",
+      "min": 28,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Inner max width",
+      "min": 600,
+      "max": 1200,
+      "step": 20,
+      "unit": "px",
+      "default": 900
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
   ]
 }
 {% endschema %}

@@ -87,29 +87,139 @@
   "tag": "section",
   "class": "section section--master-press",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "As featured in" },
-    { "type": "text", "id": "aria_label", "label": "ARIA label", "default": "As featured in" },
-
-    { "type": "header", "content": "Logo style" },
-    { "type": "range", "id": "logo_height", "label": "Logo height", "min": 14, "max": 60, "step": 1, "unit": "px", "default": 22 },
-    { "type": "range", "id": "logo_opacity", "label": "Logo opacity (%)", "min": 20, "max": 100, "step": 5, "default": 70 },
-    { "type": "text", "id": "logo_filter", "label": "CSS filter (e.g. grayscale(100%))", "default": "none" },
-
-    { "type": "header", "content": "Text fallback (when no logo image)" },
-    { "type": "text", "id": "fallback_font", "label": "Font family for text fallback", "default": "serif" },
-    { "type": "range", "id": "fallback_text_size", "label": "Fallback text size", "min": 12, "max": 28, "step": 1, "unit": "px", "default": 18 },
-    { "type": "color", "id": "fallback_text_color", "label": "Fallback text color", "default": "#1a1a1a" },
-
-    { "type": "header", "content": "Colors" },
-    { "type": "color", "id": "bg_color", "label": "Section bg", "default": "#fbe9e8" },
-    { "type": "color", "id": "text_color", "label": "Text", "default": "#1a1a1a" },
-    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow color", "default": "#7a7a7a" },
-
-    { "type": "header", "content": "Layout" },
-    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
-    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 800, "max": 1600, "step": 20, "unit": "px", "default": 1100 },
-    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 }
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "As featured in"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "ARIA label",
+      "default": "As featured in"
+    },
+    {
+      "type": "header",
+      "content": "Logo style"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Logo height",
+      "min": 14,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "logo_opacity",
+      "label": "Logo opacity (%)",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "default": 70
+    },
+    {
+      "type": "text",
+      "id": "logo_filter",
+      "label": "CSS filter (e.g. grayscale(100%))",
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Text fallback (when no logo image)"
+    },
+    {
+      "type": "text",
+      "id": "fallback_font",
+      "label": "Font family for text fallback",
+      "default": "serif"
+    },
+    {
+      "type": "range",
+      "id": "fallback_text_size",
+      "label": "Fallback text size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "fallback_text_color",
+      "label": "Fallback text color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section bg",
+      "default": "#fbe9e8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#7a7a7a"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Inner max width",
+      "min": 800,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
   ],
   "blocks": [
     {
@@ -117,21 +227,22 @@
       "name": "Logo / Publication",
       "limit": 12,
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Logo image (preferred)" },
-        { "type": "text", "id": "name", "label": "Name (alt / text fallback)", "default": "Closer" },
-        { "type": "url", "id": "link", "label": "Link" }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Press logos",
-      "blocks": [
-        { "type": "logo", "settings": { "name": "Closer" } },
-        { "type": "logo", "settings": { "name": "GLAMA" } },
-        { "type": "logo", "settings": { "name": "LUXE+co." } },
-        { "type": "logo", "settings": { "name": "InStyle" } },
-        { "type": "logo", "settings": { "name": "FINELLE" } }
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Logo image (preferred)"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name (alt / text fallback)",
+          "default": "Closer"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
       ]
     }
   ]

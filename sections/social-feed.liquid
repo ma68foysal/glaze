@@ -590,23 +590,37 @@
       "id": "title_align",
       "label": "Heading alignment",
       "options": [
-        { "value": "left",   "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right",  "label": "Right" }
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "center"
     },
     {
       "type": "range",
       "id": "title_size",
-      "min": 18, "max": 56, "step": 1, "unit": "px",
+      "min": 18,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
       "label": "Title size",
       "default": 30
     },
     {
       "type": "range",
       "id": "title_weight",
-      "min": 300, "max": 900, "step": 100,
+      "min": 300,
+      "max": 900,
+      "step": 100,
       "label": "Title weight",
       "default": 600
     },
@@ -641,7 +655,10 @@
     {
       "type": "range",
       "id": "autoplay_interval",
-      "min": 2, "max": 12, "step": 1, "unit": "s",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "s",
       "label": "Auto-slide interval",
       "default": 4
     },
@@ -658,56 +675,76 @@
     {
       "type": "range",
       "id": "slides_desktop",
-      "min": 3, "max": 7, "step": 1,
+      "min": 3,
+      "max": 7,
+      "step": 1,
       "label": "Slides visible (desktop)",
       "default": 5
     },
     {
       "type": "range",
       "id": "slides_tablet",
-      "min": 2, "max": 5, "step": 1,
+      "min": 2,
+      "max": 5,
+      "step": 1,
       "label": "Slides visible (tablet)",
       "default": 3
     },
     {
       "type": "range",
       "id": "slides_mobile",
-      "min": 1, "max": 3, "step": 1,
+      "min": 1,
+      "max": 3,
+      "step": 1,
       "label": "Slides visible (mobile)",
       "default": 1
     },
     {
       "type": "range",
       "id": "slide_gap",
-      "min": 4, "max": 40, "step": 2, "unit": "px",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
       "label": "Gap between slides",
       "default": 16
     },
     {
       "type": "range",
       "id": "slide_radius",
-      "min": 0, "max": 40, "step": 2, "unit": "px",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
       "label": "Side slide corner radius",
       "default": 18
     },
     {
       "type": "range",
       "id": "center_radius",
-      "min": 0, "max": 60, "step": 2, "unit": "px",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
       "label": "Center slide corner radius",
       "default": 32
     },
     {
       "type": "range",
       "id": "center_scale",
-      "min": 1.0, "max": 1.4, "step": 0.1,
+      "min": 1.0,
+      "max": 1.4,
+      "step": 0.1,
       "label": "Center slide scale-up",
       "default": 1.1
     },
     {
       "type": "range",
       "id": "max_width",
-      "min": 600, "max": 1600, "step": 20, "unit": "px",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
       "label": "Max width",
       "default": 1200
     },
@@ -746,21 +783,30 @@
     {
       "type": "range",
       "id": "padding_top",
-      "min": 0, "max": 200, "step": 4, "unit": "px",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
       "label": "Top padding",
       "default": 80
     },
     {
       "type": "range",
       "id": "padding_bottom",
-      "min": 0, "max": 200, "step": 4, "unit": "px",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
       "label": "Bottom padding",
       "default": 80
     },
     {
       "type": "range",
       "id": "side_padding",
-      "min": 0, "max": 80, "step": 4, "unit": "px",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
       "label": "Side padding",
       "default": 24
     }
@@ -805,18 +851,6 @@
           "label": "Link (optional)",
           "info": "When set, the whole slide is clickable."
         }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Social feed",
-      "blocks": [
-        { "type": "slide", "settings": { "badge": "@user1" } },
-        { "type": "slide", "settings": { "badge": "@user2" } },
-        { "type": "slide", "settings": { "badge": "@user3" } },
-        { "type": "slide", "settings": { "badge": "@user4" } },
-        { "type": "slide", "settings": { "badge": "@user5" } }
       ]
     }
   ]

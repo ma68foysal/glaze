@@ -43,7 +43,7 @@
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
 
     {% comment %}
-      Global Skinova design-system styles (buttons, product cards, pagination, RTE prose, form fields).
+      Global legacy styles (buttons, product cards, pagination, RTE prose, form fields).
       Loads once theme-wide so individual sections don't re-emit duplicated rules.
     {% endcomment %}
     {{ 'base.css' | asset_url | stylesheet_tag }}
