@@ -33,9 +33,14 @@ says where the rebuild stands.
   Predictive search lives in the header search panel
   (`sections/predictive-search.liquid`, `k-predictive-search` in theme.js).
   Collection and search share their filter bar, sort and drawer through
-  `snippets/k-facets.liquid`. Delete the unused old sections
-  (`highlight-statement`, `sticky-collections` and others), which still trip
-  `ExcessiveSettingsCount`.
+  `snippets/k-facets.liquid` (groups in `k-facet-groups`).
+- **Skinova leftovers:** the unused Skinova sections, `global.js` and
+  `quick-view.js` were deleted on 2026-10-15, and `base.css` was trimmed to the
+  rules still in use; theme check is clean. Still on old markup: the
+  all-collections page (`collections`), the plain page (`page`), the password
+  page and the cart drawer markup. The theme started from Shopify's Skeleton
+  at commit `a4f32d3` (2026-02-26), the last Shopify commit before `bf8e088`:
+  diff against it to tell Skeleton files from custom ones.
 - **Two previews:** `127.0.0.1:9293` serves the repo (no demo images);
   `127.0.0.1:9294` serves the demo copy and syncs into the "Oblique demo"
   theme. The demo copy lives outside the repo; copy repo changes into it with
@@ -298,10 +303,4 @@ These were never reviewed and remain outstanding whichever design ships:
 - `<shopify-account>` is not in the header. The requirements say it must be
   visible in both the desktop and mobile header. It was deliberately reverted
   because the account sheet was not the wanted behaviour; that trade-off needs
-  revisiting.**Still to rebuild:** the all-collections page (`collections`), the plain
-  page (`page`) and the password page, which still use old Skinova markup and
-  the trimmed `base.css`. The unused Skinova sections, `global.js` and
-  `quick-view.js` were deleted on 2026-10-15; theme check is clean. The theme
-  started from Shopify's Skeleton at commit `a4f32d3` (2026-02-26), the last
-  Shopify commit before `bf8e088`: diff against it to tell Skeleton files from
-  custom ones.
+  revisiting.
