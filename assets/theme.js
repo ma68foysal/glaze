@@ -264,16 +264,53 @@
         }
       });
       if (this.list) {
+        this.bindDrag();
         this.counter = this.querySelector('[data-media-index]');
         this.list.addEventListener('scroll', () => this.syncCounter(), { passive: true });
       }
     }
     items() { return this.list ? Array.prototype.slice.call(this.list.children) : []; }
+    currentIndex() {
+      var items = this.items();
+      if (window.matchMedia('(max-width: 900px)').matches) {
+        var left = this.list.scrollLeft, best = Infinity, index = 0;
+        items.forEach(function (el, i) {
+          var d = Math.abs(el.offsetLeft - items[0].offsetLeft - left);
+          if (d < best) { best = d; index = i; }
+        });
+        return index;
+      }
+      return Math.max(0, items.findIndex(function (el) { return el.classList.contains('is-active'); }));
+    }
     step(dir) {
       var items = this.items();
-      var i = items.findIndex(function (el) { return el.classList.contains('is-active'); });
-      var next = items[(i + dir + items.length) % items.length];
+      var next = items[(this.currentIndex() + dir + items.length) % items.length];
       if (next) this.showMedia(next.dataset.mediaId);
+    }
+    // Mouse drag-to-swipe for the phone-width slider (touch swipes natively).
+    bindDrag() {
+      var list = this.list, startX = 0, startLeft = 0, dragging = false, moved = false;
+      list.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        if (!window.matchMedia('(max-width: 900px)').matches) return;
+        dragging = true; moved = false; startX = e.clientX; startLeft = list.scrollLeft;
+      });
+      window.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        var dx = e.clientX - startX;
+        if (Math.abs(dx) > 4) { moved = true; list.classList.add('is-dragging'); }
+        list.scrollLeft = startLeft - dx;
+      });
+      window.addEventListener('pointerup', () => {
+        if (!dragging) return;
+        dragging = false;
+        list.classList.remove('is-dragging');
+        if (!moved) return;
+        var target = this.items()[this.currentIndex()];
+        if (target) this.showMedia(target.dataset.mediaId);
+      });
+      // A drag must not also follow a link inside the slide.
+      list.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
     }
     showMedia(id) {
       var items = this.items();
@@ -292,7 +329,10 @@
         t.setAttribute('aria-current', t.dataset.thumb === String(id) ? 'true' : 'false');
       });
       if (mobile) {
-        this.list.scrollTo({ left: target.offsetLeft - this.list.offsetLeft - parseFloat(getComputedStyle(this.list).paddingLeft), behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+        // Clamp to the real maximum: a smooth scroll aimed past the end is cancelled by scroll-snap.
+        var maxLeft = this.list.scrollWidth - this.list.clientWidth;
+        var left = target.offsetLeft - this.list.offsetLeft - parseFloat(getComputedStyle(this.list).paddingLeft);
+        this.list.scrollTo({ left: Math.max(0, Math.min(maxLeft, left)), behavior: reduceMotion.matches ? 'auto' : 'smooth' });
       }
       // Pause any other playing video when switching.
       this.querySelectorAll('.k-pdp__media:not(.is-active) video').forEach(function (v) { v.pause(); });

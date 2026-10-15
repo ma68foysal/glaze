@@ -1,0 +1,76 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Main.dc.html": {
+      "expand": "fill",
+      "h": 8000,
+      "is_interactive": true,
+      "title": "Homepage V1 — Kinetic Editorial",
+      "w": 1440,
+      "x": -79,
+      "y": 0
+    },
+    "MainV2.dc.html": {
+      "expand": "fill",
+      "h": 7300,
+      "is_interactive": true,
+      "title": "Homepage V2 — Shutter Atelier",
+      "w": 1440,
+      "x": 4560,
+      "y": 0
+    },
+    "Product.dc.html": {
+      "expand": "fill",
+      "h": 2900,
+      "is_interactive": true,
+      "title": "Product page (prototype link)",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "Review.dc.html": {
+      "h": 3000,
+      "title": "Rejection → fixes checklist",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "Collection.dc.html": {
+      "expand": "fill",
+      "h": 3400,
+      "is_interactive": true,
+      "title": "Collection page — Outerwear",
+      "w": 1440,
+      "x": 1520,
+      "y": 3020
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-06T10:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "t1": {
+      "kind": "title1",
+      "maxW": 6000,
+      "text": "Shopify theme resubmission — Fashion preset (V1 Kinetic · V2 Shutter Atelier)",
+      "w": 240,
+      "x": 0,
+      "y": -320
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Product.dc.html",
+    "Collection.dc.html",
+    "Review.dc.html",
+    "MainV2.dc.html"
+  ],
+  "pages": [],
+  "title": "Kinetic Editorial Theme — Homepage"
+}

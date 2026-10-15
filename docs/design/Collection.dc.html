@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oblique — Collection page</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&amp;family=Instrument+Serif:ital@0;1&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+.kx *{box-sizing:border-box}
+.kx a:focus-visible,.kx button:focus-visible,.kx select:focus-visible,.kx input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;letter-spacing:0;text-transform:none}
+.wrap{max-width:1440px;margin:0 auto;padding-inline:clamp(16px,3.4vw,48px)}
+.icon-btn{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:0 6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;font:600 15px 'Archivo',sans-serif;border:1.5px solid currentColor;cursor:pointer;background:transparent;color:inherit;transition:transform .3s cubic-bezier(.2,.8,.2,1),background .3s,color .3s}
+.btn:hover{transform:translateY(-2px)}
+.btn-fill{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-ink{background:#0E0E0E;border-color:#0E0E0E;color:#F2F1EC}
+.hdr{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:72px;border-bottom:1px solid #0E0E0E1f}
+.nav{display:flex;gap:28px;font-size:14px;font-weight:500}
+.nav a{position:relative;padding:12px 0}
+.nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:1.5px;background:currentColor}
+.logo{font-weight:900;font-size:26px;letter-spacing:-.02em}
+.bubble{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:999px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:0 6px}
+.ph{position:relative;overflow:hidden;width:100%;height:100%}
+.ph::before,.ph::after{content:"";position:absolute;width:14px;height:14px;border:1.5px solid currentColor;opacity:.55}
+.ph::before{left:10px;top:10px;border-right:0;border-bottom:0}
+.ph::after{right:10px;bottom:10px;border-left:0;border-top:0}
+.ph-l{position:absolute;left:12px;bottom:12px;font-size:10.5px;opacity:.85}
+/* collection hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:48px;align-items:end;padding:28px 0 36px}
+.title{margin:0;font-weight:850;font-size:clamp(64px,10vw,168px);letter-spacing:-.04em;line-height:.84;font-variation-settings:'wdth' 70}
+.title .serif{font-weight:400;letter-spacing:-.02em}
+.count{display:inline-grid;place-items:center;min-width:48px;height:48px;padding:0 12px;border-radius:999px;border:1.5px solid #0E0E0E;font:600 18px 'Archivo',sans-serif;vertical-align:super;margin-left:10px}
+.subs{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:28px}
+.sub{min-height:44px;padding:0 18px;border-radius:999px;border:1.5px solid #0E0E0E;background:transparent;color:#0E0E0E;font:500 14px 'Archivo',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .3s,color .3s}
+.sub.on{background:#0E0E0E;color:#F2F1EC}
+.sub .n{font-family:'IBM Plex Mono',monospace;font-size:11px;opacity:.7}
+/* toolbar */
+.bar{position:sticky;top:0;z-index:5;background:#F2F1EC;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;min-height:72px;border-block:1px solid #0E0E0E26}
+.bar-l,.bar-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 8px 0 14px;border-radius:999px;background:#0E0E0E0f;font:500 13px 'Archivo',sans-serif}
+.chip button{width:28px;height:28px;border:0;border-radius:999px;background:transparent;color:inherit;cursor:pointer;display:grid;place-items:center}
+.chip button:hover{background:#0E0E0E1a}
+.dens{display:inline-flex;border:1.5px solid #0E0E0E33;border-radius:999px;padding:3px}
+.dens button{width:40px;height:36px;border:0;border-radius:999px;background:transparent;color:#0E0E0E99;cursor:pointer;display:grid;place-items:center}
+.dens button.on{background:#0E0E0E;color:#F2F1EC}
+.sort{display:inline-flex;align-items:center;gap:10px}
+.sort select{min-height:44px;padding:0 12px 0 16px;border-radius:999px;border:1.5px solid #0E0E0E33;background:transparent;font:500 14px 'Archivo',sans-serif;color:#0E0E0E;cursor:pointer}
+/* grid */
+.grid{display:grid;gap:28px 20px;padding:32px 0 0}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card .media{position:relative;aspect-ratio:3/4;overflow:hidden;border-radius:6px}
+.card .media > a{position:absolute;inset:0;display:block}
+.card .alt{position:absolute;inset:0;clip-path:inset(100% 0 0 0);transition:clip-path .7s cubic-bezier(.7,0,.2,1)}
+.card:hover .alt{clip-path:inset(0 0 0 0)}
+.tag{position:absolute;left:12px;top:12px;background:#F2F1EC;color:#0E0E0E;padding:5px 9px;font-size:11px;z-index:2}
+.tag.sale{background:#0E0E0E;color:#F2F1EC}
+.qa{position:absolute;left:12px;right:12px;bottom:12px;z-index:2;min-height:48px;border:0;border-radius:999px;background:#F2F1EC;color:#0E0E0E;font:600 14px 'Archivo',sans-serif;cursor:pointer;transform:translateY(140%);transition:transform .5s cubic-bezier(.2,.8,.2,1),background .3s,color .3s}
+.card:hover .qa,.qa:focus-visible{transform:none}
+.qa:hover{background:var(--accent);color:#fff}
+.meta{display:flex;justify-content:space-between;gap:12px;padding-top:14px;font-size:15px;font-weight:600}
+.meta s{font-weight:400;opacity:.55;margin-right:6px}
+.sw{display:flex;gap:6px;padding-top:10px}
+.dot{width:14px;height:14px;border-radius:999px;box-shadow:inset 0 0 0 1px #0E0E0E33}
+.ed{grid-column:span 2;position:relative;border-radius:6px;overflow:hidden;min-height:520px;display:flex;flex-direction:column;justify-content:space-between;padding:32px;color:#F2F1EC}
+.ed .bg{position:absolute;inset:0;z-index:0}
+.ed > *:not(.bg){position:relative;z-index:1}
+.ed h2{margin:0;font-weight:850;font-size:clamp(44px,4.6vw,76px);letter-spacing:-.035em;line-height:.9;font-variation-settings:'wdth' 75}
+.more{display:flex;flex-direction:column;align-items:center;gap:16px;padding:64px 0 24px}
+.prog{width:220px;height:2px;background:#0E0E0E26;position:relative;overflow:hidden}
+.prog i{position:absolute;inset:0;background:#0E0E0E;transform-origin:left}
+/* next collection */
+.next{display:grid;grid-template-columns:minmax(0,1fr) auto 64px;align-items:center;gap:24px;min-height:160px;margin-top:96px;padding:0 8px;border-block:1px solid #0E0E0E26;position:relative;overflow:hidden;isolation:isolate;transition:color .45s}
+.next::before{content:"";position:absolute;inset:0;background:var(--accent);transform:scaleY(0);transform-origin:bottom;transition:transform .55s cubic-bezier(.7,0,.2,1);z-index:-1}
+.next:hover{color:#fff}.next:hover::before{transform:scaleY(1)}
+.next .nm{font-weight:800;font-size:clamp(48px,7vw,112px);letter-spacing:-.03em;line-height:1;font-variation-settings:'wdth' 68}
+.next .arr{width:64px;height:64px;border-radius:999px;border:1.5px solid currentColor;display:grid;place-items:center;transition:transform .5s}
+.next:hover .arr{transform:rotate(-45deg)}
+/* filter drawer */
+.scrim{position:fixed;inset:0;background:#0E0E0E73;border:0;z-index:40;cursor:pointer;animation:fade .35s both}
+.fdraw{position:fixed;top:0;left:0;bottom:0;width:min(420px,100%);background:#F2F1EC;z-index:41;display:flex;flex-direction:column;animation:slideL .5s cubic-bezier(.2,.8,.2,1) both}
+.fgrp{padding:22px 24px;border-bottom:1px solid #0E0E0E1f}
+.fgrp h3{margin:0 0 14px;font-size:16px;font-weight:700}
+.pills{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.pill{min-height:44px;border:1.5px solid #0E0E0E33;border-radius:10px;background:transparent;color:#0E0E0E;font:600 14px 'Archivo',sans-serif;cursor:pointer}
+.pill.on{background:#0E0E0E;border-color:#0E0E0E;color:#F2F1EC}
+.swatches{display:flex;gap:12px;flex-wrap:wrap}
+.swb{width:44px;height:44px;border-radius:999px;border:0;cursor:pointer;box-shadow:inset 0 0 0 1px #0E0E0E33}
+.swb.on{box-shadow:0 0 0 2px #F2F1EC,0 0 0 4px #0E0E0E}
+.check{display:flex;align-items:center;gap:12px;min-height:44px;font-size:15px;cursor:pointer}
+.check input{width:20px;height:20px;accent-color:#0E0E0E}
+.price{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.price label{display:flex;flex-direction:column;gap:6px}
+.price input{min-height:48px;border:1.5px solid #0E0E0E33;border-radius:10px;padding:0 14px;background:transparent;font:500 15px 'Archivo',sans-serif;color:#0E0E0E}
+.ffoot{margin-top:auto;display:grid;grid-template-columns:1fr 1.4fr;gap:10px;padding:20px 24px 28px;border-top:1px solid #0E0E0E1f}
+.mt{min-height:40px;padding:0 16px;background:none;border:0;border-left:1px solid #F2F1EC33;color:#F2F1EC;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.skip{position:absolute;left:12px;top:-60px;z-index:60;background:var(--accent);color:#fff;padding:12px 18px;border-radius:999px;font-weight:600;transition:top .2s}
+.skip:focus{top:12px;color:#fff}
+@keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+@keyframes wd{from{font-variation-settings:'wdth' 125;opacity:0}to{font-variation-settings:'wdth' 70;opacity:1}}
+@keyframes fade{from{opacity:0}}
+@keyframes slideL{from{transform:translateX(-100%)}}
+.title{animation:wd 1.4s cubic-bezier(.2,.8,.2,1) both}
+.card{animation:up .8s cubic-bezier(.2,.8,.2,1) both}
+.still *,.still *::before,.still *::after{animation:none !important;transition:none !important}
+@media (prefers-reduced-motion: reduce){.kx *,.kx *::before,.kx *::after{animation-duration:.001s !important;animation-iteration-count:1 !important}}
+@media (max-width:900px){
+.nav,.hdr-r .txt{display:none}
+.hero{grid-template-columns:1fr;gap:20px}
+.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid{gap:20px 12px}
+.ed{grid-column:1 / -1;min-height:420px;padding:24px}
+.qa{transform:none;min-height:44px;font-size:13px}
+.dens{display:none}
+.next{grid-template-columns:minmax(0,1fr) 48px}.next .desc{display:none}.next .arr{width:48px;height:48px}
+.pills{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+</style>
+</helmet>
+<div class="kx {{motionCls}}" style="--accent: {{accent}}; background: #F2F1EC; color: #0E0E0E; font-family: 'Archivo', system-ui, sans-serif; min-height: 100vh; overflow-x: clip">
+
+<a class="skip" href="#main">Skip to content</a>
+<div style="background: #0E0E0E; color: #F2F1EC; display: flex; justify-content: space-between; align-items: center; padding-left: clamp(16px, 3.4vw, 48px)">
+<span class="mono">Free shipping and 30-day returns</span>
+<button class="mt" aria-pressed="{{motionPressed}}" onClick="{{toggleMotion}}">{{motionLabel}}</button>
+</div>
+
+<header class="wrap">
+<div class="hdr">
+<nav class="nav" aria-label="Main"><a href="Main.dc.html">New in</a><a class="on" href="#main" aria-current="page">Collections</a><a href="Main.dc.html">Lookbook</a><a href="Main.dc.html">Journal</a></nav>
+<a class="logo" href="Main.dc.html">OBLIQUE</a>
+<div class="hdr-r" style="display: flex; justify-content: flex-end; gap: 6px; font-size: 14px; font-weight: 500">
+<button class="icon-btn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></button>
+<button class="icon-btn" aria-label="Account"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></button>
+<button class="icon-btn" aria-label="Open bag"><span class="txt">Bag</span><span class="bubble">{{bagCount}}</span></button>
+</div>
+</div>
+</header>
+
+<main id="main" class="wrap">
+<nav class="mono" aria-label="Breadcrumb" style="display: flex; gap: 10px; padding-top: 20px; opacity: .65"><a href="Main.dc.html">Home</a><span>/</span><a href="Main.dc.html">Collections</a><span>/</span><span>Outerwear</span></nav>
+
+<section class="hero" aria-labelledby="col-title">
+<h1 id="col-title" class="title">Outer<span class="serif">wear</span><span class="count" aria-label="{{countLabel}}">{{count}}</span></h1>
+<div style="display: flex; flex-direction: column; gap: 18px; padding-bottom: 10px">
+<p style="margin: 0; font-size: 18px; line-height: 1.5; max-width: 420px">Trenches, shells and coats cut for long days on foot. Water-resistant, repairable, made to move.</p>
+<p class="mono" style="margin: 0; opacity: .65">Collection 04 · Updated weekly</p>
+</div>
+</section>
+
+<div class="subs" role="group" aria-label="Browse by type">
+<sc-for list="{{subs}}" as="s" hint-placeholder-count="5">
+<button class="{{s.cls}}" aria-pressed="{{s.sel}}" onClick="{{s.pick}}">{{s.label}} <span class="n">{{s.n}}</span></button>
+</sc-for>
+</div>
+
+<div class="bar">
+<div class="bar-l">
+<button class="btn btn-ink" style="min-height: 44px; padding: 0 20px" onClick="{{openFilters}}" aria-haspopup="dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>Filter<sc-if value="{{hasActive}}" hint-placeholder-val="{{ false }}"><span class="bubble" style="background: #F2F1EC; color: #0E0E0E">{{activeCount}}</span></sc-if></button>
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="0">
+<span class="chip">{{c.label}}<button aria-label="{{c.aria}}" onClick="{{c.remove}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></span>
+</sc-for>
+<sc-if value="{{hasActive}}" hint-placeholder-val="{{ false }}"><button class="icon-btn mono" style="text-decoration: underline" onClick="{{clearAll}}">Clear all</button></sc-if>
+</div>
+<div class="bar-r">
+<span class="mono" style="opacity: .65">{{shownLabel}}</span>
+<div class="dens" role="group" aria-label="Grid density">
+<button class="{{d2}}" aria-label="Two columns" aria-pressed="{{d2p}}" onClick="{{setD2}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="18" rx="1"></rect><rect x="13" y="3" width="8" height="18" rx="1"></rect></svg></button>
+<button class="{{d3}}" aria-label="Three columns" aria-pressed="{{d3p}}" onClick="{{setD3}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="3" width="5.5" height="18" rx="1"></rect><rect x="9.25" y="3" width="5.5" height="18" rx="1"></rect><rect x="16.5" y="3" width="5.5" height="18" rx="1"></rect></svg></button>
+<button class="{{d4}}" aria-label="Four columns" aria-pressed="{{d4p}}" onClick="{{setD4}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="3" width="4" height="18" rx="1"></rect><rect x="7.33" y="3" width="4" height="18" rx="1"></rect><rect x="12.66" y="3" width="4" height="18" rx="1"></rect><rect x="18" y="3" width="4" height="18" rx="1"></rect></svg></button>
+</div>
+<label class="sort"><span class="mono">Sort</span><select aria-label="Sort products" onChange="{{onSort}}" value="{{sort}}"><option value="featured">Featured</option><option value="new">Newest</option><option value="low">Price, low to high</option><option value="high">Price, high to low</option></select></label>
+</div>
+</div>
+
+<div class="{{gridCls}}">
+<sc-for list="{{items}}" as="p" hint-placeholder-count="9">
+<sc-if value="{{p.isEd}}" hint-placeholder-val="{{ false }}">
+<article class="ed">
+<div class="bg"><div class="ph" style="background: #3F4A3C; color: #F2F1EC"><span class="ph-l mono" style="left: auto; right: 14px; top: 14px; bottom: auto">Campaign — full-bleed image or video</span></div></div>
+<span class="mono">The edit — 01</span>
+<div style="display: flex; flex-direction: column; gap: 18px; align-items: flex-start">
+<h2>Built for the <span class="serif" style="font-weight: 400">rain</span></h2>
+<p style="margin: 0; max-width: 360px; font-size: 16px; line-height: 1.5">Recycled shells with a water-repellent finish, cut long enough to cover a bike saddle.</p>
+<a class="btn" href="#main" style="background: #F2F1EC; color: #0E0E0E; border-color: #F2F1EC">Shop shells</a>
+</div>
+</article>
+</sc-if>
+<sc-if value="{{p.isCard}}" hint-placeholder-val="{{ true }}">
+<article class="card" style="animation-delay: {{p.delay}}">
+<div class="media">
+<a href="Product.dc.html" aria-label="{{p.name}}">
+<div class="ph" style="background: {{p.tone}}; color: {{p.ink}}"><span class="ph-l mono">Packshot 3:4</span></div>
+<div class="ph alt" style="background: {{p.tone2}}; color: #F2F1EC"><span class="ph-l mono">On model — hover image</span></div>
+</a>
+<sc-if value="{{p.hasTag}}" hint-placeholder-val="{{ false }}"><span class="{{p.tagCls}}">{{p.tag}}</span></sc-if>
+<button class="qa" onClick="{{p.add}}" disabled="{{p.soldOut}}">{{p.qaLabel}}</button>
+</div>
+<div class="meta"><a href="Product.dc.html">{{p.name}}</a><span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{ false }}"><s>{{p.compareS}}</s></sc-if>{{p.priceS}}</span></div>
+<div class="sw"><sc-for list="{{p.colors}}" as="c" hint-placeholder-count="2"><span class="dot" style="background: {{c}}"></span></sc-for></div>
+</article>
+</sc-if>
+</sc-for>
+</div>
+
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 80px 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 18px">
+<p style="margin: 0; font-weight: 850; font-size: 44px; letter-spacing: -.03em">Nothing fits <span class="serif" style="font-weight: 400">those filters</span></p>
+<button class="btn" onClick="{{clearAll}}">Clear filters</button>
+</div>
+</sc-if>
+
+<div class="more">
+<p class="mono" style="margin: 0">{{progressLabel}}</p>
+<div class="prog" aria-hidden="true"><i style="transform: scaleX({{progress}})"></i></div>
+<button class="btn">Show more</button>
+</div>
+
+<a class="next" href="#main"><span><span class="mono" style="display: block; margin-bottom: 10px; opacity: .7">Next collection</span><span class="nm">Knit<span class="serif" style="font-weight: 400">wear</span></span></span><span class="mono desc">Merino · cotton · rib</span><span class="arr"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+</main>
+
+<footer style="background: #0E0E0E; color: #F2F1EC; margin-top: 96px">
+<div class="wrap" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding-top: 40px; padding-bottom: 40px">
+<a class="logo" href="Main.dc.html">OBLIQUE</a>
+<span style="font-size: 14px; opacity: .7">© 2026 Oblique. Powered by Shopify</span>
+<a href="Main.dc.html" style="font-size: 14px; text-decoration: underline">Back to homepage</a>
+</div>
+</footer>
+
+<sc-if value="{{filtersOpen}}" hint-placeholder-val="{{ false }}">
+<button class="scrim" aria-label="Close filters" onClick="{{closeFilters}}"></button>
+<aside class="fdraw" role="dialog" aria-modal="true" aria-label="Filters">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #0E0E0E1f">
+<p style="margin: 0; font-weight: 850; font-size: 28px; letter-spacing: -.02em">Filter <span class="serif" style="font-weight: 400">({{draftCount}})</span></p>
+<button class="icon-btn" aria-label="Close filters" onClick="{{closeFilters}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="overflow-y: auto">
+<div class="fgrp">
+<h3>Availability</h3>
+<label class="check"><input type="checkbox" checked="{{draftStock}}" onChange="{{toggleStock}}">In stock only</label>
+</div>
+<div class="fgrp">
+<h3>Size</h3>
+<div class="pills">
+<sc-for list="{{sizePills}}" as="z" hint-placeholder-count="5">
+<button class="{{z.cls}}" aria-pressed="{{z.sel}}" onClick="{{z.toggle}}">{{z.label}}</button>
+</sc-for>
+</div>
+</div>
+<div class="fgrp">
+<h3>Colour</h3>
+<div class="swatches">
+<sc-for list="{{colorPills}}" as="c" hint-placeholder-count="5">
+<button class="{{c.cls}}" style="background: {{c.hex}}" aria-label="{{c.label}}" aria-pressed="{{c.sel}}" onClick="{{c.toggle}}"></button>
+</sc-for>
+</div>
+</div>
+<div class="fgrp">
+<h3>Price</h3>
+<div class="price">
+<label><span class="mono">From</span><input type="text" inputmode="numeric" value="€0" aria-label="Minimum price"></label>
+<label><span class="mono">To</span><input type="text" inputmode="numeric" value="€290" aria-label="Maximum price"></label>
+</div>
+</div>
+</div>
+<div class="ffoot">
+<button class="btn" onClick="{{resetDraft}}">Reset</button>
+<button class="btn btn-fill" onClick="{{applyFilters}}">{{applyLabel}}</button>
+</div>
+</aside>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2B2BFF","options":["#2B2BFF","#C2410C","#1F7A4D","#0E0E0E"]},"motion":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":3400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const eur = (n) => '€' + n;
+    const PRODUCTS = [
+      { id: 1, name: 'Stride Trench', price: 290, type: 'trenches', tone: '#C9C2B4', tone2: '#7D7266', ink: '#0E0E0E', tag: 'New', colors: ['#C9C2B4', '#2E2E2C'], cols: ['Stone', 'Ink'], sizes: ['XS', 'S', 'M', 'L'], stock: true, rank: 1 },
+      { id: 2, name: 'Commuter Shell', price: 240, compare: 300, type: 'shells', tone: '#3B4A63', tone2: '#2E2E2C', ink: '#F2F1EC', tag: 'Sale', colors: ['#3B4A63', '#3F4A3C'], cols: ['Navy', 'Moss'], sizes: ['S', 'M', 'L', 'XL'], stock: true, rank: 2 },
+      { id: 3, name: 'Field Overshirt', price: 180, type: 'overshirts', tone: '#7D7266', tone2: '#3F4A3C', ink: '#F2F1EC', tag: '', colors: ['#7D7266', '#2E2E2C'], cols: ['Stone', 'Ink'], sizes: ['S', 'M', 'L', 'XL'], stock: true, rank: 3 },
+      { id: 4, name: 'Long Wool Coat', price: 340, type: 'coats', tone: '#2E2E2C', tone2: '#6F675C', ink: '#F2F1EC', tag: 'Low stock', colors: ['#2E2E2C'], cols: ['Ink'], sizes: ['M', 'L'], stock: true, rank: 4 },
+      { id: 5, name: 'Rain Cape', price: 210, type: 'shells', tone: '#3F4A3C', tone2: '#2E2E2C', ink: '#F2F1EC', tag: '', colors: ['#3F4A3C', '#3B4A63'], cols: ['Moss', 'Navy'], sizes: ['S', 'M', 'L'], stock: true, rank: 5 },
+      { id: 6, name: 'Bias Car Coat', price: 310, type: 'coats', tone: '#B7AE9C', tone2: '#7D7266', ink: '#0E0E0E', tag: '', colors: ['#B7AE9C'], cols: ['Stone'], sizes: ['XS', 'S', 'M'], stock: false, rank: 6 },
+      { id: 7, name: 'Packable Anorak', price: 190, type: 'shells', tone: '#6F675C', tone2: '#3F4A3C', ink: '#F2F1EC', tag: 'New', colors: ['#6F675C', '#0E0E0E'], cols: ['Stone', 'Ink'], sizes: ['S', 'M', 'L', 'XL'], stock: true, rank: 7 },
+      { id: 8, name: 'Short Trench', price: 260, type: 'trenches', tone: '#A39E93', tone2: '#3B4A63', ink: '#0E0E0E', tag: '', colors: ['#A39E93', '#2E2E2C'], cols: ['Stone', 'Ink'], sizes: ['XS', 'S', 'M', 'L', 'XL'], stock: true, rank: 8 },
+      { id: 9, name: 'Quilted Liner', price: 150, type: 'overshirts', tone: '#2E2E2C', tone2: '#7D7266', ink: '#F2F1EC', tag: '', colors: ['#2E2E2C', '#3F4A3C'], cols: ['Ink', 'Moss'], sizes: ['S', 'M', 'L'], stock: true, rank: 9 }
+    ];
+    const sub = s.sub || 'all';
+    const applied = s.applied || { sizes: [], cols: [], stock: false };
+    const draft = s.draft || applied;
+    const sort = s.sort || 'featured';
+    const dens = s.dens || 3;
+
+    const SUBS = [['all', 'All'], ['trenches', 'Trenches'], ['shells', 'Shells'], ['coats', 'Coats'], ['overshirts', 'Overshirts']];
+    const subs = SUBS.map(([id, label]) => ({
+      label, n: id === 'all' ? PRODUCTS.length : PRODUCTS.filter((p) => p.type === id).length,
+      cls: id === sub ? 'sub on' : 'sub', sel: id === sub ? 'true' : 'false',
+      pick: () => this.setState({ sub: id })
+    }));
+
+    const match = (p, f) => (sub === 'all' || p.type === sub)
+      && (!f.stock || p.stock)
+      && (f.sizes.length === 0 || f.sizes.some((z) => p.sizes.includes(z)))
+      && (f.cols.length === 0 || f.cols.some((c) => p.cols.includes(c)));
+    let list = PRODUCTS.filter((p) => match(p, applied));
+    const draftMatches = PRODUCTS.filter((p) => match(p, draft)).length;
+    if (sort === 'low') list = list.slice().sort((a, b) => a.price - b.price);
+    else if (sort === 'high') list = list.slice().sort((a, b) => b.price - a.price);
+    else if (sort === 'new') list = list.slice().sort((a, b) => b.id - a.id);
+
+    const bag = s.bag || 0;
+    const cards = list.map((p, i) => ({
+      ...p, isCard: true, isEd: false,
+      priceS: eur(p.price), compareS: p.compare ? eur(p.compare) : '', onSale: !!p.compare,
+      hasTag: !p.stock || !!p.tag, tag: p.stock ? p.tag : 'Sold out',
+      tagCls: (!p.stock || p.tag === 'Sale') ? 'tag sale mono' : 'tag mono',
+      soldOut: !p.stock, qaLabel: p.stock ? 'Quick add +' : 'Sold out',
+      delay: (i * 0.06).toFixed(2) + 's',
+      add: () => this.setState({ bag: bag + 1 })
+    }));
+    const edAt = dens === 2 ? 2 : (dens === 3 ? 4 : 5);
+    const items = cards.length > edAt ? [...cards.slice(0, edAt), { isEd: true, isCard: false }, ...cards.slice(edAt)] : cards;
+
+    const chips = [
+      ...applied.sizes.map((z) => ({ label: 'Size ' + z, aria: 'Remove size ' + z, remove: () => this.setState({ applied: { ...applied, sizes: applied.sizes.filter((x) => x !== z) }, draft: null }) })),
+      ...applied.cols.map((c) => ({ label: c, aria: 'Remove colour ' + c, remove: () => this.setState({ applied: { ...applied, cols: applied.cols.filter((x) => x !== c) }, draft: null }) })),
+      ...(applied.stock ? [{ label: 'In stock', aria: 'Remove in stock filter', remove: () => this.setState({ applied: { ...applied, stock: false }, draft: null }) }] : [])
+    ];
+    const toggleIn = (arr, v) => arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
+    const SIZES = ['XS', 'S', 'M', 'L', 'XL'];
+    const COLS = [['Stone', '#C9C2B4'], ['Ink', '#2E2E2C'], ['Moss', '#3F4A3C'], ['Navy', '#3B4A63']];
+    const draftCount = draft.sizes.length + draft.cols.length + (draft.stock ? 1 : 0);
+    const motion = (this.props.motion ?? true) && !s.paused;
+    const dcls = (n) => (dens === n ? 'on' : '');
+    return {
+      accent: this.props.accent ?? '#2B2BFF',
+      motionCls: motion ? '' : 'still',
+      motionPressed: motion ? 'false' : 'true',
+      motionLabel: motion ? 'Pause motion' : 'Play motion',
+      toggleMotion: () => this.setState({ paused: !s.paused }),
+      bagCount: bag,
+      count: list.length, countLabel: list.length + ' products',
+      subs, items, chips,
+      hasActive: chips.length > 0, activeCount: chips.length,
+      clearAll: () => this.setState({ applied: { sizes: [], cols: [], stock: false }, draft: null }),
+      shownLabel: list.length + ' of ' + PRODUCTS.length + ' pieces',
+      progressLabel: 'Showing ' + list.length + ' of 24',
+      progress: (list.length / 24).toFixed(2),
+      empty: list.length === 0,
+      gridCls: 'grid g' + dens,
+      d2: dcls(2), d3: dcls(3), d4: dcls(4),
+      d2p: dens === 2 ? 'true' : 'false', d3p: dens === 3 ? 'true' : 'false', d4p: dens === 4 ? 'true' : 'false',
+      setD2: () => this.setState({ dens: 2 }), setD3: () => this.setState({ dens: 3 }), setD4: () => this.setState({ dens: 4 }),
+      sort, onSort: (e) => this.setState({ sort: e.target.value }),
+      filtersOpen: !!s.filtersOpen,
+      openFilters: () => this.setState({ filtersOpen: true, draft: applied }),
+      closeFilters: () => this.setState({ filtersOpen: false, draft: null }),
+      draftStock: draft.stock, draftCount,
+      toggleStock: () => this.setState({ draft: { ...draft, stock: !draft.stock } }),
+      sizePills: SIZES.map((z) => ({ label: z, sel: draft.sizes.includes(z) ? 'true' : 'false', cls: draft.sizes.includes(z) ? 'pill on' : 'pill', toggle: () => this.setState({ draft: { ...draft, sizes: toggleIn(draft.sizes, z) } }) })),
+      colorPills: COLS.map(([label, hex]) => ({ label, hex, sel: draft.cols.includes(label) ? 'true' : 'false', cls: draft.cols.includes(label) ? 'swb on' : 'swb', toggle: () => this.setState({ draft: { ...draft, cols: toggleIn(draft.cols, label) } }) })),
+      resetDraft: () => this.setState({ draft: { sizes: [], cols: [], stock: false } }),
+      applyLabel: 'Show ' + draftMatches + ' pieces',
+      applyFilters: () => this.setState({ applied: draft, draft: null, filtersOpen: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

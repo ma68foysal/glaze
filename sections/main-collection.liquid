@@ -1,0 +1,611 @@
+{%- liquid
+  assign per_page = section.settings.products_per_page
+  assign sort_by = collection.sort_by | default: collection.default_sort_by
+  assign editorial = section.blocks | where: 'type', 'editorial' | first
+  assign chips = section.blocks | where: 'type', 'collection_link'
+  assign form_id = 'k-filters-' | append: section.id
+  assign active_count = 0
+  for filter in collection.filters
+    if filter.type == 'price_range'
+      if filter.min_value.value != blank or filter.max_value.value != blank
+        assign active_count = active_count | plus: 1
+      endif
+    else
+      assign active_count = active_count | plus: filter.active_values.size
+    endif
+  endfor
+  assign clear_url = collection.url | append: '?sort_by=' | append: sort_by
+-%}
+
+<section class="k-col k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
+  <div class="k-wrap">
+    {%- if section.settings.show_breadcrumbs -%}
+      <nav class="k-col__crumbs k-label" aria-label="{{ 'products.breadcrumb' | t }}">
+        <a href="{{ routes.root_url }}">{{ 'products.home' | t }}</a>
+        <span aria-hidden="true">/</span>
+        <a href="{{ routes.collections_url }}">{{ 'sections.collection.collections' | t }}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{{ collection.title }}</span>
+      </nav>
+    {%- endif -%}
+
+    <header class="k-col__hero">
+      <h1 class="k-col__title">
+        {{- collection.title -}}
+        <span class="k-col__count" aria-label="{{ 'sections.collection.product_count' | t: count: collection.products_count }}">{{ collection.products_count }}</span>
+      </h1>
+      {%- if collection.description != blank or section.settings.meta != blank or collection.image -%}
+        <div class="k-col__intro">
+          {%- if collection.image and section.settings.show_image -%}
+            <div class="k-col__image k-media">
+              {{ collection.image | image_url: width: 800 | image_tag: widths: '320, 480, 640, 800', sizes: '(min-width: 900px) 240px, 50vw', loading: 'eager', alt: collection.image.alt | default: collection.title }}
+            </div>
+          {%- endif -%}
+          {%- if collection.description != blank -%}
+            <div class="k-rte k-lead">{{ collection.description }}</div>
+          {%- endif -%}
+          {%- if section.settings.meta != blank -%}
+            <p class="k-label k-muted" style="margin: 0;">{{ section.settings.meta }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </header>
+
+    {%- if chips.size > 0 -%}
+      <nav class="k-col__subs" aria-label="{{ 'sections.collection.browse' | t }}">
+        {%- for block in chips -%}
+          {%- assign c = block.settings.collection -%}
+          {%- if c != blank -%}
+            {%- liquid
+              assign chip_label = block.settings.label | default: c.title
+              assign is_current = false
+              if c.handle == collection.handle
+                assign is_current = true
+              endif
+            -%}
+            <a class="k-chip" href="{{ c.url }}"{% if is_current %} aria-current="page" aria-pressed="true"{% endif %} {{ block.shopify_attributes }}>
+              {{ chip_label }} <span class="k-col__sub-n">{{ c.products_count }}</span>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    {%- paginate collection.products by per_page -%}
+      <div class="k-col__bar">
+        <div class="k-col__bar-l">
+          {%- if section.settings.show_filters and collection.filters.size > 0 -%}
+            <button type="button" class="k-btn k-col__filter-btn" data-filter-open aria-haspopup="dialog" aria-controls="{{ form_id }}-drawer">
+              {% render 'k-icon', icon: 'filter', size: 16 %}
+              {{ 'sections.collection.filter' | t }}
+              {%- if active_count > 0 -%}<span class="k-bubble k-col__filter-n">{{ active_count }}</span>{%- endif -%}
+            </button>
+          {%- endif -%}
+          {%- for filter in collection.filters -%}
+            {%- if filter.type == 'price_range' -%}
+              {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
+                <a class="k-col__active" href="{{ filter.url_to_remove }}">
+                  {{ filter.min_value.value | default: 0 | money_without_trailing_zeros }}–{{ filter.max_value.value | default: filter.range_max | money_without_trailing_zeros }}
+                  <span class="visually-hidden">{{ 'sections.collection.remove_filter' | t }}</span>{% render 'k-icon', icon: 'close', size: 12 %}
+                </a>
+              {%- endif -%}
+            {%- else -%}
+              {%- for value in filter.active_values -%}
+                <a class="k-col__active" href="{{ value.url_to_remove }}">
+                  {{ value.label }}
+                  <span class="visually-hidden">{{ 'sections.collection.remove_filter' | t }}</span>{% render 'k-icon', icon: 'close', size: 12 %}
+                </a>
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if active_count > 0 -%}
+            <a class="k-label k-col__clear" href="{{ clear_url }}">{{ 'sections.collection.clear_all' | t }}</a>
+          {%- endif -%}
+        </div>
+
+        <div class="k-col__bar-r">
+          <span class="k-label k-muted">{{ 'sections.collection.product_count' | t: count: collection.products_count }}</span>
+          {%- if section.settings.show_density -%}
+            <div class="k-col__dens" role="group" aria-label="{{ 'sections.collection.density' | t }}">
+              <button type="button" data-density="2" aria-label="{{ 'sections.collection.columns' | t: count: 2 }}" aria-pressed="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
+              </button>
+              <button type="button" data-density="3" aria-label="{{ 'sections.collection.columns' | t: count: 3 }}" aria-pressed="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="3" width="5.5" height="18" rx="1"/><rect x="9.25" y="3" width="5.5" height="18" rx="1"/><rect x="16.5" y="3" width="5.5" height="18" rx="1"/></svg>
+              </button>
+              <button type="button" data-density="4" aria-label="{{ 'sections.collection.columns' | t: count: 4 }}" aria-pressed="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="3" width="4" height="18" rx="1"/><rect x="7.33" y="3" width="4" height="18" rx="1"/><rect x="12.66" y="3" width="4" height="18" rx="1"/><rect x="18" y="3" width="4" height="18" rx="1"/></svg>
+              </button>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.show_sort -%}
+            <form class="k-col__sort" method="get" action="{{ collection.url }}">
+              {%- for filter in collection.filters -%}
+                {%- if filter.type == 'price_range' -%}
+                  {%- if filter.min_value.value != blank -%}<input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value }}">{%- endif -%}
+                  {%- if filter.max_value.value != blank -%}<input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value }}">{%- endif -%}
+                {%- else -%}
+                  {%- for value in filter.active_values -%}<input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">{%- endfor -%}
+                {%- endif -%}
+              {%- endfor -%}
+              <label class="k-label" for="k-sort-{{ section.id }}">{{ 'sections.collection.sort' | t }}</label>
+              <select id="k-sort-{{ section.id }}" name="sort_by" data-sort-select>
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name }}</option>
+                {%- endfor -%}
+              </select>
+              <noscript><button type="submit" class="k-btn">{{ 'sections.collection.sort' | t }}</button></noscript>
+            </form>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- if collection.products.size > 0 -%}
+        <ul class="k-col__grid" role="list" data-grid style="--cols: {{ section.settings.columns }};">
+          {%- for product in collection.products -%}
+            <li class="k-col__item k-reveal">{% render 'k-card', product: product, quick_add: section.settings.quick_add %}</li>
+            {%- if editorial and paginate.current_page == 1 and forloop.index == editorial.settings.position -%}
+              <li class="k-col__ed color-{{ editorial.settings.color_scheme }}" {{ editorial.shopify_attributes }}>
+                <div class="k-col__ed-media k-media" aria-hidden="true">
+                  {%- render 'k-media', image: editorial.settings.image, video: editorial.settings.video, sizes: '(min-width: 900px) 50vw, 100vw', placeholder: 'lifestyle-2', alt: '' -%}
+                </div>
+                {%- if editorial.settings.label != blank -%}<span class="k-label k-col__ed-label">{{ editorial.settings.label }}</span>{%- endif -%}
+                <div class="k-col__ed-copy">
+                  {%- if editorial.settings.heading != blank -%}<h2 class="k-h3 k-col__ed-h">{{ editorial.settings.heading }}</h2>{%- endif -%}
+                  {%- if editorial.settings.text != blank -%}<p class="k-col__ed-text">{{ editorial.settings.text }}</p>{%- endif -%}
+                  {%- if editorial.settings.button_label != blank and editorial.settings.link != blank -%}
+                    <a class="k-btn k-btn--primary" href="{{ editorial.settings.link }}">{{ editorial.settings.button_label }}</a>
+                  {%- endif -%}
+                </div>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- else -%}
+        <div class="k-col__empty">
+          {%- if active_count > 0 -%}
+            <p class="k-h3" style="margin: 0;">{{ 'sections.collection.empty_filtered' | t }}</p>
+            <a class="k-btn k-btn--secondary" href="{{ clear_url }}">{{ 'sections.collection.clear_filters' | t }}</a>
+          {%- else -%}
+            <p class="k-h3" style="margin: 0;">{{ 'sections.collection.empty' | t }}</p>
+            <a class="k-btn k-btn--secondary" href="{{ routes.all_products_collection_url }}">{{ 'sections.collection.shop_all' | t }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if paginate.pages > 1 -%}
+        {%- liquid
+          assign shown = paginate.current_offset | plus: collection.products.size
+          assign progress = shown | times: 1.0 | divided_by: paginate.items
+        -%}
+        <div class="k-col__more" data-more>
+          <p class="k-label" style="margin: 0;" data-more-label>{{ 'sections.collection.showing_count' | t: shown: shown, total: paginate.items }}</p>
+          <div class="k-col__prog" aria-hidden="true"><i data-more-bar style="transform: scaleX({{ progress }});"></i></div>
+          {%- if paginate.next -%}
+            <a class="k-btn k-btn--secondary" href="{{ paginate.next.url }}" data-more-link data-total="{{ paginate.items }}">{{ 'sections.collection.show_more' | t }}</a>
+          {%- endif -%}
+          {%- if paginate.previous -%}
+            <a class="k-label k-col__prev" href="{{ paginate.previous.url }}">{{ 'sections.collection.previous_page' | t }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Filter drawer {%- endcomment -%}
+      {%- if section.settings.show_filters and collection.filters.size > 0 -%}
+        <k-filter-drawer class="k-col__drawer" id="{{ form_id }}-drawer" hidden>
+          <button type="button" class="k-col__scrim" data-filter-close tabindex="-1" aria-label="{{ 'general.close' | t }}"></button>
+          <div class="k-col__panel color-{{ section.settings.drawer_color_scheme }}" role="dialog" aria-modal="true" aria-labelledby="{{ form_id }}-title">
+            <div class="k-col__panel-head">
+              <h2 class="k-col__panel-title" id="{{ form_id }}-title">{{ 'sections.collection.filter' | t }}{% if active_count > 0 %} <span class="k-accent">({{ active_count }})</span>{% endif %}</h2>
+              <button type="button" class="k-icon-btn" data-filter-close aria-label="{{ 'general.close' | t }}">{% render 'k-icon', icon: 'close', size: 22 %}</button>
+            </div>
+            <form id="{{ form_id }}" class="k-col__form" method="get" action="{{ collection.url }}">
+              <input type="hidden" name="sort_by" value="{{ sort_by }}">
+              <div class="k-col__groups">
+                {%- for filter in collection.filters -%}
+                  <fieldset class="k-col__group">
+                    <legend class="k-col__group-h">{{ filter.label }}</legend>
+                    {%- case filter.type -%}
+                      {%- when 'boolean', 'list' -%}
+                        {%- if filter.presentation == 'swatch' -%}
+                          <div class="k-col__swatches">
+                            {%- for value in filter.values -%}
+                              {%- liquid
+                                assign vid = form_id | append: '-' | append: filter.param_name | append: '-' | append: forloop.index | handleize
+                                assign sw = ''
+                                if value.swatch.image
+                                  assign sw_url = value.swatch.image | image_url: width: 88
+                                  assign sw = 'background-image: url(' | append: sw_url | append: ');'
+                                elsif value.swatch.color
+                                  assign sw = '--swatch: ' | append: value.swatch.color | append: ';'
+                                endif
+                              -%}
+                              <input class="visually-hidden" type="checkbox" id="{{ vid }}" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                              <label class="k-col__swatch" for="{{ vid }}" style="{{ sw }}" title="{{ value.label | escape }}"><span class="visually-hidden">{{ value.label }} ({{ value.count }})</span></label>
+                            {%- endfor -%}
+                          </div>
+                        {%- elsif filter.values.size <= 8 and filter.label.size < 10 and filter.values.first.label.size <= 4 -%}
+                          <div class="k-col__pills">
+                            {%- for value in filter.values -%}
+                              {%- assign vid = form_id | append: '-' | append: filter.param_name | append: '-' | append: forloop.index | handleize -%}
+                              <input class="visually-hidden" type="checkbox" id="{{ vid }}" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                              <label class="k-col__pill" for="{{ vid }}">{{ value.label }}</label>
+                            {%- endfor -%}
+                          </div>
+                        {%- else -%}
+                          <ul class="k-col__checks" role="list">
+                            {%- for value in filter.values -%}
+                              {%- assign vid = form_id | append: '-' | append: filter.param_name | append: '-' | append: forloop.index | handleize -%}
+                              <li>
+                                <label class="k-col__check" for="{{ vid }}">
+                                  <input type="checkbox" id="{{ vid }}" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                                  <span>{{ value.label }}</span>
+                                  <span class="k-muted">({{ value.count }})</span>
+                                </label>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        {%- endif -%}
+                      {%- when 'price_range' -%}
+                        <div class="k-col__price">
+                          <label>
+                            <span class="k-label">{{ 'sections.collection.price_from' | t }}</span>
+                            <input type="number" inputmode="decimal" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}" step="any" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency | remove: ',' }}" placeholder="0">
+                          </label>
+                          <label>
+                            <span class="k-label">{{ 'sections.collection.price_to' | t }}</span>
+                            <input type="number" inputmode="decimal" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}" step="any" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency | remove: ',' }}" placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}">
+                          </label>
+                        </div>
+                    {%- endcase -%}
+                  </fieldset>
+                {%- endfor -%}
+              </div>
+              <div class="k-col__panel-foot">
+                <a class="k-btn k-btn--secondary" href="{{ clear_url }}">{{ 'sections.collection.reset' | t }}</a>
+                <button type="submit" class="k-btn k-btn--primary">{{ 'sections.collection.show_results' | t }}</button>
+              </div>
+            </form>
+          </div>
+        </k-filter-drawer>
+      {%- endif -%}
+    {%- endpaginate -%}
+
+    {%- assign next = section.settings.next_collection -%}
+    {%- if next != blank and next.handle != collection.handle -%}
+      <a class="k-col__next" href="{{ next.url }}">
+        <span>
+          <span class="k-label k-col__next-label">{{ 'sections.collection.next_collection' | t }}</span>
+          <span class="k-col__next-name">{{ next.title }}</span>
+        </span>
+        <span class="k-arrow-circle" aria-hidden="true">{% render 'k-icon', icon: 'arrow', size: 22 %}</span>
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-col { --pt: 0.2; }
+  .k-col__crumbs { display: flex; flex-wrap: wrap; gap: 10px; color: var(--color-muted); }
+  .k-col__crumbs a:hover { color: var(--color-text); }
+  .k-col__hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 48px; align-items: end; padding: 28px 0 36px; }
+  .k-col__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(56px, 10vw, 168px) * var(--heading-scale));
+    line-height: 0.86;
+    letter-spacing: -0.04em;
+    overflow-wrap: anywhere;
+  }
+  .k-col__count {
+    display: inline-grid; place-items: center;
+    min-width: 48px; height: 48px; padding: 0 12px;
+    margin-left: 12px;
+    border: 1.5px solid currentColor; border-radius: 999px;
+    font: 600 18px var(--font-body); letter-spacing: 0;
+    vertical-align: super;
+  }
+  .k-col__intro { display: flex; flex-direction: column; gap: 18px; padding-bottom: 10px; }
+  .k-col__image { width: min(240px, 50%); aspect-ratio: 4 / 5; border-radius: calc(var(--radius-card) * 0.25); }
+  .k-col__subs { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 28px; }
+  .k-col__subs .k-chip[aria-current] { background: var(--color-text); color: var(--color-bg); }
+  .k-col__sub-n { font-family: var(--font-label); font-size: 11px; opacity: 0.7; }
+
+  .k-col__bar {
+    position: sticky; top: var(--sticky-offset, 0px); z-index: 4;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px;
+    min-height: 72px; padding-block: 12px;
+    background: var(--color-bg);
+    border-block: 1px solid var(--color-line);
+  }
+  .k-col__bar-l, .k-col__bar-r { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .k-col__filter-btn { min-height: 44px; padding: 0 20px; --btn-bg: var(--color-text); --btn-fg: var(--color-bg); --btn-border: var(--color-text); --spin: var(--color-bg); }
+  .k-col__filter-n { background: var(--color-bg); color: var(--color-text); }
+  .k-col__active {
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: 36px; padding: 0 12px 0 14px;
+    border-radius: 999px;
+    background: var(--color-line-soft);
+    font-size: 13px; font-weight: 500;
+    transition: background-color var(--dur-fast);
+  }
+  .k-col__active:hover { background: var(--color-line); }
+  .k-col__clear { text-decoration: underline; text-underline-offset: 3px; padding: 8px 4px; }
+  .k-col__dens { display: inline-flex; padding: 3px; border: 1.5px solid var(--color-line); border-radius: 999px; }
+  .k-col__dens button {
+    display: grid; place-items: center;
+    width: 40px; height: 36px;
+    border: 0; border-radius: 999px;
+    background: transparent; color: var(--color-muted);
+    cursor: pointer;
+  }
+  .k-col__dens button[aria-pressed="true"] { background: var(--color-text); color: var(--color-bg); }
+  .k-col__sort { display: inline-flex; align-items: center; gap: 10px; }
+  .k-col__sort select {
+    min-height: 44px; padding: 0 12px 0 16px;
+    border: 1.5px solid var(--color-line); border-radius: 999px;
+    background: var(--color-bg); color: var(--color-text);
+    font: 500 14px var(--font-body);
+    cursor: pointer;
+  }
+
+  .k-col__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+    gap: 28px var(--space-md);
+    margin: 0; padding: 32px 0 0;
+    list-style: none;
+  }
+  .k-col__ed {
+    grid-column: span 2;
+    position: relative;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 24px;
+    min-height: 520px; padding: 32px;
+    overflow: hidden;
+    border-radius: calc(var(--radius-card) * 0.25);
+    isolation: isolate;
+  }
+  .k-col__ed-media { position: absolute; inset: 0; z-index: -1; }
+  .k-col__ed-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(14, 14, 14, 0.05), rgba(14, 14, 14, 0.5)); }
+  .k-col__ed-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+  .k-col__ed-h { font-size: clamp(40px, 4.6vw, 76px); }
+  .k-col__ed-text { margin: 0; max-width: 360px; }
+  .k-col__ed:has(.k-col__ed-media img, .k-col__ed-media video) { color: #f2f1ec; }
+
+  .k-col__empty { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 80px 0; text-align: center; }
+  .k-col__more { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 64px 0 0; }
+  .k-col__prog { position: relative; width: 220px; height: 2px; overflow: hidden; background: var(--color-line); }
+  .k-col__prog i { position: absolute; inset: 0; background: var(--color-text); transform-origin: left; transition: transform var(--dur-slow) var(--ease-out); }
+  .k-col__prev { text-decoration: underline; text-underline-offset: 3px; }
+
+  .k-col__next {
+    position: relative;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px;
+    min-height: 160px; margin-top: 96px; padding: 0 8px;
+    overflow: hidden; isolation: isolate;
+    border-block: 1px solid var(--color-line);
+    transition: color var(--dur);
+  }
+  .k-col__next::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--color-button); transform: scaleY(0); transform-origin: bottom; transition: transform 0.55s var(--ease-in-out); }
+  .k-col__next:hover, .k-col__next:focus-visible { color: var(--color-button-label); }
+  .k-col__next:hover::before, .k-col__next:focus-visible::before { transform: scaleY(1); }
+  .k-col__next:hover .k-arrow-circle { transform: rotate(-45deg); }
+  .k-col__next-label { display: block; margin-bottom: 10px; opacity: 0.7; }
+  .k-col__next-name {
+    font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+    font-size: calc(clamp(48px, 7vw, 112px) * var(--heading-scale));
+    line-height: 1; letter-spacing: -0.03em;
+  }
+
+  /* Filter drawer */
+  .k-col__drawer { position: fixed; inset: 0; z-index: 60; }
+  .k-col__drawer[hidden] { display: none; }
+  .k-col__scrim { position: absolute; inset: 0; border: 0; background: rgba(14, 14, 14, 0.45); cursor: pointer; animation: k-fade 0.35s both; }
+  .k-col__panel {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    width: min(420px, 100%);
+    display: flex; flex-direction: column;
+    animation: k-col-slide 0.5s var(--ease-out) both;
+  }
+  .k-col__panel-head { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--color-line); }
+  .k-col__panel-title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 30px; letter-spacing: -0.02em; line-height: 1; }
+  .k-col__form { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .k-col__groups { flex: 1; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+  .k-col__group { margin: 0; padding: 22px 24px; border: 0; border-bottom: 1px solid var(--color-line); min-width: 0; }
+  .k-col__group-h { padding: 0; margin-bottom: 14px; font-weight: 700; font-size: 16px; }
+  .k-col__checks { margin: 0; padding: 0; list-style: none; }
+  .k-col__check { display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 15px; cursor: pointer; }
+  .k-col__check input { width: 20px; height: 20px; accent-color: var(--color-text); }
+  .k-col__check:has(input:disabled) { opacity: 0.45; cursor: not-allowed; }
+  .k-col__pills { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
+  .k-col__pill {
+    display: grid; place-items: center;
+    min-height: 44px; padding: 0 8px;
+    border: 1.5px solid var(--color-line); border-radius: calc(var(--radius-card) * 0.4);
+    font-weight: 600; font-size: 14px;
+    cursor: pointer;
+  }
+  .k-col__swatches { display: flex; flex-wrap: wrap; gap: 12px; }
+  .k-col__swatch {
+    width: 44px; height: 44px;
+    border-radius: 999px;
+    background: var(--swatch, var(--color-line)); background-size: cover;
+    box-shadow: inset 0 0 0 1px rgba(var(--color-text-rgb), 0.2);
+    cursor: pointer;
+  }
+  input:checked + .k-col__pill { background: var(--color-text); border-color: var(--color-text); color: var(--color-bg); }
+  input:checked + .k-col__swatch { box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-text); }
+  input:disabled + .k-col__pill, input:disabled + .k-col__swatch { opacity: 0.35; cursor: not-allowed; }
+  input:focus-visible + .k-col__pill, input:focus-visible + .k-col__swatch { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  .k-col__price { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .k-col__price label { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .k-col__price input {
+    width: 100%; min-width: 0;
+    min-height: 48px; padding: 0 14px;
+    border: 1.5px solid var(--color-line); border-radius: calc(var(--radius-card) * 0.4);
+    background: transparent; color: inherit;
+    font: 500 15px var(--font-body);
+  }
+  .k-col__price input:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  .k-col__panel-foot { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; padding: 18px 24px 24px; border-top: 1px solid var(--color-line); }
+  @keyframes k-col-slide { from { transform: translateX(-100%); } }
+
+  @media (max-width: 900px) {
+    .k-col__hero { grid-template-columns: 1fr; gap: 20px; }
+    .k-col__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px var(--space-sm); }
+    .k-col__ed { grid-column: 1 / -1; min-height: 420px; padding: 24px; }
+    .k-col__dens { display: none; }
+    .k-col__bar-r .k-muted { display: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var KEY = 'k-collection-cols';
+    function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+    function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+    if (!customElements.get('k-filter-drawer')) {
+      customElements.define('k-filter-drawer', class extends HTMLElement {
+        connectedCallback() {
+          this.panel = this.querySelector('[role="dialog"]');
+          this.querySelectorAll('[data-filter-close]').forEach((b) => b.addEventListener('click', () => this.close()));
+          this.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') { e.preventDefault(); this.close(); }
+            if (e.key !== 'Tab') return;
+            var f = this.panel.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select');
+            if (!f.length) return;
+            var first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+          });
+        }
+        open(trigger) {
+          this.trigger = trigger;
+          this.hidden = false;
+          document.body.style.overflow = 'hidden';
+          var first = this.panel.querySelector('button, input');
+          if (first) setTimeout(function () { first.focus(); }, 30);
+        }
+        close() {
+          this.hidden = true;
+          document.body.style.overflow = '';
+          if (this.trigger) this.trigger.focus();
+        }
+      });
+    }
+
+    function init(root) {
+      (root || document).querySelectorAll('.k-col').forEach(function (sec) {
+        if (sec.dataset.kReady) return;
+        sec.dataset.kReady = '1';
+        var drawer = sec.querySelector('k-filter-drawer');
+        var openBtn = sec.querySelector('[data-filter-open]');
+        if (drawer && openBtn) openBtn.addEventListener('click', function () { drawer.open(openBtn); });
+
+        var sort = sec.querySelector('[data-sort-select]');
+        if (sort) sort.addEventListener('change', function () { sort.form.submit(); });
+
+        var grid = sec.querySelector('[data-grid]');
+        var dens = sec.querySelectorAll('[data-density]');
+        function applyCols(n) {
+          if (!grid || !n) return;
+          grid.style.setProperty('--cols', n);
+          dens.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.density === String(n) ? 'true' : 'false'); });
+        }
+        if (dens.length) {
+          applyCols(get(KEY) || grid.style.getPropertyValue('--cols').trim());
+          dens.forEach(function (b) {
+            b.addEventListener('click', function () { set(KEY, b.dataset.density); applyCols(b.dataset.density); });
+          });
+        }
+
+        // Show more: fetch the next page and append its products.
+        var more = sec.querySelector('[data-more-link]');
+        if (more && grid) {
+          more.addEventListener('click', function (e) {
+            e.preventDefault();
+            more.classList.add('k-loading');
+            var url = new URL(more.href, location.href);
+            url.searchParams.set('section_id', sec.closest('[id^="shopify-section-"]').id.replace('shopify-section-', ''));
+            fetch(url.toString()).then(function (r) { return r.text(); }).then(function (html) {
+              var doc = new DOMParser().parseFromString(html, 'text/html');
+              doc.querySelectorAll('[data-grid] > .k-col__item').forEach(function (li) { li.classList.add('is-visible'); grid.appendChild(li); });
+              var nextLink = doc.querySelector('[data-more-link]');
+              var shown = grid.querySelectorAll('.k-col__item').length;
+              var total = parseInt(more.dataset.total, 10) || shown;
+              var label = sec.querySelector('[data-more-label]');
+              var freshLabel = doc.querySelector('[data-more-label]');
+              if (label && freshLabel) label.textContent = freshLabel.textContent;
+              var bar = sec.querySelector('[data-more-bar]');
+              if (bar) bar.style.transform = 'scaleX(' + Math.min(1, shown / total) + ')';
+              if (nextLink) { more.href = nextLink.href; more.classList.remove('k-loading'); }
+              else more.remove();
+            }).catch(function () { window.location.href = more.href; });
+          });
+        }
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); });
+    else init();
+    document.addEventListener('shopify:section:load', function (e) { init(e.target); });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Collection",
+  "tag": "div",
+  "class": "k-col-section",
+  "settings": [
+    { "type": "text", "id": "meta", "label": "Label under the description", "default": "Updated weekly" },
+    { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
+    { "type": "checkbox", "id": "show_image", "label": "Show collection image", "default": true },
+    { "type": "header", "content": "Products" },
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 36, "step": 4, "default": 12 },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "checkbox", "id": "show_density", "label": "Let customers change the column count", "default": true },
+    { "type": "checkbox", "id": "quick_add", "label": "Show quick add", "default": true },
+    { "type": "header", "content": "Filtering and sorting" },
+    { "type": "checkbox", "id": "show_filters", "label": "Enable filtering", "default": true, "info": "Customize filters with the Search and Discovery app." },
+    { "type": "checkbox", "id": "show_sort", "label": "Enable sorting", "default": true },
+    { "type": "header", "content": "Next collection" },
+    { "type": "collection", "id": "next_collection", "label": "Next collection link", "info": "Shown at the bottom of the page." },
+    { "type": "header", "content": "Style" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "color_scheme", "id": "drawer_color_scheme", "label": "Filter drawer", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "collection_link",
+      "name": "Collection chip",
+      "limit": 8,
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "label", "label": "Label", "info": "Uses the collection title when empty." }
+      ]
+    },
+    {
+      "type": "editorial",
+      "name": "Editorial tile",
+      "limit": 1,
+      "settings": [
+        { "type": "paragraph", "content": "A wide campaign tile placed inside the product grid on the first page." },
+        { "type": "range", "id": "position", "label": "Show after product", "min": 1, "max": 12, "step": 1, "default": 4 },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "video", "id": "video", "label": "Video" },
+        { "type": "text", "id": "label", "label": "Label", "default": "The edit" },
+        { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Built for the <em>rain</em>", "info": "Italic words use the accent font." },
+        { "type": "text", "id": "text", "label": "Text", "default": "Recycled shells with a water-repellent finish, cut long enough to cover a bike saddle." },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+        { "type": "url", "id": "link", "label": "Button link" },
+        { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-2" }
+      ]
+    }
+  ],
+  "enabled_on": { "templates": ["collection"] }
+}
+{% endschema %}

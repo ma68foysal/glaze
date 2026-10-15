@@ -220,7 +220,8 @@
     "sku": "SKU",
     "size_guide": "Size guide",
     "unavailable": "Unavailable",
-    "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout."
+    "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
+    "unit_price": "Unit price"
   },
   "sections": {
     "category_columns": {
@@ -240,6 +241,32 @@
     "journal": {
       "placeholder_meta": "Story · 4 min",
       "placeholder_title": "Your blog post title"
+    },
+    "collection": {
+      "collections": "Collections",
+      "browse": "Browse collections",
+      "product_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      },
+      "filter": "Filter",
+      "remove_filter": "Remove filter",
+      "clear_all": "Clear all",
+      "clear_filters": "Clear filters",
+      "density": "Grid columns",
+      "columns": "Show {{ count }} columns",
+      "sort": "Sort",
+      "empty": "This collection is empty right now.",
+      "empty_filtered": "Nothing matches those filters.",
+      "shop_all": "Shop all products",
+      "showing_count": "Showing {{ shown }} of {{ total }}",
+      "show_more": "Show more",
+      "previous_page": "Previous page",
+      "price_from": "From",
+      "price_to": "To",
+      "reset": "Reset",
+      "show_results": "Show results",
+      "next_collection": "Next collection"
     }
   }
 }

@@ -309,7 +309,7 @@ body {
   border-radius: calc(var(--radius-card) * 0.25);
   background: rgba(var(--color-text-rgb), 0.08);
 }
-.k-card__media > a { position: absolute; inset: 0; display: block; }
+.k-card__link { position: absolute; inset: 0; display: block; }
 .k-card__media img, .k-card__media .k-ph {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -341,6 +341,7 @@ body {
 .k-card:hover .k-card__qa, .k-card__qa:focus-visible, .k-card__qa.k-loading { transform: none; }
 .k-card__qa:hover { background: var(--color-button); color: var(--color-button-label); }
 .k-card__qa[disabled] { cursor: not-allowed; opacity: 0.7; }
+a.k-card__qa { display: flex; align-items: center; justify-content: center; text-decoration: none; }
 .k-card__meta {
   display: flex;
   justify-content: space-between;
@@ -353,6 +354,7 @@ body {
 .k-card__title { min-width: 0; overflow-wrap: anywhere; }
 .k-card__price { flex: none; text-align: right; }
 .k-card__price s { font-weight: 400; color: var(--color-muted); margin-right: 6px; }
+.k-card__unit { margin: 4px 0 0; font-size: var(--text-sm); color: var(--color-muted); text-align: right; }
 .k-card__swatches { display: flex; gap: 6px; padding-top: 10px; }
 .k-card__swatch {
   width: 14px; height: 14px;

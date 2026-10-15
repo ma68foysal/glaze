@@ -9,79 +9,44 @@
  */
 {
   "sections": {
-    "breadcrumbs": {
-      "type": "breadcrumbs",
-      "settings": {}
-    },
-    "categories": {
-      "type": "categories",
+    "main": {
+      "type": "main-collection",
       "blocks": {
-        "cat_1": {
-          "type": "category",
+        "editorial": {
+          "type": "editorial",
           "settings": {
-            "image": "",
-            "title": "Skin Transforming",
+            "position": 4,
+            "label": "The edit",
+            "heading": "Built for the <em>rain</em>",
+            "text": "Recycled shells with a water-repellent finish, cut long enough to cover a bike saddle.",
+            "button_label": "Shop now",
             "link": "",
-            "radius": 50,
-            "size": 0
-          }
-        },
-        "cat_2": {
-          "type": "category",
-          "settings": {
-            "image": "",
-            "title": "Facial Cleanser",
-            "link": "",
-            "radius": 50,
-            "size": 0
-          }
-        },
-        "cat_3": {
-          "type": "category",
-          "settings": {
-            "image": "",
-            "title": "Toner & Mist",
-            "link": "",
-            "radius": 50,
-            "size": 0
-          }
-        },
-        "cat_4": {
-          "type": "category",
-          "settings": {
-            "image": "",
-            "title": "Serums",
-            "link": "",
-            "radius": 50,
-            "size": 0
+            "color_scheme": "scheme-2"
           }
         }
       },
       "block_order": [
-        "cat_1",
-        "cat_2",
-        "cat_3",
-        "cat_4"
+        "editorial"
       ],
       "settings": {
-        "title": "",
-        "description": "Shop by skin type and concern. Every formula is dermatologist-tested, fragrance-free and made to sit well on sensitive skin.",
-        "tile_size": 90
-      }
-    },
-    "main": {
-      "type": "collection",
-      "settings": {
+        "meta": "Updated weekly",
+        "show_breadcrumbs": true,
+        "show_image": true,
+        "products_per_page": 12,
+        "columns": 3,
+        "show_density": true,
+        "quick_add": true,
         "show_filters": true,
         "show_sort": true,
-        "products_per_page": 12,
-        "columns_desktop": 3
+        "next_collection": "",
+        "color_scheme": "scheme-1",
+        "drawer_color_scheme": "scheme-1",
+        "padding_top": "small",
+        "padding_bottom": "large"
       }
     }
   },
   "order": [
-    "breadcrumbs",
-    "categories",
     "main"
   ]
 }

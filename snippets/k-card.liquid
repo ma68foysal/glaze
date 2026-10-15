@@ -38,7 +38,7 @@
   -%}
   <article class="k-card">
     <div class="k-card__media">
-      <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+      <a class="k-card__link" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
         {%- if first_media != blank -%}
           {{ first_media | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: img_sizes, loading: loading, alt: first_media.alt | default: product.title }}
           {%- if second_media != blank and second_media.media_type == 'image' -%}
@@ -64,7 +64,7 @@
           </button>
           <p class="visually-hidden" data-quick-add-error role="alert" hidden></p>
         {%- else -%}
-          <a class="k-card__qa" href="{{ product.url }}" style="display: grid; place-items: center;">
+          <a class="k-card__qa" href="{{ product.url }}">
             {{ 'products.choose_options' | t }}<span class="visually-hidden">: {{ product.title }}</span>
           </a>
         {%- endif -%}
@@ -88,6 +88,14 @@
         {%- endif -%}
       </p>
     </div>
+    {%- if v.unit_price_measurement -%}
+      <p class="k-card__unit">
+        <span class="visually-hidden">{{ 'products.unit_price' | t }}</span>
+        {{- v.unit_price | money }} /
+        {%- if v.unit_price_measurement.reference_value != 1 %} {{ v.unit_price_measurement.reference_value }}{% endif %}
+        {{ v.unit_price_measurement.reference_unit -}}
+      </p>
+    {%- endif -%}
 
     {%- if color_option and color_option.values.size > 1 -%}
       <ul class="k-card__swatches" role="list" aria-label="{{ color_option.name }}">
