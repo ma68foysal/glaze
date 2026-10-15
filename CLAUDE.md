@@ -30,7 +30,11 @@ says where the rebuild stands.
 - **Still to rebuild:** collection, cart page, blog/article, search, 404,
   contact. Delete the unused old sections (`highlight-statement`,
   `sticky-collections` and others), which still trip `ExcessiveSettingsCount`.
-- **Demo store:** `skinova-hveyg6a1`. It holds the fashion catalogue (10
+- **Demo store:** primary address `oblique-theme.myshopify.com`, changed on
+  2026-10-15; that was 1 of 2 allowed changes, so 1 is left. The technical
+  address stays `skinova-hveyg6a1.myshopify.com`: use it for `--store` in CLI
+  commands (the CLI's store auth is stored under it) and for admin login. It
+  holds the fashion catalogue (10
   collections, 12 products, vendor "Oblique"); the skincare products are Draft.
   The unpublished **"Oblique demo"** theme (ID 167169687792) carries the store
   image references. It's built from a copy of the repo outside the repo, so
@@ -39,8 +43,10 @@ says where the rebuild stands.
 - **Never run `shopify auth logout`.** The CLI holds several Partner logins;
   switch accounts with the login command only. Run `shopify.cmd` in the
   Terminal panel, because PowerShell's script policy blocks `shopify.ps1`.
-- **Open:** store name and myshopify URL still say skinova (admin settings,
-  limited URL changes); the manual still lives at `skinova-manual.vercel.app`;
+- **Store name:** "Oblique", changed 2026-10-15 in Settings → General; it
+  drives the header and footer wordmark. The business entity name in
+  Organization settings still says skinova, which is billing and tax only.
+- **Open:** the manual still lives at `skinova-manual.vercel.app`;
   trademark and handle checks for "Oblique"; store currency is BDT.
 
 ---
@@ -268,7 +274,8 @@ npm run build                 # 52 static pages
 - Theme Store requirements — <https://shopify.dev/docs/storefronts/themes/store/requirements>
 - Listing guidelines — <https://shopify.dev/docs/storefronts/themes/store/review-process/listings>
 - Live manual — <https://skinova-manual.vercel.app>
-- Demo store — `skinova-hveyg6a1.myshopify.com` (password protected)
+- Demo store — `oblique-theme.myshopify.com` (password protected; technical
+  address `skinova-hveyg6a1.myshopify.com`)
 
 ### Still open from the first submission
 
