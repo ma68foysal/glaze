@@ -121,12 +121,15 @@
       {%- if section.settings.show_search -%}
         <k-modal class="k-header__search-modal">
           <details>
-            <summary class="k-icon-btn" aria-label="{{ 'general.search' | t }}">
-              {% render 'k-icon', icon: 'search' %}
+            <summary class="k-header__search-btn" aria-label="{{ 'general.search' | t }}" aria-keyshortcuts="/">
+              {% render 'k-icon', icon: 'search', size: 18 %}
+              <span class="k-header__search-txt" aria-hidden="true">{{ 'general.search' | t }}</span>
+              <kbd class="k-header__kbd" aria-hidden="true">/</kbd>
             </summary>
             <div class="k-modal__panel k-search color-{{ section.settings.color_scheme }}" role="dialog" aria-modal="true" aria-label="{{ 'general.search' | t }}">
               <k-predictive-search class="k-wrap k-search__inner" data-section-id="predictive-search">
                 <form action="{{ routes.search_url }}" method="get" role="search" class="k-search__form">
+                  {% render 'k-icon', icon: 'search', size: 34 %}
                   <label for="k-search-{{ section.id }}" class="visually-hidden">{{ 'general.search' | t }}</label>
                   <input
                     id="k-search-{{ section.id }}"
@@ -136,6 +139,9 @@
                     value="{{ search.terms | escape }}"
                     placeholder="{{ 'general.search_placeholder' | t }}"
                     autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
                     role="combobox"
                     aria-expanded="false"
                     aria-controls="predictive-search-listbox"
@@ -145,12 +151,27 @@
                     data-predictive-input
                   >
                   <input type="hidden" name="options[prefix]" value="last">
-                  <button type="submit" class="k-btn k-btn--primary">{{ 'general.search' | t }}</button>
+                  <button type="button" class="k-search__clear" data-predictive-clear hidden>{{ 'general.clear' | t }}</button>
                   <button type="button" class="k-icon-btn" data-modal-close aria-label="{{ 'general.close' | t }}">
                     {% render 'k-icon', icon: 'close', size: 24 %}
                   </button>
                 </form>
+                <div class="k-search__loading" aria-hidden="true"></div>
                 <p id="k-search-hint-{{ section.id }}" class="visually-hidden">{{ 'general.search_hint' | t }}</p>
+                {%- assign popular = settings.popular_searches | split: ',' -%}
+                {%- if popular.size > 0 -%}
+                  <div class="k-search__idle" data-predictive-idle>
+                    <p class="k-label k-muted">{{ 'general.popular_searches' | t }}</p>
+                    <ul class="k-search__popular" role="list">
+                      {%- for term in popular -%}
+                        {%- assign term = term | strip -%}
+                        {%- if term != blank -%}
+                          <li><a class="k-search__pop" href="{{ routes.search_url }}?q={{ term | url_encode }}&amp;options%5Bprefix%5D=last" data-predictive-term="{{ term | escape }}"><span>{{ term }}</span>{% render 'k-icon', icon: 'arrow', size: 16 %}</a></li>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- endif -%}
                 <div class="k-search__results" data-predictive-results hidden></div>
                 <p class="visually-hidden" role="status" aria-live="polite" data-predictive-status></p>
               </k-predictive-search>
@@ -258,18 +279,53 @@
   }
 
   /* Modals */
-  .k-search { inset: 0 0 auto 0; max-height: 100vh; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 20px 0; border-bottom: 1px solid var(--color-line); animation: k-fade 0.3s both; }
-  k-predictive-search { display: block; }
-  .k-search__results { padding-bottom: 8px; }
-  .k-search__input::-webkit-search-cancel-button { -webkit-appearance: none; }
-  .k-search__form { display: flex; align-items: center; gap: 12px; }
-  .k-search__input {
-    flex: 1; min-width: 0; min-height: 56px;
-    border: 0; border-bottom: 1.5px solid currentColor;
-    background: transparent; color: inherit;
-    font: 500 clamp(20px, 2.4vw, 32px) var(--font-body);
+  .k-header__search-btn {
+    display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px;
+    border: 1.5px solid var(--color-line); border-radius: 999px;
+    color: var(--color-muted); font-size: 14px; font-weight: 500; list-style: none; cursor: pointer;
+    transition: border-color var(--dur-fast), color var(--dur-fast);
   }
-  .k-search__input:focus-visible { outline: none; border-bottom-color: var(--color-accent); }
+  .k-header__search-btn::-webkit-details-marker { display: none; }
+  .k-header__search-btn:hover { border-color: var(--color-text); color: var(--color-text); }
+  .k-header__kbd { padding: 2px 6px; border: 1px solid var(--color-line); border-radius: 6px; font-family: var(--font-label); font-size: 11px; }
+
+  .k-search {
+    inset: 0 0 auto 0; max-height: 100vh; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
+    border-radius: 0 0 28px 28px; box-shadow: 0 40px 80px -40px rgba(14, 14, 14, 0.6);
+    animation: k-search-drop 0.55s var(--ease-out) both;
+  }
+  @keyframes k-search-drop { from { transform: translateY(-24px); opacity: 0; } }
+  k-predictive-search { display: block; }
+  .k-search__form { display: flex; align-items: center; gap: 16px; min-height: 96px; border-bottom: 1.5px solid var(--color-text); }
+  .k-search__form > .k-icon { flex: none; }
+  .k-search__input {
+    flex: 1; min-width: 0; height: 80px; padding: 0;
+    border: 0; background: transparent; color: inherit;
+    font: 800 calc(clamp(30px, 4vw, 54px) * var(--heading-scale)) var(--font-heading);
+    letter-spacing: -0.03em;
+  }
+  .k-search__input::placeholder { color: rgba(var(--color-text-rgb), 0.3); }
+  .k-search__input::-webkit-search-cancel-button { -webkit-appearance: none; }
+  .k-search__input:focus-visible { outline: none; }
+  .k-search__clear {
+    flex: none; min-height: 40px; padding: 0 14px; border: 1px solid var(--color-line); border-radius: 999px;
+    background: transparent; color: inherit; font: 500 13px var(--font-body); cursor: pointer;
+  }
+  .k-search__loading { height: 2px; background: var(--color-accent); transform: scaleX(0); transform-origin: 0 50%; opacity: 0; }
+  k-predictive-search[aria-busy="true"] .k-search__loading { opacity: 1; animation: k-search-load 0.9s var(--ease-out) infinite; }
+  @keyframes k-search-load { from { transform: scaleX(0); } to { transform: scaleX(1); opacity: 0; } }
+  .k-search__idle { padding: 32px 0 36px; max-width: 320px; }
+  .k-search__idle .k-label { margin: 0 0 14px; }
+  .k-search__popular { margin: 0; padding: 0; list-style: none; }
+  .k-search__pop {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px;
+    margin: 0 -12px; padding: 0 12px; border-radius: 12px; font-size: 17px; font-weight: 500;
+    transition: background-color var(--dur-fast);
+  }
+  .k-search__pop:hover { background: var(--color-surface); }
+  .k-search__pop .k-icon { opacity: 0; transition: opacity var(--dur-fast), transform var(--dur-fast); }
+  .k-search__pop:hover .k-icon { opacity: 1; transform: translateX(3px); }
+  k-predictive-search:has([data-predictive-results]:not([hidden])) .k-search__idle { display: none; }
 
   .k-mmenu { inset: 0; display: flex; flex-direction: column; gap: 8px; padding: 20px var(--gutter) 32px; overflow-y: auto; animation: k-fade 0.3s both; }
   .k-mmenu__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
@@ -298,12 +354,18 @@
   }
 
   @media (max-width: 1100px) {
+    .k-header__search-txt, .k-header__kbd { display: none; }
+    .k-header__search-btn { min-width: 44px; padding: 0; justify-content: center; border-color: transparent; color: inherit; }
     .k-header__nav { display: none; }
     .k-header__menu-modal { display: block; }
     .k-header__bar { grid-template-columns: auto 1fr auto; }
     .k-header__brand { justify-self: center; }
   }
   @media (max-width: 900px) {
+    .k-search { border-radius: 0; max-height: 100dvh; height: 100dvh; }
+    .k-search__form { min-height: 72px; gap: 10px; }
+    .k-search__form > .k-icon { display: none; }
+    .k-search__input { height: 64px; }
     .k-header__wordmark { font-size: 22px; }
     .k-header__cart-label { display: none; }
     .k-header__cart-icon { display: inline-flex; }

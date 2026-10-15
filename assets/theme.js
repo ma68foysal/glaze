@@ -615,6 +615,38 @@
   // Search API. The input is an ARIA combobox; results are a listbox
   // rendered by sections/predictive-search.liquid.
   // ------------------------------------------------------------------
+  // Wrap the searched words in <mark> inside [data-highlight] elements.
+  function highlight(root, term) {
+    if (!term) return;
+    var words = term.split(/\s+/).filter(function (w) { return w.length > 1; })
+      .map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); });
+    if (!words.length) return;
+    var re = new RegExp('(' + words.join('|') + ')', 'gi');
+    root.querySelectorAll('[data-highlight]').forEach(function (el) {
+      if (el.dataset.highlighted) return;
+      el.dataset.highlighted = '1';
+      var text = el.textContent;
+      el.textContent = '';
+      text.split(re).forEach(function (part, i) {
+        if (!part) return;
+        if (i % 2) { var m = document.createElement('mark'); m.textContent = part; el.appendChild(m); }
+        else el.appendChild(document.createTextNode(part));
+      });
+    });
+  }
+  window.ObliqueHighlight = highlight;
+
+  // "/" opens the header search from anywhere outside a text field.
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    var details = document.querySelector('.k-header__search-modal details');
+    if (!details) return;
+    e.preventDefault();
+    details.open = true;
+  });
+
   define('k-predictive-search', class extends HTMLElement {
     connectedCallback() {
       this.input = this.querySelector('[data-predictive-input]');
@@ -623,9 +655,30 @@
       if (!this.input || !this.results) return;
       this.cache = {};
       var timer;
+      this.clearBtn = this.querySelector('[data-predictive-clear]');
       this.input.addEventListener('input', () => {
+        if (this.clearBtn) this.clearBtn.hidden = !this.input.value;
         clearTimeout(timer);
         timer = setTimeout(() => this.search(this.input.value.trim()), 250);
+      });
+      if (this.clearBtn) {
+        this.clearBtn.hidden = !this.input.value;
+        this.clearBtn.addEventListener('click', () => {
+          this.input.value = '';
+          this.clearBtn.hidden = true;
+          this.search('');
+          this.input.focus();
+        });
+      }
+      // Popular searches fill the input instead of leaving the page.
+      this.addEventListener('click', (e) => {
+        var pick = e.target.closest('[data-predictive-term]');
+        if (!pick) return;
+        e.preventDefault();
+        this.input.value = pick.dataset.predictiveTerm;
+        if (this.clearBtn) this.clearBtn.hidden = false;
+        this.search(this.input.value);
+        this.input.focus();
       });
       this.input.addEventListener('focus', () => {
         if (this.results.innerHTML.trim() && this.input.value.trim()) this.open();
@@ -662,6 +715,7 @@
     render(markup) {
       this.results.innerHTML = markup;
       if (!markup) { this.close(); return; }
+      highlight(this.results, this.term);
       var status = this.results.querySelector('[data-ps-status]');
       if (this.status && status) this.status.textContent = status.textContent;
       this.open();

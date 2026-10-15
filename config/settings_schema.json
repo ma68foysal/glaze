@@ -232,6 +232,18 @@
     ]
   },
   {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "text",
+        "id": "popular_searches",
+        "label": "Popular searches",
+        "default": "Trench, Merino, Denim, Loafers, Bags",
+        "info": "Separate with commas. Shown in the search window and on the search page before a shopper types, and when a search finds nothing."
+      }
+    ]
+  },
+  {
     "name": "t:general.cart",
     "settings": [
       {

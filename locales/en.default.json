@@ -28,7 +28,7 @@
     "close_menu": "Close menu",
     "menu": "Menu",
     "view_all": "View all",
-    "search_placeholder": "Search products",
+    "search_placeholder": "Search coats, knits, stories…",
     "pause_motion": "Pause motion",
     "play_motion": "Play motion",
     "previous": "Previous",
@@ -47,7 +47,12 @@
       "one": "{{ count }} result found",
       "other": "{{ count }} results found"
     },
-    "search_hint": "Suggestions appear as you type. Use the up and down arrow keys to move through them."
+    "search_hint": "Suggestions appear as you type. Use the up and down arrow keys to move through them.",
+    "articles_and_pages": "Stories and pages",
+    "clear": "Clear",
+    "popular_searches": "Popular searches",
+    "search_keys": "↑ ↓ to move · Enter to open · Esc to close",
+    "search_no_results_hint": "Check the spelling, or try one of these instead."
   },
   "404": {
     "title": "404",
@@ -239,7 +244,7 @@
   },
   "search": {
     "title": "Search",
-    "placeholder": "Search products, articles, or pages",
+    "placeholder": "Search coats, knits, stories…",
     "submit": "Search",
     "no_results_html": "No results for <em>“{{ terms }}”</em>",
     "results_for_html": "Results for <em>“{{ terms }}”</em>",
@@ -256,7 +261,21 @@
     "type_product": "Products",
     "type_article": "Stories",
     "type_page": "Pages",
-    "label_page": "Page"
+    "label_page": "Page",
+    "clear": "Clear search",
+    "for_terms": "for “{{ terms }}”",
+    "grid_view": "Grid view",
+    "list_view": "List view",
+    "layout": "Layout",
+    "load_more": "Load more",
+    "no_filtered": "Nothing matches these filters",
+    "no_filtered_hint": "Try removing a filter, widening the price range, or searching a broader word.",
+    "products_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    },
+    "related": "Related",
+    "see_all_articles": "See all stories"
   },
   "products": {
     "sold_out": "Sold out",
@@ -328,7 +347,8 @@
       "price_to": "To",
       "reset": "Reset",
       "show_results": "Show results",
-      "next_collection": "Next collection"
+      "next_collection": "Next collection",
+      "in_stock_only": "In stock only"
     },
     "details": {
       "pin": "Detail {{ number }}: {{ title }}"
@@ -370,8 +390,9 @@
   "templates": {
     "404": {
       "title": "Page not found",
-      "home": "Back to home",
-      "popular": "Popular collections"
+      "home": "Back to homepage",
+      "popular": "Popular collections",
+      "ring": "Page not found"
     }
   }
 }

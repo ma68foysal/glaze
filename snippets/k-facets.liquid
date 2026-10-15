@@ -1,7 +1,8 @@
 {%- comment -%}
   Faceted filtering and sorting shared by the collection and search pages.
   Accepts:
-    part          — 'filters' (button, active chips, clear), 'sort' or 'drawer'
+    part          — 'filters' (button, active chips, clear), 'sort', 'drawer' or
+                    'sidebar' (the groups as an always-open column that applies on change)
     results       — the collection or search object
     url           — where the forms submit (collection.url or routes.search_url)
     form_id       — unique id prefix for this section
@@ -67,6 +68,22 @@
         </select>
         <noscript><button type="submit" class="k-btn">{{ 'sections.collection.sort' | t }}</button></noscript>
       </form>
+  {%- when 'sidebar' -%}
+    {%- if results.filters.size > 0 -%}
+      {%- assign side_id = form_id | append: '-side' -%}
+      <aside class="k-facets-side" aria-labelledby="{{ side_id }}-title">
+        <div class="k-facets-side__head">
+          <h2 class="k-facets-side__title" id="{{ side_id }}-title">{{ 'sections.collection.filter' | t }}</h2>
+          {%- if active_count > 0 -%}<a class="k-label k-col__clear" href="{{ clear_url }}">{{ 'sections.collection.clear_all' | t }}</a>{%- endif -%}
+        </div>
+        <form id="{{ side_id }}" class="k-facets-side__form" method="get" action="{{ url }}" data-auto-submit>
+          <input type="hidden" name="sort_by" value="{{ sort_by }}">
+          {{- hidden -}}
+          {%- render 'k-facet-groups', results: results, form_id: side_id -%}
+          <noscript><button type="submit" class="k-btn k-btn--primary">{{ 'sections.collection.show_results' | t }}</button></noscript>
+        </form>
+      </aside>
+    {%- endif -%}
   {%- when 'drawer' -%}
     {%- if results.filters.size > 0 -%}
       <k-filter-drawer class="k-col__drawer" id="{{ form_id }}-drawer" hidden>
@@ -79,66 +96,7 @@
           <form id="{{ form_id }}" class="k-col__form" method="get" action="{{ url }}">
             <input type="hidden" name="sort_by" value="{{ sort_by }}">
       {{- hidden -}}
-            <div class="k-col__groups">
-              {%- for filter in results.filters -%}
-                <fieldset class="k-col__group">
-                  <legend class="k-col__group-h">{{ filter.label }}</legend>
-                  {%- case filter.type -%}
-                    {%- when 'boolean', 'list' -%}
-                      {%- if filter.presentation == 'swatch' -%}
-                        <div class="k-col__swatches">
-                          {%- for value in filter.values -%}
-                            {%- liquid
-                              assign vid = form_id | append: '-' | append: filter.param_name | append: '-' | append: forloop.index | handleize
-                              assign sw = ''
-                              if value.swatch.image
-                                assign sw_url = value.swatch.image | image_url: width: 88
-                                assign sw = 'background-image: url(' | append: sw_url | append: ');'
-                              elsif value.swatch.color
-                                assign sw = '--swatch: ' | append: value.swatch.color | append: ';'
-                              endif
-                            -%}
-                            <input class="visually-hidden" type="checkbox" id="{{ vid }}" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
-                            <label class="k-col__swatch" for="{{ vid }}" style="{{ sw }}" title="{{ value.label | escape }}"><span class="visually-hidden">{{ value.label }} ({{ value.count }})</span></label>
-                          {%- endfor -%}
-                        </div>
-                      {%- elsif filter.values.size <= 8 and filter.label.size < 10 and filter.values.first.label.size <= 4 -%}
-                        <div class="k-col__pills">
-                          {%- for value in filter.values -%}
-                            {%- assign vid = form_id | append: '-' | append: filter.param_name | append: '-' | append: forloop.index | handleize -%}
-                            <input class="visually-hidden" type="checkbox" id="{{ vid }}" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
-                            <label class="k-col__pill" for="{{ vid }}">{{ value.label }}</label>
-                          {%- endfor -%}
-                        </div>
-                      {%- else -%}
-                        <ul class="k-col__checks" role="list">
-                          {%- for value in filter.values -%}
-                            {%- assign vid = form_id | append: '-' | append: filter.param_name | append: '-' | append: forloop.index | handleize -%}
-                            <li>
-                              <label class="k-col__check" for="{{ vid }}">
-                                <input type="checkbox" id="{{ vid }}" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
-                                <span>{{ value.label }}</span>
-                                <span class="k-muted">({{ value.count }})</span>
-                              </label>
-                            </li>
-                          {%- endfor -%}
-                        </ul>
-                      {%- endif -%}
-                    {%- when 'price_range' -%}
-                      <div class="k-col__price">
-                        <label>
-                          <span class="k-label">{{ 'sections.collection.price_from' | t }}</span>
-                          <input type="number" inputmode="decimal" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}" step="any" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency | remove: ',' }}" placeholder="0">
-                        </label>
-                        <label>
-                          <span class="k-label">{{ 'sections.collection.price_to' | t }}</span>
-                          <input type="number" inputmode="decimal" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}" step="any" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency | remove: ',' }}" placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}">
-                        </label>
-                      </div>
-                  {%- endcase -%}
-                </fieldset>
-              {%- endfor -%}
-            </div>
+            {%- render 'k-facet-groups', results: results, form_id: form_id -%}
             <div class="k-col__panel-foot">
               <a class="k-btn k-btn--secondary" href="{{ clear_url }}">{{ 'sections.collection.reset' | t }}</a>
               <button type="submit" class="k-btn k-btn--primary">{{ 'sections.collection.show_results' | t }}</button>

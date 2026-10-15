@@ -1,0 +1,76 @@
+{%- comment -%}
+  The filter groups for snippets/k-facets, shared by the filter drawer and the
+  search page sidebar. Accepts: results, form_id (prefix for input ids).
+  The availability filter renders as an "In stock only" switch.
+{%- endcomment -%}
+<div class="k-col__groups">
+  {%- for filter in results.filters -%}
+    {%- assign in_stock = filter.values | where: 'value', '1' | first -%}
+    {%- if filter.param_name == 'filter.v.availability' and in_stock -%}
+      {%- assign vid = form_id | append: '-in-stock' -%}
+      <div class="k-col__group k-col__group--toggle">
+        <label class="k-toggle" for="{{ vid }}">
+          <span>{{ 'sections.collection.in_stock_only' | t }}</span>
+          <input type="checkbox" role="switch" id="{{ vid }}" name="{{ in_stock.param_name }}" value="{{ in_stock.value }}"{% if in_stock.active %} checked{% endif %}>
+        </label>
+      </div>
+      {%- continue -%}
+    {%- endif -%}
+    <details class="k-col__group" open>
+      <summary class="k-col__group-h">{{ filter.label }}{% render 'k-icon', icon: 'chevron', size: 16 %}</summary>
+      {%- case filter.type -%}
+        {%- when 'boolean', 'list' -%}
+          {%- if filter.presentation == 'swatch' -%}
+            <div class="k-col__swatches">
+              {%- for value in filter.values -%}
+                {%- liquid
+                  assign vid = form_id | append: '-' | append: filter.param_name | append: '-' | append: forloop.index | handleize
+                  assign sw = ''
+                  if value.swatch.image
+                    assign sw_url = value.swatch.image | image_url: width: 88
+                    assign sw = 'background-image: url(' | append: sw_url | append: ');'
+                  elsif value.swatch.color
+                    assign sw = '--swatch: ' | append: value.swatch.color | append: ';'
+                  endif
+                -%}
+                <input class="visually-hidden" type="checkbox" id="{{ vid }}" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                <label class="k-col__swatch" for="{{ vid }}" style="{{ sw }}" title="{{ value.label | escape }}"><span class="visually-hidden">{{ value.label }} ({{ value.count }})</span></label>
+              {%- endfor -%}
+            </div>
+          {%- elsif filter.values.size <= 8 and filter.label.size < 10 and filter.values.first.label.size <= 4 -%}
+            <div class="k-col__pills">
+              {%- for value in filter.values -%}
+                {%- assign vid = form_id | append: '-' | append: filter.param_name | append: '-' | append: forloop.index | handleize -%}
+                <input class="visually-hidden" type="checkbox" id="{{ vid }}" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                <label class="k-col__pill" for="{{ vid }}">{{ value.label }}</label>
+              {%- endfor -%}
+            </div>
+          {%- else -%}
+            <ul class="k-col__checks" role="list">
+              {%- for value in filter.values -%}
+                {%- assign vid = form_id | append: '-' | append: filter.param_name | append: '-' | append: forloop.index | handleize -%}
+                <li>
+                  <label class="k-col__check" for="{{ vid }}">
+                    <input type="checkbox" id="{{ vid }}" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                    <span>{{ value.label }}</span>
+                    <span class="k-muted">({{ value.count }})</span>
+                  </label>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        {%- when 'price_range' -%}
+          <div class="k-col__price">
+            <label>
+              <span class="k-label">{{ 'sections.collection.price_from' | t }}</span>
+              <input type="number" inputmode="decimal" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}" step="any" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency | remove: ',' }}" placeholder="0">
+            </label>
+            <label>
+              <span class="k-label">{{ 'sections.collection.price_to' | t }}</span>
+              <input type="number" inputmode="decimal" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}" step="any" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency | remove: ',' }}" placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}">
+            </label>
+          </div>
+      {%- endcase -%}
+    </details>
+  {%- endfor -%}
+</div>
