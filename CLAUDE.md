@@ -27,9 +27,17 @@ says where the rebuild stands.
 - **New code conventions:** `assets/theme.css` and `assets/theme.js` hold the
   design system; new classes use the `k-` prefix. Old `skinova-*` classes and
   `window.Skinova` stay until their sections are rebuilt or deleted.
-- **Still to rebuild:** collection, cart page, blog/article, search, 404,
-  contact. Delete the unused old sections (`highlight-statement`,
-  `sticky-collections` and others), which still trip `ExcessiveSettingsCount`.
+- **Rebuilt to the canvas:** home, collection, product (thumbnails gallery,
+  details hotspots, story with steps, recently viewed, sticky add-to-bag),
+  cart, contact, blog and article. **Still to rebuild:** search, 404. Delete
+  the unused old sections (`highlight-statement`, `sticky-collections` and
+  others), which still trip `ExcessiveSettingsCount`. Predictive search is a
+  Theme Store requirement and is still missing.
+- **Two previews:** `127.0.0.1:9293` serves the repo (no demo images);
+  `127.0.0.1:9294` serves the demo copy and syncs into the "Oblique demo"
+  theme. The demo copy lives outside the repo; copy repo changes into it with
+  a sync script, never by hand-editing both. Don't use `sed -i` in the repo
+  while `theme dev` runs: its temp files break the dev server.
 - **Demo store:** primary address `oblique-theme.myshopify.com`, changed on
   2026-10-15; that was 1 of 2 allowed changes, so 1 is left. The technical
   address stays `skinova-hveyg6a1.myshopify.com`: use it for `--store` in CLI

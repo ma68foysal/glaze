@@ -9,23 +9,185 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "page",
-      "settings": {}
+    "hero": {
+      "type": "contact-hero",
+      "settings": {
+        "label": "Customer care · Studio · Press",
+        "heading": "Get in <em>touch</em>",
+        "text": "<p>Questions about an order, sizing or a repair? Our team answers every message, usually within one working day.</p>",
+        "status": "Customer care is online",
+        "color_scheme": "scheme-1",
+        "padding_top": "small",
+        "padding_bottom": "small"
+      }
     },
-    "contact_form": {
+    "ways": {
+      "type": "contact-ways",
+      "blocks": {
+        "email": {
+          "type": "method",
+          "settings": {
+            "icon": "mail",
+            "label": "Email",
+            "heading": "Customer care",
+            "value": "hello@example.com",
+            "text": "Replies within one working day",
+            "link": "mailto:hello@example.com"
+          }
+        },
+        "phone": {
+          "type": "method",
+          "settings": {
+            "icon": "phone",
+            "label": "Phone & chat",
+            "heading": "Talk to us",
+            "value": "+1 555 010 0100",
+            "text": "Monday to Friday, 10:00 – 18:00",
+            "link": "tel:+15550100100"
+          }
+        },
+        "visit": {
+          "type": "method",
+          "settings": {
+            "icon": "pin",
+            "label": "Visit",
+            "heading": "The studio",
+            "value": "12 Example Street, City",
+            "text": "Pickup, fittings and repairs",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "email",
+        "phone",
+        "visit"
+      ],
+      "settings": {
+        "heading": "Ways to reach us",
+        "color_scheme": "scheme-1",
+        "padding_top": "small",
+        "padding_bottom": "small"
+      }
+    },
+    "form": {
       "type": "contact-form",
       "settings": {
-        "heading": "Get in touch",
-        "subheading": "We typically reply within one business day.",
-        "submit_label": "Send message",
-        "padding_top": 72,
-        "padding_bottom": 96
+        "heading": "Send a <em>message</em>",
+        "topics": "Order, Returns, Sizing, Repairs, Wholesale",
+        "show_phone": true,
+        "show_order": true,
+        "max_length": 600,
+        "button_label": "Send message",
+        "success_heading": "Thanks — message received.",
+        "success_text": "Our team will reply within one working day.",
+        "color_scheme": "scheme-1",
+        "success_color_scheme": "scheme-2",
+        "padding_top": "large",
+        "padding_bottom": "medium"
+      }
+    },
+    "faq": {
+      "type": "faq-list",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "When will my order ship?",
+            "answer": "<p>Orders placed before 2pm on a working day ship the same day. You’ll get a tracking link by email.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "How do returns work?",
+            "answer": "<p>Returns are free within 30 days. Start one from your account or reply to your shipping email.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "How do I find my size?",
+            "answer": "<p>Every product has a size guide next to the size options. Still unsure? Send us your usual size and we’ll advise.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "Do you repair pieces?",
+            "answer": "<p>Yes. Repairs are free for the first year. Send a photo through the form and choose Repairs.</p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "question": "Can I change my order?",
+            "answer": "<p>Message us within an hour of ordering and we’ll update it before it ships.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5"
+      ],
+      "settings": {
+        "heading": "Quick <em>answers</em>",
+        "text": "<p>Most questions are answered here. Still stuck? Use the form above.</p>",
+        "open_first": true,
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "medium"
+      }
+    },
+    "store": {
+      "type": "store-info",
+      "blocks": {
+        "h1": {
+          "type": "hours",
+          "settings": {
+            "day": "Monday – Friday",
+            "time": "10:00 – 19:00"
+          }
+        },
+        "h2": {
+          "type": "hours",
+          "settings": {
+            "day": "Saturday",
+            "time": "10:00 – 18:00"
+          }
+        },
+        "h3": {
+          "type": "hours",
+          "settings": {
+            "day": "Sunday",
+            "time": "Closed"
+          }
+        }
+      },
+      "block_order": [
+        "h1",
+        "h2",
+        "h3"
+      ],
+      "settings": {
+        "address": "12 Example Street, City",
+        "heading": "Studio <em>hours</em>",
+        "button_label": "Get directions",
+        "color_scheme": "scheme-1",
+        "hours_color_scheme": "scheme-2",
+        "padding_top": "large",
+        "padding_bottom": "large"
       }
     }
   },
   "order": [
-    "main",
-    "contact_form"
+    "hero",
+    "ways",
+    "form",
+    "faq",
+    "store"
   ]
 }

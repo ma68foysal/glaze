@@ -1,0 +1,26 @@
+{%- comment -%}
+  Journal card. Accepts: article, show_excerpt (boolean), show_meta (boolean), sizes
+{%- endcomment -%}
+{%- liquid
+  assign words = article.content | strip_html | split: ' ' | size
+  assign minutes = words | divided_by: 200 | at_least: 1
+-%}
+<article class="k-acard">
+  <a class="k-acard__img k-media" href="{{ article.url }}" tabindex="-1" aria-hidden="true">
+    {%- if article.image -%}
+      {{ article.image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '400, 600, 800, 1200', sizes: sizes, alt: '' }}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'k-ph' }}
+    {%- endif -%}
+  </a>
+  {%- if show_meta -%}
+    <div class="k-acard__meta">
+      {%- if article.tags.size > 0 -%}<span class="k-label k-acard__tag">{{ article.tags.first }}</span>{%- endif -%}
+      <span class="k-label k-muted">{{ article.published_at | time_tag: format: 'date' }} · {{ 'blogs.read_time' | t: count: minutes }}</span>
+    </div>
+  {%- endif -%}
+  <h3 class="k-acard__title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+  {%- if show_excerpt -%}
+    <p class="k-acard__excerpt k-muted">{{ article.excerpt_or_content | strip_html | truncatewords: 26 }}</p>
+  {%- endif -%}
+</article>

@@ -1,0 +1,110 @@
+{%- liquid
+  assign hours = section.blocks | where: 'type', 'hours'
+  assign address = section.settings.address | strip
+  assign directions = section.settings.directions_link
+  if directions == blank and address != blank
+    assign query = address | url_encode
+    assign directions = 'https://www.google.com/maps/search/?api=1&query=' | append: query
+  endif
+-%}
+<section class="k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}" aria-labelledby="{{ section.id }}-heading">
+  <div class="k-wrap k-store">
+    <div class="k-store__image k-media k-reveal">
+      {%- render 'k-media', image: section.settings.image, sizes: '(min-width: 900px) 33vw, 100vw', placeholder: 'lifestyle-1' -%}
+    </div>
+    <div class="k-store__map k-reveal">
+      {%- if section.settings.map_image -%}
+        <div class="k-media k-store__map-img">{% render 'k-media', image: section.settings.map_image, sizes: '(min-width: 900px) 33vw, 100vw' %}</div>
+      {%- else -%}
+        <span class="k-store__road" style="left: 0; right: 0; top: 46%; height: 18px;"></span>
+        <span class="k-store__road" style="top: 0; bottom: 0; left: 30%; width: 14px;"></span>
+        <span class="k-store__road" style="top: 0; bottom: 0; left: 72%; width: 10px; transform: rotate(12deg);"></span>
+        <span class="k-store__pin">{% render 'k-icon', icon: 'pin', size: 48 %}</span>
+      {%- endif -%}
+      {%- if address != blank -%}<span class="k-store__addr k-label">{{ address }}</span>{%- endif -%}
+    </div>
+    <div class="k-store__hours color-{{ section.settings.hours_color_scheme }} k-reveal">
+      <h2 class="k-store__title" id="{{ section.id }}-heading">{{ section.settings.heading }}</h2>
+      {%- if hours.size > 0 -%}
+        <dl class="k-store__list">
+          {%- for block in hours -%}
+            <div {{ block.shopify_attributes }}><dt>{{ block.settings.day }}</dt><dd>{{ block.settings.time }}</dd></div>
+          {%- endfor -%}
+        </dl>
+      {%- endif -%}
+      {%- if directions != blank and section.settings.button_label != blank -%}
+        <a class="k-btn k-btn--secondary k-store__btn" href="{{ directions }}" target="_blank" rel="noopener">
+          <span>{{ section.settings.button_label }}</span>
+          <span class="visually-hidden">{{ 'general.opens_new_window' | t }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-store { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .k-store__image, .k-store__map { min-height: 420px; border-radius: calc(var(--radius-card) * 0.85); }
+  .k-store__map {
+    position: relative; overflow: hidden;
+    background-color: rgba(var(--color-text-rgb), 0.1);
+    background-image: linear-gradient(rgba(var(--color-text-rgb), 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(var(--color-text-rgb), 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .k-store__map-img { position: absolute; inset: 0; }
+  .k-store__road { position: absolute; background: var(--color-bg); }
+  .k-store__pin { position: absolute; left: 52%; top: 46%; margin: -48px 0 0 -24px; color: var(--color-accent); }
+  .k-store__addr { position: absolute; left: 16px; right: 16px; bottom: 16px; width: fit-content; max-width: calc(100% - 32px); padding: 8px 12px; border-radius: 999px; background: var(--color-bg); }
+  .k-store__hours { display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: calc(var(--radius-card) * 0.85); background: var(--color-bg); color: var(--color-text); }
+  .k-store__title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: 32px; letter-spacing: -0.02em; }
+  .k-store__title em { font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; }
+  .k-store__list { margin: 0; }
+  .k-store__list div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--color-line); font-size: 15px; }
+  .k-store__list dd { margin: 0; text-align: right; }
+  .k-store__btn { margin-top: auto; align-self: flex-start; }
+  @media (max-width: 900px) {
+    .k-store { grid-template-columns: 1fr; }
+    .k-store__image, .k-store__map { min-height: 300px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Store information",
+  "tag": "div",
+  "class": "k-store-section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "image_picker", "id": "map_image", "label": "Map image", "info": "Upload a map screenshot. Without one, a simple map pattern is shown." },
+    { "type": "text", "id": "address", "label": "Address", "default": "12 Example Street, City" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Studio <em>hours</em>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Get directions" },
+    { "type": "url", "id": "directions_link", "label": "Directions link", "info": "Defaults to a Google Maps search for the address." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "color_scheme", "id": "hours_color_scheme", "label": "Hours card color scheme", "default": "scheme-2" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "hours",
+      "name": "Opening hours",
+      "limit": 7,
+      "settings": [
+        { "type": "text", "id": "day", "label": "Days", "default": "Monday – Friday" },
+        { "type": "text", "id": "time", "label": "Hours", "default": "10:00 – 19:00" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Store information",
+      "blocks": [
+        { "type": "hours", "settings": { "day": "Monday – Friday", "time": "10:00 – 19:00" } },
+        { "type": "hours", "settings": { "day": "Saturday", "time": "10:00 – 18:00" } },
+        { "type": "hours", "settings": { "day": "Sunday", "time": "Closed" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

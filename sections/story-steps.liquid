@@ -1,0 +1,83 @@
+{%- assign steps = section.blocks | where: 'type', 'step' -%}
+<section class="k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }}">
+  <div class="k-wrap">
+    <div class="k-story__card color-{{ section.settings.color_scheme }} k-reveal{% if section.settings.image_position == 'right' %} k-story__card--flip{% endif %}">
+      <div class="k-story__image k-media">
+        {%- render 'k-media', image: section.settings.image, sizes: '(min-width: 900px) 50vw, 100vw', placeholder: 'lifestyle-1' -%}
+      </div>
+      <div class="k-story__copy">
+        {%- if section.settings.label != blank -%}<p class="k-label k-story__label">{{ section.settings.label }}</p>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h2 class="k-h3 k-story__heading">{{ section.settings.heading }}</h2>{%- endif -%}
+        {%- if section.settings.text != blank -%}<div class="k-rte k-story__text">{{ section.settings.text }}</div>{%- endif -%}
+        {%- if steps.size > 0 -%}
+          <ol class="k-story__steps" role="list">
+            {%- for block in steps -%}
+              <li {{ block.shopify_attributes }}>
+                <span class="k-label">{{ forloop.index | prepend: '0' | slice: -2, 2 }} · {{ block.settings.title }}</span>
+                {%- if block.settings.text != blank -%}<span class="k-story__step-text">{{ block.settings.text }}</span>{%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ol>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-story__card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-radius: var(--radius-card); overflow: hidden; background: var(--color-bg); color: var(--color-text); }
+  .k-story__card--flip .k-story__image { order: 2; }
+  .k-story__image { position: relative; min-height: 520px; }
+  .k-story__copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(28px, 5vw, 72px); }
+  .k-story__label { margin: 0 0 18px; color: var(--color-muted); }
+  .k-story__heading { margin: 0; }
+  .k-story__text { margin-top: 20px; max-width: 460px; font-size: 17px; line-height: 1.55; opacity: 0.88; }
+  .k-story__steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 28px 0 0; padding: 0; list-style: none; }
+  .k-story__steps li { padding-top: 14px; border-top: 1.5px solid var(--color-line); font-size: 14px; line-height: 1.5; }
+  .k-story__step-text { display: block; margin-top: 4px; }
+  @media (max-width: 900px) {
+    .k-story__card { grid-template-columns: 1fr; }
+    .k-story__card--flip .k-story__image { order: 0; }
+    .k-story__image { min-height: 320px; }
+    .k-story__steps { grid-template-columns: 1fr; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Story with steps",
+  "tag": "div",
+  "class": "k-story-section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "select", "id": "image_position", "label": "Image position", "default": "left", "options": [ { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" } ] },
+    { "type": "text", "id": "label", "label": "Label", "default": "How it’s made" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Cut in small runs, <em>finished by hand</em>", "info": "Italic words use the accent font." },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Each piece is cut in limited batches so fabric isn’t wasted, then pressed and checked one at a time.</p>" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Card color scheme", "default": "scheme-2" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "limit": 3,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Step" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Describe this step." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Story with steps",
+      "blocks": [
+        { "type": "step", "settings": { "title": "Cut", "text": "Pattern pieces laid to minimise offcuts." } },
+        { "type": "step", "settings": { "title": "Sew", "text": "Seams taped and bound inside." } },
+        { "type": "step", "settings": { "title": "Finish", "text": "Pressed, inspected and tagged by hand." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

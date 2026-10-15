@@ -1,0 +1,407 @@
+{%- liquid
+  assign words = article.content | strip_html | split: ' ' | size
+  assign minutes = words | divided_by: 200 | at_least: 1
+  assign author_parts = article.author | split: ' '
+  assign author_initials = ''
+  for part in author_parts limit: 2
+    assign letter = part | slice: 0
+    assign author_initials = author_initials | append: letter
+  endfor
+  assign shop_block = section.blocks | where: 'type', 'products' | first
+  assign share_url = shop.url | append: article.url | url_encode
+  assign share_title = article.title | url_encode
+-%}
+
+{%- if section.settings.show_progress -%}
+  <div class="k-art__progress" aria-hidden="true"><b data-read-progress></b></div>
+{%- endif -%}
+
+<article class="k-art k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}" data-article>
+  <div class="k-wrap">
+    <header class="k-art__head">
+      <nav class="k-label k-art__crumbs" aria-label="{{ 'products.breadcrumb' | t }}">
+        <a href="{{ blog.url }}">{{ blog.title }}</a>
+        {%- if article.tags.size > 0 -%}
+          <span aria-hidden="true">/</span>
+          <a href="{{ blog.url }}/tagged/{{ article.tags.first | handleize }}">{{ article.tags.first }}</a>
+        {%- endif -%}
+      </nav>
+      <h1 class="k-art__title">{{ article.title }}</h1>
+      {%- if article.excerpt != blank -%}<div class="k-art__excerpt">{{ article.excerpt | strip_html }}</div>{%- endif -%}
+      <div class="k-art__byline">
+        {%- if section.settings.show_author -%}
+          <span class="k-art__avatar" aria-hidden="true">{{ author_initials | upcase }}</span>
+          <span class="k-art__author">{{ article.author }}</span>
+        {%- endif -%}
+        <span class="k-label k-muted">{{ article.published_at | time_tag: format: 'date' }} · {{ 'blogs.read_time' | t: count: minutes }}</span>
+      </div>
+    </header>
+
+    {%- if article.image -%}
+      <figure class="k-art__cover-wrap">
+        <div class="k-art__cover k-media">
+          {{ article.image | image_url: width: 2400 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '800, 1200, 1600, 2000, 2400', sizes: '(min-width: 1440px) 1360px, 100vw', alt: article.image.alt }}
+        </div>
+        {%- if article.image.alt != blank and section.settings.show_caption -%}<figcaption class="k-art__cap k-muted">{{ article.image.alt }}</figcaption>{%- endif -%}
+      </figure>
+    {%- endif -%}
+
+    <div class="k-art__body">
+      <nav class="k-art__toc" aria-labelledby="{{ section.id }}-toc" data-toc hidden>
+        <p class="k-label" id="{{ section.id }}-toc">{{ 'blogs.in_this_story' | t }}</p>
+      </nav>
+
+      <div class="k-art__main">
+        <div class="k-rte k-art__rte{% if section.settings.drop_cap %} k-art__rte--dropcap{% endif %}" data-article-body>{{ article.content }}</div>
+
+        {%- if shop_block and shop_block.settings.products.count > 0 -%}
+          <section class="k-art__shop color-{{ shop_block.settings.color_scheme }}" aria-labelledby="{{ section.id }}-shop" {{ shop_block.shopify_attributes }}>
+            <h2 class="k-art__shop-title" id="{{ section.id }}-shop">{{ shop_block.settings.heading }}</h2>
+            <ul class="k-art__shop-row" role="list">
+              {%- for p in shop_block.settings.products -%}
+                {%- assign pv = p.selected_or_first_available_variant -%}
+                <li class="k-art__sp">
+                  <a class="k-art__sp-img k-media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+                    {%- if p.featured_media -%}
+                      {{ p.featured_media | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300, 450, 600', sizes: '(min-width: 900px) 220px, 100vw', alt: '' }}
+                    {%- else -%}
+                      {{ 'product-1' | placeholder_svg_tag: 'k-ph' }}
+                    {%- endif -%}
+                  </a>
+                  <div class="k-art__sp-in">
+                    <a class="k-art__sp-name" href="{{ p.url }}">{{ p.title }}</a>
+                    <span class="k-muted">{{ p.price | money }}</span>
+                    {%- if p.has_only_default_variant and pv.available -%}
+                      <button type="button" class="k-art__sp-add" data-quick-add="{{ pv.id }}"><span>{{ 'products.add_to_cart' | t }}</span><span class="visually-hidden"> {{ p.title }}</span></button>
+                    {%- else -%}
+                      <a class="k-art__sp-add" href="{{ p.url }}">{{ 'products.choose_options' | t }}<span class="visually-hidden"> {{ p.title }}</span></a>
+                    {%- endif -%}
+                  </div>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </section>
+        {%- endif -%}
+
+        {%- if article.tags.size > 0 -%}
+          <ul class="k-art__tags" role="list" aria-label="{{ 'blogs.tags' | t }}">
+            {%- for tag in article.tags -%}
+              <li><a href="{{ blog.url }}/tagged/{{ tag | handleize }}">#{{ tag }}</a></li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if section.settings.show_author and article.user.bio != blank -%}
+          <div class="k-art__bio">
+            {%- if article.user.image -%}
+              {{ article.user.image | image_url: width: 144 | image_tag: loading: 'lazy', class: 'k-art__avatar k-art__avatar--lg', alt: '' }}
+            {%- else -%}
+              <span class="k-art__avatar k-art__avatar--lg" aria-hidden="true">{{ author_initials | upcase }}</span>
+            {%- endif -%}
+            <div>
+              <p class="k-art__bio-name">{{ 'blogs.written_by' | t: author: article.author }}</p>
+              <div class="k-muted k-art__bio-text">{{ article.user.bio }}</div>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_share -%}
+        <div class="k-art__share">
+          <p class="k-label">{{ 'blogs.share' | t }}</p>
+          <button type="button" class="k-art__sb" data-share data-url="{{ shop.url | append: article.url }}" data-title="{{ article.title | escape }}" data-label-copied="{{ 'general.link_copied' | t }}">
+            {%- render 'k-icon', icon: 'link', size: 16 -%}<span data-share-text>{{ 'blogs.copy_link' | t }}</span>
+          </button>
+          <a class="k-art__sb" href="https://pinterest.com/pin/create/button/?url={{ share_url }}{% if article.image %}&media={{ article.image | image_url: width: 1200 | prepend: 'https:' | url_encode }}{% endif %}&description={{ share_title }}" target="_blank" rel="noopener">Pinterest<span class="visually-hidden"> {{ 'general.opens_new_window' | t }}</span></a>
+          <a class="k-art__sb" href="https://www.facebook.com/sharer.php?u={{ share_url }}" target="_blank" rel="noopener">Facebook<span class="visually-hidden"> {{ 'general.opens_new_window' | t }}</span></a>
+          <a class="k-art__sb" href="https://x.com/intent/post?text={{ share_title }}&url={{ share_url }}" target="_blank" rel="noopener">X<span class="visually-hidden"> {{ 'general.opens_new_window' | t }}</span></a>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if blog.previous_article or blog.next_article -%}
+      <nav class="k-art__pn" aria-label="{{ 'blogs.more_stories' | t }}">
+        {%- if blog.previous_article -%}
+          {%- assign pa = blog.previous_article -%}
+          <a class="k-art__pn-link" href="{{ pa.url }}">
+            {%- if pa.image -%}{{ pa.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', class: 'k-art__pn-img' }}{%- endif -%}
+            <span><span class="k-label k-muted">← {{ 'blogs.previous' | t }}</span><span class="k-art__pn-title">{{ pa.title }}</span></span>
+          </a>
+        {%- else -%}<span></span>{%- endif -%}
+        {%- if blog.next_article -%}
+          {%- assign na = blog.next_article -%}
+          <a class="k-art__pn-link k-art__pn-link--next" href="{{ na.url }}">
+            <span><span class="k-label k-muted">{{ 'blogs.next' | t }} →</span><span class="k-art__pn-title">{{ na.title }}</span></span>
+            {%- if na.image -%}{{ na.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', class: 'k-art__pn-img' }}{%- endif -%}
+          </a>
+        {%- endif -%}
+      </nav>
+    {%- endif -%}
+
+    {%- if blog.comments_enabled? -%}
+      <section class="k-art__cm" id="comments" aria-labelledby="{{ section.id }}-comments">
+        <h2 class="k-art__cm-title" id="{{ section.id }}-comments">{{ 'blogs.comments' | t }} <em>({{ article.comments_count }})</em></h2>
+        {%- if blog.moderated? -%}<p class="k-muted k-art__cm-note">{{ 'blogs.moderated' | t }}</p>{%- endif -%}
+
+        {%- paginate article.comments by 5 -%}
+          {%- if article.comments_count > 0 -%}
+            <ul class="k-art__cm-list" role="list">
+              {%- for comment in article.comments -%}
+                {%- assign c_letter = comment.author | slice: 0 | upcase -%}
+                <li class="k-art__c" id="{{ comment.id }}">
+                  <span class="k-art__avatar k-art__avatar--sm" aria-hidden="true">{{ c_letter }}</span>
+                  <div>
+                    <p class="k-art__c-head"><strong>{{ comment.author }}</strong> <span class="k-label k-muted">{{ comment.created_at | time_tag: format: 'date' }}</span></p>
+                    <div class="k-rte">{{ comment.content }}</div>
+                  </div>
+                </li>
+              {%- endfor -%}
+            </ul>
+            {%- if paginate.pages > 1 -%}
+              <nav class="k-pager" aria-label="{{ 'blogs.comments_pagination' | t }}">
+                {%- if paginate.previous -%}<a class="k-pager__pg" href="{{ paginate.previous.url }}#comments" aria-label="{{ 'blogs.previous_page' | t }}">←</a>{%- endif -%}
+                {%- for part in paginate.parts -%}
+                  {%- if part.is_link -%}<a class="k-pager__pg" href="{{ part.url }}#comments">{{ part.title }}</a>{%- else -%}<span class="k-pager__pg{% if part.title == paginate.current_page %} is-current{% endif %}"{% if part.title == paginate.current_page %} aria-current="page"{% endif %}>{{ part.title }}</span>{%- endif -%}
+                {%- endfor -%}
+                {%- if paginate.next -%}<a class="k-pager__pg" href="{{ paginate.next.url }}#comments" aria-label="{{ 'blogs.next_page' | t }}">→</a>{%- endif -%}
+              </nav>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endpaginate -%}
+
+        {%- form 'new_comment', article, class: 'k-art__cf' -%}
+          {%- if form.posted_successfully? -%}
+            <p class="k-art__cf-msg k-art__cf-full" role="status">
+              {%- if blog.moderated? -%}{{ 'blogs.comment_moderated' | t }}{%- else -%}{{ 'blogs.comment_posted' | t }}{%- endif -%}
+            </p>
+          {%- elsif form.errors -%}
+            <div class="k-art__cf-msg k-art__cf-msg--error k-art__cf-full" role="alert">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
+          <div class="k-field">
+            <label class="k-field__label" for="{{ section.id }}-c-name">{{ 'blogs.name' | t }}</label>
+            <input type="text" id="{{ section.id }}-c-name" name="comment[author]" value="{{ form.author }}" autocomplete="name" required>
+          </div>
+          <div class="k-field">
+            <label class="k-field__label" for="{{ section.id }}-c-email">{{ 'blogs.email' | t }}</label>
+            <input type="email" id="{{ section.id }}-c-email" name="comment[email]" value="{{ form.email }}" autocomplete="email" spellcheck="false" autocapitalize="off" required>
+          </div>
+          <div class="k-field k-art__cf-full">
+            <label class="k-field__label" for="{{ section.id }}-c-body">{{ 'blogs.comment' | t }}</label>
+            <textarea id="{{ section.id }}-c-body" name="comment[body]" required>{{ form.body }}</textarea>
+          </div>
+          <div class="k-art__cf-full">
+            <button type="submit" class="k-btn k-btn--primary"><span>{{ 'blogs.post_comment' | t }}</span></button>
+          </div>
+        {%- endform -%}
+      </section>
+    {%- endif -%}
+  </div>
+</article>
+
+{%- if section.settings.show_related and blog.articles_count > 1 -%}
+  <section class="k-section pt-medium pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}" aria-labelledby="{{ section.id }}-related">
+    <div class="k-wrap">
+      <div class="k-sec-head">
+        <h2 class="k-h2" id="{{ section.id }}-related">{{ section.settings.related_heading }}</h2>
+        <a class="k-btn k-btn--secondary" href="{{ blog.url }}"><span>{{ 'blogs.all_stories' | t }}</span></a>
+      </div>
+      <ul class="k-art__rel" role="list">
+        {%- assign shown = 0 -%}
+        {%- for a in blog.articles -%}
+          {%- if a.id == article.id or shown >= 3 -%}{%- continue -%}{%- endif -%}
+          {%- assign shown = shown | plus: 1 -%}
+          <li>{% render 'k-article-card', article: a, show_excerpt: false, show_meta: true, sizes: '(min-width: 900px) 30vw, 100vw' %}</li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+{%- endif -%}
+
+<script>
+  (function () {
+    var body = document.querySelector('[data-article-body]');
+    var toc = document.querySelector('[data-toc]');
+    if (body && toc) {
+      var heads = body.querySelectorAll('h2');
+      if (heads.length > 1) {
+        heads.forEach(function (h, i) {
+          if (!h.id) h.id = 'section-' + (i + 1);
+          var a = document.createElement('a');
+          a.href = '#' + h.id;
+          a.textContent = h.textContent;
+          toc.appendChild(a);
+        });
+        toc.hidden = false;
+      }
+    }
+    var bar = document.querySelector('[data-read-progress]');
+    var article = document.querySelector('[data-article]');
+    if (bar && article) {
+      var update = function () {
+        var r = article.getBoundingClientRect();
+        var total = r.height - window.innerHeight;
+        var pct = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 1;
+        bar.style.transform = 'scaleX(' + pct + ')';
+      };
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    }
+  })();
+</script>
+
+{% stylesheet %}
+  .k-art__progress { position: fixed; left: 0; right: 0; top: 0; z-index: 40; height: 3px; pointer-events: none; }
+  .k-art__progress b { display: block; height: 100%; background: var(--color-accent); transform: scaleX(0); transform-origin: 0 50%; }
+  .k-art__head { max-width: 1100px; margin: 0 auto; padding-bottom: 48px; text-align: center; }
+  .k-art__crumbs { display: flex; justify-content: center; gap: 10px; margin-bottom: 28px; color: var(--color-muted); }
+  .k-art__crumbs a:hover { color: var(--color-text); }
+  .k-art__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(52px, 7.6vw, 124px) * var(--heading-scale));
+    letter-spacing: -0.045em;
+    line-height: 0.86;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+  .k-art__excerpt { max-width: 680px; margin: 28px auto 0; font-size: 21px; line-height: 1.5; opacity: 0.85; }
+  .k-art__byline { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px; margin-top: 32px; }
+  .k-art__author { font-weight: 600; }
+  .k-art__avatar { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 999px; background: var(--color-text); color: var(--color-bg); font-weight: 800; font-size: 15px; object-fit: cover; }
+  .k-art__avatar--lg { width: 72px; height: 72px; font-size: 22px; }
+  .k-art__avatar--sm { font-size: 13px; }
+  .k-art__cover-wrap { margin: 0; }
+  .k-art__cover { height: clamp(420px, 52vw, 760px); border-radius: var(--radius-card); }
+  .k-art__cover img { object-position: center 35%; }
+  .k-art__cap { margin: 12px 0 0; font-size: 13px; }
+
+  .k-art__body { display: grid; grid-template-columns: 220px minmax(0, 700px) 220px; justify-content: center; gap: 56px; padding-top: 72px; }
+  .k-art__toc, .k-art__share { position: sticky; top: calc(var(--header-height, 0px) + 28px); align-self: start; display: flex; flex-direction: column; }
+  .k-art__toc { gap: 4px; }
+  .k-art__toc p { margin: 0 0 12px; }
+  .k-art__toc a { display: block; padding: 8px 0 8px 14px; border-left: 1.5px solid var(--color-line); font-size: 14px; font-weight: 500; color: var(--color-muted); transition: border-color var(--dur-fast), color var(--dur-fast), padding var(--dur-fast); }
+  .k-art__toc a:hover { border-color: var(--color-text); color: var(--color-text); padding-left: 20px; }
+  .k-art__toc:not([hidden]) ~ .k-art__main { grid-column: 2; }
+  .k-art__main { grid-column: 2; min-width: 0; }
+  .k-art__share { grid-column: 3; gap: 10px; }
+  .k-art__share p { margin: 0 0 4px; }
+  .k-art__sb {
+    display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 16px;
+    border: 1.5px solid var(--color-line); border-radius: 999px; background: transparent; color: inherit;
+    font: 600 14px var(--font-body); cursor: pointer; transition: border-color var(--dur-fast);
+  }
+  .k-art__sb:hover { border-color: var(--color-text); }
+
+  .k-art__rte { font-size: 19px; line-height: 1.7; }
+  .k-art__rte p { margin: 0 0 26px; }
+  .k-art__rte--dropcap > p:first-child::first-letter { float: left; margin: 10px 14px 0 0; font-family: var(--font-accent); font-style: var(--font-accent-style); font-size: 108px; line-height: 0.78; color: var(--color-accent); }
+  .k-art__rte h2 { margin: 64px 0 20px; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: 44px; letter-spacing: -0.03em; line-height: 1; scroll-margin-top: calc(var(--header-height, 0px) + 24px); }
+  .k-art__rte h3 { margin: 40px 0 14px; font-size: 26px; letter-spacing: -0.02em; }
+  .k-art__rte ul, .k-art__rte ol { margin: 0 0 26px; padding-left: 22px; }
+  .k-art__rte li { margin-bottom: 8px; }
+  .k-art__rte a { color: var(--color-accent); }
+  .k-art__rte blockquote { margin: 56px -60px; padding: 40px 0; border-block: 1.5px solid var(--color-text); font-family: var(--font-accent); font-style: var(--font-accent-style); font-size: 46px; line-height: 1.08; text-align: center; }
+  .k-art__rte blockquote p { margin: 0; }
+  .k-art__rte img { height: auto; border-radius: calc(var(--radius-card) * 0.7); }
+  .k-art__rte figure { margin: 40px 0; }
+  .k-art__rte figcaption { margin-top: 10px; font-size: 13px; color: var(--color-muted); }
+
+  .k-art__shop { margin: 48px 0; padding: 24px; border-radius: calc(var(--radius-card) * 0.85); background: var(--color-bg); color: var(--color-text); }
+  .k-art__shop-title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: 30px; letter-spacing: -0.02em; }
+  .k-art__shop-title em { font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; }
+  .k-art__shop-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 16px 0 0; padding: 0; list-style: none; }
+  .k-art__sp { display: flex; flex-direction: column; overflow: hidden; border-radius: 16px; background: var(--color-surface); color: var(--color-text); }
+  .k-art__shop .k-art__sp { background: rgba(var(--color-text-rgb), 0.08); }
+  .k-art__sp-img { aspect-ratio: 1 / 1; }
+  .k-art__sp-in { display: flex; flex: 1; flex-direction: column; gap: 8px; padding: 12px; font-size: 14px; }
+  .k-art__sp-name { font-weight: 700; font-size: 15px; }
+  .k-art__sp-add {
+    position: relative; display: inline-flex; align-items: center; justify-content: center; margin-top: auto; min-height: 44px; padding: 0 14px;
+    border: 1.5px solid currentColor; border-radius: 999px; background: transparent; color: inherit;
+    font: 600 13px var(--font-body); cursor: pointer; transition: background-color var(--dur-fast), color var(--dur-fast);
+    --spin: currentColor;
+  }
+  .k-art__sp-add:hover { background: var(--color-text); color: var(--color-bg); }
+
+  .k-art__tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 40px 0 0; padding: 32px 0; border-top: 1px solid var(--color-line); list-style: none; }
+  .k-art__tags a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--color-surface); font-size: 14px; font-weight: 600; }
+  .k-art__bio { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 18px; padding: 24px; border-radius: calc(var(--radius-card) * 0.85); background: var(--color-surface); }
+  .k-art__bio-name { margin: 0; font-weight: 700; font-size: 18px; }
+  .k-art__bio-text { margin-top: 6px; font-size: 16px; line-height: 1.5; }
+
+  .k-art__pn { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding-top: 96px; }
+  .k-art__pn-link { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 18px; align-items: center; padding: 16px; border: 1.5px solid var(--color-line); border-radius: calc(var(--radius-card) * 0.85); transition: border-color var(--dur-fast), background-color var(--dur-fast); }
+  .k-art__pn-link:not(:has(img)) { grid-template-columns: 1fr; }
+  .k-art__pn-link:hover { border-color: var(--color-text); background: var(--color-surface); }
+  .k-art__pn-link--next { grid-template-columns: minmax(0, 1fr) 120px; text-align: right; }
+  .k-art__pn-img { width: 120px; height: 120px; object-fit: cover; border-radius: 16px; }
+  .k-art__pn-title { display: block; margin-top: 6px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+
+  .k-art__cm { max-width: 700px; margin: 0 auto; padding-top: 96px; }
+  .k-art__cm-title { margin: 0 0 8px; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: 44px; letter-spacing: -0.03em; }
+  .k-art__cm-title em { font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; }
+  .k-art__cm-note { margin: 0; }
+  .k-art__cm-list { margin: 0; padding: 0; list-style: none; }
+  .k-art__c { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding: 22px 0; border-bottom: 1px solid var(--color-line); }
+  .k-art__c-head { margin: 0 0 8px; }
+  .k-art__c-head .k-label { margin-left: 8px; }
+  .k-art__cf { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
+  .k-art__cf-full { grid-column: 1 / -1; }
+  .k-art__cf textarea { min-height: 130px; }
+  .k-art__cf-msg { margin: 0; padding: 14px 18px; border-radius: 14px; background: var(--color-surface); font-weight: 600; }
+  .k-art__cf-msg--error { color: #B42318; }
+  .k-art__rel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
+
+  @media (max-width: 1200px) {
+    .k-art__body { grid-template-columns: minmax(0, 700px) 200px; }
+    .k-art__toc { display: none !important; }
+    .k-art__main { grid-column: 1; }
+    .k-art__share { grid-column: 2; }
+    .k-art__rte blockquote { margin-inline: 0; }
+  }
+  @media (max-width: 900px) {
+    .k-art__body { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: 40px; }
+    .k-art__share { position: static; grid-column: 1; grid-row: 1; flex-direction: row; flex-wrap: wrap; align-items: center; }
+    .k-art__main { grid-column: 1; }
+    .k-art__rte { font-size: 17px; }
+    .k-art__rte blockquote { font-size: 32px; }
+    .k-art__shop-row, .k-art__rel, .k-art__pn, .k-art__cf { grid-template-columns: 1fr; }
+    .k-art__pn-link, .k-art__pn-link--next { grid-template-columns: 88px minmax(0, 1fr); text-align: left; }
+    .k-art__pn-link--next img { order: -1; }
+    .k-art__pn-img { width: 88px; height: 88px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Blog post",
+  "tag": "div",
+  "class": "k-art-section",
+  "settings": [
+    { "type": "checkbox", "id": "show_progress", "label": "Show reading progress bar", "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
+    { "type": "checkbox", "id": "show_caption", "label": "Show image caption", "default": true, "info": "Uses the featured image's alt text." },
+    { "type": "checkbox", "id": "drop_cap", "label": "Large first letter", "default": true },
+    { "type": "checkbox", "id": "show_share", "label": "Show share links", "default": true },
+    { "type": "checkbox", "id": "show_related", "label": "Show more posts", "default": true },
+    { "type": "inline_richtext", "id": "related_heading", "label": "More posts heading", "default": "Keep <em>reading</em>" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "products",
+      "name": "Shop the story",
+      "limit": 1,
+      "settings": [
+        { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Shop the <em>story</em>" },
+        { "type": "product_list", "id": "products", "label": "Products", "limit": 6 },
+        { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-2" }
+      ]
+    }
+  ],
+  "enabled_on": { "templates": ["article"] }
+}
+{% endschema %}

@@ -32,7 +32,9 @@
     "pause_motion": "Pause motion",
     "play_motion": "Play motion",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "link_copied": "Link copied",
+    "opens_new_window": "(opens in a new window)"
   },
   "404": {
     "title": "404",
@@ -93,7 +95,27 @@
     "discount": "Discount",
     "bag": "Bag",
     "drawer_title": "Your bag",
-    "drawer_empty": "Your bag is empty."
+    "drawer_empty": "Your bag is empty.",
+    "product": "Product",
+    "quantity": "Quantity",
+    "total": "Total",
+    "each": "{{ price }} each",
+    "edit": "Edit",
+    "note_placeholder": "Add instructions for your order",
+    "gift_wrap": "Add gift wrapping — {{ price }}",
+    "free_shipping_away": "You’re {{ amount }} away from free shipping",
+    "free_shipping_unlocked": "You’ve unlocked free shipping",
+    "discount_code": "Discount code",
+    "discount_placeholder": "Enter code",
+    "apply": "Apply",
+    "discount_error": "That code can’t be applied to this cart.",
+    "discount_not_applicable": "not applicable",
+    "discount_remove": "Remove discount {{ code }}",
+    "payment_methods": "Accepted payment methods",
+    "shipping": "Shipping",
+    "shipping_free": "Free",
+    "shipping_at_checkout": "Calculated at checkout",
+    "secure_checkout": "Secure checkout"
   },
   "customer": {
     "account": {
@@ -148,12 +170,18 @@
   },
   "contact": {
     "title": "Contact",
-    "name": "Name",
+    "name": "Full name",
     "email": "Email",
-    "phone": "Phone",
+    "phone": "Phone (optional)",
     "message": "Message",
     "success": "Thanks, your message has been sent.",
-    "error_heading": "Please fix the following:"
+    "error_heading": "Please fix the following:",
+    "phone_field": "Phone",
+    "order": "Order number (optional)",
+    "order_field": "Order number",
+    "topic": "Topic",
+    "required": "* Required",
+    "send_another": "Send another message"
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
@@ -185,7 +213,8 @@
     "pickup_unavailable": "Pickup unavailable for this variant.",
     "pickup_check_others": "Check availability at {{ count }} other stores",
     "pickup_in_stock": "In stock",
-    "pickup_out_of_stock": "Out of stock"
+    "pickup_out_of_stock": "Out of stock",
+    "click_to_zoom": "Click to zoom"
   },
   "password": {
     "title": "This shop is private",
@@ -221,7 +250,14 @@
     "size_guide": "Size guide",
     "unavailable": "Unavailable",
     "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
-    "unit_price": "Unit price"
+    "unit_price": "Unit price",
+    "sale_off": "Sale −{{ percent }}%",
+    "save_amount": "Save {{ amount }}",
+    "close_size_guide": "Close size guide",
+    "low_stock": "Low stock — only a few left",
+    "in_stock": "In stock, ready to ship",
+    "add_short": "Add +",
+    "view_short": "View"
   },
   "sections": {
     "category_columns": {
@@ -267,6 +303,42 @@
       "reset": "Reset",
       "show_results": "Show results",
       "next_collection": "Next collection"
+    },
+    "details": {
+      "pin": "Detail {{ number }}: {{ title }}"
     }
+  },
+  "blogs": {
+    "read_time": {
+      "one": "{{ count }} min read",
+      "other": "{{ count }} min read"
+    },
+    "search": "Search the journal",
+    "filter_by_topic": "Filter by topic",
+    "all": "All",
+    "empty": "No stories here yet.",
+    "featured": "Featured",
+    "read_story": "Read story",
+    "pagination": "Pagination",
+    "previous_page": "Previous page",
+    "next_page": "Next page",
+    "in_this_story": "In this story",
+    "tags": "Tags",
+    "written_by": "Written by {{ author }}",
+    "share": "Share",
+    "copy_link": "Copy link",
+    "more_stories": "More stories",
+    "previous": "Previous",
+    "next": "Next",
+    "comments": "Comments",
+    "moderated": "Comments are moderated before they appear.",
+    "comments_pagination": "Comment pages",
+    "comment_moderated": "Thanks — your comment was sent and will appear once it’s approved.",
+    "comment_posted": "Thanks — your comment was posted.",
+    "name": "Name",
+    "email": "Email",
+    "comment": "Comment",
+    "post_comment": "Post comment",
+    "all_stories": "All stories"
   }
 }

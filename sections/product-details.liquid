@@ -1,0 +1,117 @@
+{%- liquid
+  assign details = section.blocks | where: 'type', 'detail'
+  assign image = section.settings.image
+  if image == blank and product.featured_media
+    assign image = product.featured_media.preview_image
+  endif
+-%}
+
+<section class="k-details k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap">
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="k-sec-head k-reveal">
+        {%- if section.settings.heading != blank -%}<h2 class="k-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+        {%- if section.settings.text != blank -%}<p class="k-sec-head__meta k-label k-muted">{{ section.settings.text }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <k-lookbook class="k-details__grid">
+      <div class="k-details__image k-media k-reveal">
+        {%- render 'k-media', image: image, sizes: '(min-width: 900px) 54vw, 100vw', placeholder: 'product-apparel-1' -%}
+        {%- for block in details -%}
+          <button
+            type="button"
+            class="k-details__pin"
+            style="left: {{ block.settings.x }}%; top: {{ block.settings.y }}%;"
+            data-look-pick="{{ forloop.index0 }}"
+            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-label="{{ 'sections.details.pin' | t: number: forloop.index, title: block.settings.heading }}"
+          >{{ forloop.index | prepend: '0' | slice: -2, 2 }}</button>
+        {%- endfor -%}
+      </div>
+
+      <ul class="k-details__list" role="list">
+        {%- for block in details -%}
+          <li {{ block.shopify_attributes }}>
+            <button type="button" class="k-details__row" data-look-pick="{{ forloop.index0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+              <span class="k-label">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+              <span>
+                <span class="k-details__title">{{ block.settings.heading }}</span>
+                {%- if block.settings.text != blank -%}<span class="k-details__text">{{ block.settings.text }}</span>{%- endif -%}
+              </span>
+            </button>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </k-lookbook>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-details__grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+  .k-details__image { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius-card); overflow: hidden; }
+  .k-details__pin {
+    position: absolute; z-index: 2; width: 48px; height: 48px; margin: -24px 0 0 -24px;
+    border: 0; border-radius: 999px; background: var(--color-bg); color: var(--color-text);
+    font: 600 12px var(--font-label); cursor: pointer;
+    transition: background-color var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
+  }
+  .k-details__pin::after {
+    content: ""; position: absolute; inset: -6px; border-radius: 999px;
+    border: 1.5px solid var(--color-bg); animation: k-pin-pulse 2.2s ease-out infinite;
+  }
+  .k-details__pin[aria-pressed="true"] { background: var(--color-accent); color: var(--color-bg); transform: scale(1.1); }
+  @keyframes k-pin-pulse { from { opacity: 1; transform: scale(0.9); } to { opacity: 0; transform: scale(1.5); } }
+  .k-details__list { margin: 0; padding: 0; list-style: none; }
+  .k-details__row {
+    display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; width: 100%;
+    padding: 24px 0; border: 0; border-top: 1px solid var(--color-line); background: none;
+    color: var(--color-muted); font: inherit; text-align: left; cursor: pointer; transition: color var(--dur-fast);
+  }
+  .k-details__row[aria-pressed="true"], .k-details__row:hover { color: var(--color-text); }
+  .k-details__title { display: block; margin-bottom: 6px; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+  .k-details__text { display: block; font-size: 15px; line-height: 1.55; }
+  @media (max-width: 900px) {
+    .k-details__grid { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .k-details__pin::after { animation: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product details",
+  "tag": "div",
+  "class": "k-details-section",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "The <em>details</em>", "info": "Italic words use the accent font." },
+    { "type": "text", "id": "text", "label": "Text", "default": "Tap a number to explore" },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "On product pages the product's main image is used when this is empty." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "detail",
+      "name": "Detail",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Detail" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Describe what makes this part of the product special." },
+        { "type": "range", "id": "x", "label": "Pin position across", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 },
+        { "type": "range", "id": "y", "label": "Pin position down", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product details",
+      "blocks": [
+        { "type": "detail", "settings": { "heading": "Ruffle placket", "text": "A softly gathered front edge that adds movement without bulk.", "x": 52, "y": 46 } },
+        { "type": "detail", "settings": { "heading": "Hidden press studs", "text": "Concealed fastenings keep the front clean and close with one hand.", "x": 40, "y": 62 } },
+        { "type": "detail", "settings": { "heading": "Brushed wool blend", "text": "A dense, brushed finish that holds its shape and softens with wear.", "x": 60, "y": 82 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

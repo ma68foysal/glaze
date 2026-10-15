@@ -1,0 +1,86 @@
+{%- comment -%}
+  Products the customer opened before, stored in their browser. Each card is
+  fetched by rendering this section on that product's URL, so it uses the
+  same card markup as the rest of the theme.
+{%- endcomment -%}
+<k-recently-viewed
+  class="k-recent color-{{ section.settings.color_scheme }}"
+  data-section-id="{{ section.id }}"
+  data-limit="{{ section.settings.limit }}"
+  {% if product %}data-handle="{{ product.handle }}"{% endif %}
+>
+  {%- if product -%}
+    <div data-recent-card hidden>{% render 'k-card', product: product, quick_add: section.settings.quick_add %}</div>
+  {%- endif -%}
+  <section class="k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }}" aria-label="{{ section.settings.heading | strip_html | escape }}" data-recent-wrap hidden>
+    <div class="k-wrap">
+      {%- if section.settings.heading != blank -%}
+        <div class="k-sec-head"><h2 class="k-h2">{{ section.settings.heading }}</h2></div>
+      {%- endif -%}
+      <ul class="k-grid" role="list" style="--cols: {{ section.settings.columns }};" data-recent-list></ul>
+    </div>
+  </section>
+</k-recently-viewed>
+
+{% stylesheet %}
+  .k-recent .k-grid { margin: 0; padding: 0; list-style: none; }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('k-recently-viewed')) {
+    customElements.define('k-recently-viewed', class extends HTMLElement {
+      connectedCallback() {
+        var key = 'oblique:recently-viewed';
+        var handles = [];
+        try { handles = JSON.parse(localStorage.getItem(key)) || []; } catch (e) { handles = []; }
+        var current = this.dataset.handle;
+        var show = handles.filter(function (h) { return h !== current; }).slice(0, parseInt(this.dataset.limit, 10) || 4);
+        if (current) {
+          var next = [current].concat(handles.filter(function (h) { return h !== current; })).slice(0, 12);
+          try { localStorage.setItem(key, JSON.stringify(next)); } catch (e) {}
+        }
+        if (!show.length) return;
+        var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+        var id = this.dataset.sectionId;
+        var list = this.querySelector('[data-recent-list]');
+        Promise.all(show.map(function (handle) {
+          return fetch(root + 'products/' + encodeURIComponent(handle) + '?section_id=' + id)
+            .then(function (r) { return r.ok ? r.text() : ''; })
+            .then(function (html) {
+              var doc = new DOMParser().parseFromString(html, 'text/html');
+              var card = doc.querySelector('[data-recent-card]');
+              return card ? card.innerHTML : '';
+            })
+            .catch(function () { return ''; });
+        })).then((cards) => {
+          cards.filter(Boolean).forEach(function (html) {
+            var li = document.createElement('li');
+            li.innerHTML = html;
+            list.appendChild(li);
+          });
+          if (list.children.length) this.querySelector('[data-recent-wrap]').hidden = false;
+        });
+      }
+    });
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "tag": "div",
+  "class": "k-recent-section",
+  "settings": [
+    { "type": "paragraph", "content": "Shows products the customer viewed before. Hidden until they have viewed at least one other product." },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Recently <em>viewed</em>" },
+    { "type": "range", "id": "limit", "label": "Maximum products", "min": 2, "max": 8, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "quick_add", "label": "Show quick add", "default": true },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "presets": [ { "name": "Recently viewed" } ],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}

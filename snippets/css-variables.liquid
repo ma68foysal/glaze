@@ -111,6 +111,15 @@
       --color-line: rgba({{ scheme.settings.text.rgb | replace: ' ', ',' }}, 0.15);
       --color-line-soft: rgba({{ scheme.settings.text.rgb | replace: ' ', ',' }}, 0.08);
       --color-muted: rgba({{ scheme.settings.text.rgb | replace: ' ', ',' }}, 0.68);
+      {%- liquid
+        assign bg_brightness = scheme.settings.background | color_brightness
+        if bg_brightness > 160
+          assign surface = scheme.settings.background | color_mix: '#ffffff', 25
+        else
+          assign surface = scheme.settings.background | color_lighten: 7
+        endif
+      %}
+      --color-surface: {{ surface }};
       background: {% if scheme.settings.background_gradient != blank %}{{ scheme.settings.background_gradient }}{% else %}var(--color-bg){% endif %};
       color: var(--color-text);
     }

@@ -1,0 +1,76 @@
+<section class="k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap k-faq">
+    <div>
+      {%- if section.settings.heading != blank -%}<h2 class="k-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.text != blank -%}<div class="k-rte k-muted k-faq__text">{{ section.settings.text }}</div>{%- endif -%}
+    </div>
+    <div class="k-faq__list">
+      {%- for block in section.blocks -%}
+        <details class="k-faq__item" {% if forloop.first and section.settings.open_first %}open{% endif %} {{ block.shopify_attributes }}>
+          <summary class="k-faq__q">
+            <span>{{ block.settings.question }}</span>
+            <span class="k-faq__plus" aria-hidden="true">{% render 'k-icon', icon: 'plus', size: 18 %}</span>
+          </summary>
+          <div class="k-rte k-faq__a">{{ block.settings.answer }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 56px; }
+  .k-faq__text { margin-top: 20px; max-width: 360px; font-size: 17px; line-height: 1.55; }
+  .k-faq__item { border-top: 1px solid var(--color-line); }
+  .k-faq__item:last-child { border-bottom: 1px solid var(--color-line); }
+  .k-faq__q {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 72px;
+    font-size: 20px; font-weight: 700; letter-spacing: -0.01em; list-style: none; cursor: pointer;
+  }
+  .k-faq__q::-webkit-details-marker { display: none; }
+  .k-faq__plus {
+    display: grid; place-items: center; flex: none; width: 40px; height: 40px;
+    border: 1.5px solid var(--color-text); border-radius: 999px;
+    transition: transform 0.45s var(--ease-out), background-color var(--dur-fast), color var(--dur-fast);
+  }
+  .k-faq__item[open] .k-faq__plus { transform: rotate(45deg); background: var(--color-text); color: var(--color-bg); }
+  .k-faq__a { max-width: 640px; padding-bottom: 24px; font-size: 16px; line-height: 1.6; opacity: 0.85; }
+  .k-faq__item[open] .k-faq__a { animation: k-rise-in 0.45s var(--ease-out) both; }
+  @media (max-width: 900px) { .k-faq { grid-template-columns: 1fr; gap: 28px; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "div",
+  "class": "k-faq-section",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Quick <em>answers</em>" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Most questions are answered here. Still stuck? Send us a message.</p>" },
+    { "type": "checkbox", "id": "open_first", "label": "Open the first question", "default": true },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Question" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Write the answer here.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "blocks": [
+        { "type": "question", "settings": { "question": "When will my order ship?", "answer": "<p>Orders placed before 2pm on a working day ship the same day.</p>" } },
+        { "type": "question", "settings": { "question": "How do I return something?", "answer": "<p>Start a return from your account within 30 days. Returns are free.</p>" } },
+        { "type": "question", "settings": { "question": "Do you offer repairs?", "answer": "<p>Yes. Send us a message with a photo and we'll arrange it.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

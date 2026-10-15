@@ -1,0 +1,66 @@
+{%- liquid
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = page.title
+  endif
+-%}
+<section class="k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap k-chero">
+    <div>
+      {%- if section.settings.label != blank -%}<p class="k-label k-muted k-chero__label">{{ section.settings.label }}</p>{%- endif -%}
+      <h1 class="k-chero__title">{{ heading }}</h1>
+      {%- if section.settings.text != blank -%}<div class="k-rte k-chero__text">{{ section.settings.text }}</div>{%- endif -%}
+    </div>
+    <div class="k-chero__image k-media">
+      {%- render 'k-media', image: section.settings.image, sizes: '(min-width: 900px) 42vw, 100vw', placeholder: 'lifestyle-2', eager: true -%}
+      {%- if section.settings.status != blank -%}
+        <span class="k-chero__status"><i aria-hidden="true"></i>{{ section.settings.status }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-chero { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 40px; align-items: end; }
+  .k-chero__label { margin: 0 0 24px; }
+  .k-chero__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(72px, 11vw, 176px) * var(--heading-scale));
+    letter-spacing: -0.045em;
+    line-height: 0.82;
+    overflow-wrap: anywhere;
+  }
+  .k-chero__title em { display: block; font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; letter-spacing: -0.02em; }
+  .k-chero__text { margin-top: 28px; max-width: 520px; font-size: 19px; line-height: 1.5; }
+  .k-chero__image { aspect-ratio: 4 / 3.2; border-radius: var(--radius-card); }
+  .k-chero__status {
+    position: absolute; left: 16px; bottom: 16px; z-index: 1;
+    display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+    border-radius: 999px; background: var(--color-bg); color: var(--color-text); font-size: 14px; font-weight: 600;
+  }
+  .k-chero__status i { width: 8px; height: 8px; border-radius: 999px; background: #1F7A4D; animation: k-blink 1.6s ease-in-out infinite; }
+  @keyframes k-blink { 50% { opacity: 0.25; } }
+  @media (max-width: 900px) { .k-chero { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .k-chero__status i { animation: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Contact hero",
+  "tag": "div",
+  "class": "k-chero-section",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Customer care · Studio · Press" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Get in <em>touch</em>", "info": "Italic words use the accent font and start a new line. Leave empty to use the page title." },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Questions about an order, sizing or a repair? Our team answers every message, usually within one working day.</p>" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "status", "label": "Status label on image", "default": "Customer care is online" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "presets": [ { "name": "Contact hero" } ]
+}
+{% endschema %}

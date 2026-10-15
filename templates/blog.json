@@ -10,11 +10,34 @@
 {
   "sections": {
     "main": {
-      "type": "blog",
-      "settings": {}
+      "type": "main-blog",
+      "settings": {
+        "intro": "<p><em>Notes from the studio</em> — how we make things, how to wear them, and how to keep them going.</p>",
+        "show_search": true,
+        "show_tags": true,
+        "feature_first": true,
+        "show_excerpt": true,
+        "per_page": 7,
+        "color_scheme": "scheme-1",
+        "featured_color_scheme": "scheme-2",
+        "padding_top": "medium",
+        "padding_bottom": "small"
+      }
+    },
+    "quote": {
+      "type": "pull-quote",
+      "settings": {
+        "quote": "“Clothes should get better the more you wear them — that’s the only rule we design by.”",
+        "attribution": "Head of design",
+        "show_placeholder": true,
+        "color_scheme": "scheme-1",
+        "padding_top": "medium",
+        "padding_bottom": "large"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "quote"
   ]
 }

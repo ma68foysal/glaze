@@ -1,0 +1,28 @@
+<div class="k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="{% if section.settings.full_width %}k-apps--full{% else %}k-wrap{% endif %}">
+    {%- if section.settings.heading != blank -%}
+      <div class="k-sec-head"><h2 class="k-h2">{{ section.settings.heading }}</h2></div>
+    {%- endif -%}
+    {%- for block in section.blocks -%}
+      {% render block %}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Apps",
+  "tag": "section",
+  "class": "k-apps-section",
+  "settings": [
+    { "type": "paragraph", "content": "Add app blocks, like product reviews, from your installed apps." },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading" },
+    { "type": "checkbox", "id": "full_width", "label": "Full width", "default": false },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [ { "type": "@app" } ],
+  "presets": [ { "name": "Apps" } ]
+}
+{% endschema %}

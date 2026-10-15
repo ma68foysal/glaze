@@ -10,8 +10,32 @@
 {
   "sections": {
     "main": {
-      "type": "article",
-      "settings": {}
+      "type": "main-article",
+      "blocks": {
+        "shop": {
+          "type": "products",
+          "settings": {
+            "heading": "Shop the <em>story</em>",
+            "products": [],
+            "color_scheme": "scheme-2"
+          }
+        }
+      },
+      "block_order": [
+        "shop"
+      ],
+      "settings": {
+        "show_progress": true,
+        "show_author": true,
+        "show_caption": true,
+        "drop_cap": true,
+        "show_share": true,
+        "show_related": true,
+        "related_heading": "Keep <em>reading</em>",
+        "color_scheme": "scheme-1",
+        "padding_top": "medium",
+        "padding_bottom": "medium"
+      }
     }
   },
   "order": [

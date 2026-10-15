@@ -1,0 +1,51 @@
+{%- comment -%}
+  "Pairs well with" list. Accepts: block, product, section, recommendations
+  Complementary products come from the Search and Discovery app; the block's
+  product list is the fallback.
+{%- endcomment -%}
+{%- liquid
+  assign pair_list = block.settings.products
+  if recommendations.performed? and recommendations.products_count > 0
+    assign pair_list = recommendations.products
+  endif
+-%}
+<k-complementary
+  class="k-pdp__pairs"
+  data-block-id="{{ block.id }}"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ block.settings.limit }}&intent=complementary"
+  {{ block.shopify_attributes }}
+>
+  <div data-complementary="{{ block.id }}">
+    {%- if pair_list.size > 0 -%}
+      {%- if block.settings.heading != blank -%}<p class="k-label k-pdp__pairs-head">{{ block.settings.heading }}</p>{%- endif -%}
+      <ul class="k-pdp__pairs-list" role="list">
+        {%- assign shown = 0 -%}
+        {%- for rec in pair_list -%}
+          {%- if rec.id == product.id or shown >= block.settings.limit -%}{%- continue -%}{%- endif -%}
+          {%- assign shown = shown | plus: 1 -%}
+          {%- assign rv = rec.selected_or_first_available_variant -%}
+          <li class="k-pdp__pair">
+            <a class="k-pdp__pair-img" href="{{ rec.url }}" tabindex="-1" aria-hidden="true">
+              {%- if rec.featured_media -%}
+                {{ rec.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', sizes: '64px', alt: '' }}
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'k-ph' }}
+              {%- endif -%}
+            </a>
+            <div>
+              <a class="k-pdp__pair-name" href="{{ rec.url }}">{{ rec.title }}</a>
+              <p class="k-pdp__pair-price k-muted">{{ rec.price | money }}</p>
+            </div>
+            {%- if rec.has_only_default_variant and rv.available -%}
+              <button type="button" class="k-pdp__pair-add" data-quick-add="{{ rv.id }}">
+                <span>{{ 'products.add_short' | t }}</span><span class="visually-hidden"> {{ rec.title }}</span>
+              </button>
+            {%- else -%}
+              <a class="k-pdp__pair-add" href="{{ rec.url }}">{{ 'products.view_short' | t }}<span class="visually-hidden"> {{ rec.title }}</span></a>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</k-complementary>

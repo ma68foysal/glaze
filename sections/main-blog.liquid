@@ -1,0 +1,170 @@
+{%- liquid
+  assign title = blog.title | strip
+  assign letters = title | split: ''
+  assign show_featured = false
+  if section.settings.feature_first and current_tags == blank
+    assign show_featured = true
+  endif
+-%}
+<section class="k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap">
+    <header class="k-blog__mast">
+      <h1 class="k-blog__title" aria-label="{{ title | escape }}">
+        <span class="k-kinetic k-blog__kinetic" aria-hidden="true">
+          {%- for l in letters -%}
+            {%- if l == ' ' -%}<span class="k-kinetic__l">&nbsp;</span>{%- else -%}<span class="k-kinetic__l" style="--i: {{ forloop.index0 }};">{{ l }}</span>{%- endif -%}
+          {%- endfor -%}
+        </span>
+      </h1>
+      <div class="k-blog__side">
+        {%- if section.settings.intro != blank -%}<div class="k-blog__intro">{{ section.settings.intro }}</div>{%- endif -%}
+        {%- if section.settings.show_search -%}
+          <form class="k-blog__search" action="{{ routes.search_url }}" method="get" role="search">
+            {%- render 'k-icon', icon: 'search', size: 20 -%}
+            <label class="visually-hidden" for="{{ section.id }}-q">{{ 'blogs.search' | t }}</label>
+            <input type="search" id="{{ section.id }}-q" name="q" placeholder="{{ 'blogs.search' | t }}">
+            <input type="hidden" name="type" value="article">
+            <input type="hidden" name="options[prefix]" value="last">
+          </form>
+        {%- endif -%}
+      </div>
+    </header>
+
+    {%- if section.settings.show_tags and blog.all_tags.size > 0 -%}
+      <nav class="k-blog__tags" aria-label="{{ 'blogs.filter_by_topic' | t }}">
+        <a class="k-chip{% if current_tags == blank %} is-active{% endif %}" href="{{ blog.url }}"{% if current_tags == blank %} aria-current="page"{% endif %}>{{ 'blogs.all' | t }}</a>
+        {%- for tag in blog.all_tags -%}
+          {%- assign active = false -%}
+          {%- if current_tags contains tag -%}{%- assign active = true -%}{%- endif -%}
+          <a class="k-chip{% if active %} is-active{% endif %}" href="{{ blog.url }}/tagged/{{ tag | handleize }}"{% if active %} aria-current="page"{% endif %}>{{ tag }}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    {%- paginate blog.articles by section.settings.per_page -%}
+      {%- if blog.articles_count == 0 -%}
+        <p class="k-blog__empty">{{ 'blogs.empty' | t }}</p>
+      {%- endif -%}
+
+      {%- for article in blog.articles -%}
+        {%- if forloop.first and show_featured and paginate.current_page == 1 -%}
+          {%- liquid
+            assign words = article.content | strip_html | split: ' ' | size
+            assign minutes = words | divided_by: 200 | at_least: 1
+          -%}
+          <article class="k-blog__feat color-{{ section.settings.featured_color_scheme }} k-reveal">
+            <a class="k-blog__feat-img k-media" href="{{ article.url }}" tabindex="-1" aria-hidden="true">
+              {%- if article.image -%}
+                {{ article.image | image_url: width: 1800 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '600, 900, 1200, 1500, 1800', sizes: '(min-width: 900px) 60vw, 100vw', alt: '' }}
+              {%- else -%}
+                {{ 'lifestyle-2' | placeholder_svg_tag: 'k-ph' }}
+              {%- endif -%}
+            </a>
+            <div class="k-blog__feat-text">
+              <div class="k-blog__feat-top">
+                <span class="k-label k-blog__badge">{{ 'blogs.featured' | t }}{% if article.tags.size > 0 %} · {{ article.tags.first }}{% endif %}</span>
+                <span class="k-label k-muted">{{ 'blogs.read_time' | t: count: minutes }}</span>
+              </div>
+              <div>
+                <h2 class="k-blog__feat-title"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+                <p class="k-blog__feat-excerpt">{{ article.excerpt_or_content | strip_html | truncatewords: 32 }}</p>
+              </div>
+              <div class="k-blog__feat-foot">
+                <span class="k-label k-muted">{{ article.published_at | time_tag: format: 'date' }} · {{ article.author }}</span>
+                <a class="k-btn k-btn--secondary" href="{{ article.url }}"><span>{{ 'blogs.read_story' | t }}</span><span class="visually-hidden">: {{ article.title }}</span>{% render 'k-icon', icon: 'arrow', size: 18 %}</a>
+              </div>
+            </div>
+          </article>
+          {%- continue -%}
+        {%- endif -%}
+        {%- if forloop.first or forloop.index == 2 and show_featured and paginate.current_page == 1 -%}<ul class="k-blog__grid" role="list">{%- endif -%}
+        <li class="k-reveal">{% render 'k-article-card', article: article, show_excerpt: section.settings.show_excerpt, show_meta: true, sizes: '(min-width: 900px) 30vw, 100vw' %}</li>
+        {%- if forloop.last -%}</ul>{%- endif -%}
+      {%- endfor -%}
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="k-pager" aria-label="{{ 'blogs.pagination' | t }}">
+          {%- if paginate.previous -%}
+            <a class="k-pager__pg" href="{{ paginate.previous.url }}" aria-label="{{ 'blogs.previous_page' | t }}">←</a>
+          {%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a class="k-pager__pg" href="{{ part.url }}">{{ part.title }}</a>
+            {%- elsif part.title == paginate.current_page -%}
+              <span class="k-pager__pg is-current" aria-current="page">{{ part.title }}</span>
+            {%- else -%}
+              <span class="k-pager__pg k-pager__gap">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <a class="k-pager__pg" href="{{ paginate.next.url }}" aria-label="{{ 'blogs.next_page' | t }}">→</a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-blog__mast { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: end; padding-bottom: 40px; border-bottom: 1.5px solid var(--color-text); }
+  .k-blog__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(84px, 15vw, 230px) * var(--heading-scale));
+    letter-spacing: -0.05em;
+    line-height: 0.8;
+  }
+  .k-blog__kinetic { transform-origin: 0 100%; }
+  .k-blog__side { display: flex; flex-direction: column; gap: 24px; padding-bottom: 12px; }
+  .k-blog__intro { font-size: 20px; line-height: 1.45; }
+  .k-blog__intro em { font-family: var(--font-accent); font-style: var(--font-accent-style); font-size: 1.3em; }
+  .k-blog__search { display: flex; align-items: center; gap: 10px; padding-bottom: 6px; border-bottom: 1.5px solid var(--color-text); }
+  .k-blog__search input { flex: 1; min-width: 0; min-height: 48px; border: 0; background: transparent; color: inherit; font: 500 18px var(--font-body); }
+  .k-blog__search input::placeholder { color: var(--color-muted); }
+  .k-blog__tags { display: flex; flex-wrap: wrap; gap: 8px; padding: 24px 0 0; }
+  .k-blog__tags .k-chip.is-active { background: var(--color-text); color: var(--color-bg); border-color: var(--color-text); }
+  .k-blog__empty { padding: 60px 0; text-align: center; font-size: 18px; }
+
+  .k-blog__feat { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); margin-top: 32px; border-radius: var(--radius-card); overflow: hidden; background: var(--color-bg); color: var(--color-text); }
+  .k-blog__feat-img { min-height: 520px; }
+  .k-blog__feat-img img { transition: transform 1.4s var(--ease-out); }
+  .k-blog__feat:hover .k-blog__feat-img img { transform: scale(1.04); }
+  .k-blog__feat-text { display: flex; flex-direction: column; justify-content: space-between; gap: 28px; padding: clamp(28px, 4vw, 56px); }
+  .k-blog__feat-top, .k-blog__feat-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .k-blog__badge { padding: 6px 10px; border-radius: 999px; background: var(--color-accent); color: var(--color-bg); }
+  .k-blog__feat-title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: calc(clamp(38px, 4vw, 62px) * var(--heading-scale)); letter-spacing: -0.035em; line-height: 0.92; }
+  .k-blog__feat-excerpt { margin: 18px 0 0; font-size: 17px; line-height: 1.55; opacity: 0.85; }
+
+  .k-blog__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 24px; margin: 0; padding: 56px 0 0; list-style: none; }
+
+  a.k-pager__pg:hover { border-color: var(--color-text); }
+
+  @media (max-width: 1100px) { .k-blog__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 900px) {
+    .k-blog__mast, .k-blog__feat { grid-template-columns: 1fr; }
+    .k-blog__feat-img { min-height: 300px; }
+  }
+  @media (max-width: 640px) { .k-blog__grid { grid-template-columns: 1fr; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "tag": "div",
+  "class": "k-blog-section",
+  "settings": [
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p><em>Notes from the studio</em> — how we make things, how to wear them, and how to keep them going.</p>" },
+    { "type": "checkbox", "id": "show_search", "label": "Show search", "default": true },
+    { "type": "checkbox", "id": "show_tags", "label": "Show tag filter", "default": true },
+    { "type": "checkbox", "id": "feature_first", "label": "Feature the latest post", "default": true },
+    { "type": "checkbox", "id": "show_excerpt", "label": "Show excerpts", "default": true },
+    { "type": "range", "id": "per_page", "label": "Posts per page", "min": 4, "max": 24, "step": 1, "default": 7 },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "color_scheme", "id": "featured_color_scheme", "label": "Featured post color scheme", "default": "scheme-2" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "enabled_on": { "templates": ["blog"] }
+}
+{% endschema %}

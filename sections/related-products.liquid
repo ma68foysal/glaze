@@ -1,11 +1,17 @@
 {%- liquid
   assign limit = section.settings.limit
   assign heading = section.settings.heading | strip
+  # On the cart page there is no product, so recommendations follow the first line item.
+  assign source = product
+  if source == blank and cart.item_count > 0
+    assign source = cart.items.first.product
+  endif
+  assign in_cart = cart.items | map: 'product_id' | join: ','
 -%}
 
 <k-recommendations
   class="k-related color-{{ section.settings.color_scheme }}"
-  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ limit }}&intent={{ section.settings.intent }}"
+  {% if source %}data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ source.id }}&limit={{ limit }}&intent={{ section.settings.intent }}"{% endif %}
 >
   {%- liquid
     assign show = false
@@ -46,7 +52,17 @@
           {%- if use_fallback -%}
             {%- assign shown = 0 -%}
             {%- for rec in section.settings.fallback_collection.products -%}
-              {%- if rec.id == product.id or shown >= limit -%}{%- continue -%}{%- endif -%}
+              {%- liquid
+                assign rec_id = rec.id | append: ''
+                assign skip = false
+                if rec.id == source.id or shown >= limit
+                  assign skip = true
+                endif
+                if template.name == 'cart' and in_cart contains rec_id
+                  assign skip = true
+                endif
+              -%}
+              {%- if skip -%}{%- continue -%}{%- endif -%}
               {%- assign shown = shown | plus: 1 -%}
               <li class="k-reveal">{% render 'k-card', product: rec, quick_add: section.settings.quick_add %}</li>
             {%- endfor -%}
@@ -83,6 +99,7 @@
   if (!customElements.get('k-recommendations')) {
     customElements.define('k-recommendations', class extends HTMLElement {
       connectedCallback() {
+        if (!this.dataset.url) return;
         var load = () => {
           fetch(this.dataset.url)
             .then(function (r) { return r.text(); })
@@ -127,6 +144,6 @@
     { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
   ],
   "presets": [ { "name": "Related products" } ],
-  "enabled_on": { "templates": ["product"] }
+  "enabled_on": { "templates": ["product", "cart"] }
 }
 {% endschema %}

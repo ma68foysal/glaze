@@ -76,6 +76,8 @@ body {
 .pt-none { --pt: 0; } .pt-small { --pt: 0.4; } .pt-medium { --pt: 0.7; } .pt-large { --pt: 1; }
 .pb-none { --pb: 0; } .pb-small { --pb: 0.4; } .pb-medium { --pb: 0.7; } .pb-large { --pb: 1; }
 
+[hidden] { display: none !important; }
+
 .visually-hidden {
   position: absolute !important;
   width: 1px; height: 1px;
@@ -458,3 +460,35 @@ a.k-card__qa { display: flex; align-items: center; justify-content: center; text
   }
   .k-reveal { opacity: 1 !important; transform: none !important; }
 }
+
+/* ---------- Modal (k-modal) ---------- */
+.k-modal__panel { position: fixed; z-index: 50; }
+.k-modal__scrim { position: fixed; inset: 0; z-index: 49; border: 0; background: rgba(14, 14, 14, 0.45); cursor: pointer; animation: k-fade 0.35s both; }
+
+/* ---------- Shared: form fields, pager, journal card ---------- */
+.k-field__label { font-size: 14px; font-weight: 600; }
+.k-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.k-field--full { grid-column: 1 / -1; }
+.k-field input, .k-field textarea {
+  width: 100%; min-height: 56px; padding: 0 16px;
+  border: 1.5px solid rgba(var(--color-text-rgb), 0.2); border-radius: 14px;
+  background: var(--color-surface); color: var(--color-text); font: 500 16px var(--font-body);
+  transition: border-color var(--dur-fast);
+}
+.k-field textarea { min-height: 160px; padding: 14px 16px; resize: vertical; }
+.k-field input:hover, .k-field textarea:hover { border-color: var(--color-text); }
+.k-field [aria-invalid="true"] { border-color: #B42318; }
+.k-acard { display: flex; flex-direction: column; gap: 14px; }
+.k-acard__img { display: block; aspect-ratio: 4 / 3; border-radius: calc(var(--radius-card) * 0.7); }
+.k-acard__img img { transition: transform 1s var(--ease-out); }
+.k-acard:hover .k-acard__img img { transform: scale(1.05); }
+.k-acard__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.k-acard__tag { padding: 5px 10px; border-radius: 999px; background: var(--color-surface); }
+.k-acard__title { margin: 0; font-size: 26px; font-weight: 750; letter-spacing: -0.02em; line-height: 1.08; }
+.k-acard__title a { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat; transition: background-size 0.45s; }
+.k-acard:hover .k-acard__title a { background-size: 100% 1.5px; }
+.k-acard__excerpt { margin: 0; font-size: 16px; line-height: 1.5; }
+.k-pager { display: flex; justify-content: center; align-items: center; gap: 8px; padding-top: 72px; }
+.k-pager__pg { display: grid; place-items: center; min-width: 48px; min-height: 48px; padding: 0 12px; border: 1.5px solid var(--color-line); border-radius: 999px; font-weight: 600; font-size: 15px; }
+.k-pager__pg.is-current { background: var(--color-text); border-color: var(--color-text); color: var(--color-bg); }
+.k-pager__gap { border-color: transparent; }

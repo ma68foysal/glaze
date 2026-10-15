@@ -1,0 +1,21 @@
+{%- comment -%}
+  Low stock / in stock line for the product page. Accepts: block, variant
+{%- endcomment -%}
+{%- liquid
+  assign stock_qty = nil
+  if variant.inventory_management == 'shopify' and variant.inventory_policy == 'deny'
+    assign stock_qty = variant.inventory_quantity
+  endif
+  assign low = false
+  if stock_qty != nil and stock_qty > 0 and stock_qty <= block.settings.threshold
+    assign low = true
+  endif
+  assign show_stock = low
+  if block.settings.show_in_stock and variant.available
+    assign show_stock = true
+  endif
+-%}
+<p class="k-pdp__stock" data-stock data-threshold="{{ block.settings.threshold }}" data-label-low="{{ 'products.low_stock' | t }}" data-label-in="{{ 'products.in_stock' | t }}" data-show-in="{{ block.settings.show_in_stock }}" {{ block.shopify_attributes }}{% unless show_stock %} hidden{% endunless %}>
+  <i class="{% if low %}is-low{% endif %}" aria-hidden="true"></i>
+  <span data-stock-text>{% if low %}{{ 'products.low_stock' | t }}{% else %}{{ 'products.in_stock' | t }}{% endif %}</span>
+</p>
