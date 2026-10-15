@@ -81,6 +81,9 @@
           <span class="k-label k-muted">{{ 'sections.collection.product_count' | t: count: collection.products_count }}</span>
           {%- if section.settings.show_density -%}
             <div class="k-col__dens" role="group" aria-label="{{ 'sections.collection.density' | t }}">
+              <button type="button" data-density="1" aria-label="{{ 'sections.collection.columns' | t: count: 1 }}" aria-pressed="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1"/></svg>
+              </button>
               <button type="button" data-density="2" aria-label="{{ 'sections.collection.columns' | t: count: 2 }}" aria-pressed="false">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
               </button>
@@ -208,6 +211,7 @@
     cursor: pointer;
   }
   .k-col__dens button[aria-pressed="true"] { background: var(--color-text); color: var(--color-bg); }
+  .k-col__dens button[data-density="1"] { display: none; }
 
   .k-col__grid {
     display: grid;
@@ -246,7 +250,7 @@
     box-shadow: 0 30px 50px -30px rgba(14, 14, 14, 0.6);
   }
   .k-col__peek.is-on { opacity: 1; transform: translate(-50%, -60%) scale(1) rotate(-3deg); }
-  @media (max-width: 900px), (hover: none) { .k-col__peek { display: none; } }
+  @media (hover: none), (pointer: coarse) { .k-col__peek { display: none; } }
   .k-col__ed {
     grid-column: span 2;
     position: relative;
@@ -293,9 +297,15 @@
     .k-col__hero { grid-template-columns: 1fr; gap: 20px; }
     .k-col__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px var(--space-sm); }
     .k-col__ed { grid-column: 1 / -1; min-height: 420px; padding: 24px; }
-    .k-col__dens button:not([data-density="index"]):not([data-density="2"]) { display: none; }
-    .k-irow { grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 10px 0; }
+    .k-col__dens button[data-density="3"], .k-col__dens button[data-density="4"] { display: none; }
+    .k-col__dens button[data-density="1"] { display: grid; }
+    .k-col__grid[data-cols="1"] { grid-template-columns: minmax(0, 1fr); }
+    .k-irow { grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; }
     .k-irow__num, .k-irow__type { display: none; }
+  }
+  /* Touch screens can't hover, so each row shows its own thumbnail. */
+  @media (max-width: 900px) and (hover: none), (max-width: 900px) and (pointer: coarse) {
+    .k-irow { grid-template-columns: 64px minmax(0, 1fr) auto; padding: 10px 0; }
     .k-irow__thumb { display: block; aspect-ratio: 4 / 5; border-radius: 8px; }
     .k-irow:hover, .k-irow:focus-visible { padding-left: 0; }
   }
@@ -315,7 +325,12 @@
         var dens = sec.querySelectorAll('[data-density]');
         function applyCols(n) {
           if (!grid || !n) return;
+          var phone = window.matchMedia('(max-width: 900px)').matches;
+          // One column is a phone layout; on wider screens fall back to the default.
+          if (n === '1' && !phone) n = grid.dataset.default || '3';
+          if ((n === '3' || n === '4') && phone) n = '2';
           grid.classList.toggle('is-index', n === 'index');
+          grid.dataset.cols = n;
           if (n !== 'index') grid.style.setProperty('--cols', n);
           dens.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.density === String(n) ? 'true' : 'false'); });
         }
