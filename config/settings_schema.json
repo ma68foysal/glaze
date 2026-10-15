@@ -183,23 +183,23 @@
       {
         "type": "select",
         "id": "motion_level",
-        "label": "Motion",
+        "label": "Motion preset",
         "default": "full",
         "options": [
           {
             "value": "full",
-            "label": "Full"
+            "label": "Kinetic"
           },
           {
             "value": "subtle",
-            "label": "Subtle"
+            "label": "Editorial"
           },
           {
             "value": "off",
-            "label": "Off"
+            "label": "Still"
           }
         ],
-        "info": "Subtle keeps hover and scroll reveals but stops looping animation. Shoppers can always pause motion, and their reduced-motion preference is respected."
+        "info": "Sets every animation at once. Kinetic: long eased reveals, looping type and stretching headings. Editorial: short, quiet reveals and no loops. Still: no movement, hovers change colour only. Visitors who prefer reduced motion always get Still, and shoppers can pause motion."
       },
       {
         "type": "checkbox",
@@ -225,7 +225,7 @@
         "type": "checkbox",
         "id": "stretch_headings",
         "label": "Stretch headings while scrolling",
-        "info": "Only at the Full motion level.",
+        "info": "Only with the Kinetic motion preset.",
         "default": true
       },
       {
@@ -234,6 +234,22 @@
         "label": "Show a \"View\" cursor over photos",
         "info": "For mouse users only. Buttons and the product gallery keep their usual cursor.",
         "default": true
+      }
+    ]
+  },
+  {
+    "name": "Issue label",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "A running line that makes the store read like a magazine's current issue, for example Issue 04 · SS27."
+      },
+      {
+        "type": "text",
+        "id": "issue_label",
+        "label": "Issue label",
+        "default": "Issue 01",
+        "info": "Shown in the footer, on the password page and on the 404 page. Leave empty to hide it."
       }
     ]
   },

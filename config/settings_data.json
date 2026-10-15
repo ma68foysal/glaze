@@ -71,7 +71,8 @@
             "button_label": "#FFFFFF"
           }
         }
-      }
+      },
+      "issue_label": "Issue 04 · SS27"
     },
     "Club": {
       "type_heading_font": "archivo_n9",
@@ -141,7 +142,8 @@
       "page_transitions": true,
       "custom_cursor": true,
       "cart_add_feedback": "fly",
-      "show_back_to_top": true
+      "show_back_to_top": true,
+      "issue_label": "Drop 03 · No restock"
     },
     "Hush": {
       "type_heading_font": "cormorant_n4",
@@ -211,7 +213,8 @@
       "page_transitions": true,
       "custom_cursor": false,
       "cart_add_feedback": "drawer",
-      "show_back_to_top": true
+      "show_back_to_top": true,
+      "issue_label": "Roll 12 · Autumn"
     }
   }
 }

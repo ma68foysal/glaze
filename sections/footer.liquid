@@ -56,6 +56,7 @@
 
     <div class="k-footer__bottom">
       <p class="k-footer__copy">
+        {%- if settings.issue_label != blank -%}<span class="k-footer__issue k-label">{{ settings.issue_label }}</span>{%- endif -%}
         &copy; {{ 'now' | date: '%Y' }} {{ shop.name | link_to: routes.root_url }}.
         {%- if section.settings.show_powered %} {{ powered_by_link }}{% endif -%}
       </p>
@@ -113,6 +114,7 @@
   }
   .k-footer__giant span:hover { transform: scaleY(0.82) scaleX(0.86); color: var(--color-accent); }
   .k-footer__gap { width: 0.25em; }
+  .k-footer__issue { margin-right: 14px; }
   .k-footer__bottom {
     display: flex;
     flex-wrap: wrap;
