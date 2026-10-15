@@ -297,9 +297,14 @@
     .k-col__hero { grid-template-columns: 1fr; gap: 20px; }
     .k-col__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px var(--space-sm); }
     .k-col__ed { grid-column: 1 / -1; min-height: 420px; padding: 24px; }
-    .k-col__dens button[data-density="3"], .k-col__dens button[data-density="4"] { display: none; }
+    .k-col__dens button[data-density="4"] { display: none; }
     .k-col__dens button[data-density="1"] { display: grid; }
     .k-col__grid[data-cols="1"] { grid-template-columns: minmax(0, 1fr); }
+    .k-col__grid[data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px var(--space-sm); }
+  }
+  @media (max-width: 600px) {
+    .k-col__dens button[data-density="3"] { display: none; }
+    .k-col__grid[data-cols="3"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .k-irow { grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; }
     .k-irow__num, .k-irow__type { display: none; }
   }
@@ -328,7 +333,9 @@
           var phone = window.matchMedia('(max-width: 900px)').matches;
           // One column is a phone layout; on wider screens fall back to the default.
           if (n === '1' && !phone) n = grid.dataset.default || '3';
-          if ((n === '3' || n === '4') && phone) n = '2';
+          var small = window.matchMedia('(max-width: 600px)').matches;
+          if (n === '4' && phone) n = '3';
+          if (n === '3' && small) n = '2';
           grid.classList.toggle('is-index', n === 'index');
           grid.dataset.cols = n;
           if (n !== 'index') grid.style.setProperty('--cols', n);
