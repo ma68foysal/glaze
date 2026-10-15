@@ -1,4 +1,4 @@
-<section class="k-stack k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+<section data-stack-turn class="k-stack k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
   <div class="k-wrap">
     {%- if section.settings.heading != blank -%}
       <div class="k-sec-head k-reveal"><h2 class="k-h2">{{ section.settings.heading }}</h2></div>
@@ -26,6 +26,7 @@
 </section>
 
 {% stylesheet %}
+  .k-stack { overflow-x: clip; }
   .k-stack__list { margin: 0; padding: 0; list-style: none; }
   .k-stack__card {
     position: sticky;
@@ -36,6 +37,14 @@
     padding: 44px;
     border-radius: calc(var(--radius-card) * 1.15);
     box-shadow: 0 -20px 50px -30px rgba(14, 14, 14, 0.35);
+    /* Page turn: as the next card covers this one, it swings back from its left edge like a turned page. */
+    transform-origin: 0 50%;
+    transform: perspective(1800px) rotateY(calc(var(--turn, 0) * 14deg)) scale(calc(1 - var(--turn, 0) * 0.05));
+  }
+  .k-stack__card::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(90deg, rgba(14, 14, 14, 0.28), rgba(14, 14, 14, 0) 70%);
+    opacity: var(--turn, 0);
   }
   .k-stack__copy { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 24px; }
   .k-stack__title { font-size: calc(clamp(40px, 5vw, 80px) * var(--heading-scale)); line-height: 0.92; }
@@ -45,6 +54,37 @@
     .k-stack__card { grid-template-columns: 1fr; padding: 28px; min-height: 0; top: calc(var(--header-height) + 8px + var(--n, 0) * 16px); }
   }
 {% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var queued = false;
+    function update() {
+      queued = false;
+      var html = document.documentElement;
+      var off = still.matches || html.dataset.motion === 'off' || html.classList.contains('motion-paused');
+      document.querySelectorAll('[data-stack-turn]').forEach(function (sec) {
+        var cards = sec.querySelectorAll('.k-stack__card');
+        cards.forEach(function (card, i) {
+          var next = cards[i + 1];
+          if (!next || off) { card.style.removeProperty('--turn'); return; }
+          var a = card.getBoundingClientRect(), b = next.getBoundingClientRect();
+          var p = Math.max(0, Math.min(1, (a.bottom - b.top) / a.height));
+          card.style.setProperty('--turn', (html.dataset.motion === 'subtle' ? p * 0.4 : p).toFixed(3));
+        });
+      });
+    }
+    function onScroll() { if (!queued) { queued = true; requestAnimationFrame(update); } }
+    function init() {
+      if (!document.querySelector('[data-stack-turn]')) return;
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    document.addEventListener('shopify:section:load', init);
+  })();
+{% endjavascript %}
 
 {% schema %}
 {

@@ -28,7 +28,7 @@
             aria-label="{{ 'sections.lookbook.show_product' | t: title: p_title }}"
             {{ pin.shopify_attributes }}
             data-look-block="{{ forloop.index0 }}"
-          >{{ forloop.index | prepend: '0' | slice: -2, 2 }}</button>
+          ><b>{{ forloop.index | prepend: '0' | slice: -2, 2 }}</b><span class="k-look__call" aria-hidden="true"><i></i><span>{{ p_title }}{% if p != blank %} · {{ p.price | money }}{% endif %}</span></span></button>
         {%- endfor -%}
       </div>
 
@@ -103,13 +103,22 @@
     cursor: pointer;
     transition: transform var(--dur-fast), background-color var(--dur-fast), color var(--dur-fast);
   }
-  .k-look__pin::after {
-    content: ""; position: absolute; inset: -6px;
-    border: 1.5px solid #f2f1ec; border-radius: 999px;
-    animation: k-pulse 2.2s ease-out infinite;
+  /* Editorial callout: a numbered dot; the active one draws a hairline out to its label. */
+  .k-look__pin { display: grid; place-items: center; overflow: visible; }
+  .k-look__pin b { font: inherit; }
+  .k-look__pin:hover { transform: scale(1.08); }
+  .k-look__pin:hover { z-index: 4; }
+  .k-look__pin[aria-pressed="true"] { z-index: 3; background: var(--color-button); color: var(--color-button-label); box-shadow: 0 0 0 5px rgba(242, 241, 236, 0.9); }
+  .k-look__call { position: absolute; left: 100%; top: 50%; display: flex; align-items: center; transform: translateY(-50%); pointer-events: none; }
+  .k-look__call i { display: block; width: 0; height: 1.5px; background: #f2f1ec; transition: width 0.5s var(--ease-out); }
+  .k-look__call span {
+    max-width: 0; overflow: hidden; white-space: nowrap; padding: 0; background: #f2f1ec; color: #0e0e0e;
+    font: 600 13px var(--font-body); line-height: 34px; text-transform: none; letter-spacing: 0;
+    transition: max-width 0.5s var(--ease-out) 0.1s, padding 0.5s var(--ease-out) 0.1s;
   }
-  .k-look__pin:hover { transform: scale(1.1); }
-  .k-look__pin[aria-pressed="true"] { background: var(--color-button); color: var(--color-button-label); }
+  .k-look__pin[aria-pressed="true"] .k-look__call i, .k-look__pin:hover .k-look__call i { width: 46px; }
+  .k-look__pin[aria-pressed="true"] .k-look__call span, .k-look__pin:hover .k-look__call span { max-width: 240px; padding: 0 12px; }
+  .k-look__pin[style*="left: 6"] .k-look__call, .k-look__pin[style*="left: 7"] .k-look__call, .k-look__pin[style*="left: 8"] .k-look__call, .k-look__pin[style*="left: 9"] .k-look__call { left: auto; right: 100%; flex-direction: row-reverse; }
   .k-look__panel { display: flex; flex-direction: column; justify-content: space-between; gap: 28px; padding-top: 20px; border-top: 1.5px solid var(--color-text); }
   .k-look__list { margin: 0; padding: 0; list-style: none; }
   .k-look__row {

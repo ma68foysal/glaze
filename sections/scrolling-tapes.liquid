@@ -16,7 +16,7 @@
 
 {%- capture star -%}<span class="k-tapes__sep k-loop">{% render 'k-icon', icon: 'star', size: 34 %}</span>{%- endcapture -%}
 
-<section class="k-tapes k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }}{% if crossed %} k-tapes--crossed{% endif %}" aria-label="{{ section.settings.aria_label | escape }}">
+<section class="k-tapes k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }}{% if crossed %} k-tapes--crossed{% endif %}"{% if section.settings.scroll_react %} data-tapes-react{% endif %} aria-label="{{ section.settings.aria_label | escape }}">
   <div class="k-tapes__inner">
     {%- if crossed -%}
       <div class="k-tapes__tape k-tapes__tape--b k-marquee k-marquee--reverse color-{{ section.settings.color_scheme_b }}" style="--marquee-duration: {{ section.settings.speed }}s;">
@@ -60,9 +60,44 @@
   .k-tapes--crossed .k-tapes__tape--a { top: 22%; rotate: -2.6deg; }
   .k-tapes--crossed .k-tapes__tape--b { top: 46%; rotate: 2.2deg; }
   .k-tapes__tape--b span:not(.k-tapes__sep) { color: transparent; -webkit-text-stroke: 1.5px var(--color-text); }
+  .k-tapes__tape { transform: skewX(var(--lean, 0deg)); transition: transform 0.2s linear; }
   .k-tapes__sep { display: inline-flex; animation: k-spin 6s linear infinite; }
   .k-tapes__sep svg { width: 0.6em; height: 0.6em; }
 {% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    // Tapes speed up and lean with the scroll, then ease back to their cruising pace.
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var secs = [], v = 0, lastY = window.scrollY, lastT = performance.now(), running = false;
+    function collect() { secs = Array.from(document.querySelectorAll('[data-tapes-react]')); }
+    function frame(now) {
+      var dt = Math.max(16, now - lastT);
+      var dy = window.scrollY - lastY;
+      lastY = window.scrollY; lastT = now;
+      var target = Math.max(-1, Math.min(1, dy / dt / 3));
+      v += (target - v) * 0.12;
+      var html = document.documentElement;
+      var off = still.matches || html.dataset.motion !== 'full' || html.classList.contains('motion-paused');
+      secs.forEach(function (sec) {
+        var r = sec.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) return;
+        sec.querySelectorAll('.k-tapes__tape').forEach(function (tape, i) {
+          var dir = i % 2 ? -1 : 1;
+          tape.style.setProperty('--lean', off ? '0deg' : (v * 9 * dir).toFixed(2) + 'deg');
+          tape.querySelectorAll('.k-marquee__track').forEach(function (track) {
+            track.getAnimations().forEach(function (a) { a.playbackRate = off ? 1 : 1 + Math.abs(v) * 5; });
+          });
+        });
+      });
+      if (Math.abs(v) > 0.002 || Math.abs(dy) > 0) requestAnimationFrame(frame); else running = false;
+    }
+    function kick() { if (running || !secs.length) return; running = true; lastT = performance.now(); requestAnimationFrame(frame); }
+    function init() { collect(); if (secs.length) window.addEventListener('scroll', kick, { passive: true }); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    document.addEventListener('shopify:section:load', collect);
+  })();
+{% endjavascript %}
 
 {% schema %}
 {
@@ -73,6 +108,7 @@
   "settings": [
     { "type": "select", "id": "layout", "label": "Layout", "default": "crossed", "options": [ { "value": "crossed", "label": "Two crossed tapes" }, { "value": "single", "label": "One straight tape" } ], "info": "Crossed tapes need at least one item on the second tape." },
     { "type": "range", "id": "speed", "label": "Scroll duration", "min": 10, "max": 60, "step": 2, "unit": "s", "default": 26 },
+    { "type": "checkbox", "id": "scroll_react", "label": "Speed up with scrolling", "default": true, "info": "Tapes run faster and lean while the page scrolls. Only with the Kinetic motion preset." },
     { "type": "text", "id": "aria_label", "label": "Accessible name", "default": "Highlights", "info": "Read by screen readers. Not shown on the page." },
     { "type": "color_scheme", "id": "color_scheme_a", "label": "First tape", "default": "scheme-3" },
     { "type": "color_scheme", "id": "color_scheme_b", "label": "Second tape", "default": "scheme-2" },
