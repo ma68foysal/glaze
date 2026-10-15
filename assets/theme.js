@@ -669,6 +669,31 @@
     });
   })();
 
+  // Back to top: shown after scrolling past the first screen; the ring
+  // shows how far down the page the shopper is.
+  (function () {
+    var btn = document.querySelector('[data-back-to-top]');
+    if (!btn) return;
+    var ticking = false;
+    var update = function () {
+      ticking = false;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      var y = window.scrollY;
+      btn.style.setProperty('--progress', max > 0 ? Math.min(1, y / max).toFixed(3) : 0);
+      var show = y > window.innerHeight;
+      btn.classList.toggle('is-visible', show);
+      btn.tabIndex = show ? 0 : -1;
+    };
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+    btn.addEventListener('click', function () {
+      if (window.lenis) window.lenis.scrollTo(0);
+      else window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+      var skip = document.getElementById('main-content');
+      if (skip) skip.focus({ preventScroll: true });
+    });
+  })();
+
   // "/" opens the header search from anywhere outside a text field.
   document.addEventListener('keydown', function (e) {
     if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;

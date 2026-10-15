@@ -52,7 +52,8 @@
     "clear": "Clear",
     "popular_searches": "Popular searches",
     "search_keys": "↑ ↓ to move · Enter to open · Esc to close",
-    "search_no_results_hint": "Check the spelling, or try one of these instead."
+    "search_no_results_hint": "Check the spelling, or try one of these instead.",
+    "back_to_top": "Back to top"
   },
   "404": {
     "title": "404",
@@ -352,6 +353,13 @@
     },
     "details": {
       "pin": "Detail {{ number }}: {{ title }}"
+    },
+    "countdown": {
+      "label": "Time until the drop",
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "seconds": "Seconds"
     }
   },
   "blogs": {

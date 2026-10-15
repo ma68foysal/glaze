@@ -1,0 +1,43 @@
+{%- comment -%}
+  Desktop dropdown for a top-level menu link. Accepts: link, mega (a header
+  "Mega menu" block or blank), scheme (color scheme id).
+  With a mega block the panel spans the header and shows campaign tiles.
+{%- endcomment -%}
+{%- liquid
+  assign has_grandchildren = false
+  for child in link.links
+    if child.links.size > 0
+      assign has_grandchildren = true
+    endif
+  endfor
+-%}
+<div class="k-dropdown__panel{% if mega %} k-dropdown__panel--mega{% endif %} color-{{ scheme }}" {% if mega %}{{ mega.shopify_attributes }}{% endif %}>
+  <div class="{% if mega %}k-wrap k-mega{% endif %}">
+    <div class="k-mega__links">
+      {%- if has_grandchildren -%}
+        <div class="k-dropdown__cols">
+          {%- for child in link.links -%}
+            <div>
+              <a class="k-label k-dropdown__head" href="{{ child.url }}">{{ child.title }}</a>
+              <ul role="list">
+                {%- for grandchild in child.links -%}
+                  <li><a class="k-link-underline" href="{{ grandchild.url }}"{% if grandchild.current %} aria-current="page"{% endif %}>{{ grandchild.title }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <ul class="k-dropdown__list" role="list">
+          {%- for child in link.links -%}
+            <li><a class="k-link-underline" href="{{ child.url }}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      <a class="k-label k-dropdown__all" href="{{ link.url }}">{{ 'general.view_all' | t }} →</a>
+    </div>
+    {%- if mega -%}
+      <div class="k-mega__tiles">{%- render 'k-nav-tiles', block: mega, class: 'k-mega__tile' -%}</div>
+    {%- endif -%}
+  </div>
+</div>

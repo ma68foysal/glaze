@@ -1,0 +1,31 @@
+{%- comment -%}
+  Campaign tiles from a header "Mega menu" block. Accepts: block, class
+  A tile renders only with an image or a heading, and links only when it has a URL.
+{%- endcomment -%}
+{%- for i in (1..2) -%}
+  {%- liquid
+    assign image_key = 'image_' | append: i
+    assign heading_key = 'heading_' | append: i
+    assign label_key = 'label_' | append: i
+    assign link_key = 'link_' | append: i
+    assign image = block.settings[image_key]
+    assign heading = block.settings[heading_key]
+    assign label = block.settings[label_key]
+    assign url = block.settings[link_key]
+    assign tag = 'div'
+    if url != blank
+      assign tag = 'a'
+    endif
+  -%}
+  {%- if image != blank or heading != blank -%}
+    <{{ tag }} class="k-tile {{ class }}"{% if url != blank %} href="{{ url }}"{% endif %}>
+      <span class="k-tile__img k-media">
+        {%- render 'k-media', image: image, sizes: '(min-width: 1100px) 260px, 45vw', placeholder: 'lifestyle-1', alt: '' -%}
+      </span>
+      <span class="k-tile__text">
+        {%- if label != blank -%}<span class="k-label">{{ label }}</span>{%- endif -%}
+        {%- if heading != blank -%}<span class="k-tile__heading">{{ heading }}</span>{%- endif -%}
+      </span>
+    </{{ tag }}>
+  {%- endif -%}
+{%- endfor -%}

@@ -651,3 +651,22 @@ input:focus-visible + .k-col__pill, input:focus-visible + .k-col__swatch { outli
 @media (prefers-reduced-motion: reduce) {
   [data-stretch] .k-h2, [data-grain] :is(.k-media, .k-card__media)::after { animation: none !important; }
 }
+
+/* ---------- Fly to bag (settings.cart_add_feedback) ---------- */
+.k-fly { position: fixed; z-index: 70; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 10px; pointer-events: none; box-shadow: 0 20px 40px -20px rgba(14, 14, 14, 0.6); }
+.k-fly img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#cart-icon-bubble.is-bumped .k-bubble { animation: k-bag-bump 0.5s var(--ease-out); }
+@keyframes k-bag-bump { 40% { transform: scale(1.45); } }
+
+/* ---------- Back to top (settings.show_back_to_top) ---------- */
+.k-totop {
+  position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 25;
+  display: grid; place-items: center; width: 56px; height: 56px; padding: 0;
+  border: 0; border-radius: 999px; background: var(--color-text); color: var(--color-bg); cursor: pointer;
+  transform: translateY(120px); opacity: 0; transition: transform 0.45s var(--ease-out), opacity 0.3s;
+}
+.k-totop.is-visible { transform: none; opacity: 1; }
+.k-totop .k-icon { transform: rotate(-45deg); }
+.k-totop__ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.k-totop__ring circle { fill: none; stroke: var(--color-accent); stroke-width: 3; stroke-dasharray: 164; stroke-dashoffset: calc(164 - 164 * var(--progress, 0)); }
+body:has(.k-pdp__bar.is-visible) .k-totop { bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }

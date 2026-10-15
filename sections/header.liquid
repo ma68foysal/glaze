@@ -30,6 +30,10 @@
                       {{ link.title }}
                       {% render 'k-icon', icon: 'plus', size: 22 %}
                     </summary>
+                    {%- for block in section.blocks -%}
+                      {%- assign key = block.settings.menu_item | handleize -%}
+                      {%- if key == link.handle -%}<div class="k-mmenu__tiles">{%- render 'k-nav-tiles', block: block, class: 'k-mmenu__tile' -%}</div>{%- endif -%}
+                    {%- endfor -%}
                     <ul class="k-mmenu__sub" role="list">
                       <li><a href="{{ link.url }}" class="k-label">{{ 'general.view_all' | t }} — {{ link.title }}</a></li>
                       {%- for child in link.links -%}
@@ -50,40 +54,23 @@
       <nav class="k-header__nav" aria-label="{{ 'general.menu' | t }}">
         <ul class="k-header__list" role="list">
           {%- for link in menu.links -%}
-            <li>
+            {%- liquid
+              assign mega = nil
+              for block in section.blocks
+                assign key = block.settings.menu_item | handleize
+                if key == link.handle
+                  assign mega = block
+                endif
+              endfor
+            -%}
+            <li{% if mega and link.links.size > 0 %} class="k-header__mega-item"{% endif %}>
               {%- if link.links.size > 0 -%}
-                <details class="k-dropdown">
+                <details class="k-dropdown{% if mega %} k-dropdown--mega{% endif %}">
                   <summary class="k-header__link">
                     <span>{{ link.title }}</span>
                     {% render 'k-icon', icon: 'chevron', size: 14 %}
                   </summary>
-                  <div class="k-dropdown__panel color-{{ section.settings.color_scheme }}">
-                    {%- assign has_grandchildren = false -%}
-                    {%- for child in link.links -%}
-                      {%- if child.links.size > 0 -%}{%- assign has_grandchildren = true -%}{%- endif -%}
-                    {%- endfor -%}
-                    {%- if has_grandchildren -%}
-                      <div class="k-dropdown__cols">
-                        {%- for child in link.links -%}
-                          <div>
-                            <a class="k-label k-dropdown__head" href="{{ child.url }}">{{ child.title }}</a>
-                            <ul role="list">
-                              {%- for grandchild in child.links -%}
-                                <li><a class="k-link-underline" href="{{ grandchild.url }}"{% if grandchild.current %} aria-current="page"{% endif %}>{{ grandchild.title }}</a></li>
-                              {%- endfor -%}
-                            </ul>
-                          </div>
-                        {%- endfor -%}
-                      </div>
-                    {%- else -%}
-                      <ul class="k-dropdown__list" role="list">
-                        {%- for child in link.links -%}
-                          <li><a class="k-link-underline" href="{{ child.url }}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title }}</a></li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-                    <a class="k-label k-dropdown__all" href="{{ link.url }}">{{ 'general.view_all' | t }} →</a>
-                  </div>
+                  {%- render 'k-nav-panel', link: link, mega: mega, scheme: section.settings.color_scheme -%}
                 </details>
               {%- else -%}
                 <a class="k-header__link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}><span>{{ link.title }}</span></a>
@@ -257,6 +244,26 @@
     box-shadow: 0 30px 60px -30px rgba(var(--color-text-rgb), 0.35);
     animation: k-rise-in 0.4s var(--ease-out) both;
   }
+  .k-header__mega-item, .k-dropdown--mega { position: static; }
+  .k-dropdown__panel--mega {
+    left: 0; right: 0; top: 100%; min-width: 0; padding: 32px 0 36px;
+    border-width: 1px 0 0; border-radius: 0 0 28px 28px;
+    box-shadow: 0 40px 80px -40px rgba(14, 14, 14, 0.45);
+  }
+  .k-mega { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 48px; align-items: start; }
+  .k-mega__tiles { display: grid; grid-template-columns: repeat(2, 240px); gap: 16px; }
+  .k-mega__tiles:empty { display: none; }
+  .k-tile { position: relative; display: block; overflow: hidden; border-radius: calc(var(--radius-card) * 0.6); color: #fff; }
+  .k-tile__img { display: block; aspect-ratio: 4 / 5; }
+  .k-tile__img img { transition: transform 1s var(--ease-out); }
+  a.k-tile:hover .k-tile__img img { transform: scale(1.05); }
+  .k-tile__img::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(14, 14, 14, 0.6), transparent 55%); }
+  .k-tile__text { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 2; display: flex; flex-direction: column; gap: 6px; }
+  .k-tile__heading { font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: 22px; line-height: 1; letter-spacing: -0.02em; }
+  .k-tile__heading em { font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; }
+  .k-mmenu__tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 6px 0 14px; }
+  .k-mmenu__tiles:empty { display: none; }
+  .k-mmenu__tile .k-tile__heading { font-size: 18px; }
   .k-dropdown__cols { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(160px, 1fr); gap: 32px; }
   .k-dropdown__panel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
   .k-dropdown__panel ul a { display: inline-block; padding: 6px 0; font-size: 15px; }
@@ -390,6 +397,25 @@
     { "type": "header", "content": "Colors" },
     { "type": "color_scheme", "id": "color_scheme", "label": "Header", "default": "scheme-1" },
     { "type": "color_scheme", "id": "menu_color_scheme", "label": "Mobile menu", "default": "scheme-2" }
+  ],
+  "blocks": [
+    {
+      "type": "mega",
+      "name": "Mega menu",
+      "settings": [
+        { "type": "text", "id": "menu_item", "label": "Menu item", "info": "The title of a top-level menu item with a dropdown, for example Women. Its dropdown opens full width with these tiles." },
+        { "type": "header", "content": "First tile" },
+        { "type": "image_picker", "id": "image_1", "label": "Image" },
+        { "type": "text", "id": "label_1", "label": "Label", "default": "New season" },
+        { "type": "inline_richtext", "id": "heading_1", "label": "Heading", "default": "The rain <em>edit</em>" },
+        { "type": "url", "id": "link_1", "label": "Link" },
+        { "type": "header", "content": "Second tile" },
+        { "type": "image_picker", "id": "image_2", "label": "Image" },
+        { "type": "text", "id": "label_2", "label": "Label" },
+        { "type": "inline_richtext", "id": "heading_2", "label": "Heading" },
+        { "type": "url", "id": "link_2", "label": "Link" }
+      ]
+    }
   ],
   "enabled_on": { "groups": ["header"] }
 }

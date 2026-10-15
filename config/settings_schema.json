@@ -167,6 +167,13 @@
         "step": 2,
         "unit": "px",
         "default": 24
+      },
+      {
+        "type": "checkbox",
+        "id": "show_back_to_top",
+        "label": "Show back-to-top button",
+        "info": "Appears after scrolling, with a ring that fills as the page scrolls.",
+        "default": true
       }
     ]
   },
@@ -308,6 +315,23 @@
         ],
         "default": "page",
         "info": "t:labels.cart_type_info"
+      },
+      {
+        "type": "select",
+        "id": "cart_add_feedback",
+        "label": "After adding to cart",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Open the cart drawer"
+          },
+          {
+            "value": "fly",
+            "label": "Fly the photo to the bag"
+          }
+        ],
+        "default": "drawer",
+        "info": "Applies when the cart type is Drawer."
       },
       {
         "type": "checkbox",

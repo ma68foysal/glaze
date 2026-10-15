@@ -1,0 +1,173 @@
+{%- liquid
+  assign form_id = 'drop-' | append: section.id
+  assign date = section.settings.end_date | strip
+  assign time = section.settings.end_time | strip | default: '10:00'
+  assign tz = 'now' | date: '%z'
+  assign tz_h = tz | slice: 0, 3
+  assign tz_m = tz | slice: 3, 2
+  assign end_iso = date | append: 'T' | append: time | append: ':00' | append: tz_h | append: ':' | append: tz_m
+  assign ended = false
+  if date != blank
+    assign end_ts = end_iso | date: '%s' | plus: 0
+    assign now_ts = 'now' | date: '%s' | plus: 0
+    if end_ts > 0 and now_ts >= end_ts
+      assign ended = true
+    endif
+  endif
+  assign hide = false
+  if ended and section.settings.after_end == 'hide' and request.design_mode == false
+    assign hide = true
+  endif
+-%}
+{%- unless hide -%}
+<k-countdown class="k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} k-drop-wrap" data-end="{{ end_iso | escape }}" data-after="{{ section.settings.after_end }}"{% if ended %} data-ended{% endif %}>
+  <div class="k-wrap">
+    <div class="k-drop color-{{ section.settings.color_scheme }}{% if section.settings.image != blank %} k-drop--image{% endif %}">
+      <div class="k-drop__body">
+        <div class="k-drop__top">
+          {%- if section.settings.label != blank -%}<span class="k-label k-drop__muted">{{ section.settings.label }}</span>{%- endif -%}
+          {%- if date != blank -%}<span class="k-label k-drop__muted">{{ end_iso | date: format: 'abbreviated_date' }} · {{ time }}</span>{%- endif -%}
+        </div>
+        <h2 class="k-drop__title" data-drop-live-hide{% if ended %} hidden{% endif %}>{{ section.settings.heading }}</h2>
+        <h2 class="k-drop__title" data-drop-live{% unless ended %} hidden{% endunless %}>{{ section.settings.live_heading }}</h2>
+
+        <div class="k-drop__digits" role="timer" aria-label="{{ 'sections.countdown.label' | t }}" data-drop-live-hide{% if ended or date == blank %} hidden{% endif %}>
+          {%- assign units = 'days,hours,minutes,seconds' | split: ',' -%}
+          {%- for unit in units -%}
+            {%- assign unit_key = 'sections.countdown.' | append: unit -%}
+            <div><b data-unit="{{ unit }}">00</b><span class="k-label k-drop__muted">{{ unit_key | t }}</span></div>
+          {%- endfor -%}
+        </div>
+
+        {%- if section.settings.live_label != blank and section.settings.live_link != blank -%}
+          <div data-drop-live{% unless ended %} hidden{% endunless %}>
+            <a class="k-btn k-btn--primary" href="{{ section.settings.live_link }}"><span>{{ section.settings.live_label }}</span>{% render 'k-icon', icon: 'arrow', size: 18 %}</a>
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.show_signup -%}
+          <div data-drop-live-hide{% if ended %} hidden{% endif %}>
+            {%- form 'customer', id: form_id, class: 'k-drop__form' -%}
+              <input type="hidden" name="contact[tags]" value="newsletter,{{ section.settings.tag | default: 'drop' | handleize }}">
+              {%- if form.posted_successfully? -%}
+                <p class="k-drop__ok" role="status" tabindex="-1" data-focus-on-load>{{ section.settings.success_text }}</p>
+              {%- else -%}
+                <label class="visually-hidden" for="{{ form_id }}-email">{{ 'general.newsletter_form.email_label' | t }}</label>
+                <input type="email" id="{{ form_id }}-email" name="contact[email]" required autocomplete="email" spellcheck="false" autocapitalize="off" placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"{% if form.errors %} aria-invalid="true" aria-describedby="{{ form_id }}-error"{% endif %}>
+                <button type="submit" class="k-btn k-drop__btn"><span>{{ section.settings.button_label }}</span></button>
+                {%- if form.errors -%}<p class="k-drop__err" id="{{ form_id }}-error" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>{%- endif -%}
+              {%- endif -%}
+            {%- endform -%}
+          </div>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.image != blank -%}
+        <div class="k-drop__img k-media">
+          {%- render 'k-media', image: section.settings.image, sizes: '(min-width: 900px) 40vw, 100vw' -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</k-countdown>
+{%- endunless -%}
+
+{% javascript %}
+  if (!customElements.get('k-countdown')) {
+    customElements.define('k-countdown', class extends HTMLElement {
+      connectedCallback() {
+        var focus = this.querySelector('[data-focus-on-load]');
+        if (focus) focus.focus();
+        this.end = Date.parse(this.dataset.end);
+        if (isNaN(this.end) || this.hasAttribute('data-ended')) return;
+        this.units = {};
+        this.querySelectorAll('[data-unit]').forEach((el) => { this.units[el.dataset.unit] = el; });
+        this.tick();
+        this.timer = setInterval(() => this.tick(), 1000);
+      }
+      disconnectedCallback() { clearInterval(this.timer); }
+      tick() {
+        var s = Math.max(0, Math.floor((this.end - Date.now()) / 1000));
+        var v = { days: Math.floor(s / 86400), hours: Math.floor(s % 86400 / 3600), minutes: Math.floor(s % 3600 / 60), seconds: s % 60 };
+        Object.keys(v).forEach((k) => {
+          var el = this.units[k];
+          if (!el) return;
+          var t = (v[k] < 10 ? '0' : '') + v[k];
+          if (el.textContent === t) return;
+          el.textContent = t;
+          el.classList.remove('is-tick'); void el.offsetWidth; el.classList.add('is-tick');
+        });
+        if (s === 0) this.finish();
+      }
+      finish() {
+        clearInterval(this.timer);
+        if (this.dataset.after === 'hide' && !window.Shopify?.designMode) { this.hidden = true; return; }
+        this.querySelectorAll('[data-drop-live-hide]').forEach(function (el) { el.hidden = true; });
+        this.querySelectorAll('[data-drop-live]').forEach(function (el) { el.hidden = false; });
+      }
+    });
+  }
+{% endjavascript %}
+
+{% stylesheet %}
+  .k-drop { display: grid; grid-template-columns: minmax(0, 1fr); overflow: hidden; border-radius: var(--radius-card); background: var(--color-bg); color: var(--color-text); }
+  .k-drop--image { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+  .k-drop__body { display: flex; flex-direction: column; gap: 24px; padding: clamp(24px, 4vw, 56px); }
+  .k-drop__top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .k-drop__muted { opacity: 0.7; }
+  .k-drop__title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: calc(clamp(34px, 4.6vw, 64px) * var(--heading-scale)); letter-spacing: -0.035em; line-height: 0.92; }
+  .k-drop__title em { font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; }
+  .k-drop__digits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .k-drop__digits div { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1.5px solid var(--color-line); }
+  .k-drop__digits b {
+    display: block; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(44px, 6.4vw, 96px) * var(--heading-scale)); line-height: 0.9; letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums; transform-origin: 0 100%;
+  }
+  .k-drop__digits b.is-tick { animation: k-drop-tick 0.45s var(--ease-out); }
+  @keyframes k-drop-tick { from { transform: scaleX(1.18); opacity: 0.6; } }
+  .k-drop__form { display: flex; flex-wrap: wrap; gap: 8px; }
+  .k-drop__form input[type="email"] {
+    flex: 1 1 240px; min-width: 0; min-height: 52px; padding: 0 18px;
+    border: 1px solid var(--color-line); border-radius: 999px; background: transparent; color: inherit; font: 500 15px var(--font-body);
+  }
+  .k-drop__form input::placeholder { color: inherit; opacity: 0.6; }
+  .k-drop__btn { --btn-bg: var(--color-text); --btn-fg: var(--color-bg); --btn-border: var(--color-text); }
+  .k-drop__ok, .k-drop__err { margin: 0; flex-basis: 100%; font-size: 15px; }
+  .k-drop__img { min-height: 360px; }
+  @media (max-width: 900px) {
+    .k-drop--image { grid-template-columns: 1fr; }
+    .k-drop__img { min-height: 260px; order: -1; }
+    .k-drop__digits { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .k-drop__digits b.is-tick { animation: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Next drop",
+  "tag": "section",
+  "class": "k-drop-section",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Drop 05 · Outerwear" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "The rain <em>edit</em> lands in" },
+    { "type": "text", "id": "end_date", "label": "Drop date", "info": "Format YYYY-MM-DD, for example 2026-11-20. Uses your store's time zone." },
+    { "type": "text", "id": "end_time", "label": "Drop time", "default": "10:00", "info": "24-hour format, for example 18:30." },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "header", "content": "Sign-up" },
+    { "type": "checkbox", "id": "show_signup", "label": "Show email sign-up", "default": true, "info": "Adds the shopper to your customers with email marketing consent." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Notify me" },
+    { "type": "text", "id": "tag", "label": "Customer tag", "default": "drop", "info": "Added to the customer so you can email this list." },
+    { "type": "text", "id": "success_text", "label": "Confirmation", "default": "You're on the list. We'll email you when it drops." },
+    { "type": "header", "content": "When the countdown ends" },
+    { "type": "select", "id": "after_end", "label": "Show", "default": "link", "options": [ { "value": "link", "label": "A link to the drop" }, { "value": "hide", "label": "Nothing (hide the section)" } ] },
+    { "type": "inline_richtext", "id": "live_heading", "label": "Heading", "default": "The rain edit is <em>live</em>" },
+    { "type": "text", "id": "live_label", "label": "Button label", "default": "Shop the drop" },
+    { "type": "url", "id": "live_link", "label": "Button link" },
+    { "type": "header", "content": "Style" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Card color scheme", "default": "scheme-2" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "presets": [ { "name": "Next drop" } ]
+}
+{% endschema %}

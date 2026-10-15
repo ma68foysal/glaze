@@ -1,0 +1,144 @@
+{%- liquid
+  assign form_id = 'k-popup-form-' | append: section.id
+  assign skip = false
+  if template.name == 'cart' or template.name == 'password' or template.name == 'gift_card'
+    assign skip = true
+  endif
+-%}
+{%- unless skip -%}
+<k-popup data-delay="{{ section.settings.delay }}" data-days="{{ section.settings.days }}" data-form-id="{{ form_id }}" data-section-id="{{ section.id }}"{% if template.name == 'product' %} data-product{% endif %}>
+  <dialog class="k-popup color-{{ section.settings.color_scheme }}" aria-labelledby="{{ section.id }}-title">
+    <div class="k-popup__card{% if section.settings.image == blank %} k-popup__card--text{% endif %}">
+      {%- if section.settings.image != blank -%}
+        <div class="k-popup__img k-media">
+          {%- render 'k-media', image: section.settings.image, sizes: '(min-width: 760px) 360px, 100vw', alt: '' -%}
+        </div>
+      {%- endif -%}
+      <div class="k-popup__body">
+        <button type="button" class="k-icon-btn k-popup__close" data-popup-close aria-label="{{ 'general.close' | t }}">{% render 'k-icon', icon: 'close', size: 22 %}</button>
+        {%- if section.settings.label != blank -%}<p class="k-label k-muted">{{ section.settings.label }}</p>{%- endif -%}
+        <h2 class="k-popup__title" id="{{ section.id }}-title">{{ section.settings.heading }}</h2>
+        {%- if section.settings.text != blank -%}<div class="k-rte k-muted k-popup__text">{{ section.settings.text }}</div>{%- endif -%}
+        {%- form 'customer', id: form_id, class: 'k-popup__form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter,popup">
+          {%- if form.posted_successfully? -%}
+            <p class="k-popup__ok" role="status" data-popup-success>{{ 'general.newsletter_form.confirmation' | t }}</p>
+          {%- else -%}
+            <label class="visually-hidden" for="{{ form_id }}-email">{{ 'general.newsletter_form.email_label' | t }}</label>
+            <input type="email" id="{{ form_id }}-email" name="contact[email]" required autocomplete="email" spellcheck="false" autocapitalize="off" placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"{% if form.errors %} aria-invalid="true" aria-describedby="{{ form_id }}-error"{% endif %}>
+            <button type="submit" class="k-btn k-btn--primary"><span>{{ 'general.newsletter_form.subscribe' | t }}</span></button>
+            {%- if form.errors -%}<p class="k-popup__err" id="{{ form_id }}-error" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>{%- endif -%}
+          {%- endif -%}
+        {%- endform -%}
+        <button type="button" class="k-popup__no" data-popup-close>{{ section.settings.dismiss_label }}</button>
+      </div>
+    </div>
+  </dialog>
+</k-popup>
+{%- endunless -%}
+
+{% javascript %}
+  if (!customElements.get('k-popup')) {
+    customElements.define('k-popup', class extends HTMLElement {
+      connectedCallback() {
+        this.dialog = this.querySelector('dialog');
+        if (!this.dialog || typeof this.dialog.showModal !== 'function') return;
+        this.key = 'oblique:popup:' + this.dataset.sectionId;
+        this.querySelectorAll('[data-popup-close]').forEach((b) => b.addEventListener('click', () => this.close()));
+        // A click on the backdrop (outside the card) closes it too.
+        this.dialog.addEventListener('click', (e) => { if (e.target === this.dialog) this.close(); });
+        this.dialog.addEventListener('cancel', () => this.remember());
+
+        // Back from a sign-up: show the confirmation in the popup that sent it.
+        var posted = location.hash === '#' + this.dataset.formId || /[?&]customer_posted=true/.test(location.search);
+        if (posted && this.querySelector('[data-popup-success], [aria-invalid]')) {
+          if (this.querySelector('[data-popup-success]')) this.remember(3650);
+          this.open();
+          return;
+        }
+        if (window.Shopify && window.Shopify.designMode) {
+          document.addEventListener('shopify:section:select', (e) => { if (e.detail.sectionId === this.dataset.sectionId) this.open(); });
+          document.addEventListener('shopify:section:deselect', (e) => { if (e.detail.sectionId === this.dataset.sectionId) this.close(); });
+          return;
+        }
+        if (this.seen()) return;
+        // Not over a product page on phones, where it would cover the buy button.
+        if (this.hasAttribute('data-product') && window.matchMedia('(max-width: 900px)').matches) return;
+        setTimeout(() => this.open(), (parseInt(this.dataset.delay, 10) || 8) * 1000);
+      }
+      seen() {
+        try { var until = parseInt(localStorage.getItem(this.key), 10); return until && Date.now() < until; } catch (e) { return false; }
+      }
+      remember(days) {
+        var d = days || parseInt(this.dataset.days, 10) || 14;
+        try { localStorage.setItem(this.key, String(Date.now() + d * 86400000)); } catch (e) {}
+      }
+      open() {
+        if (this.dialog.open || document.querySelector('dialog[open]')) return;
+        this.dialog.showModal();
+      }
+      close() {
+        this.remember();
+        if (this.dialog.open) this.dialog.close();
+      }
+    });
+  }
+{% endjavascript %}
+
+{% stylesheet %}
+  .k-popup {
+    width: min(760px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 0; margin: auto;
+    border: 0; border-radius: var(--radius-card); overflow: auto; background: var(--color-bg); color: var(--color-text);
+    box-shadow: 0 40px 80px -40px rgba(14, 14, 14, 0.6);
+  }
+  .k-popup::backdrop { background: rgba(14, 14, 14, 0.5); }
+  .k-popup[open] { animation: k-popup-in 0.5s var(--ease-out) both; }
+  .k-popup[open]::backdrop { animation: k-fade 0.3s both; }
+  @keyframes k-popup-in { from { opacity: 0; transform: translateY(24px); } }
+  .k-popup__card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .k-popup__card--text { grid-template-columns: 1fr; }
+  .k-popup__img { min-height: 360px; }
+  .k-popup__body { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: clamp(24px, 4vw, 40px); }
+  .k-popup__body > p { margin: 0; }
+  .k-popup__close { position: absolute; right: 12px; top: 12px; }
+  .k-popup__title {
+    margin: 0; padding-right: 36px; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(36px, 4vw, 48px) * var(--heading-scale)); letter-spacing: -0.04em; line-height: 0.9;
+  }
+  .k-popup__title em { font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; }
+  .k-popup__text { font-size: 15px; }
+  .k-popup__form { display: flex; flex-direction: column; gap: 10px; }
+  .k-popup__form input[type="email"] {
+    min-height: 52px; padding: 0 18px; border: 1.5px solid rgba(var(--color-text-rgb), 0.25); border-radius: 999px;
+    background: var(--color-surface); color: inherit; font: 500 15px var(--font-body);
+  }
+  .k-popup__ok, .k-popup__err { margin: 0; font-size: 15px; }
+  .k-popup__err { color: #B42318; }
+  .k-popup__no { align-self: flex-start; min-height: 44px; padding: 0; border: 0; background: none; color: var(--color-muted); font: 500 14px var(--font-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  @media (max-width: 760px) {
+    .k-popup__card { grid-template-columns: 1fr; }
+    .k-popup__img { min-height: 200px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .k-popup[open], .k-popup[open]::backdrop { animation: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Newsletter popup",
+  "tag": "div",
+  "class": "k-popup-section",
+  "settings": [
+    { "type": "paragraph", "content": "Opens once per visitor after the delay. Never shown on the cart or over product pages on phones. Select the section to preview it." },
+    { "type": "range", "id": "delay", "label": "Delay", "min": 2, "max": 30, "step": 1, "unit": "s", "default": 8 },
+    { "type": "range", "id": "days", "label": "Show again after", "min": 1, "max": 60, "step": 1, "unit": "d", "default": 14 },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "label", "label": "Label", "default": "Newsletter" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Stay in <em>motion</em>" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>New drops and repair days, twice a month.</p>" },
+    { "type": "text", "id": "dismiss_label", "label": "Dismiss link", "default": "No thanks" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "presets": [ { "name": "Newsletter popup" } ],
+  "enabled_on": { "groups": ["footer"] }
+}
+{% endschema %}
