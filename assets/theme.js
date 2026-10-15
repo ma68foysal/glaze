@@ -1131,14 +1131,21 @@ if (!customElements.get('k-fit')) {
         usual.appendChild(label);
       });
       this.range.addEventListener('input', () => { this.finder.querySelector('[data-fit-h-out]').textContent = this.range.value; });
-      this.openBtn.addEventListener('click', () => this.toggle(this.finder.hidden));
+      this.openBtn.addEventListener('click', () => this.toggle(true));
+      this.finder.querySelector('[data-fit-x]').addEventListener('click', () => this.toggle(false));
+      this.finder.addEventListener('click', (e) => { if (e.target === this.finder) this.toggle(false); });
       this.next.addEventListener('click', () => { if (this.step < 4) this.go(this.step + 1); else this.use(); });
       this.back.addEventListener('click', () => { if (this.step > 1 && this.step < 4) this.go(this.step - 1); else this.toggle(false); });
     }
     toggle(open) {
-      this.finder.hidden = !open;
-      this.openBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      if (open) { this.go(1); this.range.focus(); } else this.openBtn.focus();
+      if (open) {
+        this.go(1);
+        if (typeof this.finder.showModal === 'function') this.finder.showModal(); else this.finder.setAttribute('open', '');
+        this.range.focus();
+      } else {
+        if (typeof this.finder.close === 'function' && this.finder.open) this.finder.close(); else this.finder.removeAttribute('open');
+        this.openBtn.focus();
+      }
     }
     go(n) {
       this.step = n;

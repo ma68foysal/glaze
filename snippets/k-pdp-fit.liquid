@@ -42,8 +42,12 @@
   {%- endif -%}
 
   {%- if block.settings.show_finder and size_position > 0 and chart.size > 1 -%}
-    <button type="button" class="k-fit__open" data-fit-open aria-expanded="false" aria-controls="{{ uid }}">{{ 'products.fit.find' | t }}</button>
-    <div class="k-fit__finder" id="{{ uid }}" data-fit-finder hidden>
+    <button type="button" class="k-fit__open" data-fit-open aria-haspopup="dialog" aria-controls="{{ uid }}">{{ 'products.fit.find' | t }}</button>
+    <dialog class="k-fit__finder" id="{{ uid }}" data-fit-finder aria-labelledby="{{ uid }}-title">
+      <div class="k-fit__dhead">
+        <p class="k-fit__dtitle" id="{{ uid }}-title">{{ 'products.fit.find' | t }} · <span>{{ product.title | escape }}</span></p>
+        <button type="button" class="k-fit__x" data-fit-x aria-label="{{ 'general.close' | t }}">{% render 'k-icon', icon: 'close', size: 18 %}</button>
+      </div>
       <script type="application/json" data-fit-chart>
         [
           {%- for row in chart -%}
@@ -90,7 +94,7 @@
       <span hidden data-fit-label-back>{{ 'products.fit.back' | t }}</span>
       <span hidden data-fit-label-close>{{ 'general.close' | t }}</span>
       <span hidden data-fit-label-for-you>{{ 'products.fit.for_you' | t }}</span>
-    </div>
+    </dialog>
   {%- endif -%}
 </k-fit>
 
@@ -103,8 +107,19 @@
   .k-fit__ends { display: flex; justify-content: space-between; gap: 8px; }
   .k-fit__model { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 15px; }
   .k-fit__open { justify-self: start; min-height: 32px; padding: 0; border: 0; background: none; color: inherit; font: 600 14px var(--font-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-  .k-fit__finder { display: grid; gap: 16px; padding: 18px; border: 1.5px solid var(--color-text); animation: k-rise-in 0.45s var(--ease-out) both; }
-  .k-fit__finder[hidden] { display: none; }
+  .k-fit__finder {
+    width: min(480px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 22px;
+    border: 1.5px solid var(--color-text); background: var(--color-bg); color: var(--color-text);
+    box-shadow: 14px 14px 0 var(--color-text);
+  }
+  .k-fit__finder[open] { display: grid; gap: 18px; animation: k-rise-in 0.45s var(--ease-out) both; }
+  .k-fit__finder::backdrop { background: rgba(14, 14, 14, 0.55); }
+  .k-fit__dhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .k-fit__dtitle { margin: 0; font-weight: 700; font-size: 15px; }
+  .k-fit__dtitle span { font-weight: 400; color: var(--color-muted); }
+  .k-fit__x { flex: none; display: inline-grid; place-items: center; width: var(--touch); height: var(--touch); border: 1px solid var(--color-line); border-radius: 999px; background: transparent; color: inherit; cursor: pointer; transition: background-color 0.3s, color 0.3s, transform 0.4s var(--ease-out); }
+  .k-fit__x:hover { background: var(--color-text); color: var(--color-bg); transform: rotate(90deg); }
+  @media (prefers-reduced-motion: reduce) { .k-fit__finder[open] { animation: none; } }
   .k-fit__steps { display: flex; gap: 6px; }
   .k-fit__steps span { flex: 1; height: 3px; background: var(--color-line); transition: background-color 0.3s; }
   .k-fit__steps span.is-on { background: var(--color-text); }

@@ -1,0 +1,252 @@
+{%- comment -%}
+  Complete the look: the campaign photo is the shopping list. Numbered
+  callouts on the photo and rows in the list highlight each other. Shoppers
+  untick what they have, pick sizes, and "Add the look" sends every ticked
+  piece in one /cart/add.js request.
+{%- endcomment -%}
+{%- liquid
+  assign pieces = section.blocks | where: 'type', 'piece'
+  assign sid = 'look-' | append: section.id
+-%}
+<section id="{{ sid }}" class="k-ctl k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <k-complete-look class="k-wrap k-ctl__grid" data-money-format="{{ shop.money_format | escape }}">
+    <div class="k-ctl__pic k-media">
+      {%- render 'k-media', image: section.settings.image, sizes: '(min-width: 990px) 55vw, 100vw', placeholder: 'lifestyle-1' -%}
+      {%- for block in pieces -%}
+        {%- assign p = block.settings.product -%}
+        {%- assign p_title = p.title -%}
+        {%- if p_title == blank -%}{%- assign p_title = 'products.placeholder_title' | t -%}{%- endif -%}
+        <button
+          type="button"
+          class="k-ctl__dot"
+          style="left: {{ block.settings.x }}%; top: {{ block.settings.y }}%;"
+          data-ctl-i="{{ forloop.index0 }}"
+          aria-label="{{ p_title | escape }}"
+          {{ block.shopify_attributes }}
+        >
+          <b>{{ forloop.index }}</b>
+          <span>{{ p_title | escape }}{% if p %} · {{ p.price | money }}{% endif %}</span>
+        </button>
+      {%- endfor -%}
+    </div>
+
+    <div class="k-ctl__panel">
+      {%- if section.settings.eyebrow != blank -%}<p class="k-label k-muted">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="k-h2 k-ctl__title">{{ section.settings.heading }}</h2>{%- endif -%}
+
+      <ul class="k-ctl__list" role="list">
+        {%- for block in pieces -%}
+          {%- assign p = block.settings.product -%}
+          {%- assign v = p.selected_or_first_available_variant -%}
+          <li class="k-ctl__item" data-ctl-i="{{ forloop.index0 }}"{% if p == blank or p.available == false %} data-ctl-off{% endif %}>
+            <span class="k-ctl__n k-label">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+            <input
+              type="checkbox"
+              id="{{ sid }}-c{{ forloop.index }}"
+              data-ctl-check
+              {% if p != blank and p.available %}checked{% else %}disabled{% endif %}
+              aria-label="{{ 'sections.complete_look.include' | t: title: p.title | escape }}"
+            >
+            <span class="k-ctl__thumb k-media" aria-hidden="true">
+              {%- if p.featured_media -%}
+                {{ p.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', sizes: '64px', widths: '80, 160', alt: '' }}
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'k-ph' }}
+              {%- endif -%}
+            </span>
+            <span class="k-ctl__info">
+              {%- if p != blank -%}
+                <a class="k-ctl__name" href="{{ p.url }}">{{ p.title | escape }}</a>
+              {%- else -%}
+                <span class="k-ctl__name">{{ 'products.placeholder_title' | t }}</span>
+              {%- endif -%}
+              {%- if p != blank and p.has_only_default_variant == false -%}
+                <label class="visually-hidden" for="{{ sid }}-v{{ forloop.index }}">{{ 'sections.complete_look.option_for' | t: title: p.title | escape }}</label>
+                <select id="{{ sid }}-v{{ forloop.index }}" class="k-ctl__select" data-ctl-variant>
+                  {%- for variant in p.variants -%}
+                    <option value="{{ variant.id }}" data-price="{{ variant.price }}"{% unless variant.available %} disabled{% endunless %}{% if variant.id == v.id %} selected{% endif %}>
+                      {{ variant.title | escape }}{% unless variant.available %} — {{ 'products.sold_out' | t }}{% endunless %}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              {%- elsif p != blank -%}
+                <input type="hidden" data-ctl-variant value="{{ v.id }}" data-price="{{ v.price }}">
+              {%- endif -%}
+            </span>
+            <span class="k-ctl__price" data-ctl-price>{% if p != blank %}{{ v.price | money }}{% endif %}</span>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <div class="k-ctl__sum">
+        <span data-ctl-count data-one="{{ 'sections.complete_look.pieces.one' | t: count: 1 | escape }}" data-other="{{ 'sections.complete_look.pieces.other' | t: count: '[count]' | escape }}"></span>
+        <span data-ctl-total></span>
+      </div>
+      <button type="button" class="k-btn k-btn--primary k-btn--block k-ctl__add" data-ctl-add data-label="{{ section.settings.button_label | escape }}" data-label-none="{{ 'sections.complete_look.choose_one' | t | escape }}">
+        <span data-ctl-add-text>{{ section.settings.button_label }}</span>
+      </button>
+      <p class="k-ctl__err" role="alert" data-ctl-error hidden></p>
+    </div>
+  </k-complete-look>
+</section>
+
+{% stylesheet %}
+  .k-ctl__grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: start; }
+  .k-ctl__pic { position: relative; aspect-ratio: 4 / 5; }
+  .k-ctl__dot { position: absolute; z-index: 2; display: flex; align-items: center; padding: 0; border: 0; background: none; color: #0e0e0e; transform: translate(-18px, -50%); cursor: pointer; }
+  .k-ctl__dot b {
+    display: grid; place-items: center; width: 36px; height: 36px; border-radius: 999px; background: #f2f1ec;
+    font: 700 13px var(--font-label); transition: background-color 0.3s, color 0.3s, box-shadow 0.4s;
+  }
+  .k-ctl__dot span {
+    max-width: 0; overflow: hidden; white-space: nowrap; height: 36px; display: flex; align-items: center;
+    background: #f2f1ec; font-weight: 600; font-size: 13px; padding: 0; border-radius: 0 999px 999px 0;
+    transition: max-width 0.5s var(--ease-out), padding 0.5s var(--ease-out);
+  }
+  .k-ctl__dot.is-on b, .k-ctl__dot:hover b, .k-ctl__dot:focus-visible b { background: var(--color-button); color: var(--color-button-label); box-shadow: 0 0 0 8px rgba(var(--color-bg-rgb), 0.35); }
+  .k-ctl__dot.is-on span, .k-ctl__dot:hover span, .k-ctl__dot:focus-visible span { max-width: 240px; padding: 0 14px 0 10px; }
+  .k-ctl__panel { display: grid; gap: 18px; }
+  .k-ctl__panel > .k-label { margin: 0; }
+  .k-ctl__title { margin: 0; }
+  .k-ctl__list { margin: 0; padding: 0; list-style: none; border-top: 1.5px solid var(--color-text); }
+  .k-ctl__item {
+    display: grid; grid-template-columns: 28px 22px 64px minmax(0, 1fr) auto; gap: 12px; align-items: center;
+    padding: 14px 8px; border-bottom: 1px solid var(--color-line); transition: background-color 0.3s;
+  }
+  .k-ctl__item.is-on { background: rgba(var(--color-text-rgb), 0.05); }
+  .k-ctl__item[data-ctl-off] { opacity: 0.55; }
+  .k-ctl__item input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var(--color-accent); }
+  .k-ctl__thumb { aspect-ratio: 4 / 5; background: var(--color-surface); }
+  .k-ctl__thumb :is(img, svg) { width: 100%; height: 100%; object-fit: cover; }
+  .k-ctl__info { display: grid; gap: 6px; justify-items: start; min-width: 0; }
+  .k-ctl__name { font-weight: 700; overflow-wrap: anywhere; }
+  .k-ctl__select { min-height: 36px; max-width: 100%; padding: 0 30px 0 12px; border: 1px solid var(--color-line); border-radius: 999px; background-color: transparent; color: inherit; font: 500 13px var(--font-body); }
+  .k-ctl__price { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .k-ctl__sum { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: 24px; letter-spacing: -0.02em; }
+  .k-ctl__err { margin: 0; color: var(--color-accent); font-size: 14px; }
+  @media (max-width: 989px) {
+    .k-ctl__grid { grid-template-columns: minmax(0, 1fr); }
+    .k-ctl__item { grid-template-columns: 22px 56px minmax(0, 1fr) auto; }
+    .k-ctl__n { display: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('k-complete-look')) {
+    customElements.define('k-complete-look', class extends HTMLElement {
+      connectedCallback() {
+        this.items = Array.from(this.querySelectorAll('.k-ctl__item'));
+        this.dots = Array.from(this.querySelectorAll('.k-ctl__dot'));
+        this.btn = this.querySelector('[data-ctl-add]');
+        this.addEventListener('change', () => this.update());
+        var hl = (i) => {
+          this.dots.forEach((d) => d.classList.toggle('is-on', d.dataset.ctlI === i));
+          this.items.forEach((d) => d.classList.toggle('is-on', d.dataset.ctlI === i));
+        };
+        this.addEventListener('pointerover', (e) => { var t = e.target.closest('[data-ctl-i]'); hl(t ? t.dataset.ctlI : null); });
+        this.addEventListener('pointerleave', () => hl(null));
+        this.addEventListener('focusin', (e) => { var t = e.target.closest('[data-ctl-i]'); if (t) hl(t.dataset.ctlI); });
+        this.dots.forEach((d) => d.addEventListener('click', () => {
+          var row = this.items[parseInt(d.dataset.ctlI, 10)];
+          var box = row && row.querySelector('[data-ctl-check]');
+          if (box && !box.disabled) { box.checked = !box.checked; this.update(); }
+          hl(d.dataset.ctlI);
+        }));
+        this.btn.addEventListener('click', () => this.add());
+        this.update();
+      }
+      money(cents) {
+        var fmt = this.dataset.moneyFormat;
+        if (!fmt) return (cents / 100).toFixed(2);
+        var n = (cents / 100);
+        var withSep = function (num, dec, th, ds) {
+          var parts = num.toFixed(dec).split('.');
+          parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, th);
+          return parts.join(ds);
+        };
+        return fmt.replace(/\{\{\s*(\w+)\s*\}\}/, function (_, key) {
+          switch (key) {
+            case 'amount_no_decimals': return withSep(n, 0, ',', '.');
+            case 'amount_with_comma_separator': return withSep(n, 2, '.', ',');
+            case 'amount_no_decimals_with_comma_separator': return withSep(n, 0, '.', ',');
+            case 'amount_with_apostrophe_separator': return withSep(n, 2, "'", '.');
+            default: return withSep(n, 2, ',', '.');
+          }
+        });
+      }
+      chosen() {
+        return this.items.map((row) => {
+          var box = row.querySelector('[data-ctl-check]');
+          var v = row.querySelector('[data-ctl-variant]');
+          if (!box || !box.checked || !v) return null;
+          var opt = v.tagName === 'SELECT' ? v.selectedOptions[0] : v;
+          return { id: parseInt(v.value, 10), price: parseInt(opt.dataset.price, 10) || 0, row: row, opt: opt };
+        }).filter(Boolean);
+      }
+      update() {
+        this.items.forEach((row) => {
+          var v = row.querySelector('select[data-ctl-variant]');
+          if (!v) return;
+          row.querySelector('[data-ctl-price]').textContent = this.money(parseInt(v.selectedOptions[0].dataset.price, 10) || 0);
+        });
+        var list = this.chosen();
+        var total = list.reduce(function (a, b) { return a + b.price; }, 0);
+        var count = this.querySelector('[data-ctl-count]');
+        count.textContent = list.length === 1 ? count.dataset.one : count.dataset.other.replace('[count]', list.length);
+        this.querySelector('[data-ctl-total]').textContent = this.money(total);
+        var text = this.btn.querySelector('[data-ctl-add-text]');
+        this.btn.disabled = list.length === 0;
+        text.textContent = list.length ? this.btn.dataset.label + ' · ' + this.money(total) : this.btn.dataset.labelNone;
+      }
+      add() {
+        var list = this.chosen().filter(function (x) { return !x.opt.disabled; });
+        if (!list.length || !window.SkinovaCart) return;
+        var err = this.querySelector('[data-ctl-error]');
+        err.hidden = true;
+        this.btn.classList.add('k-loading');
+        window.SkinovaCart.addToCart({ items: list.map(function (x) { return { id: x.id, quantity: 1 }; }) }, { sourceButton: this.btn, source: 'complete-look' })
+          .catch(function (e) { err.textContent = e.message; err.hidden = false; })
+          .finally(() => { this.btn.classList.remove('k-loading'); });
+      }
+    });
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Complete the look",
+  "tag": "section",
+  "class": "k-ctl-section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Campaign photo" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Look 07" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "The soft <em>suit</em>", "info": "Italic words use the accent font." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Add the look" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "piece",
+      "name": "Piece",
+      "limit": 6,
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "range", "id": "x", "label": "Callout across", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 },
+        { "type": "range", "id": "y", "label": "Callout down", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Complete the look",
+      "blocks": [
+        { "type": "piece", "settings": { "x": 48, "y": 32 } },
+        { "type": "piece", "settings": { "x": 56, "y": 52 } },
+        { "type": "piece", "settings": { "x": 44, "y": 74 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

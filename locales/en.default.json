@@ -341,6 +341,12 @@
     "price_from": "From {{ price }}"
   },
   "sections": {
+    "complete_look": {
+      "include": "Include {{ title }}",
+      "option_for": "Size or option for {{ title }}",
+      "choose_one": "Choose at least one piece",
+      "pieces": { "one": "{{ count }} piece", "other": "{{ count }} pieces" }
+    },
     "category_columns": {
       "placeholder_title": "Category"
     },

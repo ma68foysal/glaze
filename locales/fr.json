@@ -396,6 +396,15 @@
       "hours": "Heures",
       "minutes": "Minutes",
       "seconds": "Secondes"
+    },
+    "complete_look": {
+      "include": "Inclure {{ title }}",
+      "option_for": "Taille ou option pour {{ title }}",
+      "choose_one": "Choisissez au moins une pièce",
+      "pieces": {
+        "one": "{{ count }} pièce",
+        "other": "{{ count }} pièces"
+      }
     }
   },
   "blogs": {
