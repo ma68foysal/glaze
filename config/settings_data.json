@@ -8,9 +8,9 @@
  * ------------------------------------------------------------
  */
 {
-  "current": "Skinova",
+  "current": "Oblique",
   "presets": {
-    "Skinova": {
+    "Oblique": {
       "type_heading_font": "archivo_n8",
       "type_primary_font": "archivo_n4",
       "max_page_width": 1440,

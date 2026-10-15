@@ -1,11 +1,47 @@
-# Skinova — Shopify theme
+# Oblique — Shopify theme (formerly Skinova)
 
-A skincare theme for the Shopify Theme Store, by Themestudio. Built on Shopify's
+A fashion theme for the Shopify Theme Store, by Themestudio. Built on Shopify's
 [Skeleton theme](https://github.com/Shopify/skeleton-theme), which is the only
 codebase Shopify approves for new Theme Store submissions.
 
-**Read this before changing anything.** The theme was submitted once and
-rejected. The current job is a redesign, not a bug-fix pass.
+**Read this before changing anything.** The theme was submitted once as
+Skinova (a skincare theme) and rejected. The current job is a redesign, not a
+bug-fix pass. The sections below describe that history; "Redesign progress"
+says where the rebuild stands.
+
+---
+
+## Redesign progress (October 2026)
+
+- **Name:** Oblique, chosen 2026-10-15. It's clear on the Theme Store (themes
+  and presets), with no Shopify app of that name. "Kinetic" was rejected
+  because two Shopify animation apps already use it. The design is still called
+  "Kinetic Editorial" in code comments and the canvas.
+- **Design source:** the Kinetic Editorial canvas,
+  https://claude.ai/artifact/NcLUbanME64GNT7VTDznJ8 (V1 homepage and product
+  page).
+- **Branch:** `redesign/kinetic`, cut from `f9c21f2`. Done: design system
+  (colour schemes, type, motion), header, footer, cart drawer, the V1 homepage
+  sections, the product page and related products. Every remaining page uses
+  colour schemes.
+- **New code conventions:** `assets/theme.css` and `assets/theme.js` hold the
+  design system; new classes use the `k-` prefix. Old `skinova-*` classes and
+  `window.Skinova` stay until their sections are rebuilt or deleted.
+- **Still to rebuild:** collection, cart page, blog/article, search, 404,
+  contact. Delete the unused old sections (`highlight-statement`,
+  `sticky-collections` and others), which still trip `ExcessiveSettingsCount`.
+- **Demo store:** `skinova-hveyg6a1`. It holds the fashion catalogue (10
+  collections, 12 products, vendor "Oblique"); the skincare products are Draft.
+  The unpublished **"Oblique demo"** theme (ID 167169687792) carries the store
+  image references. It's built from a copy of the repo outside the repo, so
+  `shopify://shop_images` references never get committed. Photo sources are in
+  `docs/demo-images.md`.
+- **Never run `shopify auth logout`.** The CLI holds several Partner logins;
+  switch accounts with the login command only. Run `shopify.cmd` in the
+  Terminal panel, because PowerShell's script policy blocks `shopify.ps1`.
+- **Open:** store name and myshopify URL still say skinova (admin settings,
+  limited URL changes); the manual still lives at `skinova-manual.vercel.app`;
+  trademark and handle checks for "Oblique"; store currency is BDT.
 
 ---
 
