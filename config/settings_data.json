@@ -72,7 +72,8 @@
           }
         }
       },
-      "issue_label": "Issue 04 · SS27"
+      "issue_label": "Issue 04 · SS27",
+      "card_style": "standard"
     },
     "Club": {
       "type_heading_font": "archivo_n9",
@@ -92,58 +93,59 @@
       "color_schemes": {
         "scheme-1": {
           "settings": {
-            "background": "#0E0E0E",
-            "text": "#F2F1EC",
-            "accent": "#8F8FFF",
-            "button": "#8F8FFF",
+            "background": "#1F3BFF",
+            "text": "#FFFFFF",
+            "accent": "#D4FF3A",
+            "button": "#D4FF3A",
             "button_label": "#0E0E0E"
           }
         },
         "scheme-2": {
           "settings": {
-            "background": "#F2F1EC",
+            "background": "#F4F4F0",
             "text": "#0E0E0E",
-            "accent": "#2B2BFF",
-            "button": "#0E0E0E",
-            "button_label": "#F2F1EC"
+            "accent": "#1F3BFF",
+            "button": "#1F3BFF",
+            "button_label": "#FFFFFF"
           }
         },
         "scheme-3": {
           "settings": {
-            "background": "#8F8FFF",
+            "background": "#D4FF3A",
             "text": "#0E0E0E",
-            "accent": "#0E0E0E",
+            "accent": "#1F3BFF",
             "button": "#0E0E0E",
-            "button_label": "#F2F1EC"
+            "button_label": "#D4FF3A"
           }
         },
         "scheme-4": {
           "settings": {
-            "background": "#1C1C1C",
-            "text": "#F2F1EC",
-            "accent": "#8F8FFF",
-            "button": "#F2F1EC",
+            "background": "#0E0E0E",
+            "text": "#F4F4F0",
+            "accent": "#D4FF3A",
+            "button": "#D4FF3A",
             "button_label": "#0E0E0E"
           }
         },
         "scheme-5": {
           "settings": {
-            "background": "#000000",
-            "text": "#FFFFFF",
-            "accent": "#8F8FFF",
-            "button": "#FFFFFF",
-            "button_label": "#000000"
+            "background": "#FFFFFF",
+            "text": "#0E0E0E",
+            "accent": "#1F3BFF",
+            "button": "#1F3BFF",
+            "button_label": "#FFFFFF"
           }
         }
       },
-      "photo_treatment": "mono",
-      "photo_grain": true,
+      "photo_treatment": "none",
+      "photo_grain": false,
       "stretch_headings": true,
       "page_transitions": true,
       "custom_cursor": true,
       "cart_add_feedback": "fly",
       "show_back_to_top": true,
-      "issue_label": "Drop 03 · No restock"
+      "issue_label": "Drop 03 · No restock",
+      "card_style": "standard"
     },
     "Hush": {
       "type_heading_font": "cormorant_n4",
@@ -158,7 +160,7 @@
       "section_spacing": 152,
       "button_shape": "pill",
       "card_radius": 28,
-      "motion_level": "subtle",
+      "motion_level": "off",
       "show_motion_toggle": true,
       "color_schemes": {
         "scheme-1": {
@@ -214,7 +216,8 @@
       "custom_cursor": false,
       "cart_add_feedback": "drawer",
       "show_back_to_top": true,
-      "issue_label": "Roll 12 · Autumn"
+      "issue_label": "Roll 12 · Autumn",
+      "card_style": "contact"
     }
   }
 }

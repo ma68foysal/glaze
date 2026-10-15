@@ -419,6 +419,10 @@
       "pause": "Pausar {{ title }}",
       "play": "Reproducir {{ title }}",
       "products": "Prendas de este clip"
+    },
+    "feature_index": {
+      "filter": "Filtrar funciones",
+      "all": "Todo"
     }
   },
   "blogs": {

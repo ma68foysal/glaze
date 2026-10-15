@@ -286,11 +286,47 @@
         "padding_top": "large",
         "padding_bottom": "large"
       }
+    },
+    "runway": {
+      "type": "runway",
+      "settings": {
+        "heading": "Run<em>way</em>",
+        "label": "Drop 03 · tap to shop",
+        "color_scheme": "scheme-4",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      },
+      "blocks": {
+        "r1": {
+          "type": "clip",
+          "settings": {
+            "caption": "Look 01"
+          }
+        },
+        "r2": {
+          "type": "clip",
+          "settings": {
+            "caption": "Look 02"
+          }
+        },
+        "r3": {
+          "type": "clip",
+          "settings": {
+            "caption": "Look 03"
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3"
+      ]
     }
   },
   "order": [
     "hero",
     "drop",
+    "runway",
     "tapes",
     "edit",
     "lookbook",

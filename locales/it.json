@@ -419,6 +419,10 @@
       "pause": "Metti in pausa {{ title }}",
       "play": "Riproduci {{ title }}",
       "products": "Capi in questo video"
+    },
+    "feature_index": {
+      "filter": "Filtra le funzionalità",
+      "all": "Tutte"
     }
   },
   "blogs": {

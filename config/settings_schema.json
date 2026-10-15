@@ -323,6 +323,23 @@
     "name": "Product cards",
     "settings": [
       {
+        "type": "select",
+        "id": "card_style",
+        "label": "Card style",
+        "options": [
+          {
+            "value": "standard",
+            "label": "Standard"
+          },
+          {
+            "value": "contact",
+            "label": "Contact sheet"
+          }
+        ],
+        "default": "standard",
+        "info": "Contact sheet frames every photo like a film contact print, with a frame number."
+      },
+      {
         "type": "checkbox",
         "id": "quick_view",
         "label": "Show quick view",

@@ -36,7 +36,7 @@
       endif
     endfor
   -%}
-  <article class="k-card">
+  <article class="k-card{% if settings.card_style == 'contact' %} k-card--contact{% endif %}">
     <div class="k-card__media">
       <a class="k-card__link" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
         {%- if first_media != blank -%}
@@ -96,6 +96,10 @@
         {%- endif -%}
       {%- endif -%}
     </div>
+    {%- if settings.card_style == 'contact' -%}
+      {%- assign frame_no = product.id | modulo: 36 | plus: 1 -%}
+      <p class="k-card__frame" aria-hidden="true"><span>{% if frame_no < 10 %}0{% endif %}{{ frame_no }}A</span><span>&#9654;</span><span>{{ product.vendor | default: shop.name | truncate: 14, '' }}</span></p>
+    {%- endif -%}
 
     <div class="k-card__meta">
       <h3 class="k-card__title" style="margin: 0; font: inherit;">

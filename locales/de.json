@@ -419,6 +419,10 @@
       "pause": "{{ title }} pausieren",
       "play": "{{ title }} abspielen",
       "products": "Produkte in diesem Clip"
+    },
+    "feature_index": {
+      "filter": "Funktionen filtern",
+      "all": "Alle"
     }
   },
   "blogs": {

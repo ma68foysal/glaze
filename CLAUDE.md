@@ -44,6 +44,18 @@ says where the rebuild stands.
   `<k-countdown>` lives in theme.js so the password layout can use it. The theme started from Shopify's Skeleton
   at commit `a4f32d3` (2026-02-26), the last Shopify commit before `bf8e088`:
   diff against it to tell Skeleton files from custom ones.
+- **Stand-out features (2026-10-16, boards 05–16):** quick view
+  (`sections/quick-view.liquid`, opened from any `a[data-quick-view]`),
+  pre-order labels and combined-listing links, load-as-you-scroll, FR/DE/IT/ES
+  locales (merge new strings with `scratchpad/add_strings.py`-style edits;
+  theme check fails on missing translations), Press, motion presets
+  (Kinetic/Editorial/Still are the `motion_level` values full/subtle/off),
+  issue label, Fit and size finder block (`k-pdp-fit`), Complete the look,
+  Runway, moodboard (`page.moodboard`, localStorage `oblique:moodboard`),
+  drop mode (`custom.drop_date` metafield), scroll-reactive tapes, page-turn
+  stacked cards, callout hotspots, contact-sheet card style, Feature index.
+  Club is cobalt/acid with no photo filter; Hush uses contact-sheet cards and
+  the Still preset.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,
