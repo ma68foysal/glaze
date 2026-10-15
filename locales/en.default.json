@@ -19,8 +19,20 @@
     "country_label": "Country/region",
     "language_label": "Language",
     "newsletter_form": {
-      "confirmation": "Thanks for subscribing — we'll be in touch."
-    }
+      "confirmation": "Thanks for subscribing — we'll be in touch.",
+      "email_label": "Email address",
+      "email_placeholder": "you@example.com",
+      "subscribe": "Subscribe"
+    },
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "menu": "Menu",
+    "view_all": "View all",
+    "search_placeholder": "Search products",
+    "pause_motion": "Pause motion",
+    "play_motion": "Play motion",
+    "previous": "Previous",
+    "next": "Next"
   },
   "404": {
     "title": "404",
@@ -78,7 +90,10 @@
       "one": "{{ count }} item",
       "other": "{{ count }} items"
     },
-    "discount": "Discount"
+    "discount": "Discount",
+    "bag": "Bag",
+    "drawer_title": "Your bag",
+    "drawer_empty": "Your bag is empty."
   },
   "customer": {
     "account": {
@@ -188,5 +203,37 @@
     "results_for_html": "{{ count }} results for &ldquo;{{ terms }}&rdquo;.",
     "prompt": "Start typing to search the store.",
     "view_all_html": "View all results for &ldquo;{{ terms }}&rdquo; →"
+  },
+  "products": {
+    "sold_out": "Sold out",
+    "sale": "Sale",
+    "quick_add": "Quick add +",
+    "choose_options": "Choose options",
+    "regular_price": "Regular price",
+    "sale_price": "Sale price",
+    "from_price": "From {{ price }}",
+    "placeholder_title": "Product name",
+    "add_to_cart": "Add to bag",
+    "view_details": "View details"
+  },
+  "sections": {
+    "category_columns": {
+      "placeholder_title": "Category"
+    },
+    "collection_index": {
+      "placeholder_title": "Collection"
+    },
+    "feature_explorer": {
+      "see_it": "See it on a piece"
+    },
+    "lookbook": {
+      "show_product": "Show {{ title }}",
+      "selected": "Selected",
+      "empty": "Choose a product for this hotspot in the theme editor."
+    },
+    "journal": {
+      "placeholder_meta": "Story · 4 min",
+      "placeholder_title": "Your blog post title"
+    }
   }
 }

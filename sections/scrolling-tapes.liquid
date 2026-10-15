@@ -1,0 +1,106 @@
+{%- liquid
+  assign top_count = 0
+  assign bottom_count = 0
+  for b in section.blocks
+    if b.settings.tape == 'bottom'
+      assign bottom_count = bottom_count | plus: 1
+    else
+      assign top_count = top_count | plus: 1
+    endif
+  endfor
+  assign crossed = false
+  if section.settings.layout == 'crossed' and bottom_count > 0
+    assign crossed = true
+  endif
+-%}
+
+{%- capture star -%}<span class="k-tapes__sep k-loop">{% render 'k-icon', icon: 'star', size: 34 %}</span>{%- endcapture -%}
+
+<section class="k-tapes k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }}{% if crossed %} k-tapes--crossed{% endif %}" aria-label="{{ section.settings.aria_label | escape }}">
+  <div class="k-tapes__inner">
+    {%- if crossed -%}
+      <div class="k-tapes__tape k-tapes__tape--b k-marquee k-marquee--reverse color-{{ section.settings.color_scheme_b }}" style="--marquee-duration: {{ section.settings.speed }}s;">
+        <div class="k-marquee__track">
+          {%- for pass in (1..4) -%}
+            {%- for b in section.blocks -%}{%- if b.settings.tape != 'bottom' -%}{%- continue -%}{%- endif -%}
+              <span {% if pass > 1 %}aria-hidden="true"{% else %}{{ b.shopify_attributes }}{% endif %}>{{ b.settings.text }}</span>{{ star }}
+            {%- endfor -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+    {%- if top_count > 0 or crossed == false -%}
+      <div class="k-tapes__tape k-tapes__tape--a k-marquee color-{{ section.settings.color_scheme_a }}" style="--marquee-duration: {{ section.settings.speed }}s;">
+        <div class="k-marquee__track">
+          {%- for pass in (1..4) -%}
+            {%- for b in section.blocks -%}{%- if b.settings.tape == 'bottom' and crossed -%}{%- continue -%}{%- endif -%}
+              <span {% if pass > 1 %}aria-hidden="true"{% else %}{{ b.shopify_attributes }}{% endif %}>{{ b.settings.text }}</span>{{ star }}
+            {%- endfor -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-tapes__inner { position: relative; overflow: hidden; }
+  .k-tapes--crossed .k-tapes__inner { height: clamp(170px, 18vw, 250px); }
+  .k-tapes__tape {
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight-black);
+    font-size: clamp(34px, 4.4vw, 64px);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-transform: uppercase;
+    --marquee-gap: 36px;
+  }
+  .k-tapes__tape .k-marquee__track { padding-block: 18px; }
+  .k-tapes--crossed .k-tapes__tape { position: absolute; left: -5%; width: 110%; }
+  .k-tapes--crossed .k-tapes__tape--a { top: 22%; rotate: -2.6deg; }
+  .k-tapes--crossed .k-tapes__tape--b { top: 46%; rotate: 2.2deg; }
+  .k-tapes__tape--b span:not(.k-tapes__sep) { color: transparent; -webkit-text-stroke: 1.5px var(--color-text); }
+  .k-tapes__sep { display: inline-flex; animation: k-spin 6s linear infinite; }
+  .k-tapes__sep svg { width: 0.6em; height: 0.6em; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Scrolling tapes",
+  "tag": "div",
+  "class": "k-tapes-section",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "select", "id": "layout", "label": "Layout", "default": "crossed", "options": [ { "value": "crossed", "label": "Two crossed tapes" }, { "value": "single", "label": "One straight tape" } ], "info": "Crossed tapes need at least one item on the second tape." },
+    { "type": "range", "id": "speed", "label": "Scroll duration", "min": 10, "max": 60, "step": 2, "unit": "s", "default": 26 },
+    { "type": "text", "id": "aria_label", "label": "Accessible name", "default": "Highlights", "info": "Read by screen readers. Not shown on the page." },
+    { "type": "color_scheme", "id": "color_scheme_a", "label": "First tape", "default": "scheme-3" },
+    { "type": "color_scheme", "id": "color_scheme_b", "label": "Second tape", "default": "scheme-2" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "New season" },
+        { "type": "select", "id": "tape", "label": "Tape", "default": "top", "options": [ { "value": "top", "label": "First tape" }, { "value": "bottom", "label": "Second tape" } ] }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scrolling tapes",
+      "blocks": [
+        { "type": "item", "settings": { "text": "New season", "tape": "top" } },
+        { "type": "item", "settings": { "text": "Collection 04", "tape": "top" } },
+        { "type": "item", "settings": { "text": "Free returns", "tape": "top" } },
+        { "type": "item", "settings": { "text": "Made to move", "tape": "bottom" } },
+        { "type": "item", "settings": { "text": "Layer it", "tape": "bottom" } },
+        { "type": "item", "settings": { "text": "Repair it", "tape": "bottom" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

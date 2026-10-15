@@ -1,0 +1,86 @@
+{%- liquid
+  assign messages = section.blocks | where: 'type', 'message'
+-%}
+{%- if messages.size > 0 -%}
+  <div class="k-ann color-{{ section.settings.color_scheme }}" {{ section.shopify_attributes }}>
+    {% render 'k-motion-toggle' %}
+    {%- if messages.size == 1 and section.settings.scroll == false -%}
+      <p class="k-ann__static k-label">
+        {%- assign b = messages.first -%}
+        {%- if b.settings.link != blank -%}
+          <a href="{{ b.settings.link }}" {{ b.shopify_attributes }}>{{ b.settings.text }}</a>
+        {%- else -%}
+          <span {{ b.shopify_attributes }}>{{ b.settings.text }}</span>
+        {%- endif -%}
+      </p>
+    {%- else -%}
+      <div class="k-ann__marquee k-marquee k-label" style="--marquee-duration: {{ section.settings.speed }}s;">
+        {%- comment -%} The track is rendered twice so the -50% loop is seamless. Copy 2 is hidden from assistive tech. {%- endcomment -%}
+        <div class="k-marquee__track">
+          {%- for pass in (1..4) -%}
+            {%- for b in messages -%}
+              {%- if b.settings.link != blank -%}
+                <a href="{{ b.settings.link }}" {% if pass > 1 %}aria-hidden="true" tabindex="-1"{% else %}{{ b.shopify_attributes }}{% endif %}>{{ b.settings.text }}</a>
+              {%- else -%}
+                <span {% if pass > 1 %}aria-hidden="true"{% else %}{{ b.shopify_attributes }}{% endif %}>{{ b.settings.text }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .k-ann { display: flex; align-items: center; min-height: 40px; }
+  .k-ann__static { flex: 1; margin: 0; padding: 10px var(--gutter); text-align: center; }
+  .k-ann__marquee { flex: 1; min-width: 0; padding: 10px 0; }
+  .k-ann a { text-decoration: underline; text-underline-offset: 3px; }
+  .k-motion-toggle { flex: none; order: 2; }
+  .k-motion-toggle__btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: 40px; padding: 0 16px;
+    border: 0; border-left: 1px solid var(--color-line);
+    background: none; color: inherit; cursor: pointer;
+  }
+  .k-motion-toggle__play { display: none; }
+  .motion-paused .k-motion-toggle__pause { display: none; }
+  .motion-paused .k-motion-toggle__play { display: inline; }
+  @media (max-width: 900px) { .k-motion-toggle__text { display: none; } .k-motion-toggle__btn { min-width: 44px; justify-content: center; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "tag": "div",
+  "class": "k-ann-section",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-2" },
+    { "type": "checkbox", "id": "scroll", "label": "Scroll messages", "default": true, "info": "A single message is shown centered when this is off." },
+    { "type": "range", "id": "speed", "label": "Scroll duration", "min": 10, "max": 60, "step": 2, "unit": "s", "default": 30 }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Free shipping and 30-day returns" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar",
+      "blocks": [
+        { "type": "message", "settings": { "text": "New season is live" } },
+        { "type": "message", "settings": { "text": "Free shipping and 30-day returns" } },
+        { "type": "message", "settings": { "text": "Repairs on every piece" } }
+      ]
+    }
+  ],
+  "enabled_on": { "groups": ["header"] }
+}
+{% endschema %}

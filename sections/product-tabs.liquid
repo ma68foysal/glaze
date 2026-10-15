@@ -1,0 +1,105 @@
+{%- liquid
+  assign limit = section.settings.products_to_show
+  assign tab_count = section.blocks.size
+-%}
+<section class="k-tabs k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <k-tabs class="k-wrap" style="display: block;">
+    <div class="k-sec-head k-reveal">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="k-h2" id="k-tabs-h-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if tab_count > 1 -%}
+        <div class="k-tabs__list" role="tablist"{% if section.settings.heading != blank %} aria-labelledby="k-tabs-h-{{ section.id }}"{% endif %}>
+          {%- for block in section.blocks -%}
+            <button
+              type="button"
+              class="k-chip"
+              role="tab"
+              id="k-tab-{{ block.id }}"
+              aria-controls="k-panel-{{ block.id }}"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+              {{ block.shopify_attributes }}
+            >{{ block.settings.label | default: block.settings.collection.title }}</button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- assign c = block.settings.collection -%}
+      <div
+        class="k-tabs__panel"
+        id="k-panel-{{ block.id }}"
+        {% if tab_count > 1 %}role="tabpanel" aria-labelledby="k-tab-{{ block.id }}" tabindex="0"{% endif %}
+        {% unless forloop.first %}hidden{% endunless %}
+      >
+        <ul class="k-grid" role="list" style="--cols: {{ section.settings.columns }};">
+          {%- if c != blank and c.products_count > 0 -%}
+            {%- for product in c.products limit: limit -%}
+              <li class="k-reveal">{% render 'k-card', product: product, quick_add: section.settings.quick_add %}</li>
+            {%- endfor -%}
+          {%- else -%}
+            {%- for i in (1..limit) -%}
+              <li class="k-reveal">{% render 'k-card', product: blank, placeholder: i %}</li>
+            {%- endfor -%}
+          {%- endif -%}
+        </ul>
+        {%- if section.settings.show_view_all and c != blank and c.products_count > limit -%}
+          <div class="k-tabs__more">
+            <a class="k-btn k-btn--secondary" href="{{ c.url }}">
+              {{ 'general.view_all' | t }}<span class="visually-hidden"> {{ c.title }}</span>
+              {% render 'k-icon', icon: 'arrow', size: 16 %}
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </k-tabs>
+</section>
+
+{% stylesheet %}
+  .k-tabs__list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .k-tabs__panel { outline-offset: 6px; }
+  .k-tabs__panel .k-grid { margin: 0; padding: 0; list-style: none; }
+  .k-tabs__more { display: flex; justify-content: center; padding-top: var(--space-xl); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product tabs",
+  "tag": "div",
+  "class": "k-tabs-section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "The edit <em>this week</em>", "info": "Italic words use the accent font." },
+    { "type": "range", "id": "products_to_show", "label": "Products per tab", "min": 2, "max": 12, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "quick_add", "label": "Show quick add", "default": true },
+    { "type": "checkbox", "id": "show_view_all", "label": "Show view all button", "default": true },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Tab label", "info": "Uses the collection title when empty." },
+        { "type": "collection", "id": "collection", "label": "Collection" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product tabs",
+      "blocks": [
+        { "type": "tab", "settings": { "label": "New in" } },
+        { "type": "tab", "settings": { "label": "Bestsellers" } },
+        { "type": "tab", "settings": { "label": "Essentials" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -22,7 +22,6 @@
             "image": "",
             "title": "Skin Transforming",
             "link": "",
-            "bg_color": "#fad248",
             "radius": 50,
             "size": 0
           }
@@ -33,7 +32,6 @@
             "image": "",
             "title": "Facial Cleanser",
             "link": "",
-            "bg_color": "#f5e0d6",
             "radius": 50,
             "size": 0
           }
@@ -44,7 +42,6 @@
             "image": "",
             "title": "Toner & Mist",
             "link": "",
-            "bg_color": "#fbcb1a",
             "radius": 50,
             "size": 0
           }
@@ -55,7 +52,6 @@
             "image": "",
             "title": "Serums",
             "link": "",
-            "bg_color": "#e8e8e8",
             "radius": 50,
             "size": 0
           }
@@ -70,7 +66,6 @@
       "settings": {
         "title": "",
         "description": "Shop by skin type and concern. Every formula is dermatologist-tested, fragrance-free and made to sit well on sensitive skin.",
-        "bg_color": "#fbe9e8",
         "tile_size": 90
       }
     },
@@ -80,10 +75,7 @@
         "show_filters": true,
         "show_sort": true,
         "products_per_page": 12,
-        "columns_desktop": 3,
-        "bg_color": "#ffffff",
-        "text_color": "#1a1a1a",
-        "card_bg": "#ffffff"
+        "columns_desktop": 3
       }
     }
   },

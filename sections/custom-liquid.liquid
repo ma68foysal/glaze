@@ -1,0 +1,21 @@
+<div class="k-custom k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="{% if section.settings.full_width %}k-custom__full{% else %}k-wrap{% endif %}">
+    {{ section.settings.custom_liquid }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Liquid",
+  "tag": "section",
+  "class": "k-custom-section",
+  "settings": [
+    { "type": "liquid", "id": "custom_liquid", "label": "Liquid code", "info": "Add app snippets or other Liquid code to create advanced customizations." },
+    { "type": "checkbox", "id": "full_width", "label": "Use full page width", "default": false },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "presets": [ { "name": "Custom Liquid" } ]
+}
+{% endschema %}

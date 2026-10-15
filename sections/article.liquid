@@ -1,16 +1,15 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = 'article-' | append: section.id
   assign show_image = section.settings.show_image
   assign show_author = section.settings.show_author
   assign show_share = section.settings.show_share
-  assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
 -%}
 
 <article
   id="{{ section_id }}"
   class="skinova-article full-width"
-  style="--bg: {{ bg_color }}; --fg: {{ text_color }};"
+  style="--bg: var(--color-bg); --fg: var(--color-text);"
 >
   <div class="skinova-article__inner">
     <header class="skinova-article__header">
@@ -117,6 +116,7 @@
     {%- endif -%}
   </div>
 </article>
+</div>
 
 {% stylesheet %}
   .skinova-article {
@@ -320,16 +320,10 @@
       "content": "t:sections.article.colors_header"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "t:sections.article.bg_color",
-      "default": "#fbe9e8"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.article.text_color",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     }
   ]
 }

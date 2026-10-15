@@ -9,1061 +9,484 @@
  */
 {
   "sections": {
-    "slideshow_skinova_x7W6aQ": {
-      "type": "slideshow",
-      "blocks": {
-        "slide_RLe74U": {
-          "type": "slide",
-          "settings": {
-            "media_type": "image",
-            "image": "",
-            "eyebrow": "Edit 01",
-            "heading": "Get the skin you want to feel",
-            "body": "Thoughtful, clean formulas built for everyday rituals — made to perform without performance.",
-            "button_label": "Shop the edit",
-            "button_link": "/collections/all",
-            "content_align": "right",
-            "theme_preset": "cream",
-            "bg_color": "#fbe9e8",
-            "text_color": "#1a1a1a"
-          }
-        },
-        "slide_XWBVFT": {
-          "type": "slide",
-          "settings": {
-            "media_type": "image",
-            "image": "",
-            "eyebrow": "Edit 02",
-            "heading": "Quiet ingredients. Loud results.",
-            "body": "Made with bio-active actives and the kind of restraint that lets your skin do the talking.",
-            "button_label": "Discover the ritual",
-            "button_link": "/collections/all",
-            "content_align": "left",
-            "theme_preset": "blush",
-            "bg_color": "#fbe9e8",
-            "text_color": "#1a1a1a"
-          }
-        },
-        "slide_7AXGEF": {
-          "type": "slide",
-          "settings": {
-            "media_type": "image",
-            "image": "",
-            "eyebrow": "Edit 03",
-            "heading": "Skin first. Always.",
-            "body": "Dermatologist-approved formulas designed for sensitive routines, gentle on every skin type.",
-            "button_label": "Browse all",
-            "button_link": "/collections/all",
-            "content_align": "right",
-            "theme_preset": "sage",
-            "bg_color": "#fbe9e8",
-            "text_color": "#1a1a1a"
-          }
-        }
-      },
-      "block_order": [
-        "slide_RLe74U",
-        "slide_XWBVFT",
-        "slide_7AXGEF"
-      ],
-      "name": "Slideshow",
+    "hero": {
+      "type": "kinetic-hero",
       "settings": {
-        "height_desktop": 720,
-        "height_mobile": 580,
-        "parallax_strength": 40,
-        "autoplay": true,
-        "speed": 6,
-        "show_progress": true,
+        "heading_line": "Wear the",
+        "kinetic_word": "Motion",
+        "text": "Garments engineered to bend, stride and layer. Built for long days in a moving city.",
+        "button_label": "Shop new in",
+        "button_link": "shopify://collections/all",
+        "button2_label": "View lookbook",
+        "button2_link": "",
+        "label_left": "SS26 · Collection 04",
+        "label_center": "Cut for bodies in motion",
+        "label_right": "Scroll to explore ↓",
+        "badge_text": "New season · Shop the drop",
         "show_counter": true,
-        "aria_label": "Featured stories"
-      }
-    },
-    "marquee_skinova_f8tiN3": {
-      "type": "marquee",
-      "blocks": {
-        "item_tRy3x9": {
-          "type": "item",
-          "settings": {
-            "image": "",
-            "text": "Toxin-Free Formulas",
-            "link": ""
-          }
-        },
-        "item_baYJfF": {
-          "type": "item",
-          "settings": {
-            "image": "",
-            "text": "Skin Transformation",
-            "link": ""
-          }
-        },
-        "item_BqJ3ce": {
-          "type": "item",
-          "settings": {
-            "image": "",
-            "text": "Made With Intention",
-            "link": ""
-          }
-        },
-        "item_EnykLy": {
-          "type": "item",
-          "settings": {
-            "image": "",
-            "text": "New Season Arrivals",
-            "link": ""
-          }
-        }
+        "interval": 3,
+        "color_scheme": "scheme-1",
+        "padding_top": "small",
+        "padding_bottom": "none"
       },
-      "block_order": [
-        "item_tRy3x9",
-        "item_baYJfF",
-        "item_BqJ3ce",
-        "item_EnykLy"
-      ],
-      "name": "Marquee",
-      "settings": {
-        "direction": "left",
-        "speed": 40,
-        "text_color": "#111111",
-        "text_size": 40,
-        "text_size_mobile": 22,
-        "text_weight": 500,
-        "image_size": 72,
-        "image_size_mobile": 46,
-        "image_radius": 80,
-        "gap": 60,
-        "gap_mobile": 24,
-        "padding_top": 24,
-        "padding_bottom": 24,
-        "bg_color": "#ffffff",
-        "border_top_width": 1,
-        "border_top_color": "#e6e6e6",
-        "border_bottom_width": 1,
-        "border_bottom_color": "#e6e6e6",
-        "show_images": true
-      }
-    },
-    "featured_product_skinova_w7prWB": {
-      "type": "featured-product",
       "blocks": {
-        "tab_pddiiP": {
-          "type": "tab",
-          "settings": {
-            "tab_label": "What's hot",
-            "collection": "frontpage",
-            "hero_position": "left"
-          }
-        },
-        "tab_UFkE9x": {
-          "type": "tab",
-          "settings": {
-            "tab_label": "Best sellers",
-            "collection": "frontpage",
-            "hero_position": "right"
-          }
-        },
-        "tab_V33fHR": {
-          "type": "tab",
-          "settings": {
-            "tab_label": "Sale",
-            "collection": "frontpage",
-            "hero_position": "left"
-          }
-        }
-      },
-      "block_order": [
-        "tab_pddiiP",
-        "tab_UFkE9x",
-        "tab_V33fHR"
-      ],
-      "name": "Featured product",
-      "settings": {
-        "show_shop_all": true,
-        "shop_all_label": "Shop All Products",
-        "shop_all_link": "/collections/all",
-        "card_radius": 16,
-        "hero_eyebrow": "Editor's pick",
-        "hero_cta_label": "Shop the ritual",
-        "eyebrow_color": "#1a1a1a",
-        "hero_color_1": "#fbe9e8",
-        "hero_color_2": "#f5d8d5",
-        "hero_color_3": "#e3e7d4",
-        "hero_color_4": "#fdf6f1",
-        "choose_options_label": "Choose Options",
-        "atc_label": "Add To Cart",
-        "bg_color": "#ffffff",
-        "text_color": "#1a1a1a",
-        "muted_color": "#a0a0a0",
-        "tab_active_color": "#111111",
-        "tab_inactive_color": "#b3b3b3",
-        "tab_font_size": 22,
-        "title_color": "#111111",
-        "title_font_size": 15,
-        "type_color": "#7a7a7a",
-        "type_font_size": 12,
-        "price_color": "#1a1a1a",
-        "compare_color": "#888888",
-        "price_font_size": 14,
-        "sale_bg": "#e23b3b",
-        "sale_fg": "#ffffff",
-        "new_bg": "#2f9e4f",
-        "new_fg": "#ffffff",
-        "hot_bg": "#4a37d1",
-        "hot_fg": "#ffffff",
-        "badge_font_size": 11,
-        "btn_bg": "#1a1a1a",
-        "btn_fg": "#ffffff",
-        "btn_hover_bg": "#ffffff",
-        "btn_hover_fg": "#1a1a1a",
-        "padding_top": 60,
-        "padding_bottom": 60
-      }
-    },
-    "highlight_statement_YFmqWy": {
-      "type": "highlight-statement",
-      "blocks": {
-        "text_H9beV6": {
-          "type": "text",
-          "settings": {
-            "text": "Make your skin",
-            "style": "normal",
-            "color": "",
-            "baseline_offset": 0
-          }
-        },
-        "image_CMDJmH": {
-          "type": "image",
-          "settings": {
-            "image": "",
-            "alt": "",
-            "label": "",
-            "shape": "pill",
-            "width": 180,
-            "height": 80,
-            "custom_radius": 16,
-            "rotate": -3,
-            "float": true,
-            "ring": false,
-            "ring_color": "#f5b631",
-            "image_bg": ""
-          }
-        },
-        "text_jT9tff": {
-          "type": "text",
-          "settings": {
-            "text": "feel nourished",
-            "style": "normal",
-            "color": "",
-            "baseline_offset": 0
-          }
-        },
-        "break_9NJQka": {
-          "type": "break",
+        "media_1": {
+          "type": "media",
           "settings": {}
         },
-        "image_dB6p3A": {
-          "type": "image",
-          "settings": {
-            "image": "",
-            "alt": "",
-            "label": "",
-            "shape": "rounded",
-            "width": 200,
-            "height": 92,
-            "custom_radius": 24,
-            "rotate": 4,
-            "float": false,
-            "ring": false,
-            "ring_color": "#f5b631",
-            "image_bg": ""
-          }
-        },
-        "text_G7nbUW": {
-          "type": "text",
-          "settings": {
-            "text": "and glowing",
-            "style": "underline",
-            "color": "",
-            "baseline_offset": 0
-          }
-        },
-        "image_kt78jE": {
-          "type": "image",
-          "settings": {
-            "image": "",
-            "alt": "",
-            "label": "",
-            "shape": "circle",
-            "width": 96,
-            "height": 80,
-            "custom_radius": 16,
-            "rotate": 0,
-            "float": true,
-            "ring": false,
-            "ring_color": "#f5b631",
-            "image_bg": ""
-          }
-        },
-        "break_XUVfwr": {
-          "type": "break",
+        "media_2": {
+          "type": "media",
           "settings": {}
         },
-        "decorator_pGVDJK": {
-          "type": "decorator",
+        "media_3": {
+          "type": "media",
+          "settings": {}
+        },
+        "product_4": {
+          "type": "product",
           "settings": {
-            "icon": "sparkle",
-            "size": 28,
-            "rotate": 0,
-            "color": "",
-            "animate": true
+            "fallback_title": "Oblique Trench"
           }
         },
-        "text_JVUbdn": {
+        "product_5": {
+          "type": "product",
+          "settings": {
+            "fallback_title": "Crescent Bag"
+          }
+        }
+      },
+      "block_order": [
+        "media_1",
+        "media_2",
+        "media_3",
+        "product_4",
+        "product_5"
+      ]
+    },
+    "tapes": {
+      "type": "scrolling-tapes",
+      "settings": {
+        "layout": "crossed",
+        "speed": 26,
+        "aria_label": "Highlights",
+        "color_scheme_a": "scheme-3",
+        "color_scheme_b": "scheme-2",
+        "padding_top": "small",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "item_1": {
+          "type": "item",
+          "settings": {
+            "text": "New season",
+            "tape": "top"
+          }
+        },
+        "item_2": {
+          "type": "item",
+          "settings": {
+            "text": "Collection 04",
+            "tape": "top"
+          }
+        },
+        "item_3": {
+          "type": "item",
+          "settings": {
+            "text": "Free returns",
+            "tape": "top"
+          }
+        },
+        "item_4": {
+          "type": "item",
+          "settings": {
+            "text": "Made to move",
+            "tape": "bottom"
+          }
+        },
+        "item_5": {
+          "type": "item",
+          "settings": {
+            "text": "Layer it",
+            "tape": "bottom"
+          }
+        },
+        "item_6": {
+          "type": "item",
+          "settings": {
+            "text": "Repair it",
+            "tape": "bottom"
+          }
+        }
+      },
+      "block_order": [
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4",
+        "item_5",
+        "item_6"
+      ]
+    },
+    "categories": {
+      "type": "category-columns",
+      "settings": {
+        "aria_label": "Shop by category",
+        "color_scheme": "scheme-2",
+        "padding_top": "small",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "column_1": {
+          "type": "column",
+          "settings": {
+            "title": "Women",
+            "button_label": "Shop women",
+            "link": "shopify://collections/all"
+          }
+        },
+        "column_2": {
+          "type": "column",
+          "settings": {
+            "title": "Men",
+            "button_label": "Shop men",
+            "link": "shopify://collections/all"
+          }
+        },
+        "column_3": {
+          "type": "column",
+          "settings": {
+            "title": "Accessories",
+            "button_label": "Shop accessories",
+            "link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "column_1",
+        "column_2",
+        "column_3"
+      ]
+    },
+    "index": {
+      "type": "collection-index",
+      "settings": {
+        "heading": "Collection <em>index</em>",
+        "text": "Hover a row. Each collection opens like a contact sheet.",
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "collection_1": {
+          "type": "collection",
+          "settings": {
+            "title": "Outerwear",
+            "description": "Trenches · shells · coats"
+          }
+        },
+        "collection_2": {
+          "type": "collection",
+          "settings": {
+            "title": "Knitwear",
+            "description": "Merino · cotton · rib"
+          }
+        },
+        "collection_3": {
+          "type": "collection",
+          "settings": {
+            "title": "Tailoring",
+            "description": "Soft blazers · trousers"
+          }
+        },
+        "collection_4": {
+          "type": "collection",
+          "settings": {
+            "title": "Denim",
+            "description": "Relaxed · straight · wide"
+          }
+        },
+        "collection_5": {
+          "type": "collection",
+          "settings": {
+            "title": "Accessories",
+            "description": "Bags · belts · knit caps"
+          }
+        }
+      },
+      "block_order": [
+        "collection_1",
+        "collection_2",
+        "collection_3",
+        "collection_4",
+        "collection_5"
+      ]
+    },
+    "edit": {
+      "type": "product-tabs",
+      "settings": {
+        "heading": "The edit <em>this week</em>",
+        "products_to_show": 4,
+        "columns": 4,
+        "quick_add": true,
+        "show_view_all": true,
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "tab_1": {
+          "type": "tab",
+          "settings": {
+            "label": "New in",
+            "collection": "frontpage"
+          }
+        },
+        "tab_2": {
+          "type": "tab",
+          "settings": {
+            "label": "Bestsellers"
+          }
+        },
+        "tab_3": {
+          "type": "tab",
+          "settings": {
+            "label": "Essentials"
+          }
+        }
+      },
+      "block_order": [
+        "tab_1",
+        "tab_2",
+        "tab_3"
+      ]
+    },
+    "explorer": {
+      "type": "feature-explorer",
+      "settings": {
+        "eyebrow": "Why us",
+        "heading": "Explore fabrics built for <em>motion.</em>",
+        "card_label": "Collection 04",
+        "card_text": "Pieces designed to move with you, on the bike, on the platform and on the long walk home.",
+        "card_heading": "Engineered everyday <em>wear</em>",
+        "button_label": "Shop the collection",
+        "button_link": "shopify://collections/all",
+        "badge": "New season",
+        "color_scheme": "scheme-1",
+        "card_color_scheme": "scheme-5",
+        "padding_top": "large",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "chip_1": {
+          "type": "chip",
+          "settings": {
+            "label": "Commute-ready"
+          }
+        },
+        "chip_2": {
+          "type": "chip",
+          "settings": {
+            "label": "Water-repellent"
+          }
+        },
+        "chip_3": {
+          "type": "chip",
+          "settings": {
+            "label": "Repair included"
+          }
+        },
+        "item_4": {
+          "type": "item",
+          "settings": {
+            "title": "Stretch wool",
+            "stat": "4-way stretch",
+            "text": "<p>A wool blend with mechanical stretch that recovers its shape after a full day of reaching, sitting and cycling.</p>"
+          }
+        },
+        "item_5": {
+          "type": "item",
+          "settings": {
+            "title": "Weatherproof shells",
+            "stat": "Water-repellent",
+            "text": "<p>Recycled shells with a water-repellent finish, cut long enough to cover a bike saddle.</p>"
+          }
+        },
+        "item_6": {
+          "type": "item",
+          "settings": {
+            "title": "Repair program",
+            "stat": "Repairs included",
+            "text": "<p>Send any piece back for mending. We patch, re-stitch and replace zips so it stays in rotation.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "chip_1",
+        "chip_2",
+        "chip_3",
+        "item_4",
+        "item_5",
+        "item_6"
+      ]
+    },
+    "manifesto": {
+      "type": "manifesto",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      },
+      "blocks": {
+        "text_1": {
           "type": "text",
           "settings": {
-            "text": "from within",
-            "style": "italic",
-            "color": "",
-            "baseline_offset": 0
+            "text": "We cut garments for <em>bodies</em>"
           }
         },
-        "decorator_NNwzJ9": {
-          "type": "decorator",
+        "image_2": {
+          "type": "image",
+          "settings": {}
+        },
+        "text_3": {
+          "type": "text",
           "settings": {
-            "icon": "sparkle",
-            "size": 28,
-            "rotate": 0,
-            "color": "",
-            "animate": true
+            "text": "in motion, built to bend, stride and <em>carry</em> the city"
           }
         },
-        "sticker_3iDcMi": {
-          "type": "sticker",
+        "image_4": {
+          "type": "image",
+          "settings": {}
+        },
+        "text_5": {
+          "type": "text",
           "settings": {
-            "text": "Clean beauty",
-            "shape": "star",
-            "x_pct": 92,
-            "y_pct": 14,
-            "rotate": -12,
-            "font_size": 11,
-            "bg_color": "#fbcb1a",
-            "text_color": "#1a1a1a"
+            "text": "on their back."
           }
         }
       },
       "block_order": [
-        "text_H9beV6",
-        "image_CMDJmH",
-        "text_jT9tff",
-        "break_9NJQka",
-        "image_dB6p3A",
-        "text_G7nbUW",
-        "image_kt78jE",
-        "break_XUVfwr",
-        "decorator_pGVDJK",
-        "text_JVUbdn",
-        "decorator_NNwzJ9",
-        "sticker_3iDcMi"
-      ],
-      "name": "Highlight statement",
-      "settings": {
-        "hero_side": "left",
-        "hero_aspect": "4_5",
-        "hero_ratio": "0.9",
-        "hero_radius": 24,
-        "echo_text": "GLOW",
-        "echo_pos": "bottom-right",
-        "echo_size": 28,
-        "echo_color": "#1a1a1a",
-        "echo_opacity": 10,
-        "line_1_align": "flex-start",
-        "line_1_rotate": 0,
-        "line_2_align": "flex-end",
-        "line_2_rotate": 0,
-        "line_3_align": "center",
-        "line_3_rotate": 0,
-        "line_4_align": "flex-start",
-        "line_4_rotate": 0,
-        "max_width": 1280,
-        "item_gap": 18,
-        "line_gap": 10,
-        "font_size_d": 72,
-        "font_size_t": 52,
-        "font_size_m": 32,
-        "font_weight": 600,
-        "line_height": 1.2,
-        "letter_spacing": -1,
-        "bg_color": "#ffffff",
-        "bg_gradient": "",
-        "text_color": "#111111",
-        "accent_color": "#f5b631",
-        "anim_mask": true,
-        "anim_parallax": true,
-        "anim_tilt": true,
-        "anim_spotlight": false,
-        "show_marquee": false,
-        "marquee_text": "Clean beauty",
-        "marquee_speed": 22,
-        "marquee_color": "#111111",
-        "padding_top": 96,
-        "padding_bottom": 96,
-        "side_padding": 32,
-        "show_hero": false
-      }
+        "text_1",
+        "image_2",
+        "text_3",
+        "image_4",
+        "text_5"
+      ]
     },
-    "collection_list_skinova_cTyQ8H": {
-      "type": "collection-list",
+    "lookbook": {
+      "type": "lookbook",
+      "settings": {
+        "heading": "Shop the <em>look</em>",
+        "text": "Look 04 / Collection 04",
+        "color_scheme": "scheme-1",
+        "padding_top": "none",
+        "padding_bottom": "large"
+      },
       "blocks": {
-        "collection_qnYMJp": {
-          "type": "collection",
+        "hotspot_1": {
+          "type": "hotspot",
           "settings": {
-            "collection": "frontpage",
-            "image": "",
-            "title": "Moisturisers",
-            "count_text": "",
-            "link": ""
+            "x": 38,
+            "y": 30
           }
         },
-        "collection_ntyWDm": {
-          "type": "collection",
+        "hotspot_2": {
+          "type": "hotspot",
           "settings": {
-            "collection": "frontpage",
-            "image": "",
-            "title": "",
-            "count_text": "",
-            "link": ""
+            "x": 58,
+            "y": 58
           }
         },
-        "collection_JRDLAY": {
-          "type": "collection",
+        "hotspot_3": {
+          "type": "hotspot",
           "settings": {
-            "collection": "frontpage",
-            "image": "",
-            "title": "Serums",
-            "count_text": "",
-            "link": ""
-          }
-        },
-        "collection_VGxX8Q": {
-          "type": "collection",
-          "settings": {
-            "collection": "frontpage",
-            "image": "",
-            "title": "Moisturisers",
-            "count_text": "",
-            "link": ""
+            "x": 44,
+            "y": 84
           }
         }
       },
       "block_order": [
-        "collection_qnYMJp",
-        "collection_ntyWDm",
-        "collection_JRDLAY",
-        "collection_VGxX8Q"
-      ],
-      "name": "Collection list",
-      "settings": {
-        "eyebrow": "Nourish Your Skin",
-        "title": "Clean beauty that delivers real results",
-        "description": "Every formula we make is thoughtfully developed — effective, skin-safe and a genuine pleasure to use.",
-        "cards_per_view": 3,
-        "card_gap": 20,
-        "card_radius": 14,
-        "bg_color": "#f2ebe5",
-        "text_color": "#1a1a1a",
-        "eyebrow_color": "#1a1a1a",
-        "eyebrow_size": 14,
-        "title_color": "#111111",
-        "title_size": 44,
-        "title_weight": 600,
-        "desc_color": "#3a3a3a",
-        "desc_size": 15,
-        "card_bg": "#ffffff",
-        "card_title_color": "#111111",
-        "card_title_size": 18,
-        "card_count_color": "#777777",
-        "card_count_size": 13,
-        "btn_bg": "#f2f2f2",
-        "btn_fg": "#111111",
-        "btn_hover_bg": "#111111",
-        "btn_hover_fg": "#ffffff",
-        "nav_bg": "rgba(0,0,0,0)",
-        "nav_fg": "#111111",
-        "nav_hover_bg": "#111111",
-        "nav_hover_fg": "#ffffff",
-        "padding_top": 80,
-        "padding_bottom": 80
-      }
+        "hotspot_1",
+        "hotspot_2",
+        "hotspot_3"
+      ]
     },
-    "product_bundle_skinova_CM3gnJ": {
-      "type": "product-bundle",
-      "blocks": {
-        "product_M8i8mc": {
-          "type": "product",
-          "settings": {
-            "product": "rejuvenating-night-oil",
-            "title_override": "Rejuvenating Night Oil",
-            "dot_x": 42,
-            "dot_y": 65
-          }
-        },
-        "product_X7YqC6": {
-          "type": "product",
-          "settings": {
-            "product": "dream-bio-retinol",
-            "title_override": "Dream Bio Retinol",
-            "dot_x": 90,
-            "dot_y": 45
-          }
-        },
-        "product_DYgrUY": {
-          "type": "product",
-          "settings": {
-            "product": "protective-day-oil",
-            "title_override": "",
-            "dot_x": 14,
-            "dot_y": 31
-          }
-        }
+    "stack": {
+      "type": "stacked-cards",
+      "settings": {
+        "heading": "Built for the <em>long walk</em>",
+        "color_scheme": "scheme-1",
+        "padding_top": "none",
+        "padding_bottom": "medium"
       },
-      "block_order": [
-        "product_M8i8mc",
-        "product_X7YqC6",
-        "product_DYgrUY"
-      ],
-      "name": "Product bundle",
-      "settings": {
-        "image": "",
-        "media_radius": 16,
-        "eyebrow": "Shop Skincare Set",
-        "title": "Build your complete daily skin ritual",
-        "btn_label": "Add All To Cart",
-        "bg_color": "#ffffff",
-        "text_color": "#1a1a1a",
-        "eyebrow_color": "#1a1a1a",
-        "eyebrow_size": 14,
-        "title_color": "#111111",
-        "title_size": 42,
-        "title_weight": 600,
-        "dot_bg": "#ffffff",
-        "dot_fg": "#1a1a1a",
-        "dot_size": 32,
-        "item_bg": "#ffffff",
-        "item_image_bg": "#f4f4f4",
-        "num_bg": "#ffffff",
-        "num_fg": "#1a1a1a",
-        "item_title_color": "#111111",
-        "item_title_size": 15,
-        "price_color": "#111111",
-        "compare_color": "#999999",
-        "variant_color": "#555555",
-        "btn_bg": "#111111",
-        "btn_fg": "#ffffff",
-        "btn_hover_bg": "#333333",
-        "btn_hover_fg": "#ffffff",
-        "padding_top": 80,
-        "padding_bottom": 80
-      }
-    },
-    "sticky_collections_skinova_H8XPUd": {
-      "type": "sticky-collections",
       "blocks": {
-        "collection_MfnXLf": {
-          "type": "collection",
-          "settings": {
-            "collection": "frontpage",
-            "title_override": "Sale 30% off",
-            "products_count": 8
-          }
-        },
-        "collection_ck67AF": {
-          "type": "collection",
-          "settings": {
-            "collection": "frontpage",
-            "title_override": "Travel & Minis",
-            "products_count": 8
-          }
-        },
-        "collection_ae6yKd": {
-          "type": "collection",
-          "settings": {
-            "collection": "frontpage",
-            "title_override": "Under 29$",
-            "products_count": 8
-          }
-        }
-      },
-      "block_order": [
-        "collection_MfnXLf",
-        "collection_ck67AF",
-        "collection_ae6yKd"
-      ],
-      "name": "Sticky collections",
-      "settings": {
-        "head_title": "Your routine. Your rules.Shop what works for you.",
-        "head_title_color": "#111111",
-        "head_title_size": 36,
-        "head_title_weight": 600,
-        "head_desc": "",
-        "head_desc_color": "#444444",
-        "head_desc_size": 15,
-        "head_link_label": "Shop All Products",
-        "head_link_url": "/collections/all",
-        "head_link_color": "#111111",
-        "head_link_size": 14,
-        "head_align": "center",
-        "image": "",
-        "image_content_position": "top",
-        "image_radius": 16,
-        "eyebrow": "Formulated With Care",
-        "eyebrow_color": "#ffffff",
-        "eyebrow_size": 14,
-        "image_title": "Built for every skin type",
-        "image_title_color": "#ffffff",
-        "image_title_size": 34,
-        "image_title_weight": 600,
-        "btn_label": "Shop All Products",
-        "btn_link": "/collections/all",
-        "image_btn_bg": "#ffffff",
-        "image_btn_fg": "#111111",
-        "sticky_offset": 80,
-        "coll_gap": 56,
-        "coll_title_color": "#111111",
-        "coll_title_size": 26,
-        "coll_title_weight": 600,
-        "nav_bg": "#ffffff",
-        "nav_fg": "#111111",
-        "nav_hover_bg": "#111111",
-        "nav_hover_fg": "#ffffff",
-        "choose_options_label": "Choose Options",
-        "atc_label": "Add To Cart",
-        "card_bg": "#f4f4f4",
-        "card_radius": 12,
-        "card_title_color": "#111111",
-        "card_title_size": 14,
-        "type_color": "#7a7a7a",
-        "type_size": 12,
-        "price_color": "#1a1a1a",
-        "compare_color": "#888888",
-        "price_size": 13,
-        "sale_bg": "#e23b3b",
-        "sale_fg": "#ffffff",
-        "new_bg": "#2f9e4f",
-        "new_fg": "#ffffff",
-        "hot_bg": "#4a37d1",
-        "hot_fg": "#ffffff",
-        "badge_size": 11,
-        "btn_bg": "#ffffff",
-        "btn_fg": "#111111",
-        "btn_hover_bg": "#111111",
-        "btn_hover_fg": "#ffffff",
-        "bg_color": "#ffffff",
-        "text_color": "#1a1a1a",
-        "padding_top": 80,
-        "padding_bottom": 80
-      }
-    },
-    "image_with_text_skinova_3hQB3m": {
-      "type": "image-with-text",
-      "name": "Image with text",
-      "settings": {
-        "image": "",
-        "image_side": "right",
-        "eyebrow": "Gentle And Considered",
-        "title": "Skincare that respects your skin",
-        "description": "We formulate without compromise — no harsh chemicals, no unnecessary fillers. Just clean, effective ingredients your skin can trust every day.",
-        "btn_label": "Shop Now",
-        "btn_link": "/collections/all",
-        "radius": 20,
-        "min_height": 520,
-        "text_gap": 16,
-        "bg_color": "#ffffff",
-        "content_bg": "#e9dccb",
-        "eyebrow_color": "#1a1a1a",
-        "eyebrow_size": 14,
-        "title_color": "#111111",
-        "title_size": 52,
-        "title_weight": 600,
-        "desc_color": "#333333",
-        "desc_size": 15,
-        "btn_bg": "#111111",
-        "btn_fg": "#ffffff",
-        "btn_hover_bg": "#333333",
-        "btn_hover_fg": "#ffffff",
-        "btn_size": 14,
-        "padding_top": 40,
-        "padding_bottom": 40,
-        "side_padding": 40
-      }
-    },
-    "shoppable_tabs_skinova_PwcPDF": {
-      "type": "shoppable-tabs",
-      "blocks": {
-        "tab_Tdjqi3": {
-          "type": "tab",
-          "settings": {
-            "tab_title": "Sensitive Skin",
-            "tab_description": "<p>We're careful about every ingredient that goes in — and just as careful about what we keep out. No irritants, no unnecessary fragrance, no compromise on your skin's comfort.</p>",
-            "collection": "frontpage",
-            "products_count": 4
-          }
-        },
-        "tab_fWDbfL": {
-          "type": "tab",
-          "settings": {
-            "tab_title": "Dry Skin",
-            "tab_description": "<p>Deep, lasting hydration that works beneath the surface. Our dry skin range is formulated to restore your skin's natural moisture barrier and keep it protected throughout the day.</p>",
-            "collection": "frontpage",
-            "products_count": 4
-          }
-        },
-        "tab_ePiWkU": {
-          "type": "tab",
-          "settings": {
-            "tab_title": "Organic Formulas",
-            "tab_description": "<p>Where it's possible to use certified organic ingredients without affecting efficacy, we do. Because what's good for your skin should also be good for the planet.</p>",
-            "collection": "frontpage",
-            "products_count": 4
-          }
-        },
-        "tab_PkLXwH": {
-          "type": "tab",
-          "settings": {
-            "tab_title": "Prestige Skincare",
-            "tab_description": "<p>Professional-grade ingredients. Accessible price points. Our premium range delivers results you'd expect from a high-end skin clinic, without the clinic price tag.</p>",
-            "collection": "frontpage",
-            "products_count": 4
-          }
-        }
-      },
-      "block_order": [
-        "tab_Tdjqi3",
-        "tab_fWDbfL",
-        "tab_ePiWkU",
-        "tab_PkLXwH"
-      ],
-      "name": "Shoppable tabs",
-      "settings": {
-        "eyebrow": "Photos & Results",
-        "eyebrow_color": "#1a1a1a",
-        "eyebrow_size": 14,
-        "eyebrow_weight": 500,
-        "title": "Real skin. Real products. Real difference.",
-        "title_color": "#111111",
-        "title_size": 38,
-        "title_weight": 600,
-        "tab_title_color": "#111111",
-        "tab_title_inactive_color": "#a0a0a0",
-        "tab_title_size": 18,
-        "tab_title_weight": 600,
-        "tab_desc_color": "#3a3a3a",
-        "tab_desc_size": 14,
-        "tab_accent_color": "#111111",
-        "sticky_offset": 80,
-        "card_radius": 16,
-        "product_bar_bg": "#ffffff",
-        "product_thumb_size": 54,
-        "product_title_color": "#111111",
-        "product_title_size": 14,
-        "product_price_color": "#e23b3b",
-        "product_compare_color": "#8a8a8a",
-        "product_price_size": 13,
-        "bag_bg": "#f2f2f2",
-        "bag_fg": "#111111",
-        "bag_hover_bg": "#111111",
-        "bag_hover_fg": "#ffffff",
-        "bg_color": "#ffffff",
-        "text_color": "#1a1a1a",
-        "padding_top": 80,
-        "padding_bottom": 80
-      }
-    },
-    "featured_press_skinova_XWhbnq": {
-      "type": "featured-press",
-      "blocks": {
-        "press_9wwXw9": {
-          "type": "press",
-          "settings": {
-            "logo": "",
-            "alt": "",
-            "quote": "\"An edit of skincare that genuinely performs. Clean, considered and worth every penny.\"",
-            "link": ""
-          }
-        },
-        "press_zUDCNK": {
-          "type": "press",
-          "settings": {
-            "logo": "",
-            "alt": "",
-            "quote": "\"Thoughtfully formulated products with results-driven ingredients. A brand to watch.\"",
-            "link": ""
-          }
-        },
-        "press_8CqWh8": {
-          "type": "press",
-          "settings": {
-            "logo": "",
-            "alt": "",
-            "quote": "\"Looking to simplify your skincare without compromising on quality? This is where to start.\"",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "press_9wwXw9",
-        "press_zUDCNK",
-        "press_8CqWh8"
-      ],
-      "name": "Featured press",
-      "settings": {
-        "title": "As Seen In",
-        "title_color": "#111111",
-        "title_size": 40,
-        "title_weight": 600,
-        "columns_desktop": 3,
-        "gap": 40,
-        "logo_max_height": 54,
-        "quote_color": "#1a1a1a",
-        "quote_size": 15,
-        "quote_weight": 400,
-        "bg_color": "#ffffff",
-        "text_color": "#1a1a1a",
-        "border_color": "#e6e6e6",
-        "border_width": 1,
-        "padding_top": 72,
-        "padding_bottom": 72
-      }
-    },
-    "features_skinova_xphNB6": {
-      "type": "features",
-      "blocks": {
-        "feature_H7xchU": {
-          "type": "feature",
-          "settings": {
-            "icon_preset": "shipping",
-            "title": "Free shipping",
-            "subtitle": "On orders over $50",
-            "link": ""
-          }
-        },
-        "feature_9MxFaB": {
-          "type": "feature",
-          "settings": {
-            "icon_preset": "guarantee",
-            "title": "30-day guarantee",
-            "subtitle": "Money-back, no questions",
-            "link": ""
-          }
-        },
-        "feature_ba7EtB": {
-          "type": "feature",
-          "settings": {
-            "icon_preset": "payment",
-            "title": "Buy now, pay later",
-            "subtitle": "4 interest-free payments",
-            "link": ""
-          }
-        },
-        "feature_UqW4k9": {
-          "type": "feature",
-          "settings": {
-            "icon_preset": "support",
-            "title": "24/7 live support",
-            "subtitle": "We reply within the hour",
-            "link": ""
-          }
-        },
-        "feature_WfKycX": {
-          "type": "feature",
-          "settings": {
-            "icon_preset": "return",
-            "title": "Easy returns",
-            "subtitle": "Free returns within 14 days",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "feature_H7xchU",
-        "feature_9MxFaB",
-        "feature_ba7EtB",
-        "feature_UqW4k9",
-        "feature_WfKycX"
-      ],
-      "name": "Features",
-      "settings": {
-        "align": "center",
-        "divider_style": "line",
-        "divider_color": "#e2dcd6",
-        "bg_color": "#ffffff",
-        "text_color": "#1a1a1a",
-        "item_padding_y": 8,
-        "item_padding_x": 28,
-        "icon_size": 44,
-        "icon_bg": "#fbe9e8",
-        "icon_color": "#1a1a1a",
-        "title_color": "#1a1a1a",
-        "title_size": 14,
-        "title_size_mobile": 13,
-        "title_weight": 600,
-        "subtitle_color": "#7a7a7a",
-        "subtitle_size": 12,
-        "padding_top": 56,
-        "padding_bottom": 56
-      }
-    },
-    "faq_skinova_JcNjzx": {
-      "type": "faq-grid",
-      "blocks": {
-        "faq_MDpDEJ": {
-          "type": "faq",
-          "settings": {
-            "question": "How long does shipping take?",
-            "answer": "<p>Standard orders are dispatched within 1–2 business days. Domestic delivery typically arrives within 3–5 business days. Express options are available at checkout for faster delivery.</p>",
-            "open_by_default": false
-          }
-        },
-        "faq_LEzXnV": {
-          "type": "faq",
-          "settings": {
-            "question": "Does my order arrive in gift-ready packaging?",
-            "answer": "<p>Yes. Every order is packaged with care — clean, minimal and presentation-ready. Perfect for gifting or treating yourself.</p>",
-            "open_by_default": true
-          }
-        },
-        "faq_jm7ABH": {
-          "type": "faq",
-          "settings": {
-            "question": "Do you ship internationally?",
-            "answer": "<p>Yes, we ship worldwide. International delivery times vary by destination and are calculated at checkout. All orders are fully tracked from dispatch to doorstep.</p>",
-            "open_by_default": false
-          }
-        },
-        "faq_xWCNpW": {
-          "type": "faq",
-          "settings": {
-            "question": "What payment methods do you accept?",
-            "answer": "<p>Shipping usually takes 3-7 business days, depending on your location. Expedited shipping options are available for faster delivery.</p>",
-            "open_by_default": false
-          }
-        }
-      },
-      "block_order": [
-        "faq_MDpDEJ",
-        "faq_LEzXnV",
-        "faq_jm7ABH",
-        "faq_xWCNpW"
-      ],
-      "name": "FAQ grid",
-      "settings": {
-        "title": "We've got answers.",
-        "title_color": "#111111",
-        "title_size": 38,
-        "title_weight": 600,
-        "description": "<p>Every product we make is designed to work and feel great. Got a question? We've probably already answered it — and if not, we're always here.</p>",
-        "desc_color": "#1a1a1a",
-        "desc_size": 15,
-        "btn_label": "See More Answers",
-        "btn_link": "",
-        "btn_bg": "#111111",
-        "btn_fg": "#ffffff",
-        "btn_hover_bg": "#333333",
-        "btn_hover_fg": "#ffffff",
-        "image": "",
-        "image_radius": 0,
-        "item_bg": "#ffffff",
-        "item_border_color": "#e8e2d8",
-        "item_radius": 14,
-        "item_gap": 10,
-        "question_color": "#111111",
-        "question_size": 16,
-        "question_weight": 600,
-        "icon_color": "#111111",
-        "answer_color": "#3a3a3a",
-        "answer_size": 14,
-        "bg_color": "#efe9de",
-        "padding_top": 80,
-        "padding_bottom": 80
-      }
-    },
-    "about_skinova_rmM4PF": {
-      "type": "about",
-      "blocks": {
-        "card_4NHQw4": {
+        "card_1": {
           "type": "card",
           "settings": {
-            "image": "",
-            "bg_color": "#ebebeb",
-            "title": "News, tips, reviews",
-            "btn_label": "View Our Blog",
-            "link": ""
+            "label": "Material",
+            "heading": "Fabrics that move first",
+            "color_scheme": "scheme-3",
+            "text": "<p>Stretch wool, washed cotton and recycled shells chosen for how they behave mid-stride, not on the hanger.</p>"
           }
         },
-        "card_4M3wA3": {
+        "card_2": {
           "type": "card",
           "settings": {
-            "image": "",
-            "bg_color": "#c9b49a",
-            "title": "Stores near you",
-            "btn_label": "Find A Store",
-            "link": ""
+            "label": "Fit",
+            "heading": "Cut on the bias",
+            "color_scheme": "scheme-2",
+            "text": "<p>Angled seams and gusseted joints give every piece room to reach, sit and cycle without pulling.</p>"
           }
         },
-        "card_4AgeeW": {
+        "card_3": {
           "type": "card",
           "settings": {
-            "image": "",
-            "bg_color": "#e9cbcb",
-            "title": "On the gram",
-            "btn_label": "@skinova",
-            "link": ""
+            "label": "Care",
+            "heading": "Made to be mended",
+            "color_scheme": "scheme-4",
+            "text": "<p>Spare buttons, replaceable zips and a repair service so the coat you buy today stays in rotation.</p>"
           }
         }
       },
       "block_order": [
-        "card_4NHQw4",
-        "card_4M3wA3",
-        "card_4AgeeW"
-      ],
-      "name": "About",
+        "card_1",
+        "card_2",
+        "card_3"
+      ]
+    },
+    "journal": {
+      "type": "journal",
       "settings": {
-        "title": "Skincare that fits every season, every mood, every version of you.",
-        "title_color": "#111111",
-        "title_size": 34,
-        "title_weight": 600,
-        "link_label": "About Us",
-        "link_url": "",
-        "link_color": "#111111",
-        "link_size": 14,
-        "columns_desktop": 3,
-        "card_gap": 20,
-        "card_radius": 12,
-        "card_title_color": "#111111",
-        "card_title_size": 22,
-        "card_title_weight": 600,
-        "btn_bg": "#111111",
-        "btn_fg": "#ffffff",
-        "btn_hover_bg": "#333333",
-        "btn_hover_fg": "#ffffff",
-        "bg_color": "#ffffff",
-        "padding_top": 72,
-        "padding_bottom": 72
+        "heading": "Journal",
+        "limit": 4,
+        "button_label": "All stories",
+        "color_scheme": "scheme-1",
+        "padding_top": "small",
+        "padding_bottom": "large"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading_outline": "Stay in",
+        "heading": "Motion",
+        "text": "<p>Early access to new drops, styling notes from the studio, and nothing you didn't ask for.</p>",
+        "color_scheme": "scheme-2",
+        "padding_top": "large",
+        "padding_bottom": "large"
       }
     }
   },
   "order": [
-    "slideshow_skinova_x7W6aQ",
-    "marquee_skinova_f8tiN3",
-    "featured_product_skinova_w7prWB",
-    "highlight_statement_YFmqWy",
-    "collection_list_skinova_cTyQ8H",
-    "product_bundle_skinova_CM3gnJ",
-    "sticky_collections_skinova_H8XPUd",
-    "image_with_text_skinova_3hQB3m",
-    "shoppable_tabs_skinova_PwcPDF",
-    "featured_press_skinova_XWhbnq",
-    "features_skinova_xphNB6",
-    "faq_skinova_JcNjzx",
-    "about_skinova_rmM4PF"
+    "hero",
+    "tapes",
+    "categories",
+    "index",
+    "edit",
+    "explorer",
+    "manifesto",
+    "lookbook",
+    "stack",
+    "journal",
+    "newsletter"
   ]
 }

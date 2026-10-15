@@ -1,14 +1,13 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = 'search-' | append: section.id
   assign products_per_page = section.settings.products_per_page
-  assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
 -%}
 
 <section
   id="{{ section_id }}"
   class="skinova-search full-width"
-  style="--bg: {{ bg_color }}; --fg: {{ text_color }};"
+  style="--bg: var(--color-bg); --fg: var(--color-text);"
 >
   <div class="skinova-search__inner">
     <header class="skinova-search__header">
@@ -98,6 +97,7 @@
     {%- endif -%}
   </div>
 </section>
+</div>
 
 {% stylesheet %}
   .skinova-search {
@@ -256,16 +256,10 @@
       "content": "t:sections.search.colors_header"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "t:sections.search.bg_color",
-      "default": "#fbe9e8"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.search.text_color",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     }
   ]
 }

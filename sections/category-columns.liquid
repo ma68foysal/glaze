@@ -1,0 +1,132 @@
+{%- assign count = section.blocks.size | at_least: 1 -%}
+<section class="k-cats k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }}" aria-label="{{ section.settings.aria_label | escape }}">
+  <div class="k-cats__grid color-{{ section.settings.color_scheme }}" style="--cols: {{ count }};">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign link = block.settings.link
+        if link == blank and block.settings.collection != blank
+          assign link = block.settings.collection.url
+        endif
+        assign title = block.settings.title | default: block.settings.collection.title
+        assign image = block.settings.image | default: block.settings.collection.featured_image
+        if title == blank
+          assign title = 'sections.category_columns.placeholder_title' | t
+        endif
+        assign tag = 'div'
+        if link != blank
+          assign tag = 'a'
+        endif
+      -%}
+      <{{ tag }} class="k-cat k-reveal"{% if link != blank %} href="{{ link }}"{% endif %} style="--d: {{ forloop.index0 }};" {{ block.shopify_attributes }}>
+        <div class="k-cat__media k-media" aria-hidden="true">
+          {%- render 'k-media', image: image, video: block.settings.video, sizes: '(min-width: 900px) 34vw, 100vw', placeholder: 'lifestyle-2', alt: '' -%}
+        </div>
+        <span class="k-cat__shade"></span>
+        <h2 class="k-cat__title">{{ title }}</h2>
+        {%- if block.settings.button_label != blank and link != blank -%}
+          <span class="k-cat__btn">{{ block.settings.button_label }}</span>
+        {%- endif -%}
+      </{{ tag }}>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-cats__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+    gap: 1px;
+    background: var(--color-bg);
+  }
+  .k-cat {
+    position: relative;
+    display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+    min-height: clamp(520px, 52vw, 750px);
+    padding: 48px;
+    overflow: hidden;
+    color: #fff;
+    isolation: isolate;
+  }
+  @supports (animation-timeline: view()) {
+    .js .k-cat.k-reveal { animation-range: entry calc(var(--d, 0) * 8%) cover calc(25% + var(--d, 0) * 8%); }
+  }
+  .k-cat__media { position: absolute; inset: 0; z-index: -2; background: #2e2e2c; transition: transform var(--dur-slow) var(--ease-out); }
+  .k-cat__media .k-ph { fill: rgba(255, 255, 255, 0.25); background: #3f4a3c; }
+  .k-cat:hover .k-cat__media { transform: scale(1.05); }
+  .k-cat__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(14, 14, 14, 0.1), rgba(14, 14, 14, 0.45)); transition: background var(--dur); }
+  .k-cat:hover .k-cat__shade { background: linear-gradient(180deg, rgba(14, 14, 14, 0.2), rgba(14, 14, 14, 0.55)); }
+  .k-cat__title {
+    margin: 0;
+    writing-mode: vertical-lr;
+    rotate: 180deg;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: calc(clamp(64px, 6.6vw, 112px) * var(--heading-scale));
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    text-transform: lowercase;
+    transform-origin: 50% 50%;
+    transition: letter-spacing var(--dur-slow) var(--ease-out), translate var(--dur);
+  }
+  .k-cat:hover .k-cat__title { letter-spacing: 0.02em; translate: 0 -8px; }
+  .k-cat__btn {
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center;
+    min-height: 48px; padding: 0 30px;
+    border-radius: var(--radius-button);
+    background: #f2f1ec; color: #0e0e0e;
+    font-weight: 600; font-size: var(--text-sm);
+    text-transform: lowercase;
+    transition: transform var(--dur-fast), box-shadow var(--dur-fast);
+  }
+  .k-cat__btn::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent 0%, rgba(14, 14, 14, 0.08) 50%, transparent 100%);
+    transform: translateX(-100%); transition: transform 0.5s;
+  }
+  .k-cat:hover .k-cat__btn { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14, 14, 14, 0.15); }
+  .k-cat:hover .k-cat__btn::before { transform: translateX(100%); }
+  @media (max-width: 900px) {
+    .k-cats__grid { grid-template-columns: 1fr; }
+    .k-cat { min-height: 440px; padding: 24px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Category columns",
+  "tag": "div",
+  "class": "k-cats-section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "aria_label", "label": "Accessible name", "default": "Shop by category", "info": "Read by screen readers. Not shown on the page." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Divider color", "default": "scheme-2", "info": "Shows as the thin line between columns." },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection", "info": "Fills the title, image and link when those are empty." },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Tall portrait images work best." },
+        { "type": "video", "id": "video", "label": "Video", "info": "Plays muted on a loop instead of the image." },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category columns",
+      "blocks": [
+        { "type": "column", "settings": { "title": "Women", "button_label": "Shop women" } },
+        { "type": "column", "settings": { "title": "Men", "button_label": "Shop men" } },
+        { "type": "column", "settings": { "title": "Accessories", "button_label": "Shop accessories" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

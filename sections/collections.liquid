@@ -1,18 +1,17 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = 'collections-' | append: section.id
   assign heading = section.settings.heading
   assign columns_desktop = section.settings.columns_desktop
   assign show_description = section.settings.show_description
-  assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
 -%}
 
 <section
   id="{{ section_id }}"
   class="skinova-collections full-width"
   style="
-    --bg: {{ bg_color }};
-    --fg: {{ text_color }};
+    --bg: var(--color-bg);
+    --fg: var(--color-text);
     --cols-d: {{ columns_desktop }};
   "
 >
@@ -56,6 +55,7 @@
     {%- endif -%}
   </div>
 </section>
+</div>
 
 {% stylesheet %}
   .skinova-collections {
@@ -182,18 +182,16 @@
       "content": "t:sections.collections.colors_header"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "t:sections.collections.bg_color",
-      "default": "#fbe9e8"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.collections.text_color",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     }
   ],
-  "presets": [{ "name": "t:general.collections_grid" }]
+  "presets": [
+    {
+      "name": "t:general.collections_grid"
+    }
+  ]
 }
 {% endschema %}

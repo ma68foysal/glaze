@@ -1,3 +1,4 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = 'page-' | append: section.id
   assign show_title = section.settings.show_title
@@ -5,14 +6,12 @@
   assign subtitle = section.settings.subtitle
   assign align = section.settings.align
   assign max_width = section.settings.max_width
-  assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
 -%}
 
 <section
   id="{{ section_id }}"
   class="skinova-page skinova-page--align-{{ align }} full-width"
-  style="--bg: {{ bg_color }}; --fg: {{ text_color }}; --max-w: {{ max_width }}px;"
+  style="--bg: var(--color-bg); --fg: var(--color-text); --max-w: {{ max_width }}px;"
 >
   <div class="skinova-page__inner">
     {%- if show_title -%}
@@ -29,6 +28,7 @@
     {%- endif -%}
   </div>
 </section>
+</div>
 
 {% stylesheet %}
   .skinova-page {
@@ -134,8 +134,14 @@
       "id": "align",
       "label": "t:labels.alignment",
       "options": [
-        { "value": "left", "label": "t:options.alignment.left" },
-        { "value": "center", "label": "t:options.alignment.center" }
+        {
+          "value": "left",
+          "label": "t:options.alignment.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.alignment.center"
+        }
       ],
       "default": "left"
     },
@@ -154,16 +160,10 @@
       "content": "t:sections.page.colors_header"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "t:sections.page.bg_color",
-      "default": "#fbe9e8"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.page.text_color",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     }
   ]
 }

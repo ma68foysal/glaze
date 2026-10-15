@@ -1,0 +1,90 @@
+<section class="k-mani k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap">
+    <p class="k-mani__text">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'text' -%}
+            <span class="k-mani__part" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+          {%- when 'image' -%}
+            <span class="k-mani__pill k-media" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 300 | image_tag: widths: '150, 300', sizes: '150px', loading: 'lazy', alt: block.settings.image.alt }}
+              {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'k-ph' }}
+              {%- endif -%}
+            </span>
+        {%- endcase -%}
+        {%- unless forloop.last %} {% endunless -%}
+      {%- endfor -%}
+    </p>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-mani__text {
+    margin: 0;
+    max-width: 1240px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: calc(clamp(34px, 4.9vw, 76px) * var(--heading-scale));
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    text-wrap: pretty;
+  }
+  .k-mani__text em { font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; letter-spacing: -0.01em; }
+  .k-mani__pill {
+    display: inline-block;
+    position: relative;
+    width: 1.9em; height: 0.82em;
+    margin: 0 0.08em;
+    border-radius: 999px;
+    vertical-align: -0.06em;
+  }
+  @supports (animation-timeline: view()) {
+    .js .k-mani__part { animation: k-ink linear both; animation-timeline: view(); animation-range: cover 18% cover 42%; }
+  }
+  @keyframes k-ink { from { color: rgba(var(--color-text-rgb), 0.18); } to { color: var(--color-text); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Manifesto",
+  "tag": "div",
+  "class": "k-mani-section",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "paragraph", "content": "Build one large statement from text and small image blocks. Each text part darkens as it scrolls into view." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        { "type": "inline_richtext", "id": "text", "label": "Text", "default": "We cut garments for <em>bodies</em>", "info": "Italic words use the accent font." }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Shown as a small pill inside the sentence." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Manifesto",
+      "blocks": [
+        { "type": "text", "settings": { "text": "We cut garments for <em>bodies</em>" } },
+        { "type": "image" },
+        { "type": "text", "settings": { "text": "in motion, built to bend, stride and <em>carry</em> the city" } },
+        { "type": "image" },
+        { "type": "text", "settings": { "text": "on their back." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

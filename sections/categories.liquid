@@ -1,6 +1,6 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = 'cats-' | append: section.id
-  assign bg = section.settings.bg_color
   assign title = section.settings.title
   assign description = section.settings.description
   assign tile_size_default = section.settings.tile_size
@@ -18,7 +18,7 @@
 <section
   id="{{ section_id }}"
   class="skinova-cats full-width"
-  style="--cats-bg: {{ bg }};"
+  style="--cats-bg: var(--color-bg);"
 >
   <div class="skinova-cats__inner">
     {%- if title != blank or description != blank -%}
@@ -39,7 +39,6 @@
             assign b_title = block.settings.title
             assign b_link = block.settings.link
             assign b_image = block.settings.image
-            assign b_bg = block.settings.bg_color
             assign b_radius = block.settings.radius
             assign b_size = block.settings.size
             if b_size == 0
@@ -52,7 +51,7 @@
             <{{ cat_tag }}
               class="skinova-cats__item"
               {% if b_link != blank %}href="{{ b_link }}"{% endif %}
-              style="--ci-bg: {{ b_bg }}; --ci-radius: {{ b_radius }}%; --ci-size: {{ b_size }}px;"
+              style="--ci-bg: rgba(var(--color-text-rgb), 0.06); --ci-radius: {{ b_radius }}%; --ci-size: {{ b_size }}px;"
             >
               <span class="skinova-cats__img">
                 {%- if b_image != blank -%}
@@ -76,6 +75,7 @@
     {%- endif -%}
   </div>
 </section>
+</div>
 
 {% stylesheet %}
   .skinova-cats {
@@ -201,10 +201,10 @@
       "default": "Shop by skin type and concern. Every formula is dermatologist-tested, fragrance-free and made to sit well on sensitive skin."
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Section background",
-      "default": "#fbe9e8"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     },
     {
       "type": "range",
@@ -241,12 +241,6 @@
           "label": "Link"
         },
         {
-          "type": "color",
-          "id": "bg_color",
-          "label": "Tile background",
-          "default": "#fde2c2"
-        },
-        {
           "type": "range",
           "id": "radius",
           "label": "Corner radius",
@@ -275,10 +269,30 @@
     {
       "name": "Categories",
       "blocks": [
-        { "type": "category", "settings": { "title": "Skin Transforming", "bg_color": "#fad248" } },
-        { "type": "category", "settings": { "title": "Facial Cleanser",   "bg_color": "#f5e0d6" } },
-        { "type": "category", "settings": { "title": "Toner & Mist",      "bg_color": "#fbcb1a" } },
-        { "type": "category", "settings": { "title": "Serums",            "bg_color": "#e8e8e8" } }
+        {
+          "type": "category",
+          "settings": {
+            "title": "Skin Transforming"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Facial Cleanser"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Toner & Mist"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Serums"
+          }
+        }
       ]
     }
   ]

@@ -1,17 +1,16 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = 'cart-' | append: section.id
   assign show_notes = section.settings.show_notes
   assign notes_label = section.settings.notes_label
   assign continue_label = section.settings.continue_label
   assign continue_link = section.settings.continue_link
-  assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
 -%}
 
 <section
   id="{{ section_id }}"
   class="skinova-cart full-width"
-  style="--bg: {{ bg_color }}; --fg: {{ text_color }};"
+  style="--bg: var(--color-bg); --fg: var(--color-text);"
 >
   <div class="skinova-cart__inner">
     <header class="skinova-cart__header">
@@ -239,6 +238,7 @@
     }
   })();
 </script>
+</div>
 
 {% stylesheet %}
   .skinova-cart {
@@ -585,16 +585,10 @@
       "content": "t:sections.cart.colors_header"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "t:sections.cart.bg_color",
-      "default": "#fbe9e8"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.cart.text_color",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     }
   ]
 }

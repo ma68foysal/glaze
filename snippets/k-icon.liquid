@@ -1,0 +1,33 @@
+{%- comment -%}
+  Line icons, 24px grid, stroke follows currentColor.
+  Usage: {% render 'k-icon', icon: 'arrow' %}  — optional size (default 20).
+{%- endcomment -%}
+{%- assign s = size | default: 20 -%}
+{%- case icon -%}
+  {%- when 'arrow' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  {%- when 'arrow-up-right' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9"/></svg>
+  {%- when 'bag' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 8h14l-1 13H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+  {%- when 'search' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+  {%- when 'menu' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M3 8h18M3 16h12"/></svg>
+  {%- when 'close' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  {%- when 'plus' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
+  {%- when 'chevron' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+  {%- when 'pause' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+  {%- when 'play' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M7 5v14l12-7z"/></svg>
+  {%- when 'star' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true" focusable="false"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1"/></svg>
+  {%- when 'dot' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+  {%- when 'bolt' -%}
+    <svg class="k-icon" width="{{ s }}" height="{{ s }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+{%- endcase -%}

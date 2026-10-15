@@ -1,3 +1,4 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = 'contact-form-' | append: section.id
   comment
@@ -9,12 +10,6 @@
   assign heading = section.settings.heading
   assign subheading = section.settings.subheading
   assign submit_label = section.settings.submit_label
-  assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
-  assign field_bg = section.settings.field_bg
-  assign field_border = section.settings.field_border
-  assign accent_color = section.settings.accent_color
-  assign accent_text_color = section.settings.accent_text_color
 -%}
 
 <section
@@ -22,12 +17,12 @@
   class="contact-form-section"
   aria-labelledby="{{ section_id }}-heading"
   style="
-    --bg: {{ bg_color }};
-    --fg: {{ text_color }};
-    --field-bg: {{ field_bg }};
-    --field-border: {{ field_border }};
-    --accent: {{ accent_color }};
-    --accent-fg: {{ accent_text_color }};
+    --bg: var(--color-bg);
+    --fg: var(--color-text);
+    --field-bg: rgba(var(--color-text-rgb), 0.04);
+    --field-border: var(--color-line);
+    --accent: var(--color-button);
+    --accent-fg: var(--color-button-label);
     --pad-top: {{ section.settings.padding_top }}px;
     --pad-bottom: {{ section.settings.padding_bottom }}px;
   "
@@ -119,6 +114,7 @@
     {%- endform -%}
   </div>
 </section>
+</div>
 
 {% stylesheet %}
   .contact-form-section {
@@ -256,40 +252,10 @@
       "content": "t:sections.contact_form.colors_header"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "t:sections.contact_form.bg_color",
-      "default": "#fbe9e8"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.contact_form.text_color",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "field_bg",
-      "label": "t:sections.contact_form.field_bg",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "field_border",
-      "label": "t:sections.contact_form.field_border",
-      "default": "#00000014"
-    },
-    {
-      "type": "color",
-      "id": "accent_color",
-      "label": "t:sections.contact_form.accent_color",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "accent_text_color",
-      "label": "t:sections.contact_form.accent_text_color",
-      "default": "#ffffff"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     },
     {
       "type": "header",

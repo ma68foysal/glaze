@@ -1,0 +1,43 @@
+{%- comment -%}
+  Image or video fill for a .k-media box.
+  Accepts:
+    image        — image object
+    video        — Shopify-hosted video object (wins over image; image is the poster)
+    sizes        — sizes attribute
+    placeholder  — placeholder_svg_tag name when both are blank (default 'image')
+    eager        — boolean
+    alt          — alt text override
+  Videos are muted, never autoplay with sound, and only play when motion is
+  allowed and they're on screen (theme.js).
+{%- endcomment -%}
+{%- liquid
+  assign loading = 'lazy'
+  assign fetch = 'auto'
+  if eager
+    assign loading = 'eager'
+    assign fetch = 'high'
+  endif
+  assign img_sizes = sizes | default: '100vw'
+-%}
+{%- if video != blank -%}
+  {%- assign poster = image | default: video.preview_image -%}
+  <video
+    data-k-autoplay
+    muted
+    loop
+    playsinline
+    preload="none"
+    aria-hidden="true"
+    {% if poster != blank %}poster="{{ poster | image_url: width: 1200 }}"{% endif %}
+  >
+    {%- for source in video.sources -%}
+      {%- if source.mime_type == 'video/mp4' -%}
+        <source src="{{ source.url }}" type="{{ source.mime_type }}">
+      {%- endif -%}
+    {%- endfor -%}
+  </video>
+{%- elsif image != blank -%}
+  {{ image | image_url: width: 2400 | image_tag: widths: '480, 720, 960, 1280, 1600, 2000, 2400', sizes: img_sizes, loading: loading, fetchpriority: fetch, alt: alt | default: image.alt }}
+{%- else -%}
+  {{ placeholder | default: 'image' | placeholder_svg_tag: 'k-ph' }}
+{%- endif -%}

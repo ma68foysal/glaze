@@ -1,0 +1,170 @@
+{%- assign pins = section.blocks | where: 'type', 'hotspot' -%}
+<section class="k-look k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap">
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="k-sec-head k-reveal">
+        {%- if section.settings.heading != blank -%}<h2 class="k-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+        {%- if section.settings.text != blank -%}<p class="k-sec-head__meta k-label k-muted">{{ section.settings.text }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <k-lookbook class="k-look__grid">
+      <div class="k-look__image k-media k-reveal">
+        {%- render 'k-media', image: section.settings.image, sizes: '(min-width: 900px) 58vw, 100vw', placeholder: 'lifestyle-2' -%}
+        {%- for pin in pins -%}
+          {%- liquid
+            assign p = pin.settings.product
+            assign p_title = p.title
+            if p_title == blank
+              assign p_title = 'products.placeholder_title' | t
+            endif
+          -%}
+          <button
+            type="button"
+            class="k-look__pin"
+            style="left: {{ pin.settings.x }}%; top: {{ pin.settings.y }}%;"
+            data-look-pick="{{ forloop.index0 }}"
+            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-label="{{ 'sections.lookbook.show_product' | t: title: p_title }}"
+            {{ pin.shopify_attributes }}
+            data-look-block="{{ forloop.index0 }}"
+          >{{ forloop.index | prepend: '0' | slice: -2, 2 }}</button>
+        {%- endfor -%}
+      </div>
+
+      <div class="k-look__panel">
+        <ul class="k-look__list" role="list">
+          {%- for pin in pins -%}
+            {%- liquid
+            assign p = pin.settings.product
+            assign p_title = p.title
+            if p_title == blank
+              assign p_title = 'products.placeholder_title' | t
+            endif
+          -%}
+            <li>
+              <button type="button" class="k-look__row" data-look-pick="{{ forloop.index0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+                <span class="k-label">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+                <span>{{ p_title }}</span>
+                <span>{% if p != blank %}{{ p.price | money }}{% endif %}</span>
+              </button>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- for pin in pins -%}
+          {%- liquid
+            assign p = pin.settings.product
+            assign p_title = p.title
+            if p_title == blank
+              assign p_title = 'products.placeholder_title' | t
+            endif
+          -%}
+          <div class="k-look__detail" data-look-detail="{{ forloop.index0 }}" {% unless forloop.first %}hidden{% endunless %} aria-live="polite">
+            <p class="k-label k-muted" style="margin: 0 0 10px;">{{ 'sections.lookbook.selected' | t }} — {{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
+            {%- if p != blank -%}
+              <p class="k-h3 k-look__name">{{ p.title }}</p>
+              <p class="k-look__desc">{{ p.description | strip_html | truncatewords: 26 }}</p>
+              <div class="k-look__ctas">
+                {%- if p.available and p.has_only_default_variant -%}
+                  <button type="button" class="k-btn k-btn--primary" data-quick-add="{{ p.selected_or_first_available_variant.id }}">
+                    {{ 'products.add_to_cart' | t }} — {{ p.price | money }}
+                  </button>
+                  <p class="visually-hidden" data-quick-add-error role="alert" hidden></p>
+                {%- elsif p.available -%}
+                  <a class="k-btn k-btn--primary" href="{{ p.url }}">{{ 'products.choose_options' | t }}</a>
+                {%- else -%}
+                  <button type="button" class="k-btn k-btn--primary" disabled>{{ 'products.sold_out' | t }}</button>
+                {%- endif -%}
+                <a class="k-btn k-btn--secondary" href="{{ p.url }}">{{ 'products.view_details' | t }}<span class="visually-hidden">: {{ p.title }}</span></a>
+              </div>
+            {%- else -%}
+              <p class="k-h3 k-look__name">{{ 'products.placeholder_title' | t }}</p>
+              <p class="k-look__desc k-muted">{{ 'sections.lookbook.empty' | t }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </k-lookbook>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-look__grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 40px; align-items: stretch; }
+  .k-look__image { aspect-ratio: 5 / 4; border-radius: calc(var(--radius-card) * 0.25); }
+  .k-look__pin {
+    position: absolute; z-index: 2;
+    width: 48px; height: 48px; margin: -24px 0 0 -24px;
+    border: 0; border-radius: 999px;
+    background: #f2f1ec; color: #0e0e0e;
+    font: 600 12px var(--font-label);
+    cursor: pointer;
+    transition: transform var(--dur-fast), background-color var(--dur-fast), color var(--dur-fast);
+  }
+  .k-look__pin::after {
+    content: ""; position: absolute; inset: -6px;
+    border: 1.5px solid #f2f1ec; border-radius: 999px;
+    animation: k-pulse 2.2s ease-out infinite;
+  }
+  .k-look__pin:hover { transform: scale(1.1); }
+  .k-look__pin[aria-pressed="true"] { background: var(--color-button); color: var(--color-button-label); }
+  .k-look__panel { display: flex; flex-direction: column; justify-content: space-between; gap: 28px; padding-top: 20px; border-top: 1.5px solid var(--color-text); }
+  .k-look__list { margin: 0; padding: 0; list-style: none; }
+  .k-look__row {
+    width: 100%;
+    display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 12px;
+    min-height: 60px; padding: 0;
+    border: 0; border-bottom: 1px solid var(--color-line);
+    background: none; color: var(--color-muted);
+    font: 500 16px var(--font-body); text-align: left; cursor: pointer;
+    transition: color var(--dur-fast), padding var(--dur);
+  }
+  .k-look__row:hover { color: var(--color-text); }
+  .k-look__row[aria-pressed="true"] { color: var(--color-text); padding-left: 10px; }
+  .k-look__name { margin: 0; }
+  .k-look__desc { margin: 14px 0 24px; max-width: 380px; color: var(--color-muted); }
+  .k-look__ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+  .k-look__detail:not([hidden]) { animation: k-rise-in 0.45s var(--ease-out) both; }
+  @media (max-width: 900px) {
+    .k-look__grid { grid-template-columns: 1fr; }
+    .k-look__pin { width: 40px; height: 40px; margin: -20px 0 0 -20px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Lookbook",
+  "tag": "div",
+  "class": "k-look-section",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Shop the <em>look</em>", "info": "Italic words use the accent font." },
+    { "type": "text", "id": "text", "label": "Text", "default": "Look 04" },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Landscape 5:4 images work best. Place each hotspot on the product it shows." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Hotspot",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "range", "id": "x", "label": "Horizontal position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 40 },
+        { "type": "range", "id": "y", "label": "Vertical position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 40 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lookbook",
+      "blocks": [
+        { "type": "hotspot", "settings": { "x": 38, "y": 30 } },
+        { "type": "hotspot", "settings": { "x": 58, "y": 58 } },
+        { "type": "hotspot", "settings": { "x": 44, "y": 84 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,3 +1,4 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = 'blog-' | append: section.id
   assign articles_per_page = section.settings.articles_per_page
@@ -5,14 +6,12 @@
   assign show_image = section.settings.show_image
   assign show_excerpt = section.settings.show_excerpt
   assign show_author = section.settings.show_author
-  assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
 -%}
 
 <section
   id="{{ section_id }}"
   class="skinova-blog full-width"
-  style="--bg: {{ bg_color }}; --fg: {{ text_color }}; --cols-d: {{ columns_desktop }};"
+  style="--bg: var(--color-bg); --fg: var(--color-text); --cols-d: {{ columns_desktop }};"
 >
   <div class="skinova-blog__inner">
     <header class="skinova-blog__header">
@@ -71,6 +70,7 @@
     {%- endpaginate -%}
   </div>
 </section>
+</div>
 
 {% stylesheet %}
   .skinova-blog {
@@ -243,16 +243,10 @@
       "content": "t:sections.blog.colors_header"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "t:sections.blog.bg_color",
-      "default": "#fbe9e8"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.blog.text_color",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     }
   ]
 }

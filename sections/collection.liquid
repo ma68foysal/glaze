@@ -1,12 +1,10 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = 'collection-' | append: section.id
   assign products_per_page = section.settings.products_per_page
   assign columns_desktop = section.settings.columns_desktop
   assign show_filters = section.settings.show_filters
   assign show_sort = section.settings.show_sort
-  assign bg_color = section.settings.bg_color
-  assign text_color = section.settings.text_color
-  assign card_bg = section.settings.card_bg
 
   assign sort_by = collection.sort_by | default: collection.default_sort_by
 -%}
@@ -15,9 +13,9 @@
   id="{{ section_id }}"
   class="skinova-collection full-width"
   style="
-    --bg: {{ bg_color }};
-    --fg: {{ text_color }};
-    --card-bg: {{ card_bg }};
+    --bg: var(--color-bg);
+    --fg: var(--color-text);
+    --card-bg: rgba(var(--color-text-rgb), 0.04);
     --cols-d: {{ columns_desktop }};
   "
 >
@@ -380,6 +378,7 @@
     });
   })();
 </script>
+</div>
 
 {% stylesheet %}
   .skinova-collection {
@@ -1090,22 +1089,10 @@
       "content": "t:sections.collection.colors_header"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Page background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.collection.text_color",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "card_bg",
-      "label": "t:sections.collection.card_bg",
-      "default": "#ffffff"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     }
   ]
 }

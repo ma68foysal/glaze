@@ -1,3 +1,4 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign sid = 'MasterProduct-' | append: section.id
   assign product_form_id = 'product-form-' | append: section.id
@@ -14,13 +15,13 @@
 {%- endcomment -%}
 <style>
   #{{ sid }} {
-    --c-bg: {{ section.settings.bg_color }};
-    --c-card: {{ section.settings.card_bg }};
-    --c-fg: {{ section.settings.text_color }};
-    --c-muted: {{ section.settings.muted_color }};
-    --c-accent: {{ section.settings.accent_color }};
-    --c-accent-fg: {{ section.settings.accent_text_color }};
-    --c-border: {{ section.settings.border_color }};
+    --c-bg: var(--color-bg);
+    --c-card: rgba(var(--color-text-rgb), 0.04);
+    --c-fg: var(--color-text);
+    --c-muted: var(--color-muted);
+    --c-accent: var(--color-button);
+    --c-accent-fg: var(--color-button-label);
+    --c-border: var(--color-line);
     --pt: {{ section.settings.padding_top }}px;
     --pb: {{ section.settings.padding_bottom }}px;
     --pt-mobile: {{ pt_mobile }}px;
@@ -34,22 +35,22 @@
     --gallery-sticky-top: {{ section.settings.gallery_sticky_top | default: 24 }}px;
     --thumb-size: {{ section.settings.thumb_size }}px;
     --rating-size: {{ section.settings.rating_size }}px;
-    --star-color: {{ section.settings.star_color }};
-    --title-color: {{ section.settings.title_color }};
+    --star-color: var(--color-text);
+    --title-color: var(--color-text);
     --title-size: clamp({{ section.settings.title_size_min }}px, {{ section.settings.title_size_vw }}vw, {{ section.settings.title_size_max }}px);
     --feature-size: {{ section.settings.feature_size }}px;
-    --feature-color: {{ section.settings.feature_color }};
+    --feature-color: var(--color-muted);
     --variant-price-size: {{ section.settings.variant_price_size }}px;
     --variant-name-size: {{ section.settings.variant_name_size }}px;
     --atc-padding-y: {{ section.settings.atc_padding_y }}px;
     --atc-padding-x: {{ section.settings.atc_padding_x }}px;
     --atc-radius: {{ section.settings.atc_radius }}px;
-    --atc-bg: {{ section.settings.atc_bg }};
-    --atc-color: {{ section.settings.atc_color }};
-    --atc-hover-bg: {{ section.settings.atc_hover_bg }};
+    --atc-bg: var(--color-button);
+    --atc-color: var(--color-button-label);
+    --atc-hover-bg: var(--color-text);
     --atc-size: {{ section.settings.atc_size }}px;
-    --trust-bg: {{ section.settings.trust_bg }};
-    --trust-color: {{ section.settings.trust_color }};
+    --trust-bg: rgba(var(--color-text-rgb), 0.05);
+    --trust-color: var(--color-text);
     --detail-label-size: {{ section.settings.detail_label_size }}px;
   }
 </style>
@@ -546,6 +547,7 @@
   [data-skinova-mp] root element above. ATC labels are passed through
   data-atc-label / data-sold-out-label attributes.
 {%- endcomment -%}
+</div>
 
 {% schema %}
 {
@@ -553,92 +555,417 @@
   "tag": "section",
   "class": "section section--master-main",
   "settings": [
-    { "type": "header", "content": "Layout" },
-    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 40 },
-    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 60 },
-    { "type": "range", "id": "max_width", "label": "Inner max width", "min": 1000, "max": 1600, "step": 20, "unit": "px", "default": 1200 },
-    { "type": "range", "id": "side_padding", "label": "Side padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 },
-    { "type": "range", "id": "radius_md", "label": "Radius — medium", "min": 0, "max": 32, "step": 1, "unit": "px", "default": 12 },
-    { "type": "range", "id": "radius_lg", "label": "Radius — large", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 24 },
-    { "type": "range", "id": "thumb_size", "label": "Thumbnail size", "min": 48, "max": 120, "step": 4, "unit": "px", "default": 76 },
-    { "type": "range", "id": "gallery_sticky_top", "label": "Gallery sticky top offset (desktop)", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 24, "info": "Distance from the viewport top while the gallery is pinned. Increase to clear a sticky header." },
-
-    { "type": "header", "content": "Gallery" },
-    { "type": "select", "id": "gallery_thumb_position", "label": "Thumbnail position (desktop)", "options": [
-      { "value": "left", "label": "Left (vertical)" },
-      { "value": "right", "label": "Right (vertical)" },
-      { "value": "below", "label": "Below (horizontal)" }
-    ], "default": "left", "info": "On mobile, thumbnails always appear as a horizontal strip below the image." },
-    { "type": "checkbox", "id": "gallery_show_thumbs", "label": "Show thumbnails", "default": true },
-    { "type": "checkbox", "id": "gallery_show_arrows", "label": "Show previous/next arrows on main image", "default": true },
-
-    { "type": "header", "content": "Colors" },
-    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#fbe9e8" },
-    { "type": "color", "id": "card_bg", "label": "Card / surface", "default": "#ffffff" },
-    { "type": "color", "id": "text_color", "label": "Body text", "default": "#1a1a1a" },
-    { "type": "color", "id": "muted_color", "label": "Muted text", "default": "#7a7a7a" },
-    { "type": "color", "id": "title_color", "label": "Title color", "default": "#1a1a1a" },
-    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#e8a5a0" },
-    { "type": "color", "id": "accent_text_color", "label": "Accent text (on accent bg)", "default": "#ffffff" },
-    { "type": "color", "id": "accent_dim_color", "label": "Accent — dim (selected variant)", "default": "#fae6e4" },
-    { "type": "color", "id": "border_color", "label": "Border", "default": "rgba(0,0,0,0.08)" },
-    { "type": "color", "id": "star_color", "label": "Star color", "default": "#f59e0b" },
-
-    { "type": "header", "content": "Typography" },
-    { "type": "range", "id": "title_size_min", "label": "Title min size", "min": 20, "max": 40, "step": 1, "unit": "px", "default": 26 },
-    { "type": "range", "id": "title_size_vw", "label": "Title fluid (vw)", "min": 2, "max": 6, "step": 1, "unit": "vw", "default": 3 },
-    { "type": "range", "id": "title_size_max", "label": "Title max size", "min": 28, "max": 64, "step": 1, "unit": "px", "default": 36 },
-    { "type": "range", "id": "feature_size", "label": "Feature bullet size", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
-    { "type": "color", "id": "feature_color", "label": "Feature bullet color", "default": "#444444" },
-    { "type": "text", "id": "title_fallback", "label": "Title fallback (when product has none)", "default": "Luxe Eyelash Growth Serum" },
-
-    { "type": "header", "content": "Rating" },
-    { "type": "checkbox", "id": "show_rating", "label": "Show rating row", "default": true },
-    { "type": "text", "id": "rating_value", "label": "Rating value", "default": "4.9" },
-    { "type": "text", "id": "review_count", "label": "Review count", "default": "1,827" },
-    { "type": "range", "id": "rating_size", "label": "Rating font size", "min": 11, "max": 16, "step": 1, "unit": "px", "default": 13 },
-
-    { "type": "header", "content": "Variants" },
-    { "type": "text", "id": "variant_label", "label": "Variant group label", "default": "Choose your option" },
-    { "type": "range", "id": "variant_name_size", "label": "Variant name size", "min": 13, "max": 20, "step": 1, "unit": "px", "default": 15 },
-    { "type": "range", "id": "variant_price_size", "label": "Variant price size", "min": 13, "max": 22, "step": 1, "unit": "px", "default": 16 },
-
-    { "type": "header", "content": "Add-to-cart button" },
-    { "type": "text", "id": "atc_label", "label": "Button label", "default": "Add to Cart" },
-    { "type": "text", "id": "sold_out_label", "label": "Sold out label", "default": "Sold out" },
-    { "type": "text", "id": "shipping_note", "label": "Shipping note (below button)", "default": "Free shipping on all U.S. orders" },
-    { "type": "color", "id": "atc_bg", "label": "Button background", "default": "#1a1a1a" },
-    { "type": "color", "id": "atc_color", "label": "Button text", "default": "#ffffff" },
-    { "type": "color", "id": "atc_hover_bg", "label": "Button hover bg", "default": "#000000" },
-    { "type": "range", "id": "atc_size", "label": "Button font size", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
-    { "type": "range", "id": "atc_padding_y", "label": "Button vertical padding", "min": 12, "max": 30, "step": 1, "unit": "px", "default": 18 },
-    { "type": "range", "id": "atc_padding_x", "label": "Button horizontal padding", "min": 16, "max": 60, "step": 2, "unit": "px", "default": 24 },
-    { "type": "range", "id": "atc_radius", "label": "Button radius", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 100 },
-
-    { "type": "header", "content": "Verified buyer block" },
-    { "type": "checkbox", "id": "show_verified", "label": "Show verified buyer block", "default": true },
-    { "type": "image_picker", "id": "verified_avatar", "label": "Avatar" },
-    { "type": "text", "id": "verified_name", "label": "Name", "default": "Louise S." },
-    { "type": "text", "id": "verified_meta", "label": "Meta (location/role)", "default": "Verified Buyer · Sydney" },
-    { "type": "textarea", "id": "verified_text", "label": "Quote", "default": "I cannot tell you how much I love this serum! Healthier, longer, fuller lashes — exactly what I was hoping for." },
-
-    { "type": "header", "content": "Payment icons" },
-    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true },
-
-    { "type": "header", "content": "Trust badges (use Trust blocks below)" },
-    { "type": "color", "id": "trust_bg", "label": "Trust pill bg", "default": "#fae6e4" },
-    { "type": "color", "id": "trust_color", "label": "Trust pill text", "default": "#1a1a1a" },
-
-    { "type": "header", "content": "Collapsible details" },
-    { "type": "range", "id": "detail_label_size", "label": "Detail label size", "min": 13, "max": 20, "step": 1, "unit": "px", "default": 15 },
-    { "type": "text", "id": "details_1_title", "label": "Detail 1 — title", "default": "Ingredients and safety" },
-    { "type": "richtext", "id": "details_1_body", "label": "Detail 1 — body", "default": "<p>Vegan, cruelty-free, dermatologically tested. Full ingredient list available in pack.</p>" },
-    { "type": "text", "id": "details_2_title", "label": "Detail 2 — title", "default": "How to use" },
-    { "type": "richtext", "id": "details_2_body", "label": "Detail 2 — body", "default": "<p>Apply once daily along the upper lash line, like an eyeliner. Visible results in 4 weeks.</p>" },
-    { "type": "text", "id": "details_3_title", "label": "Detail 3 — title", "default": "Refund and returns" },
-    { "type": "richtext", "id": "details_3_body", "label": "Detail 3 — body", "default": "<p>30-day money-back guarantee. No questions asked.</p>" },
-    { "type": "text", "id": "details_4_title", "label": "Detail 4 — title", "default": "Shipping and guarantee" },
-    { "type": "richtext", "id": "details_4_body", "label": "Detail 4 — body", "default": "<p>Free shipping on US orders over $30. Ships within 24 hours.</p>" }
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Inner max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "radius_md",
+      "label": "Radius — medium",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "radius_lg",
+      "label": "Radius — large",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "thumb_size",
+      "label": "Thumbnail size",
+      "min": 48,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 76
+    },
+    {
+      "type": "range",
+      "id": "gallery_sticky_top",
+      "label": "Gallery sticky top offset (desktop)",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 24,
+      "info": "Distance from the viewport top while the gallery is pinned. Increase to clear a sticky header."
+    },
+    {
+      "type": "header",
+      "content": "Gallery"
+    },
+    {
+      "type": "select",
+      "id": "gallery_thumb_position",
+      "label": "Thumbnail position (desktop)",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left (vertical)"
+        },
+        {
+          "value": "right",
+          "label": "Right (vertical)"
+        },
+        {
+          "value": "below",
+          "label": "Below (horizontal)"
+        }
+      ],
+      "default": "left",
+      "info": "On mobile, thumbnails always appear as a horizontal strip below the image."
+    },
+    {
+      "type": "checkbox",
+      "id": "gallery_show_thumbs",
+      "label": "Show thumbnails",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "gallery_show_arrows",
+      "label": "Show previous/next arrows on main image",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size_min",
+      "label": "Title min size",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "title_size_vw",
+      "label": "Title fluid (vw)",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "vw",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "title_size_max",
+      "label": "Title max size",
+      "min": 28,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "feature_size",
+      "label": "Feature bullet size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "text",
+      "id": "title_fallback",
+      "label": "Title fallback (when product has none)",
+      "default": "Luxe Eyelash Growth Serum"
+    },
+    {
+      "type": "header",
+      "content": "Rating"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating row",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "rating_value",
+      "label": "Rating value",
+      "default": "4.9"
+    },
+    {
+      "type": "text",
+      "id": "review_count",
+      "label": "Review count",
+      "default": "1,827"
+    },
+    {
+      "type": "range",
+      "id": "rating_size",
+      "label": "Rating font size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Variants"
+    },
+    {
+      "type": "text",
+      "id": "variant_label",
+      "label": "Variant group label",
+      "default": "Choose your option"
+    },
+    {
+      "type": "range",
+      "id": "variant_name_size",
+      "label": "Variant name size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "variant_price_size",
+      "label": "Variant price size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Add-to-cart button"
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "Button label",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_label",
+      "label": "Sold out label",
+      "default": "Sold out"
+    },
+    {
+      "type": "text",
+      "id": "shipping_note",
+      "label": "Shipping note (below button)",
+      "default": "Free shipping on all U.S. orders"
+    },
+    {
+      "type": "range",
+      "id": "atc_size",
+      "label": "Button font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "atc_padding_y",
+      "label": "Button vertical padding",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "atc_padding_x",
+      "label": "Button horizontal padding",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "atc_radius",
+      "label": "Button radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Verified buyer block"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_verified",
+      "label": "Show verified buyer block",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "verified_avatar",
+      "label": "Avatar"
+    },
+    {
+      "type": "text",
+      "id": "verified_name",
+      "label": "Name",
+      "default": "Louise S."
+    },
+    {
+      "type": "text",
+      "id": "verified_meta",
+      "label": "Meta (location/role)",
+      "default": "Verified Buyer · Sydney"
+    },
+    {
+      "type": "textarea",
+      "id": "verified_text",
+      "label": "Quote",
+      "default": "I cannot tell you how much I love this serum! Healthier, longer, fuller lashes — exactly what I was hoping for."
+    },
+    {
+      "type": "header",
+      "content": "Payment icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Collapsible details"
+    },
+    {
+      "type": "range",
+      "id": "detail_label_size",
+      "label": "Detail label size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "text",
+      "id": "details_1_title",
+      "label": "Detail 1 — title",
+      "default": "Ingredients and safety"
+    },
+    {
+      "type": "richtext",
+      "id": "details_1_body",
+      "label": "Detail 1 — body",
+      "default": "<p>Vegan, cruelty-free, dermatologically tested. Full ingredient list available in pack.</p>"
+    },
+    {
+      "type": "text",
+      "id": "details_2_title",
+      "label": "Detail 2 — title",
+      "default": "How to use"
+    },
+    {
+      "type": "richtext",
+      "id": "details_2_body",
+      "label": "Detail 2 — body",
+      "default": "<p>Apply once daily along the upper lash line, like an eyeliner. Visible results in 4 weeks.</p>"
+    },
+    {
+      "type": "text",
+      "id": "details_3_title",
+      "label": "Detail 3 — title",
+      "default": "Refund and returns"
+    },
+    {
+      "type": "richtext",
+      "id": "details_3_body",
+      "label": "Detail 3 — body",
+      "default": "<p>30-day money-back guarantee. No questions asked.</p>"
+    },
+    {
+      "type": "text",
+      "id": "details_4_title",
+      "label": "Detail 4 — title",
+      "default": "Shipping and guarantee"
+    },
+    {
+      "type": "richtext",
+      "id": "details_4_body",
+      "label": "Detail 4 — body",
+      "default": "<p>Free shipping on US orders over $30. Ships within 24 hours.</p>"
+    }
   ],
   "blocks": [
     {
@@ -646,7 +973,12 @@
       "name": "Feature bullet",
       "limit": 8,
       "settings": [
-        { "type": "text", "id": "text", "label": "Bullet text", "default": "Visible results in 4 weeks" }
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Bullet text",
+          "default": "Visible results in 4 weeks"
+        }
       ]
     },
     {
@@ -654,7 +986,12 @@
       "name": "Trust pill",
       "limit": 6,
       "settings": [
-        { "type": "text", "id": "text", "label": "Pill text", "default": "Vegan" }
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Pill text",
+          "default": "Vegan"
+        }
       ]
     },
     {
@@ -665,13 +1002,48 @@
     {
       "name": "Product",
       "blocks": [
-        { "type": "feature", "settings": { "text": "Visible results in 4 weeks" } },
-        { "type": "feature", "settings": { "text": "Zero side effects, dermatologically tested" } },
-        { "type": "feature", "settings": { "text": "Less than the price of a single lash treatment" } },
-        { "type": "feature", "settings": { "text": "30-second daily application" } },
-        { "type": "trust",   "settings": { "text": "Vegan" } },
-        { "type": "trust",   "settings": { "text": "Cruelty-Free" } },
-        { "type": "trust",   "settings": { "text": "Made in USA" } }
+        {
+          "type": "feature",
+          "settings": {
+            "text": "Visible results in 4 weeks"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "text": "Zero side effects, dermatologically tested"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "text": "Less than the price of a single lash treatment"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "text": "30-second daily application"
+          }
+        },
+        {
+          "type": "trust",
+          "settings": {
+            "text": "Vegan"
+          }
+        },
+        {
+          "type": "trust",
+          "settings": {
+            "text": "Cruelty-Free"
+          }
+        },
+        {
+          "type": "trust",
+          "settings": {
+            "text": "Made in USA"
+          }
+        }
       ]
     }
   ]

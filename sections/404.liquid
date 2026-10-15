@@ -1,3 +1,4 @@
+<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
 {%- liquid
   assign section_id = '404-' | append: section.id
   assign heading = section.settings.heading
@@ -14,8 +15,8 @@
   style="
     --pad-top: {{ section.settings.padding_top }}px;
     --pad-bottom: {{ section.settings.padding_bottom }}px;
-    --bg: {{ section.settings.bg_color }};
-    --fg: {{ section.settings.text_color }};
+    --bg: var(--color-bg);
+    --fg: var(--color-text);
   "
 >
   <div class="skinova-404__inner">
@@ -39,6 +40,7 @@
     </div>
   </div>
 </section>
+</div>
 
 {% stylesheet %}
   .skinova-404 {
@@ -129,16 +131,10 @@
       "content": "t:sections.page_404.colors_header"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "t:sections.page_404.bg_color",
-      "default": "#fbe9e8"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.page_404.text_color",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
     },
     {
       "type": "header",

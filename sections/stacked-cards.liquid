@@ -1,0 +1,88 @@
+<section class="k-stack k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap">
+    {%- if section.settings.heading != blank -%}
+      <div class="k-sec-head k-reveal"><h2 class="k-h2">{{ section.settings.heading }}</h2></div>
+    {%- endif -%}
+    <ol class="k-stack__list" role="list">
+      {%- for block in section.blocks -%}
+        <li class="k-stack__card color-{{ block.settings.color_scheme }}" style="--n: {{ forloop.index0 }};" {{ block.shopify_attributes }}>
+          <div class="k-stack__copy">
+            <span class="k-label">{{ forloop.index | prepend: '0' | slice: -2, 2 }}{% if block.settings.label != blank %} / {{ block.settings.label }}{% endif %}</span>
+            <h3 class="k-h3 k-stack__title">{{ block.settings.heading }}</h3>
+            {%- if block.settings.text != blank -%}
+              <div class="k-rte k-stack__text">{{ block.settings.text }}</div>
+            {%- endif -%}
+            {%- if block.settings.button_label != blank and block.settings.link != blank -%}
+              <a class="k-btn k-btn--secondary" href="{{ block.settings.link }}">{{ block.settings.button_label }}</a>
+            {%- endif -%}
+          </div>
+          <div class="k-stack__media k-media">
+            {%- render 'k-media', image: block.settings.image, video: block.settings.video, sizes: '(min-width: 900px) 45vw, 100vw' -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-stack__list { margin: 0; padding: 0; list-style: none; }
+  .k-stack__card {
+    position: sticky;
+    top: calc(var(--header-height) + 18px + var(--n, 0) * 28px);
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px;
+    min-height: 440px;
+    margin-bottom: 28px;
+    padding: 44px;
+    border-radius: calc(var(--radius-card) * 1.15);
+    box-shadow: 0 -20px 50px -30px rgba(14, 14, 14, 0.35);
+  }
+  .k-stack__copy { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 24px; }
+  .k-stack__title { font-size: calc(clamp(40px, 5vw, 80px) * var(--heading-scale)); line-height: 0.92; }
+  .k-stack__text { max-width: 420px; font-size: 17px; }
+  .k-stack__media { min-height: 280px; border-radius: var(--radius-media); }
+  @media (max-width: 900px) {
+    .k-stack__card { grid-template-columns: 1fr; padding: 28px; min-height: 0; top: calc(var(--header-height) + 8px + var(--n, 0) * 16px); }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Stacked cards",
+  "tag": "div",
+  "class": "k-stack-section",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Built for the <em>long walk</em>", "info": "Italic words use the accent font." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Material" },
+        { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Fabrics that move first" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Describe one reason to choose your products in a sentence or two.</p>" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "video", "id": "video", "label": "Video" },
+        { "type": "text", "id": "button_label", "label": "Button label" },
+        { "type": "url", "id": "link", "label": "Button link" },
+        { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-3" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stacked cards",
+      "blocks": [
+        { "type": "card", "settings": { "label": "Material", "heading": "Fabrics that move first", "color_scheme": "scheme-3", "text": "<p>Stretch wool, washed cotton and recycled shells chosen for how they behave mid-stride, not on the hanger.</p>" } },
+        { "type": "card", "settings": { "label": "Fit", "heading": "Cut on the bias", "color_scheme": "scheme-2", "text": "<p>Angled seams and gusseted joints give every piece room to reach, sit and cycle without pulling.</p>" } },
+        { "type": "card", "settings": { "label": "Care", "heading": "Made to be mended", "color_scheme": "scheme-4", "text": "<p>Spare buttons, replaceable zips and a repair service so the coat you buy today stays in rotation.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

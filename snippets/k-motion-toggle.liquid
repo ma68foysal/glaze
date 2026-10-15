@@ -1,0 +1,17 @@
+{%- comment -%}
+  Shopper-facing pause/play for looping motion. Renders nothing when the
+  merchant hides it or turns motion off. Behaviour: <k-motion-toggle> in theme.js.
+{%- endcomment -%}
+{%- if settings.show_motion_toggle and settings.motion_level != 'off' -%}
+  <k-motion-toggle
+    class="k-motion-toggle"
+    data-pause-label="{{ 'general.pause_motion' | t }}"
+    data-play-label="{{ 'general.play_motion' | t }}"
+  >
+    <button type="button" class="k-motion-toggle__btn k-label" aria-pressed="false">
+      <span class="k-motion-toggle__pause">{% render 'k-icon', icon: 'pause', size: 14 %}</span>
+      <span class="k-motion-toggle__play">{% render 'k-icon', icon: 'play', size: 14 %}</span>
+      <span class="k-motion-toggle__text" data-label>{{ 'general.pause_motion' | t }}</span>
+    </button>
+  </k-motion-toggle>
+{%- endif -%}

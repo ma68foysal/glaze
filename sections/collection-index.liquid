@@ -1,0 +1,129 @@
+<section class="k-index k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap">
+    {%- if section.settings.heading != blank or section.settings.text != blank -%}
+      <div class="k-sec-head k-reveal">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="k-h2">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <p class="k-sec-head__meta k-label k-muted">{{ section.settings.text }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <ul class="k-index__list k-reveal" role="list">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign c = block.settings.collection
+          assign name = block.settings.title | default: c.title
+          if name == blank
+            assign name = 'sections.collection_index.placeholder_title' | t
+          endif
+          assign image = block.settings.image | default: c.featured_image
+          assign url = c.url
+        -%}
+        <li {{ block.shopify_attributes }}>
+          {%- if url != blank -%}<a class="k-index__row" href="{{ url }}">{%- else -%}<div class="k-index__row">{%- endif -%}
+            <span class="k-label">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+            <span class="k-index__name">{{ name }}</span>
+            <span class="k-index__thumb k-media" aria-hidden="true">
+              {%- if image != blank -%}
+                {{ image | image_url: width: 300 | image_tag: widths: '150, 300', sizes: '150px', loading: 'lazy', alt: '' }}
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'k-ph' }}
+              {%- endif -%}
+            </span>
+            <span class="k-index__desc k-label">{{ block.settings.description }}</span>
+            <span class="k-arrow-circle" aria-hidden="true">{% render 'k-icon', icon: 'arrow' %}</span>
+          {%- if url != blank -%}</a>{%- else -%}</div>{%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-index__list { margin: 0; padding: 0; list-style: none; border-bottom: 1px solid var(--color-line); }
+  .k-index__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto auto 56px;
+    align-items: center;
+    gap: 24px;
+    min-height: 128px;
+    padding: 0 8px;
+    border-top: 1px solid var(--color-line);
+    overflow: hidden;
+    isolation: isolate;
+    transition: color var(--dur);
+  }
+  .k-index__row::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: var(--color-button);
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform 0.55s var(--ease-in-out);
+  }
+  a.k-index__row:hover, a.k-index__row:focus-visible { color: var(--color-button-label); }
+  a.k-index__row:hover::before, a.k-index__row:focus-visible::before { transform: scaleY(1); }
+  .k-index__name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: calc(clamp(40px, 6.2vw, 96px) * var(--heading-scale));
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    transition: letter-spacing var(--dur-slow) var(--ease-out);
+  }
+  a.k-index__row:hover .k-index__name { letter-spacing: 0.01em; }
+  .k-index__thumb { display: block; width: 0; height: 96px; border-radius: 6px; transition: width var(--dur-slow) var(--ease-out); }
+  a.k-index__row:hover .k-index__thumb { width: 150px; }
+  a.k-index__row:hover .k-arrow-circle { transform: rotate(-45deg); }
+  @media (max-width: 900px) {
+    .k-index__row { grid-template-columns: 44px minmax(0, 1fr) 44px; min-height: 96px; gap: 12px; }
+    .k-index__thumb, .k-index__desc { display: none; }
+    .k-index__row .k-arrow-circle { width: 44px; height: 44px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection index",
+  "tag": "div",
+  "class": "k-index-section",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Collection <em>index</em>", "info": "Italic words use the accent font." },
+    { "type": "text", "id": "text", "label": "Text", "default": "Hover a row. Each collection opens like a contact sheet." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "title", "label": "Title", "info": "Uses the collection title when empty." },
+        { "type": "text", "id": "description", "label": "Short description", "default": "Three or four words" },
+        { "type": "image_picker", "id": "image", "label": "Hover image", "info": "Uses the collection image when empty." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection index",
+      "blocks": [
+        { "type": "collection", "settings": { "title": "Outerwear", "description": "Trenches · shells · coats" } },
+        { "type": "collection", "settings": { "title": "Knitwear", "description": "Merino · cotton · rib" } },
+        { "type": "collection", "settings": { "title": "Tailoring", "description": "Soft blazers · trousers" } },
+        { "type": "collection", "settings": { "title": "Denim", "description": "Relaxed · straight · wide" } },
+        { "type": "collection", "settings": { "title": "Accessories", "description": "Bags · belts · knit caps" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

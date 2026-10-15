@@ -1,0 +1,121 @@
+{%- comment -%}
+  Product card.
+  Accepts:
+    product      — product object; blank renders a placeholder card
+    placeholder  — 1–6, which placeholder illustration to show when product is blank
+    quick_add    — boolean, default true
+    sizes        — the image sizes attribute
+    eager        — boolean, load images eagerly
+{%- endcomment -%}
+{%- liquid
+  assign show_qa = true
+  if quick_add == false
+    assign show_qa = false
+  endif
+  assign img_sizes = sizes | default: '(min-width: 1440px) 340px, (min-width: 900px) 25vw, 50vw'
+  assign loading = 'lazy'
+  if eager
+    assign loading = 'eager'
+  endif
+-%}
+
+{%- if product != blank -%}
+  {%- liquid
+    assign first_media = product.featured_media
+    assign second_media = product.media[1]
+    assign v = product.selected_or_first_available_variant
+    assign on_sale = false
+    if product.compare_at_price > product.price
+      assign on_sale = true
+    endif
+    assign color_option = nil
+    for option in product.options_with_values
+      assign oname = option.name | downcase
+      if oname == 'color' or oname == 'colour'
+        assign color_option = option
+      endif
+    endfor
+  -%}
+  <article class="k-card">
+    <div class="k-card__media">
+      <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+        {%- if first_media != blank -%}
+          {{ first_media | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: img_sizes, loading: loading, alt: first_media.alt | default: product.title }}
+          {%- if second_media != blank and second_media.media_type == 'image' -%}
+            {{ second_media | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: img_sizes, loading: 'lazy', alt: '', class: 'k-card__alt' }}
+          {%- endif -%}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'k-ph' }}
+        {%- endif -%}
+      </a>
+
+      {%- if product.available == false -%}
+        <span class="k-card__badge k-tag k-label">{{ 'products.sold_out' | t }}</span>
+      {%- elsif on_sale -%}
+        <span class="k-card__badge k-tag k-label">{{ 'products.sale' | t }}</span>
+      {%- endif -%}
+
+      {%- if show_qa -%}
+        {%- if product.available == false -%}
+          <button type="button" class="k-card__qa" disabled>{{ 'products.sold_out' | t }}</button>
+        {%- elsif product.has_only_default_variant -%}
+          <button type="button" class="k-card__qa" data-quick-add="{{ v.id }}">
+            {{ 'products.quick_add' | t }}<span class="visually-hidden">: {{ product.title }}</span>
+          </button>
+          <p class="visually-hidden" data-quick-add-error role="alert" hidden></p>
+        {%- else -%}
+          <a class="k-card__qa" href="{{ product.url }}" style="display: grid; place-items: center;">
+            {{ 'products.choose_options' | t }}<span class="visually-hidden">: {{ product.title }}</span>
+          </a>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    <div class="k-card__meta">
+      <h3 class="k-card__title" style="margin: 0; font: inherit;">
+        <a class="k-link-underline" href="{{ product.url }}">{{ product.title }}</a>
+      </h3>
+      <p class="k-card__price" style="margin: 0;">
+        {%- if on_sale -%}
+          <span class="visually-hidden">{{ 'products.regular_price' | t }}</span>
+          <s>{{ product.compare_at_price | money }}</s>
+          <span class="visually-hidden">{{ 'products.sale_price' | t }}</span>
+        {%- endif -%}
+        {%- if product.price_varies -%}
+          {{ 'products.from_price' | t: price: product.price_min | money }}
+        {%- else -%}
+          {{ product.price | money }}
+        {%- endif -%}
+      </p>
+    </div>
+
+    {%- if color_option and color_option.values.size > 1 -%}
+      <ul class="k-card__swatches" role="list" aria-label="{{ color_option.name }}">
+        {%- for value in color_option.values limit: 5 -%}
+          {%- liquid
+            assign swatch_style = ''
+            if value.swatch.image
+              assign swatch_url = value.swatch.image | image_url: width: 40
+              assign swatch_style = 'background-image: url(' | append: swatch_url | append: ');'
+            elsif value.swatch.color
+              assign swatch_style = '--swatch: ' | append: value.swatch.color | append: ';'
+            endif
+          -%}
+          <li class="k-card__swatch" style="{{ swatch_style }}" title="{{ value | escape }}"><span class="visually-hidden">{{ value }}</span></li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </article>
+{%- else -%}
+  {%- assign ph = placeholder | default: 1 | modulo: 6 | plus: 1 -%}
+  {%- assign ph_name = 'product-' | append: ph -%}
+  <div class="k-card k-card--placeholder">
+    <div class="k-card__media">
+      {{ ph_name | placeholder_svg_tag: 'k-ph' }}
+    </div>
+    <div class="k-card__meta">
+      <span class="k-card__title">{{ 'products.placeholder_title' | t }}</span>
+      <span class="k-card__price">{{ 4900 | money }}</span>
+    </div>
+  </div>
+{%- endif -%}

@@ -1,0 +1,114 @@
+{%- liquid
+  assign blog = section.settings.blog
+  assign limit = section.settings.limit
+-%}
+<k-rail class="k-journal-rail-wrap"><section class="k-journal k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap">
+    <div class="k-sec-head k-reveal">
+      {%- if section.settings.heading != blank -%}<h2 class="k-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      <div class="k-journal__actions">
+        {%- if blog != blank and section.settings.button_label != blank -%}
+          <a class="k-btn k-btn--secondary" href="{{ blog.url }}">{{ section.settings.button_label }}</a>
+        {%- endif -%}
+        <div class="k-rail__nav">
+          <button type="button" class="k-rail__btn" data-rail-prev aria-label="{{ 'general.previous' | t }}" disabled>
+            <span style="display: inline-flex; transform: rotate(180deg);">{% render 'k-icon', icon: 'arrow', size: 18 %}</span>
+          </button>
+          <button type="button" class="k-rail__btn" data-rail-next aria-label="{{ 'general.next' | t }}">
+            {% render 'k-icon', icon: 'arrow', size: 18 %}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ul class="k-journal__rail" role="list" data-rail-track tabindex="0"{% if section.settings.heading != blank %} aria-label="{{ section.settings.heading | strip_html | escape }}"{% endif %}>
+      {%- if blog != blank and blog.articles_count > 0 -%}
+        {%- for article in blog.articles limit: limit -%}
+          <li>
+            <a class="k-story" href="{{ article.url }}">
+              <span class="k-story__media k-media">
+                {%- if article.image != blank -%}
+                  {{ article.image | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: '(min-width: 900px) 31vw, 82vw', loading: 'lazy', alt: article.image.alt | default: '' }}
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag: 'k-ph' }}
+                {%- endif -%}
+              </span>
+              <span class="k-label k-muted k-story__meta">
+                {%- if article.tags.size > 0 -%}{{ article.tags.first }} · {% endif -%}
+                {{ article.published_at | time_tag: format: 'date' }}
+              </span>
+              <h3 class="k-h4 k-story__title">{{ article.title }}</h3>
+            </a>
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..limit) -%}
+          <li>
+            <div class="k-story">
+              <span class="k-story__media k-media">{{ 'image' | placeholder_svg_tag: 'k-ph' }}</span>
+              <span class="k-label k-muted k-story__meta">{{ 'sections.journal.placeholder_meta' | t }}</span>
+              <h3 class="k-h4 k-story__title">{{ 'sections.journal.placeholder_title' | t }}</h3>
+            </div>
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+  </div>
+</section></k-rail>
+
+{% stylesheet %}
+  .k-journal__rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(280px, 31%);
+    gap: var(--space-md);
+    margin: 0; padding: 0 0 16px;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .k-journal__rail::-webkit-scrollbar { display: none; }
+  .k-journal-rail-wrap { display: block; }
+  .k-journal__actions { display: flex; align-items: center; gap: 16px; }
+  .k-rail__nav { display: flex; gap: 8px; }
+  .k-rail__btn {
+    display: grid; place-items: center;
+    width: 52px; height: 52px;
+    border: 1.5px solid var(--color-text); border-radius: 999px;
+    background: transparent; color: var(--color-text);
+    cursor: pointer;
+    transition: background-color var(--dur-fast), color var(--dur-fast), opacity var(--dur-fast);
+  }
+  .k-rail__btn:hover:not([disabled]) { background: var(--color-text); color: var(--color-bg); }
+  .k-rail__btn[disabled] { opacity: 0.3; cursor: default; }
+  .k-rail-wrap--static .k-rail__nav { display: none; }
+  .k-journal__rail > li { scroll-snap-align: start; }
+  .k-story { display: block; }
+  .k-story__media { display: block; aspect-ratio: 4 / 3; border-radius: calc(var(--radius-card) * 0.75); }
+  .k-story__media img { transition: transform 0.8s var(--ease-out); }
+  .k-story:hover .k-story__media img { transform: scale(1.05); }
+  .k-story__meta { display: block; margin-top: 14px; }
+  .k-story__title { margin-top: 6px; }
+  a.k-story:hover .k-story__title { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+  @media (max-width: 900px) { .k-journal__rail { grid-auto-columns: 82%; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Journal",
+  "tag": "div",
+  "class": "k-journal-section",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Journal" },
+    { "type": "blog", "id": "blog", "label": "Blog" },
+    { "type": "range", "id": "limit", "label": "Posts to show", "min": 2, "max": 8, "step": 1, "default": 4 },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "All stories" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "presets": [ { "name": "Journal" } ]
+}
+{% endschema %}

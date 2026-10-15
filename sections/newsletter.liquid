@@ -1,0 +1,90 @@
+<section class="k-news k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap k-news__inner">
+    <h2 class="k-news__h">
+      {%- if section.settings.heading_outline != blank -%}<span class="k-news__outline">{{ section.settings.heading_outline }}</span>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<span class="k-news__solid">{{ section.settings.heading }}</span>{%- endif -%}
+    </h2>
+
+    {%- form 'customer', id: 'k-news-form', class: 'k-news__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      {%- if section.settings.text != blank -%}
+        <div class="k-rte k-lead">{{ section.settings.text }}</div>
+      {%- else -%}
+        <span></span>
+      {%- endif -%}
+      <div>
+        {%- if form.posted_successfully? -%}
+          <p class="k-news__msg" role="status" tabindex="-1" autofocus>{{ 'general.newsletter_form.confirmation' | t }}</p>
+        {%- else -%}
+          <label class="k-label k-muted" for="k-news-email-{{ section.id }}" style="display: block; margin-bottom: 12px;">{{ 'general.newsletter_form.email_label' | t }}</label>
+          <div class="k-news__field">
+            <input
+              id="k-news-email-{{ section.id }}"
+              type="email"
+              name="contact[email]"
+              autocomplete="email"
+              required
+              placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"
+              {% if form.errors %}aria-invalid="true" aria-describedby="k-news-err-{{ section.id }}"{% endif %}
+            >
+            <button type="submit" class="k-btn k-btn--primary">{{ 'general.newsletter_form.subscribe' | t }}</button>
+          </div>
+          {%- if form.errors -%}
+            <p class="k-news__msg k-news__msg--error" id="k-news-err-{{ section.id }}" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    {%- endform -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-news { overflow: hidden; }
+  .k-news__inner { display: flex; flex-direction: column; gap: var(--space-xl); }
+  .k-news__h {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(64px, 13vw, 210px) * var(--heading-scale));
+    line-height: 0.84;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+  .k-news__outline { display: block; color: transparent; -webkit-text-stroke: 1.5px var(--color-text); }
+  .k-news__solid { display: block; color: var(--color-accent); }
+  @supports (animation-timeline: view()) {
+    .js .k-news__h { animation: k-news-skew linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+  }
+  @keyframes k-news-skew { from { transform: translateX(6%); } to { transform: translateX(-6%); } }
+  .k-news__form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 40px; align-items: end; }
+  .k-news__field { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 10px; border-bottom: 1.5px solid var(--color-text); }
+  .k-news__field input {
+    flex: 1 1 220px; min-height: 52px;
+    border: 0; background: transparent; color: inherit;
+    font: 500 20px var(--font-body);
+  }
+  .k-news__field input::placeholder { color: var(--color-muted); }
+  .k-news__field input:focus-visible { outline: none; }
+  .k-news__field:focus-within { border-bottom-color: var(--color-accent); }
+  .k-news__msg { margin: 0; font-size: var(--text-lg); }
+  .k-news__msg--error { margin-top: 12px; font-size: var(--text-sm); }
+  @media (max-width: 900px) { .k-news__form { grid-template-columns: 1fr; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "tag": "div",
+  "class": "k-news-section",
+  "settings": [
+    { "type": "text", "id": "heading_outline", "label": "Outlined heading", "default": "Stay in" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Motion" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Early access to new drops, styling notes from the studio, and nothing you didn't ask for.</p>" },
+    { "type": "paragraph", "content": "Subscribers are added to your customer list with the newsletter tag." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-2" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "presets": [ { "name": "Newsletter" } ]
+}
+{% endschema %}

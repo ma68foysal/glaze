@@ -1,59 +1,118 @@
+{%- liquid
+  assign scheme_base = settings.color_schemes.first
+  assign scheme_cream = scheme_base
+  assign scheme_card = scheme_base
+  for scheme in settings.color_schemes
+    if forloop.index == 4
+      assign scheme_cream = scheme
+    elsif forloop.index == 5
+      assign scheme_card = scheme
+    endif
+  endfor
+  assign heading_bold = settings.type_heading_font | font_modify: 'weight', '900'
+  if heading_bold == blank
+    assign heading_bold = settings.type_heading_font | font_modify: 'weight', 'bolder'
+  endif
+  case settings.button_shape
+    when 'square'
+      assign radius_button = '0px'
+    when 'rounded'
+      assign radius_button = '10px'
+    else
+      assign radius_button = '999px'
+  endcase
+-%}
 {% style %}
-  {% # Load all weight/style variants for both fonts. Shopify hosts these from fonts.shopifycdn.com. %}
+  {% # Body font: regular, bold, italic and bold italic, as the Theme Store requires. %}
   {{ settings.type_primary_font | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
   {{ settings.type_heading_font | font_face: font_display: 'swap' }}
-  {{ settings.type_heading_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ heading_bold | font_face: font_display: 'swap' }}
+  {{ settings.type_accent_font | font_face: font_display: 'swap' }}
+  {{ settings.type_label_font | font_face: font_display: 'swap' }}
+  {{ settings.type_label_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
-    --font-heading--family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
-    --font-heading--style: {{ settings.type_heading_font.style }};
-    --font-heading--weight: {{ settings.type_heading_font.weight }};
+    /* ---- Type ---- */
+    --font-body: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
+    --font-body-weight: {{ settings.type_primary_font.weight }};
+    --font-heading: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    --font-heading-weight: {{ settings.type_heading_font.weight }};
+    --font-heading-weight-black: {{ heading_bold.weight | default: settings.type_heading_font.weight }};
+    --font-accent: {{ settings.type_accent_font.family }}, {{ settings.type_accent_font.fallback_families }};
+    --font-accent-style: {{ settings.type_accent_font.style }};
+    --font-label: {{ settings.type_label_font.family }}, {{ settings.type_label_font.fallback_families }};
+    --heading-scale: {{ settings.heading_scale | divided_by: 100.0 }};
+
+    /* ---- Shape and space ---- */
     --page-width: {{ settings.max_page_width }}px;
-    --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
-    --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+    --section-space: {{ settings.section_spacing }}px;
+    --radius-button: {{ radius_button }};
+    --radius-card: {{ settings.card_radius }}px;
+    --radius-media: {{ settings.card_radius | times: 0.75 | round }}px;
 
-    /* Skinova design tokens — drive section defaults (404, cart, collection, etc.)
-       so the theme inherits merchant colour choices without per-section duplication.
-       The hardcoded fallbacks (#fbe9e8 etc.) are only used if a setting is blank. */
-    --g-bg: {{ settings.background_color | default: '#ffffff' }};
-    --g-fg: {{ settings.foreground_color | default: '#1a1a1a' }};
-    --g-cream: {{ settings.secondary_background | default: '#fbe9e8' }};
-    --g-cream-fg: {{ settings.secondary_foreground | default: '#1a1a1a' }};
-    --g-accent: {{ settings.accent_background | default: '#111111' }};
-    --g-accent-fg: {{ settings.accent_foreground | default: '#ffffff' }};
-    --g-card-bg: {{ settings.card_background | default: '#ffffff' }};
-    --g-card-fg: {{ settings.card_foreground | default: '#1a1a1a' }};
-
-    /* Brand-fixed shades derived from the cream/ink palette — these stay as
-       theme constants because they're tonal helpers, not merchant-facing. */
-    --g-cream-soft: #fae6e4;
-    --g-cream-warm: #f5d8d5;
-    --g-rose: #e8a5a0;
-    --g-ink: var(--g-fg);
-    --g-ink-soft: #444444;
-    --g-muted: #7a7a7a;
-    --g-muted-strong: #555555;
-    --g-line: #00000014;
-    --g-star: #f59e0b;
-    --g-success-bg: #e9f7ec;
+    /* ---- Legacy tokens for sections not yet rebuilt. Remove with them. ----
+       They read from the color schemes so old sections follow the same palette:
+       base = first scheme, cream = fourth (stone), card = fifth (white). */
+    --font-primary--family: var(--font-body);
+    --font-primary--style: {{ settings.type_primary_font.style }};
+    --font-primary--weight: var(--font-body-weight);
+    --font-heading--family: var(--font-heading);
+    --font-heading--style: {{ settings.type_heading_font.style }};
+    --font-heading--weight: var(--font-heading-weight);
+    --page-margin: 0px;
+    --style-border-radius-inputs: {{ settings.card_radius | times: 0.5 | round }}px;
+    --color-background: {{ scheme_base.settings.background }};
+    --color-foreground: {{ scheme_base.settings.text }};
+    --g-bg: {{ scheme_base.settings.background }};
+    --g-fg: {{ scheme_base.settings.text }};
+    --g-cream: {{ scheme_cream.settings.background }};
+    --g-cream-fg: {{ scheme_cream.settings.text }};
+    --g-cream-soft: rgba({{ scheme_cream.settings.background.rgb | replace: ' ', ',' }}, 0.5);
+    --g-cream-warm: {{ scheme_cream.settings.background }};
+    --g-accent: {{ scheme_base.settings.button }};
+    --g-accent-fg: {{ scheme_base.settings.button_label }};
+    --g-rose: {{ scheme_base.settings.accent }};
+    --g-card-bg: {{ scheme_card.settings.background }};
+    --g-card-fg: {{ scheme_card.settings.text }};
+    --g-ink: {{ scheme_base.settings.text }};
+    --g-ink-soft: rgba({{ scheme_base.settings.text.rgb | replace: ' ', ',' }}, 0.82);
+    --g-muted: rgba({{ scheme_base.settings.text.rgb | replace: ' ', ',' }}, 0.62);
+    --g-muted-strong: rgba({{ scheme_base.settings.text.rgb | replace: ' ', ',' }}, 0.75);
+    --g-line: rgba({{ scheme_base.settings.text.rgb | replace: ' ', ',' }}, 0.12);
+    --g-star: {{ scheme_base.settings.text }};
+    --g-success-bg: #e6f2e9;
     --g-success-fg: #1d6b2e;
     --g-error-bg: #fbe9e9;
     --g-error-fg: #8a1a1a;
-    --g-display-font: var(--font-heading--family);
-    --g-body-font: var(--font-primary--family);
-    --g-radius-sm: 8px;
-    --g-radius-md: 12px;
-    --g-radius-lg: 24px;
-    --g-radius-pill: 100px;
+    --g-display-font: var(--font-heading);
+    --g-body-font: var(--font-body);
+    --g-radius-sm: calc(var(--radius-card) * 0.35);
+    --g-radius-md: calc(var(--radius-card) * 0.5);
+    --g-radius-lg: var(--radius-card);
+    --g-radius-pill: var(--radius-button);
     --g-touch: 44px;
   }
+
+  {% # One class per color scheme. Sections add color-<scheme id> to their root. %}
+  {%- for scheme in settings.color_schemes %}
+    {% if forloop.first %}:root,{% endif %}
+    .color-{{ scheme.id }} {
+      --color-bg: {{ scheme.settings.background }};
+      --color-bg-rgb: {{ scheme.settings.background.rgb | replace: ' ', ',' }};
+      --color-text: {{ scheme.settings.text }};
+      --color-text-rgb: {{ scheme.settings.text.rgb | replace: ' ', ',' }};
+      --color-accent: {{ scheme.settings.accent }};
+      --color-button: {{ scheme.settings.button }};
+      --color-button-label: {{ scheme.settings.button_label }};
+      --color-line: rgba({{ scheme.settings.text.rgb | replace: ' ', ',' }}, 0.15);
+      --color-line-soft: rgba({{ scheme.settings.text.rgb | replace: ' ', ',' }}, 0.08);
+      --color-muted: rgba({{ scheme.settings.text.rgb | replace: ' ', ',' }}, 0.68);
+      background: {% if scheme.settings.background_gradient != blank %}{{ scheme.settings.background_gradient }}{% else %}var(--color-bg){% endif %};
+      color: var(--color-text);
+    }
+  {%- endfor %}
 {% endstyle %}

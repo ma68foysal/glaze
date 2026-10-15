@@ -19,12 +19,6 @@
         "heading": "Get in touch",
         "subheading": "We typically reply within one business day.",
         "submit_label": "Send message",
-        "bg_color": "#fbe9e8",
-        "text_color": "#1a1a1a",
-        "field_bg": "#ffffff",
-        "field_border": "#00000014",
-        "accent_color": "#1a1a1a",
-        "accent_text_color": "#ffffff",
         "padding_top": 72,
         "padding_bottom": 96
       }

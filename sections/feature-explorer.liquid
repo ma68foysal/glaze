@@ -1,0 +1,228 @@
+{%- liquid
+  assign items = section.blocks | where: 'type', 'item'
+  assign chips = section.blocks | where: 'type', 'chip'
+-%}
+<section class="k-fx k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}" aria-labelledby="k-fx-h-{{ section.id }}">
+  <k-accordion-media class="k-wrap k-fx__grid">
+    <div class="k-fx__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="k-label k-fx__eyebrow"><span class="k-fx__dot"></span>{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h2 class="k-h2 k-fx__heading" id="k-fx-h-{{ section.id }}">{{ section.settings.heading }}</h2>
+
+      {%- if chips.size > 0 -%}
+        <ul class="k-fx__chips" role="list">
+          {%- for chip in chips -%}
+            <li {{ chip.shopify_attributes }}>
+              {%- if chip.settings.link != blank -%}
+                <a class="k-fx__chip" href="{{ chip.settings.link }}">{{ chip.settings.label }}</a>
+              {%- else -%}
+                <span class="k-fx__chip">{{ chip.settings.label }}</span>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <div class="k-fx__acc">
+        {%- for item in items -%}
+          <div class="k-fx__item{% if forloop.first %} is-open{% endif %}" data-acc-item data-acc-index="{{ forloop.index0 }}" {{ item.shopify_attributes }}>
+            <h3 style="margin: 0;">
+              <button
+                type="button"
+                class="k-fx__btn"
+                data-acc-button
+                id="k-fx-b-{{ item.id }}"
+                aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                aria-controls="k-fx-p-{{ item.id }}"
+              >
+                <span>{{ item.settings.title }}</span>
+                {% render 'k-icon', icon: 'plus', size: 18 %}
+              </button>
+            </h3>
+            <div class="k-fx__panel k-rte" id="k-fx-p-{{ item.id }}" role="region" aria-labelledby="k-fx-b-{{ item.id }}" {% unless forloop.first %}hidden{% endunless %}>
+              {{ item.settings.text }}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="k-fx__card color-{{ section.settings.card_color_scheme }} k-reveal">
+      <div class="k-fx__card-copy">
+        <div>
+          {%- if section.settings.card_label != blank -%}
+            <p class="k-label" style="margin: 0 0 18px;">{{ section.settings.card_label }}</p>
+          {%- endif -%}
+          {%- if section.settings.card_text != blank -%}
+            <p class="k-muted" style="margin: 0; max-width: 260px;">{{ section.settings.card_text }}</p>
+          {%- endif -%}
+        </div>
+        <div>
+          {%- if section.settings.card_heading != blank -%}
+            <p class="k-h3 k-fx__card-h">{{ section.settings.card_heading }}</p>
+          {%- endif -%}
+          {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+            <a class="k-btn k-btn--primary k-btn--block k-btn--split" href="{{ section.settings.button_link }}">
+              {{ section.settings.button_label }} <span class="k-btn__arrow">{% render 'k-icon', icon: 'arrow', size: 16 %}</span>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="k-fx__media">
+        {%- for item in items -%}
+          <div class="k-fx__slide{% if forloop.first %} is-active{% endif %}" data-acc-media="{{ forloop.index0 }}">
+            <div class="k-media">
+              {%- render 'k-media', image: item.settings.image, video: item.settings.video, sizes: '(min-width: 900px) 30vw, 100vw', placeholder: 'lifestyle-2' -%}
+            </div>
+            {%- if item.settings.stat != blank -%}
+              <div class="k-fx__stat color-{{ section.settings.card_color_scheme }} k-loop">
+                <div style="padding: 14px 16px 16px;">
+                  <p class="k-label k-muted" style="margin: 0 0 6px;">{{ item.settings.title }}</p>
+                  <p class="k-fx__stat-v">{{ item.settings.stat }}</p>
+                </div>
+                {%- if item.settings.stat_link != blank -%}
+                  <a class="k-fx__stat-link" href="{{ item.settings.stat_link }}">{% render 'k-icon', icon: 'bolt', size: 14 %}{{ 'sections.feature_explorer.see_it' | t }}</a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+        {%- if section.settings.badge != blank -%}
+          <span class="k-fx__badge k-label">{{ section.settings.badge }}</span>
+        {%- endif -%}
+      </div>
+    </div>
+  </k-accordion-media>
+</section>
+
+{% stylesheet %}
+  .k-fx__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 56px; align-items: center; }
+  .k-fx__copy { display: flex; flex-direction: column; gap: 28px; }
+  .k-fx__eyebrow { display: flex; align-items: center; gap: 10px; margin: 0; }
+  .k-fx__dot { width: 8px; height: 8px; border-radius: 999px; background: var(--color-accent); }
+  .k-fx__heading { font-size: calc(clamp(44px, 5.2vw, 80px) * var(--heading-scale)); line-height: 1; }
+  .k-fx__chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .k-fx__chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: var(--touch); padding: 0 16px;
+    border: 1px solid var(--color-line); border-radius: 999px;
+    background: rgba(var(--color-bg-rgb), 0.6);
+    font-size: var(--text-sm); font-weight: 600;
+    transition: border-color var(--dur-fast);
+  }
+  a.k-fx__chip:hover { border-color: var(--color-text); }
+  .k-fx__acc { display: flex; flex-direction: column; gap: 6px; }
+  .k-fx__item { border-radius: calc(var(--radius-card) * 0.65); transition: background-color var(--dur); }
+  .k-fx__item.is-open { background: rgba(var(--color-text-rgb), 0.05); }
+  .k-fx__btn {
+    width: 100%; min-height: 64px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding: 0 22px;
+    border: 0; background: none; color: inherit;
+    font: 600 19px var(--font-body); text-align: left; cursor: pointer;
+  }
+  .k-fx__btn .k-icon { flex: none; transition: transform var(--dur) var(--ease-out); }
+  .k-fx__item.is-open .k-fx__btn .k-icon { transform: rotate(45deg); }
+  .k-fx__panel { padding: 0 22px 22px; max-width: 460px; color: var(--color-muted); animation: k-rise-in 0.45s var(--ease-out) both; }
+
+  .k-fx__card {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px;
+    padding: 22px;
+    border-radius: calc(var(--radius-card) * 1.33);
+    box-shadow: 0 30px 60px -40px rgba(14, 14, 14, 0.25);
+  }
+  .k-fx__card-copy { display: flex; flex-direction: column; justify-content: space-between; gap: 32px; padding: 18px 8px 8px 12px; }
+  .k-fx__card-h { margin: 0 0 22px; font-size: clamp(32px, 3vw, 46px); line-height: 1; }
+  .k-fx__media { position: relative; min-height: 440px; overflow: hidden; border-radius: var(--radius-card); }
+  .k-fx__slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity var(--dur-slow) var(--ease-out), visibility var(--dur-slow); }
+  .k-fx__slide.is-active { opacity: 1; visibility: visible; }
+  .k-fx__slide > .k-media { position: absolute; inset: 0; }
+  .k-fx__badge {
+    position: absolute; right: 16px; top: 16px;
+    display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px;
+    border-radius: 999px; background: var(--color-bg); color: var(--color-text);
+  }
+  .k-fx__stat {
+    position: absolute; left: 16px; bottom: 16px;
+    width: min(220px, 70%);
+    overflow: hidden;
+    border-radius: calc(var(--radius-card) * 0.75);
+    box-shadow: 0 18px 40px -20px rgba(14, 14, 14, 0.5);
+    animation: k-bob 6s ease-in-out infinite;
+  }
+  .k-fx__stat-v { margin: 0; font-weight: 700; font-size: 28px; letter-spacing: -0.02em; line-height: 1.05; }
+  .k-fx__stat-link {
+    display: flex; align-items: center; gap: 8px;
+    min-height: var(--touch); padding: 0 16px;
+    background: var(--color-button); color: var(--color-button-label);
+    font-size: var(--text-sm); font-weight: 600;
+  }
+  @media (max-width: 900px) {
+    .k-fx__grid, .k-fx__card { grid-template-columns: 1fr; gap: 32px; }
+    .k-fx__media { min-height: 380px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Feature explorer",
+  "tag": "div",
+  "class": "k-fx-section",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label", "default": "Why us" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Fabrics built for <em>motion.</em>", "info": "Italic words use the accent font." },
+    { "type": "header", "content": "Card" },
+    { "type": "text", "id": "card_label", "label": "Card label", "default": "New season" },
+    { "type": "text", "id": "card_text", "label": "Card text", "default": "Pieces designed to move with you, on the bike, on the platform and on the long walk home." },
+    { "type": "inline_richtext", "id": "card_heading", "label": "Card heading", "default": "Engineered everyday <em>wear</em>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the collection" },
+    { "type": "url", "id": "button_link", "label": "Button link", "default": "/collections/all" },
+    { "type": "text", "id": "badge", "label": "Image badge", "default": "New season" },
+    { "type": "header", "content": "Style" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "color_scheme", "id": "card_color_scheme", "label": "Card color scheme", "default": "scheme-5" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Feature",
+      "limit": 5,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Stretch wool" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Explain what makes this feature matter to the customer in one or two sentences.</p>" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "video", "id": "video", "label": "Video" },
+        { "type": "text", "id": "stat", "label": "Highlight", "default": "4-way stretch", "info": "A short fact shown on the image card." },
+        { "type": "url", "id": "stat_link", "label": "Highlight link" }
+      ]
+    },
+    {
+      "type": "chip",
+      "name": "Chip",
+      "limit": 4,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Water-repellent" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature explorer",
+      "blocks": [
+        { "type": "chip", "settings": { "label": "Commute-ready" } },
+        { "type": "chip", "settings": { "label": "Water-repellent" } },
+        { "type": "chip", "settings": { "label": "Repair included" } },
+        { "type": "item", "settings": { "title": "Stretch wool", "stat": "4-way stretch", "text": "<p>A wool blend with mechanical stretch that recovers its shape after a full day of reaching, sitting and cycling.</p>" } },
+        { "type": "item", "settings": { "title": "Weatherproof shells", "stat": "Water-repellent", "text": "<p>Recycled shells with a water-repellent finish, cut long enough to cover a bike saddle.</p>" } },
+        { "type": "item", "settings": { "title": "Repair program", "stat": "Repairs included", "text": "<p>Send any piece back for mending. We patch, re-stitch and replace zips so it stays in rotation.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}">
+<html lang="{{ request.locale.iso_code }}" data-motion="{{ settings.motion_level | default: 'full' }}">
   <head>
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
@@ -48,6 +48,9 @@
     {% endcomment %}
     {{ 'base.css' | asset_url | stylesheet_tag }}
 
+    {% # Kinetic design system. Loads after base.css; base.css goes once every section is rebuilt. %}
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 
@@ -72,7 +75,7 @@
     {{ content_for_header }}
   </head>
 
-  <body>
+  <body class="k-scope color-{{ settings.color_schemes.first.id | default: 'scheme-1' }}">
     <a class="skip-to-content" href="#main-content">{{ 'general.skip_to_content' | t }}</a>
 
     {% sections 'header-group' %}
@@ -94,6 +97,7 @@
       needed. Both are deferred so they run after the parser hits </body>.
     {%- endcomment -%}
     <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
 
     {%- comment -%}
       quick-view.js — product quick-view modal renderer, shared by

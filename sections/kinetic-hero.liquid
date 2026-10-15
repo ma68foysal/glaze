@@ -1,0 +1,241 @@
+{%- liquid
+  assign media_blocks = section.blocks | where: 'type', 'media'
+  assign product_blocks = section.blocks | where: 'type', 'product'
+  assign word = section.settings.kinetic_word | strip
+  assign letters = word | split: ''
+-%}
+
+<section
+  class="k-hero k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}"
+  aria-label="{{ section.settings.heading_line | append: ' ' | append: word | strip | escape }}"
+>
+  <div class="k-wrap">
+    {%- if section.settings.label_left != blank or section.settings.label_center != blank or section.settings.label_right != blank -%}
+      <div class="k-hero__top k-label">
+        <span>{{ section.settings.label_left }}</span>
+        <span class="k-hero__hide-m">{{ section.settings.label_center }}</span>
+        <span>{{ section.settings.label_right }}</span>
+      </div>
+    {%- endif -%}
+
+    <div class="k-hero__stage">
+      <k-rotator class="k-hero__card k-loop" data-interval="{{ section.settings.interval }}" aria-hidden="true">
+        {%- for block in media_blocks limit: 3 -%}
+          <div class="k-hero__slide{% if forloop.first %} is-active{% endif %}" data-slide {{ block.shopify_attributes }}>
+            <div class="k-media">
+              {%- render 'k-media', image: block.settings.image, video: block.settings.video, sizes: '(min-width: 900px) 22vw, 60vw', eager: forloop.first, placeholder: 'lifestyle-1', alt: '' -%}
+            </div>
+          </div>
+        {%- else -%}
+          <div class="k-hero__slide is-active" data-slide>
+            <div class="k-media">{{ 'lifestyle-1' | placeholder_svg_tag: 'k-ph' }}</div>
+          </div>
+        {%- endfor -%}
+      </k-rotator>
+
+      <h1 class="k-hero__heading">
+        {%- if section.settings.heading_line != blank -%}
+          <span class="k-hero__line k-accent">{{ section.settings.heading_line }}</span>
+        {%- endif -%}
+        {%- if word != blank -%}
+          <span class="k-hero__word k-kinetic">
+            <span class="visually-hidden">{{ word }}</span>
+            {%- for l in letters -%}
+              <span class="k-kinetic__l" style="--i: {{ forloop.index0 }}" aria-hidden="true">{% if l == ' ' %}&nbsp;{% else %}{{ l }}{% endif %}</span>
+            {%- endfor -%}
+          </span>
+        {%- endif -%}
+      </h1>
+
+      {%- for block in product_blocks limit: 2 -%}
+        {%- assign p = block.settings.product -%}
+        {%- capture float_inner -%}
+          <div class="k-media">
+            {%- if p.featured_media != blank -%}
+              {{ p.featured_media | image_url: width: 400 | image_tag: widths: '200, 300, 400', sizes: '170px', loading: 'lazy', alt: '' }}
+            {%- else -%}
+              {%- assign phn = 'product-' | append: forloop.index -%}
+              {{ phn | placeholder_svg_tag: 'k-ph' }}
+            {%- endif -%}
+          </div>
+          <span class="k-hero__float-meta">
+            <span>{{ p.title | default: block.settings.fallback_title }}</span>
+            {%- if p != blank -%}<span>{{ p.price | money_without_trailing_zeros }}</span>{%- endif -%}
+          </span>
+        {%- endcapture -%}
+        {%- if p != blank -%}
+          <a class="k-hero__float k-hero__float--{{ forloop.index }} k-loop" href="{{ p.url }}" {{ block.shopify_attributes }}>{{ float_inner }}</a>
+        {%- else -%}
+          <div class="k-hero__float k-hero__float--{{ forloop.index }} k-loop" {{ block.shopify_attributes }}>{{ float_inner }}</div>
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if section.settings.badge_text != blank -%}
+        <div class="k-hero__badge" aria-hidden="true">
+          <svg viewBox="0 0 120 120" class="k-loop">
+            <defs><path id="k-circ-{{ section.id }}" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
+            <text><textPath href="#k-circ-{{ section.id }}">{{ section.settings.badge_text | upcase }} • {{ section.settings.badge_text | upcase }} • </textPath></text>
+          </svg>
+          <span class="k-hero__badge-core">{% render 'k-icon', icon: 'arrow-up-right', size: 26 %}</span>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="k-hero__foot">
+      {%- if section.settings.text != blank -%}
+        <p class="k-lead" style="margin: 0;">{{ section.settings.text }}</p>
+      {%- else -%}
+        <span></span>
+      {%- endif -%}
+      <div class="k-hero__ctas">
+        {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+          <a class="k-btn k-btn--primary" href="{{ section.settings.button_link }}">{{ section.settings.button_label }} {% render 'k-icon', icon: 'arrow', size: 16 %}</a>
+        {%- endif -%}
+        {%- if section.settings.button2_label != blank and section.settings.button2_link != blank -%}
+          <a class="k-btn k-btn--secondary" href="{{ section.settings.button2_link }}">{{ section.settings.button2_label }}</a>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.show_counter and media_blocks.size > 1 -%}
+        <div class="k-hero__count" aria-hidden="true">
+          <span class="k-hero__count-n" data-counter>01</span>
+          <span class="k-hero__bar"><i data-progress></i></span>
+          <span class="k-label k-muted">{{ media_blocks.size | at_most: 3 | prepend: '0' }}</span>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-hero { --pt: 0.2; }
+  .k-hero__top { display: flex; justify-content: space-between; gap: 16px; padding-top: 22px; }
+  .k-hero__stage {
+    position: relative;
+    display: grid;
+    place-items: start center;
+    min-height: clamp(520px, 58vw, 820px);
+    padding-top: clamp(12px, 2vw, 32px);
+    isolation: isolate;
+  }
+  .k-hero__card {
+    position: absolute; left: 50%; bottom: 0; z-index: 2;
+    width: clamp(200px, 22vw, 330px);
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    rotate: -3deg;
+    translate: -50% 0;
+    box-shadow: 0 30px 60px -30px rgba(14, 14, 14, 0.5);
+    animation: k-hero-tilt 9s ease-in-out infinite;
+  }
+  .k-hero__slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s var(--ease-out); }
+  .k-hero__slide.is-active { opacity: 1; }
+  .k-hero__slide .k-media { position: absolute; inset: 0; }
+  .k-hero__slide.is-active .k-media > * { animation: k-hero-kb 9s linear both; }
+  .k-hero__heading { position: relative; z-index: 1; margin: 0; text-align: center; line-height: 0.82; pointer-events: none; }
+  .k-hero__line { display: block; margin-bottom: 0.12em; font-size: calc(clamp(40px, 6.4vw, 104px) * var(--heading-scale)); }
+  .k-hero__word {
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight-black);
+    font-size: var(--text-display);
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+  .k-hero__float {
+    position: absolute; z-index: 3;
+    width: clamp(120px, 11vw, 170px);
+    padding: 8px 8px 10px;
+    background: var(--color-bg);
+    box-shadow: 0 18px 40px -18px rgba(14, 14, 14, 0.45);
+    animation: k-bob 7s ease-in-out infinite;
+  }
+  .k-hero__float:hover { animation-play-state: paused; }
+  .k-hero__float .k-media { aspect-ratio: 4 / 5; }
+  .k-hero__float-meta { display: flex; justify-content: space-between; gap: 6px; margin-top: 8px; font-size: 12px; font-weight: 600; }
+  .k-hero__float--1 { left: 7%; top: 16%; rotate: -6deg; }
+  .k-hero__float--2 { right: 8%; bottom: 14%; rotate: 5deg; animation-delay: -3s; }
+  .k-hero__badge { position: absolute; right: 3%; top: 8%; z-index: 2; width: clamp(96px, 9vw, 132px); }
+  .k-hero__badge svg { width: 100%; height: auto; animation: k-spin 14s linear infinite; }
+  .k-hero__badge text { font: 500 10.5px var(--font-label); letter-spacing: 3.2px; fill: currentColor; }
+  .k-hero__badge-core { position: absolute; inset: 0; display: grid; place-items: center; }
+  .k-hero__foot {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
+    gap: 32px;
+    align-items: end;
+    padding: 8px 0 40px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .k-hero__ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+  .k-hero__count { display: flex; align-items: center; gap: 14px; }
+  .k-hero__count-n { font-weight: 800; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .k-hero__bar { position: relative; width: 120px; height: 2px; overflow: hidden; background: var(--color-line); }
+  .k-hero__bar i { position: absolute; inset: 0; background: var(--color-accent); transform: scaleX(0); transform-origin: left; }
+  @keyframes k-hero-tilt { 0%, 100% { rotate: -3deg; translate: -50% 0; } 50% { rotate: 2deg; translate: -50% -12px; } }
+  @keyframes k-hero-kb { from { transform: scale(1.12); } to { transform: scale(1); } }
+  @media (max-width: 900px) {
+    .k-hero__hide-m, .k-hero__badge, .k-hero__count { display: none; }
+    .k-hero__foot { grid-template-columns: 1fr; gap: 20px; }
+    .k-hero__float--1 { left: 2%; top: 30%; }
+    .k-hero__float--2 { right: 2%; bottom: 6%; }
+    .k-hero__stage { min-height: 560px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Kinetic hero",
+  "tag": "div",
+  "class": "k-hero-section",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "text", "id": "heading_line", "label": "Heading line", "default": "Wear the", "info": "Shown in the accent font above the kinetic word." },
+    { "type": "text", "id": "kinetic_word", "label": "Kinetic word", "default": "Motion", "info": "One short word of 4 to 8 letters works best." },
+    { "type": "text", "id": "text", "label": "Text", "default": "Garments engineered to bend, stride and layer. Built for long days in a moving city." },
+    { "type": "text", "id": "button_label", "label": "First button label", "default": "Shop new in" },
+    { "type": "url", "id": "button_link", "label": "First button link", "default": "/collections/all" },
+    { "type": "text", "id": "button2_label", "label": "Second button label", "default": "View lookbook" },
+    { "type": "url", "id": "button2_link", "label": "Second button link" },
+    { "type": "header", "content": "Details" },
+    { "type": "text", "id": "label_left", "label": "Top left label", "default": "New season" },
+    { "type": "text", "id": "label_center", "label": "Top center label", "default": "Cut for bodies in motion" },
+    { "type": "text", "id": "label_right", "label": "Top right label", "default": "Scroll to explore ↓" },
+    { "type": "text", "id": "badge_text", "label": "Spinning badge text", "default": "New season · Shop the drop" },
+    { "type": "checkbox", "id": "show_counter", "label": "Show image counter", "default": true },
+    { "type": "range", "id": "interval", "label": "Time per image", "min": 2, "max": 8, "step": 1, "unit": "s", "default": 3 },
+    { "type": "header", "content": "Style" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "media",
+      "name": "Image",
+      "limit": 3,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Portrait 4:5 images work best." },
+        { "type": "video", "id": "video", "label": "Video", "info": "Plays muted on a loop instead of the image." }
+      ]
+    },
+    {
+      "type": "product",
+      "name": "Floating product",
+      "limit": 2,
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "fallback_title", "label": "Title when no product is selected", "default": "Product name" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Kinetic hero",
+      "blocks": [
+        { "type": "media" }, { "type": "media" }, { "type": "media" },
+        { "type": "product" }, { "type": "product" }
+      ]
+    }
+  ],
+  "disabled_on": { "groups": ["header", "footer"] }
+}
+{% endschema %}
