@@ -36,9 +36,12 @@ says where the rebuild stands.
   `snippets/k-facets.liquid` (groups in `k-facet-groups`).
 - **Skinova leftovers:** the unused Skinova sections, `global.js` and
   `quick-view.js` were deleted on 2026-10-15, and `base.css` was trimmed to the
-  rules still in use; theme check is clean. Still on old markup: the
-  all-collections page (`collections`), the plain page (`page`), the password
-  page and the cart drawer markup. The theme started from Shopify's Skeleton
+  rules still in use; theme check is clean. The all-collections page, plain
+  page, password page and cart drawer were rebuilt on 2026-10-16 (stand-out
+  boards 01–04, https://claude.ai/artifact/YZA2gSAXqzjQifZAnijVgn). The
+  free-shipping threshold and gift wrap product are theme settings (Cart),
+  shared by the cart page and drawer through `snippets/k-free-shipping`.
+  `<k-countdown>` lives in theme.js so the password layout can use it. The theme started from Shopify's Skeleton
   at commit `a4f32d3` (2026-02-26), the last Shopify commit before `bf8e088`:
   diff against it to tell Skeleton files from custom ones.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;

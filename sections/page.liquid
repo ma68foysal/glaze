@@ -1,170 +1,158 @@
-<div class="color-{{ section.settings.color_scheme }} k-legacy-scheme">
-{%- liquid
-  assign section_id = 'page-' | append: section.id
-  assign show_title = section.settings.show_title
-  assign show_subtitle = section.settings.show_subtitle
-  assign subtitle = section.settings.subtitle
-  assign align = section.settings.align
-  assign max_width = section.settings.max_width
--%}
-
+{%- comment -%}
+  Plain page (shipping, about, care…) set as a magazine feature.
+  Masthead: eyebrow, the page title, an optional lede. The body is the page's
+  own content; every H2 in it is numbered and listed in a contents column that
+  follows the reader's scroll. Pages with fewer than two H2s get no contents
+  column and a centred body.
+{%- endcomment -%}
 <section
-  id="{{ section_id }}"
-  class="skinova-page skinova-page--align-{{ align }} full-width"
-  style="--bg: var(--color-bg); --fg: var(--color-text); --max-w: {{ max_width }}px;"
+  id="page-{{ section.id }}"
+  class="k-page k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}"
+  data-k-page
 >
-  <div class="skinova-page__inner">
-    {%- if show_title -%}
-      <header class="skinova-page__header">
-        <h1 class="skinova-page__title">{{ page.title | escape }}</h1>
-        {%- if show_subtitle and subtitle != blank -%}
-          <p class="skinova-page__subtitle">{{ subtitle | escape }}</p>
-        {%- endif -%}
-      </header>
-    {%- endif -%}
+  <div class="k-wrap">
+    <header class="k-page__mast">
+      {%- if section.settings.eyebrow != blank or section.settings.show_date -%}
+        <p class="k-page__eyebrow k-label k-muted">
+          {{- section.settings.eyebrow -}}
+          {%- if section.settings.eyebrow != blank and section.settings.show_date %} · {% endif -%}
+          {%- if section.settings.show_date and page.published_at -%}
+            {%- assign page_date = page.published_at | date: format: 'date' -%}
+            {{- 'pages.updated' | t: date: page_date -}}
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+      <h1 class="k-page__title k-h-display">
+        {%- if section.settings.heading != blank -%}{{ section.settings.heading }}{%- else -%}{{ page.title | escape }}{%- endif -%}
+      </h1>
+      {%- if section.settings.lede != blank -%}
+        <p class="k-page__lede">{{ section.settings.lede }}</p>
+      {%- endif -%}
+    </header>
 
-    {%- if page.content != blank -%}
-      <div class="skinova-page__content rte">{{ page.content }}</div>
-    {%- endif -%}
+    <div class="k-page__lay">
+      {%- if section.settings.show_toc -%}
+        <nav class="k-page__toc" aria-labelledby="page-{{ section.id }}-toc" data-toc hidden>
+          <p class="k-label k-muted" id="page-{{ section.id }}-toc">{{ 'pages.on_this_page' | t }}</p>
+        </nav>
+      {%- endif -%}
+      <div class="k-rte k-page__body" data-page-body>
+        {{ page.content }}
+      </div>
+    </div>
   </div>
 </section>
-</div>
 
 {% stylesheet %}
-  .skinova-page {
-    background: var(--bg, var(--g-cream));
-    color: var(--fg, var(--g-ink));
-    font-family: var(--g-body-font);
-    padding: 64px 24px 96px;
+  .k-page__mast { display: grid; gap: 22px; padding-bottom: 36px; border-bottom: 1.5px solid var(--color-text); }
+  .k-page__eyebrow { margin: 0; }
+  .k-page__title { margin: 0; font-size: clamp(56px, 10vw, 150px); overflow-wrap: anywhere; text-wrap: balance; }
+  .k-page__lede { margin: 0; max-width: 52ch; font-size: clamp(19px, 1.8vw, 24px); line-height: 1.4; }
+
+  .k-page__lay { display: grid; grid-template-columns: minmax(0, 720px); justify-content: center; gap: 64px; padding-top: 48px; }
+  .k-page__lay:has(.k-page__toc:not([hidden])) { grid-template-columns: 240px minmax(0, 720px); justify-content: start; }
+  .k-page__toc { position: sticky; top: calc(var(--header-height, 0px) + 28px); align-self: start; display: grid; }
+  .k-page__toc p { margin: 0 0 12px; }
+  .k-page__toc a {
+    display: grid; grid-template-columns: 34px 1fr; padding: 10px 0; border-top: 1px solid var(--color-line);
+    font-weight: 600; font-size: 15px; color: var(--color-muted); transition: color 0.3s;
   }
-  .skinova-page__inner {
-    max-width: var(--max-w, 768px);
-    margin: 0 auto;
+  .k-page__toc a span:first-child { font-family: var(--font-label); font-size: var(--text-label); letter-spacing: 0.06em; padding-top: 2px; }
+  .k-page__toc a:hover, .k-page__toc a.is-on { color: var(--color-text); }
+  .k-page__toc a.is-on span:first-child { color: var(--color-accent); }
+
+  .k-page__body { counter-reset: k-page-h2; font-size: 17px; line-height: 1.7; }
+  .k-page__body > :first-child { margin-top: 0; }
+  .k-page__body p { margin: 0 0 22px; max-width: 64ch; }
+  .k-page__body h2 {
+    counter-increment: k-page-h2;
+    display: flex; align-items: baseline; gap: 14px;
+    margin: 56px 0 18px; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black);
+    font-size: clamp(30px, 3.4vw, 44px); line-height: 0.95; letter-spacing: -0.03em;
+    scroll-margin-top: calc(var(--header-height, 0px) + 24px);
   }
-  .skinova-page--align-center .skinova-page__inner { text-align: center; }
-  .skinova-page--align-center .skinova-page__content { text-align: left; }
-  .skinova-page__header { margin-bottom: 40px; }
-  .skinova-page__title {
-    font-family: var(--g-display-font);
-    font-size: clamp(28px, 4vw, 44px);
-    font-weight: 600;
-    line-height: 1.15;
-    margin: 0 0 12px;
+  .k-page__body.is-numbered h2::before {
+    content: counter(k-page-h2, decimal-leading-zero);
+    font-family: var(--font-label); font-size: 13px; font-weight: 400; letter-spacing: 0.08em; color: var(--color-accent);
   }
-  .skinova-page__subtitle {
-    font-size: 16px;
-    color: var(--g-muted-strong);
-    line-height: 1.55;
-    margin: 0;
+  .k-page__body > h2:first-child { margin-top: 0; }
+  .k-page__body h3 { margin: 36px 0 12px; font-size: 22px; letter-spacing: -0.02em; }
+  .k-page__body ul, .k-page__body ol { margin: 0 0 22px; padding-left: 22px; }
+  .k-page__body li { margin-bottom: 6px; }
+  .k-page__body a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 3px; }
+  .k-page__body blockquote {
+    margin: 36px 0; padding: 28px 0; border-block: 1.5px solid var(--color-text);
+    font-family: var(--font-accent); font-style: var(--font-accent-style); font-size: clamp(28px, 3.4vw, 44px); line-height: 1.08;
   }
-  .skinova-page__content {
-    font-size: 16px;
-    line-height: 1.7;
-    color: var(--g-ink);
+  .k-page__body blockquote p { margin: 0; }
+  .k-page__body table { width: 100%; margin: 8px 0 28px; border-collapse: collapse; font-size: 15px; display: block; overflow-x: auto; }
+  .k-page__body :is(th, td) { padding: 12px 10px; border-bottom: 1px solid var(--color-line); text-align: left; vertical-align: top; }
+  .k-page__body th { font-family: var(--font-label); font-size: var(--text-label); font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); }
+  .k-page__body img { height: auto; }
+  .k-page__body figure { margin: 32px 0; }
+  .k-page__body figcaption { margin-top: 8px; font-family: var(--font-label); font-size: var(--text-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); }
+
+  @media (max-width: 989px) {
+    .k-page__lay, .k-page__lay:has(.k-page__toc:not([hidden])) { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-top: 32px; }
+    .k-page__toc { position: static; }
   }
-  .skinova-page__content > * + * { margin-top: 1.1em; }
-  .skinova-page__content h2,
-  .skinova-page__content h3,
-  .skinova-page__content h4 {
-    font-family: var(--g-display-font);
-    margin-top: 1.8em;
-    color: var(--g-ink);
-  }
-  .skinova-page__content h2 { font-size: 24px; }
-  .skinova-page__content h3 { font-size: 20px; }
-  .skinova-page__content h4 { font-size: 17px; }
-  .skinova-page__content a { color: var(--g-ink); text-underline-offset: 3px; }
-  .skinova-page__content a:hover { color: var(--g-rose); }
-  .skinova-page__content img {
-    border-radius: var(--g-radius-md);
-    margin: 1.6em 0;
-    max-width: 100%;
-    height: auto;
-  }
-  .skinova-page__content blockquote {
-    border-left: 3px solid var(--g-rose);
-    padding-left: 16px;
-    font-style: italic;
-    color: var(--g-muted-strong);
-    margin: 1.6em 0;
-  }
-  .skinova-page__content ul,
-  .skinova-page__content ol {
-    padding-left: 24px;
-  }
-  .skinova-page__content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1.6em 0;
-  }
-  .skinova-page__content th,
-  .skinova-page__content td {
-    border-bottom: 1px solid var(--g-line);
-    padding: 8px 12px;
-    text-align: left;
-  }
-  .skinova-page__content th { font-weight: 600; }
 {% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    function setup(sec) {
+      var body = sec.querySelector('[data-page-body]');
+      if (!body || sec.dataset.bound) return;
+      sec.dataset.bound = '1';
+      var heads = body.querySelectorAll('h2');
+      if (heads.length < 2) return;
+      body.classList.add('is-numbered');
+      var toc = sec.querySelector('[data-toc]');
+      if (!toc) return;
+      var links = [];
+      heads.forEach(function (h, i) {
+        if (!h.id) h.id = 'k-page-' + (i + 1);
+        var a = document.createElement('a');
+        a.href = '#' + h.id;
+        var n = document.createElement('span');
+        n.textContent = (i < 9 ? '0' : '') + (i + 1);
+        var t = document.createElement('span');
+        t.textContent = h.textContent;
+        a.appendChild(n); a.appendChild(t);
+        toc.appendChild(a);
+        links.push(a);
+      });
+      toc.hidden = false;
+      if (!('IntersectionObserver' in window)) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          links.forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + e.target.id); });
+        });
+      }, { rootMargin: '-25% 0px -65% 0px' });
+      heads.forEach(function (h) { io.observe(h); });
+      links[0].classList.add('is-on');
+    }
+    function init() { document.querySelectorAll('[data-k-page]').forEach(setup); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    document.addEventListener('shopify:section:load', init);
+  })();
+{% endjavascript %}
 
 {% schema %}
 {
-  "name": "t:general.page",
-  "tag": "section",
-  "class": "section-page",
+  "name": "Page",
+  "tag": "div",
+  "class": "k-page-section",
   "settings": [
-    {
-      "type": "checkbox",
-      "id": "show_title",
-      "label": "t:sections.page.show_title",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_subtitle",
-      "label": "t:sections.page.show_subtitle",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "subtitle",
-      "label": "t:sections.page.subtitle"
-    },
-    {
-      "type": "select",
-      "id": "align",
-      "label": "t:labels.alignment",
-      "options": [
-        {
-          "value": "left",
-          "label": "t:options.alignment.left"
-        },
-        {
-          "value": "center",
-          "label": "t:options.alignment.center"
-        }
-      ],
-      "default": "left"
-    },
-    {
-      "type": "range",
-      "id": "max_width",
-      "min": 560,
-      "max": 1200,
-      "step": 40,
-      "unit": "px",
-      "label": "t:sections.page.max_width",
-      "default": 760
-    },
-    {
-      "type": "header",
-      "content": "t:sections.page.colors_header"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "Color scheme",
-      "default": "scheme-1"
-    }
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "info": "A short label above the title, such as Customer care." },
+    { "type": "checkbox", "id": "show_date", "label": "Show the publish date", "default": false },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Leave empty to use the page title. Italic words use the accent font." },
+    { "type": "text", "id": "lede", "label": "Lede", "info": "One or two sentences under the title." },
+    { "type": "checkbox", "id": "show_toc", "label": "Show a contents list", "default": true, "info": "Built from the page's H2 headings. Needs at least two." },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
   ]
 }
 {% endschema %}

@@ -686,3 +686,16 @@ body:has(.k-pdp__bar.is-visible) .k-totop { bottom: calc(100px + env(safe-area-i
 }
 .k-cursor.is-on .k-cursor__dot { transform: scale(1); }
 [data-motion="off"] .k-cursor__dot { transition: none; }
+
+/* ---------------------------------------------------------------
+   Free-shipping meter (snippets/k-free-shipping): cart page and drawer
+   --------------------------------------------------------------- */
+.k-ship__row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-weight: 600; }
+.k-ship__bar { position: relative; margin-top: 12px; background: rgba(var(--color-text-rgb), 0.1); }
+.k-ship__bar b { position: absolute; inset: 0 auto 0 0; background: var(--color-accent); transition: width 0.8s var(--ease-out); }
+.k-ship--panel { padding: 18px 20px; border-radius: 18px; background: var(--color-surface); }
+.k-ship--panel .k-ship__bar { height: 6px; border-radius: 999px; overflow: hidden; }
+.k-ship--panel .k-ship__bar i { display: none; }
+.k-ship--line .k-ship__row { font-size: 14px; }
+.k-ship--line .k-ship__bar { height: 4px; margin-top: 10px; }
+.k-ship--line .k-ship__bar i { position: absolute; top: -5px; width: 14px; height: 14px; border-radius: 999px; background: var(--color-accent); transform: translateX(-50%); transition: left 0.8s var(--ease-out); }

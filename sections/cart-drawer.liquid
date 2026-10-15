@@ -1,188 +1,216 @@
 {%- comment -%}
-  Cart drawer — slides in from the right when cart_type == 'drawer'.
-  Rendered once per page from layout/theme.liquid. The body is the SECTION
-  that Section Rendering API refetches after every cart mutation, so the
-  whole drawer's innerHTML gets swapped server-side — no manual DOM mutation.
+  Cart drawer: slides in from the right when cart_type == 'drawer'.
+  Rendered once per page from layout/theme.liquid. The Section Rendering API
+  refetches this section after every cart change and swaps the inner HTML of
+  <skinova-cart-drawer>, so nothing here is patched by hand.
 
-  Wrapper: <skinova-cart-drawer> custom element (defined in cart.js).
-  Items wrapper: <skinova-cart-items> custom element.
-  Remove/quantity: <skinova-cart-remove> wraps each line's remove button.
-  Note: <skinova-cart-note> wraps the textarea.
+  Hooks cart.js relies on (keep them when restyling):
+  - <skinova-cart-drawer>, [data-drawer-panel], [data-drawer-close], [data-skinova-cart-close]
+  - <skinova-cart-items> with [data-skinova-cart-qty-input] and [data-skinova-cart-qty-step]
+  - [data-cart-line] on each line (gets .is-loading), <skinova-cart-remove>, <skinova-cart-note>
+  - [data-k-drawer-add] (Complete the look), [data-k-gift-variant] (gift wrap)
 {%- endcomment -%}
+{%- liquid
+  assign gift = settings.gift_wrap_product
+  assign gift_variant = gift.selected_or_first_available_variant
+  assign gift_line = nil
+  assign cart_product_ids = ''
+  for item in cart.items
+    assign cart_product_ids = cart_product_ids | append: ',' | append: item.product_id | append: ','
+    if gift_variant and item.variant_id == gift_variant.id
+      assign gift_line = item
+    endif
+  endfor
+
+  # Complete the look: the picked products, or a collection as a fallback. Pieces already in the bag are skipped.
+  assign look_source = section.settings.look_products
+  if look_source == blank or look_source.size == 0
+    assign look_source = section.settings.look_collection.products
+  endif
+  assign look_count = 0
+  for p in look_source
+    assign probe = ',' | append: p.id | append: ','
+    unless cart_product_ids contains probe or p.id == gift.id
+      assign look_count = look_count | plus: 1
+    endunless
+  endfor
+  assign look_limit = section.settings.look_limit
+-%}
 
 <skinova-cart-drawer
-  class="skinova-cart-drawer{% if cart.item_count == 0 %} is-empty{% endif %}"
+  id="skinova-cart-drawer"
+  class="k-drawer{% if cart.item_count == 0 %} is-empty{% endif %}"
   role="dialog"
   aria-modal="true"
-  aria-labelledby="skinova-cart-drawer-heading"
+  aria-labelledby="k-drawer-title"
   aria-hidden="true"
 >
-  <div class="skinova-cart-drawer__overlay" data-skinova-cart-close aria-hidden="true"></div>
-  <aside class="skinova-cart-drawer__panel color-{{ section.settings.color_scheme | default: 'scheme-1' }}" tabindex="-1">
-    <header class="skinova-cart-drawer__head">
-      <h2 id="skinova-cart-drawer-heading" class="skinova-cart-drawer__title">
+  <div class="k-drawer__scrim" data-skinova-cart-close aria-hidden="true"></div>
+  <aside class="k-drawer__panel color-{{ section.settings.color_scheme | default: 'scheme-1' }}" tabindex="-1" data-drawer-panel>
+    <header class="k-drawer__head">
+      <h2 id="k-drawer-title" class="k-drawer__title">
         {{ 'cart.drawer_title' | t }}
-        {%- if cart.item_count > 0 %} <span class="skinova-cart-drawer__count">({{ cart.item_count }})</span>{%- endif -%}
+        {%- if cart.item_count > 0 %} <span class="k-drawer__count">({{ cart.item_count }})</span>{%- endif -%}
       </h2>
-      <button
-        type="button"
-        class="skinova-cart-drawer__close"
-        data-skinova-cart-close
-        aria-label="{{ 'general.close' | t }}"
-      >
-        {% render 'k-icon', icon: 'close', size: 22 %}
+      <button type="button" class="k-drawer__close" data-drawer-close data-skinova-cart-close aria-label="{{ 'general.close' | t }}">
+        {% render 'k-icon', icon: 'close', size: 18 %}
       </button>
     </header>
 
-    {%- if cart.item_count == 0 -%}
-      <div class="skinova-cart-drawer__empty">
-        <p class="skinova-cart-drawer__empty-text">{{ 'cart.drawer_empty' | t }}</p>
-        <a class="k-btn k-btn--secondary" href="{{ routes.all_products_collection_url }}" data-skinova-cart-close>
-          {{ 'cart.continue_shopping' | t }}
-        </a>
-      </div>
-    {%- else -%}
-      <skinova-cart-items class="skinova-cart-drawer__items">
-        <form action="{{ routes.cart_url }}" method="post" id="skinova-cart-drawer-form" novalidate>
-          <ul class="skinova-cart-drawer__list" role="list">
-            {%- for item in cart.items -%}
-              <li class="skinova-cart-drawer__item" data-key="{{ item.key }}" data-index="{{ forloop.index }}">
-                <a class="skinova-cart-drawer__item-media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
-                  {%- if item.image -%}
-                    {{ item.image | image_url: width: 240 | image_tag:
-                        loading: 'lazy',
-                        sizes: '80px',
-                        widths: '80, 160, 240',
-                        alt: item.image.alt | default: item.product.title | escape
-                    }}
-                  {%- else -%}
-                    {{ 'product-1' | placeholder_svg_tag: 'k-ph' }}
-                  {%- endif -%}
-                </a>
-                <div class="skinova-cart-drawer__item-body">
-                  <a class="skinova-cart-drawer__item-title" href="{{ item.url }}">
-                    {{ item.product.title | escape }}
-                  </a>
+    <div class="k-drawer__body">
+      {%- if cart.item_count == 0 -%}
+        <div class="k-drawer__empty">
+          <p class="k-drawer__empty-title">{{ 'cart.drawer_empty' | t }}</p>
+          <a class="k-btn k-btn--secondary" href="{{ routes.all_products_collection_url }}" data-skinova-cart-close>
+            <span>{{ 'cart.continue_shopping' | t }}</span>
+          </a>
+        </div>
+      {%- else -%}
+        {%- render 'k-free-shipping', style: 'line' -%}
 
-                  {%- unless item.product.has_only_default_variant -%}
-                    <p class="skinova-cart-drawer__item-options">{{ item.variant.title | escape }}</p>
-                  {%- endunless -%}
-
-                  {%- if item.selling_plan_allocation -%}
-                    <p class="skinova-cart-drawer__item-options">{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>
-                  {%- endif -%}
-
-                  {%- for property in item.properties -%}
-                    {%- assign first_char = property.first | slice: 0 -%}
-                    {%- if first_char != '_' and property.last != blank -%}
-                      <p class="skinova-cart-drawer__item-options">
-                        <strong>{{ property.first | escape }}:</strong>
-                        {% if property.last contains '/uploads/' %}
-                          <a href="{{ property.last }}" target="_blank" rel="noopener">{{ property.last | split: '/' | last | escape }}</a>
-                        {% else %}
-                          {{ property.last | escape }}
-                        {% endif %}
-                      </p>
+        <skinova-cart-items class="k-drawer__items">
+          <form action="{{ routes.cart_url }}" method="post" id="k-drawer-form" novalidate>
+            <ul class="k-drawer__list" role="list">
+              {%- for item in cart.items -%}
+                <li class="k-drawer__line" data-cart-line data-key="{{ item.key }}" data-index="{{ forloop.index }}">
+                  <a class="k-drawer__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+                    {%- if item.image -%}
+                      {{ item.image | image_url: width: 240 | image_tag: loading: 'lazy', sizes: '84px', widths: '84, 168, 240', alt: '' }}
+                    {%- else -%}
+                      {{ 'product-1' | placeholder_svg_tag: 'k-ph' }}
                     {%- endif -%}
-                  {%- endfor -%}
-
-                  {%- if item.line_level_discount_allocations.size > 0 -%}
-                    <ul class="skinova-cart-drawer__item-discounts" aria-label="{{ 'cart.discounts_aria' | t }}">
-                      {%- for discount in item.line_level_discount_allocations -%}
-                        <li>{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</li>
-                      {%- endfor -%}
-                    </ul>
-                  {%- endif -%}
-
-                  <div class="skinova-cart-drawer__item-row">
-                    <div class="skinova-cart-drawer__qty">
-                      <label for="skinova-cart-qty-{{ item.key }}" class="visually-hidden">
-                        {{ 'cart.qty_label' | t: title: item.product.title | escape }}
-                      </label>
-                      <button
-                        type="button"
-                        class="skinova-cart-drawer__qty-btn"
-                        aria-label="{{ 'cart.qty_decrease' | t }}"
-                        data-skinova-cart-qty-step="-1"
-                        data-target="skinova-cart-qty-{{ item.key }}"
-                      >−</button>
+                  </a>
+                  <div class="k-drawer__info">
+                    <a class="k-drawer__name" href="{{ item.url }}">{{ item.product.title | escape }}</a>
+                    {%- unless item.product.has_only_default_variant -%}
+                      <p class="k-drawer__opt">{{ item.variant.title | escape }}</p>
+                    {%- endunless -%}
+                    {%- if item.selling_plan_allocation -%}
+                      <p class="k-drawer__opt">{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>
+                    {%- endif -%}
+                    {%- for property in item.properties -%}
+                      {%- assign first_char = property.first | slice: 0 -%}
+                      {%- if first_char != '_' and property.last != blank -%}
+                        <p class="k-drawer__opt">{{ property.first | escape }}: {{ property.last | escape }}</p>
+                      {%- endif -%}
+                    {%- endfor -%}
+                    {%- if item.line_level_discount_allocations.size > 0 -%}
+                      <ul class="k-drawer__disc" aria-label="{{ 'cart.discounts_aria' | t }}">
+                        {%- for discount in item.line_level_discount_allocations -%}
+                          <li>{{ discount.discount_application.title | escape }} (−{{ discount.amount | money }})</li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                    <div class="k-drawer__qty">
+                      <label for="k-drawer-qty-{{ item.key }}" class="visually-hidden">{{ 'cart.qty_label' | t: title: item.product.title | escape }}</label>
+                      <button type="button" aria-label="{{ 'cart.qty_decrease' | t }}" data-skinova-cart-qty-step="-1" data-target="k-drawer-qty-{{ item.key }}">−</button>
                       <input
                         type="number"
-                        id="skinova-cart-qty-{{ item.key }}"
+                        id="k-drawer-qty-{{ item.key }}"
                         name="updates[{{ item.key }}]"
                         value="{{ item.quantity }}"
                         min="0"
                         inputmode="numeric"
-                        pattern="[0-9]*"
                         data-skinova-cart-qty-input
                         data-index="{{ forloop.index }}"
                         data-key="{{ item.key }}"
                       >
-                      <button
-                        type="button"
-                        class="skinova-cart-drawer__qty-btn"
-                        aria-label="{{ 'cart.qty_increase' | t }}"
-                        data-skinova-cart-qty-step="1"
-                        data-target="skinova-cart-qty-{{ item.key }}"
-                      >+</button>
-                    </div>
-
-                    <div class="skinova-cart-drawer__item-prices">
-                      {%- if item.original_line_price != item.final_line_price -%}
-                        <s class="skinova-cart-drawer__item-compare">{{ item.original_line_price | money }}</s>
-                        <span class="skinova-cart-drawer__item-price">{{ item.final_line_price | money }}</span>
-                      {%- else -%}
-                        <span class="skinova-cart-drawer__item-price">{{ item.final_line_price | money }}</span>
-                      {%- endif -%}
+                      <button type="button" aria-label="{{ 'cart.qty_increase' | t }}" data-skinova-cart-qty-step="1" data-target="k-drawer-qty-{{ item.key }}">+</button>
                     </div>
                   </div>
+                  <div class="k-drawer__end">
+                    <span class="k-drawer__price">
+                      {%- if item.original_line_price != item.final_line_price -%}
+                        <s>{{ item.original_line_price | money }}</s>
+                      {%- endif -%}
+                      {{ item.final_line_price | money }}
+                    </span>
+                    <skinova-cart-remove data-key="{{ item.key }}" data-index="{{ forloop.index }}">
+                      <button type="button" class="k-drawer__remove" aria-label="{{ 'cart.remove_aria' | t: title: item.product.title | escape }}">{{ 'cart.remove' | t }}</button>
+                    </skinova-cart-remove>
+                  </div>
+                </li>
+              {%- endfor -%}
+            </ul>
+            {%- if cart.cart_level_discount_applications.size > 0 -%}
+              <ul class="k-drawer__disc k-drawer__disc--cart" aria-label="{{ 'cart.cart_discounts_aria' | t }}">
+                {%- for discount in cart.cart_level_discount_applications -%}
+                  <li>{{ discount.title | escape }} (−{{ discount.total_allocated_amount | money }})</li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </form>
+        </skinova-cart-items>
+      {%- endif -%}
 
-                  <skinova-cart-remove data-key="{{ item.key }}" data-index="{{ forloop.index }}">
-                    <button
-                      type="button"
-                      class="skinova-cart-drawer__remove"
-                      aria-label="{{ 'cart.remove_aria' | t: title: item.product.title | escape }}"
-                    >{{ 'cart.remove' | t }}</button>
-                  </skinova-cart-remove>
+      {%- if look_count > 0 and look_limit > 0 -%}
+        <div class="k-drawer__look">
+          <div class="k-drawer__look-head">
+            <strong>{{ section.settings.look_heading }}</strong>
+            {%- if section.settings.look_label != blank -%}<span class="k-label">{{ section.settings.look_label }}</span>{%- endif -%}
+          </div>
+          <ul class="k-drawer__look-grid" role="list">
+            {%- assign shown = 0 -%}
+            {%- for p in look_source -%}
+              {%- assign probe = ',' | append: p.id | append: ',' -%}
+              {%- if shown >= look_limit -%}{%- break -%}{%- endif -%}
+              {%- if cart_product_ids contains probe or p.id == gift.id -%}{%- continue -%}{%- endif -%}
+              {%- assign shown = shown | plus: 1 -%}
+              <li class="k-drawer__look-item">
+                <a class="k-drawer__look-media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+                  {%- if p.featured_media -%}
+                    {{ p.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', sizes: '56px', widths: '56, 112, 160', alt: '' }}
+                  {%- else -%}
+                    {{ 'product-2' | placeholder_svg_tag: 'k-ph' }}
+                  {%- endif -%}
+                </a>
+                <div class="k-drawer__look-info">
+                  <a href="{{ p.url }}">{{ p.title | escape }}</a>
+                  <span class="k-label">{{ p.price | money }}</span>
                 </div>
+                {%- if p.available == false -%}
+                  <span class="k-drawer__look-btn is-static">{{ 'products.sold_out' | t }}</span>
+                {%- elsif p.has_only_default_variant -%}
+                  <button type="button" class="k-drawer__look-btn" data-k-drawer-add="{{ p.selected_or_first_available_variant.id }}" aria-label="{{ 'collection.add_to_cart' | t: title: p.title | escape }}">{{ 'cart.look_add' | t }}</button>
+                {%- else -%}
+                  <a class="k-drawer__look-btn" href="{{ p.url }}">{{ 'products.choose_options' | t }}</a>
+                {%- endif -%}
               </li>
             {%- endfor -%}
           </ul>
+        </div>
+      {%- endif -%}
 
-          {%- if cart.cart_level_discount_applications.size > 0 -%}
-            <ul class="skinova-cart-drawer__cart-discounts" aria-label="{{ 'cart.cart_discounts_aria' | t }}">
-              {%- for discount in cart.cart_level_discount_applications -%}
-                <li>{{ discount.title | escape }} (−{{ discount.total_allocated_amount | money }})</li>
-              {%- endfor -%}
-            </ul>
-          {%- endif -%}
-        </form>
-      </skinova-cart-items>
-
-      <footer class="skinova-cart-drawer__footer">
+      {%- if cart.item_count > 0 -%}
+        {%- if gift_variant -%}
+          <label class="k-drawer__opt-row">
+            <input type="checkbox" data-k-gift-variant="{{ gift_variant.id }}"{% if gift_line %} data-k-gift-key="{{ gift_line.key }}" checked{% endif %}>
+            <span>
+              {%- assign gift_money = gift_variant.price | money -%}
+              <strong>{{ 'cart.gift_wrap' | t: price: gift_money }}</strong>
+              {%- if gift.description != blank -%}<br><span class="k-muted">{{ gift.description | strip_html | truncatewords: 12 }}</span>{%- endif -%}
+            </span>
+          </label>
+        {%- endif -%}
         {%- if settings.show_cart_note -%}
-          {%- comment -%} Note lives in the footer (above subtotal) so it stays visible regardless of items list height. {%- endcomment -%}
-          <details class="skinova-cart-drawer__note-wrap">
-            <summary>{{ 'cart.note_toggle' | t }}</summary>
+          <details class="k-drawer__note">
+            <summary>{{ 'cart.note_toggle' | t }}<span aria-hidden="true">+</span></summary>
             <skinova-cart-note>
-              <label for="skinova-cart-drawer-note" class="visually-hidden">{{ 'cart.notes_label' | t }}</label>
-              <textarea
-                id="skinova-cart-drawer-note"
-                class="skinova-cart-drawer__note"
-                form="skinova-cart-drawer-form"
-                name="note"
-                rows="3"
-                placeholder="{{ 'cart.notes_label' | t }}"
-              >{{ cart.note }}</textarea>
+              <label for="k-drawer-note" class="k-label">{{ 'cart.notes_label' | t }}</label>
+              <textarea id="k-drawer-note" form="k-drawer-form" name="note" rows="3" placeholder="{{ 'cart.note_placeholder' | t }}">{{ cart.note }}</textarea>
             </skinova-cart-note>
           </details>
         {%- endif -%}
+      {%- endif -%}
+    </div>
 
-        <div class="skinova-cart-drawer__subtotal">
+    {%- if cart.item_count > 0 -%}
+      <footer class="k-drawer__foot">
+        <div class="k-drawer__total">
           <span>{{ 'cart.subtotal' | t }}</span>
-          <span class="skinova-cart-drawer__subtotal-value">{{ cart.total_price | money_with_currency }}</span>
+          <span>{{ cart.total_price | money_with_currency }}</span>
         </div>
-        <p class="skinova-cart-drawer__tax-note">
+        <p class="k-drawer__tax">
           {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
             {{ 'cart.tax_and_shipping_at_checkout_html' | t: link: shop.shipping_policy.url }}
           {%- elsif cart.taxes_included -%}
@@ -193,215 +221,116 @@
             {{ 'cart.tax_and_shipping_at_checkout' | t }}
           {%- endif -%}
         </p>
-        <a class="k-btn k-btn--secondary k-btn--block" href="{{ routes.cart_url }}">
-          {{ 'cart.view_cart' | t }}
-        </a>
-        <button
-          type="submit"
-          form="skinova-cart-drawer-form"
-          name="checkout"
-          class="k-btn k-btn--primary k-btn--block k-btn--split"
-        >
-          {{ 'cart.checkout' | t }}
-          <span class="k-btn__arrow">{% render 'k-icon', icon: 'arrow', size: 16 %}</span>
+        {%- assign total_money = cart.total_price | money -%}
+        <button type="submit" form="k-drawer-form" name="checkout" class="k-btn k-btn--primary k-btn--block">
+          <span>{{ 'cart.checkout_total' | t: total: total_money }}</span>
         </button>
+        <a class="k-btn k-btn--secondary k-btn--block k-drawer__view" href="{{ routes.cart_url }}"><span>{{ 'cart.view_cart' | t }}</span></a>
       </footer>
     {%- endif -%}
   </aside>
 </skinova-cart-drawer>
 
 {% stylesheet %}
-  /* Cart drawer — design-system styles. Class names stay skinova-* because cart.js targets them. */
-  .skinova-cart-drawer {
-    position: fixed;
-    inset: 0;
-    z-index: 9000;
-    visibility: hidden;
-    pointer-events: none;
-    font-family: var(--font-body);
-    transition: visibility 0s linear 0.5s;
-  }
-  .skinova-cart-drawer[open] { visibility: visible; pointer-events: auto; transition: visibility 0s linear 0s; }
-  .skinova-cart-drawer__overlay {
-    position: absolute; inset: 0;
-    background: rgba(14, 14, 14, 0.45);
-    opacity: 0;
-    cursor: pointer;
-    transition: opacity 0.35s var(--ease-out);
-  }
-  .skinova-cart-drawer[open] .skinova-cart-drawer__overlay { opacity: 1; }
-
-  .skinova-cart-drawer__panel {
+  .k-drawer { position: fixed; inset: 0; z-index: 9000; visibility: hidden; pointer-events: none; transition: visibility 0s linear 0.55s; }
+  .k-drawer[open] { visibility: visible; pointer-events: auto; transition: visibility 0s linear 0s; }
+  .k-drawer__scrim { position: absolute; inset: 0; background: rgba(14, 14, 14, 0.55); opacity: 0; cursor: pointer; transition: opacity 0.4s var(--ease-out); }
+  .k-drawer[open] .k-drawer__scrim { opacity: 1; }
+  .k-drawer__panel {
     position: absolute; top: 0; right: 0; bottom: 0;
-    width: min(460px, 100vw);
+    width: min(480px, 100vw);
     display: flex; flex-direction: column;
-    box-shadow: -30px 0 60px -30px rgba(14, 14, 14, 0.35);
+    box-shadow: -24px 0 60px rgba(0, 0, 0, 0.18);
     transform: translateX(100%);
-    transition: transform 0.5s var(--ease-out);
-    will-change: transform;
+    transition: transform 0.55s var(--ease-out);
   }
-  .skinova-cart-drawer[open] .skinova-cart-drawer__panel { transform: none; }
-  .skinova-cart-drawer__panel:focus { outline: none; }
+  .k-drawer[open] .k-drawer__panel { transform: none; }
+  .k-drawer__panel:focus { outline: none; }
 
-  .skinova-cart-drawer__head {
-    flex: none;
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding: 18px 24px;
-    border-bottom: 1px solid var(--color-line);
-  }
-  .skinova-cart-drawer__title {
-    margin: 0;
-    font-family: var(--font-heading);
-    font-weight: var(--font-heading-weight);
-    font-size: 30px;
-    line-height: 1;
-    letter-spacing: -0.02em;
-  }
-  .skinova-cart-drawer__count {
-    font-family: var(--font-accent);
-    font-style: var(--font-accent-style);
-    font-weight: 400;
-    letter-spacing: 0;
-  }
-  .skinova-cart-drawer__close {
-    display: inline-grid; place-items: center;
+  .k-drawer__head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 24px; border-bottom: 1.5px solid var(--color-text); }
+  .k-drawer__title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 40px; line-height: 0.9; letter-spacing: -0.03em; }
+  .k-drawer__count { font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400; letter-spacing: 0; }
+  .k-drawer__close {
+    flex: none; display: inline-grid; place-items: center;
     width: var(--touch); height: var(--touch);
-    margin-right: -10px;
-    border: 0; border-radius: 999px;
-    background: transparent; color: inherit;
-    cursor: pointer;
-    transition: background-color var(--dur-fast), transform var(--dur) var(--ease-out);
+    border: 1px solid var(--color-line); border-radius: 999px;
+    background: transparent; color: inherit; cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, transform 0.4s var(--ease-out);
   }
-  .skinova-cart-drawer__close:hover { background: var(--color-line-soft); transform: rotate(90deg); }
+  .k-drawer__close:hover { background: var(--color-text); color: var(--color-bg); transform: rotate(90deg); }
 
-  .skinova-cart-drawer__items { flex: 1; display: block; overflow-y: auto; overscroll-behavior: contain; padding: 0 24px; }
-  .skinova-cart-drawer__list { margin: 0; padding: 0; list-style: none; }
-  .skinova-cart-drawer__item {
-    position: relative;
-    display: grid;
-    grid-template-columns: 80px minmax(0, 1fr);
-    gap: 16px;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--color-line);
+  .k-drawer__body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 0 24px 8px; }
+  .k-drawer__body > .k-ship { margin: 18px 0 6px; }
+  .k-drawer__items { display: block; }
+  .k-drawer__list { margin: 0; padding: 0; list-style: none; }
+  .k-drawer__line {
+    display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; gap: 16px;
+    padding: 18px 0; border-bottom: 1px solid var(--color-line);
     animation: k-rise-in 0.5s var(--ease-out) both;
+    transition: opacity 0.3s;
   }
-  .skinova-cart-drawer__item:nth-child(2) { animation-delay: 0.05s; }
-  .skinova-cart-drawer__item:nth-child(3) { animation-delay: 0.1s; }
-  .skinova-cart-drawer__item.is-loading { opacity: 0.55; pointer-events: none; }
-  .skinova-cart-drawer__item.is-loading::after { display: none; }
-  .skinova-cart-drawer__item.is-loading::before { left: 40px; top: 50%; border-color: var(--color-text); border-right-color: transparent; }
-  .skinova-cart-drawer__item-media {
-    position: relative;
-    display: block;
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
-    border-radius: calc(var(--radius-card) * 0.25);
-    background: var(--color-line-soft);
-  }
-  .skinova-cart-drawer__item-media img, .skinova-cart-drawer__item-media svg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .skinova-cart-drawer__item-body { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
-  .skinova-cart-drawer__item-title {
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 1.3;
-    overflow-wrap: anywhere;
-    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat;
-    transition: background-size 0.4s var(--ease-out);
-  }
-  .skinova-cart-drawer__item-title:hover { background-size: 100% 1.5px; }
-  .skinova-cart-drawer__item-options {
-    margin: 0;
-    font-family: var(--font-label);
-    font-size: var(--text-label);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-  .skinova-cart-drawer__item-discounts, .skinova-cart-drawer__cart-discounts {
-    margin: 4px 0 0; padding: 0; list-style: none;
-    font-size: 13px; color: var(--color-accent);
-  }
-  .skinova-cart-drawer__cart-discounts { margin: 16px 0; }
-  .skinova-cart-drawer__item-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
-  .skinova-cart-drawer__qty {
-    display: inline-flex; align-items: center;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-button);
-  }
-  .skinova-cart-drawer__qty-btn {
-    width: 40px; height: 40px;
-    border: 0; border-radius: var(--radius-button);
-    background: transparent; color: inherit;
-    font: 500 17px var(--font-body);
-    cursor: pointer;
-    transition: background-color var(--dur-fast);
-  }
-  .skinova-cart-drawer__qty-btn:hover { background: var(--color-line-soft); }
-  .skinova-cart-drawer__qty input {
-    width: 32px; height: 40px;
-    border: 0; background: transparent; color: inherit;
-    font: 600 14px var(--font-body);
-    text-align: center;
-    -moz-appearance: textfield;
-  }
-  .skinova-cart-drawer__qty input::-webkit-outer-spin-button,
-  .skinova-cart-drawer__qty input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .skinova-cart-drawer__item-prices { display: inline-flex; align-items: baseline; gap: 8px; }
-  .skinova-cart-drawer__item-price { font-weight: 600; font-size: 15px; }
-  .skinova-cart-drawer__item-compare { font-size: 13px; color: var(--color-muted); }
-  .skinova-cart-drawer__remove {
-    min-height: 32px; padding: 0;
-    border: 0; background: transparent; color: var(--color-muted);
-    font: 500 13px var(--font-body);
-    text-decoration: underline; text-underline-offset: 3px;
-    cursor: pointer;
-  }
-  .skinova-cart-drawer__remove:hover { color: var(--color-text); }
+  .k-drawer__line:nth-child(2) { animation-delay: 0.05s; }
+  .k-drawer__line:nth-child(3) { animation-delay: 0.1s; }
+  .k-drawer__line.is-loading { opacity: 0.5; pointer-events: none; }
+  .k-drawer__media { position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; background: var(--color-surface); }
+  .k-drawer__media :is(img, svg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .k-drawer__info { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
+  .k-drawer__name { font-weight: 700; font-size: 16px; line-height: 1.25; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+  .k-drawer__opt { margin: 0; font-family: var(--font-label); font-size: var(--text-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); }
+  .k-drawer__disc { margin: 2px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--color-accent); }
+  .k-drawer__disc--cart { margin: 14px 0 0; }
+  .k-drawer__qty { display: inline-flex; align-items: center; margin-top: 8px; border: 1.5px solid rgba(var(--color-text-rgb), 0.2); border-radius: 999px; }
+  .k-drawer__qty button { width: 40px; height: 40px; border: 0; border-radius: 999px; background: none; color: inherit; font: 600 17px var(--font-body); cursor: pointer; }
+  .k-drawer__qty button:hover { background: var(--color-surface); }
+  .k-drawer__qty input { width: 28px; height: 40px; border: 0; background: transparent; color: inherit; font: 600 15px var(--font-body); text-align: center; -moz-appearance: textfield; }
+  .k-drawer__qty input::-webkit-outer-spin-button, .k-drawer__qty input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .k-drawer__end { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; gap: 8px; }
+  .k-drawer__price { font-weight: 700; font-size: 15px; text-align: right; }
+  .k-drawer__price s { display: block; font-weight: 400; font-size: 13px; color: var(--color-muted); }
+  .k-drawer__remove { min-height: 32px; padding: 0; border: 0; background: none; color: var(--color-muted); font: 500 13px var(--font-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .k-drawer__remove:hover { color: var(--color-text); }
 
-  .skinova-cart-drawer__footer {
-    flex: none;
-    display: grid; gap: 12px;
-    padding: 18px 24px 24px;
-    border-top: 1px solid var(--color-line);
+  .k-drawer__look { margin: 22px 0; padding: 18px; background: var(--color-text); color: var(--color-bg); }
+  .k-drawer__look-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .k-drawer__look-head strong { font-size: 17px; }
+  .k-drawer__look-head .k-label { opacity: 0.7; }
+  .k-drawer__look-grid { margin: 14px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; }
+  .k-drawer__look-item { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 10px; align-items: center; }
+  .k-drawer__look-media { position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; background: rgba(var(--color-bg-rgb), 0.1); }
+  .k-drawer__look-media :is(img, svg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .k-drawer__look-info { display: grid; gap: 2px; min-width: 0; font-weight: 600; font-size: 14px; line-height: 1.25; }
+  .k-drawer__look-info .k-label { opacity: 0.7; font-weight: 400; }
+  .k-drawer__look-btn {
+    grid-column: 1 / -1; display: inline-flex; align-items: center; justify-content: center;
+    min-height: 40px; padding: 0 12px; border-radius: var(--radius-button);
+    border: 1px solid currentColor; background: transparent; color: inherit;
+    font: 600 13px var(--font-body); cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
   }
-  .skinova-cart-drawer__note-wrap summary {
-    display: inline-flex; align-items: center;
-    min-height: 32px;
-    font-size: 14px;
-    text-decoration: underline; text-underline-offset: 3px;
-    cursor: pointer;
-    list-style: none;
-  }
-  .skinova-cart-drawer__note-wrap summary::-webkit-details-marker { display: none; }
-  .skinova-cart-drawer__note {
-    width: 100%; min-height: 80px;
-    margin-top: 8px; padding: 12px 14px;
-    border: 1px solid var(--color-line);
-    border-radius: calc(var(--radius-card) * 0.5);
-    background: transparent; color: inherit;
-    font: inherit; font-size: 15px;
-    resize: vertical;
-  }
-  .skinova-cart-drawer__note:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
-  .skinova-cart-drawer__subtotal { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; font-weight: 600; }
-  .skinova-cart-drawer__subtotal-value { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 22px; letter-spacing: -0.01em; }
-  .skinova-cart-drawer__tax-note { margin: 0 0 4px; font-family: var(--font-label); font-size: var(--text-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); }
-  .skinova-cart-drawer__tax-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+  .k-drawer__look-btn:hover { background: var(--color-bg); color: var(--color-text); }
+  .k-drawer__look-btn.is-static { opacity: 0.6; cursor: default; }
+  .k-drawer__look-btn.is-static:hover { background: transparent; color: inherit; }
+  .k-drawer__look-btn.is-loading { opacity: 0.6; pointer-events: none; }
 
-  .skinova-cart-drawer__empty {
-    flex: 1;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
-    padding: 24px;
-    text-align: center;
-  }
-  .skinova-cart-drawer__empty-text {
-    margin: 0;
-    font-family: var(--font-heading);
-    font-weight: var(--font-heading-weight);
-    font-size: 30px;
-    line-height: 1;
-    letter-spacing: -0.02em;
-  }
+  .k-drawer__opt-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-top: 1px solid var(--color-line); line-height: 1.4; font-size: 15px; cursor: pointer; }
+  .k-drawer__opt-row input { flex: none; width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--color-accent); }
+  .k-drawer__opt-row .k-muted { font-size: 14px; }
+  .k-drawer__note { padding: 14px 0; border-top: 1px solid var(--color-line); }
+  .k-drawer__note summary { display: flex; justify-content: space-between; align-items: center; min-height: 32px; font-weight: 600; cursor: pointer; list-style: none; }
+  .k-drawer__note summary::-webkit-details-marker { display: none; }
+  .k-drawer__note[open] summary span { transform: rotate(45deg); }
+  .k-drawer__note summary span { transition: transform 0.3s var(--ease-out); font-size: 20px; }
+  .k-drawer__note .k-label { display: block; margin-top: 10px; color: var(--color-muted); }
+  .k-drawer__note textarea { width: 100%; min-height: 84px; margin-top: 8px; padding: 12px 14px; border: 1.5px solid rgba(var(--color-text-rgb), 0.2); background: transparent; color: inherit; font: inherit; font-size: 15px; resize: vertical; }
+
+  .k-drawer__foot { flex: none; display: grid; gap: 10px; padding: 16px 24px 22px; border-top: 1.5px solid var(--color-text); }
+  .k-drawer__total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 26px; letter-spacing: -0.02em; }
+  .k-drawer__tax { margin: -4px 0 2px; font-size: 13px; color: var(--color-muted); }
+  .k-drawer__tax a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+  .k-drawer__view { min-height: 46px; }
+
+  .k-drawer__empty { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding: 40px 0 8px; }
+  .k-drawer__empty-title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 40px; line-height: 0.95; letter-spacing: -0.03em; }
 {% endstylesheet %}
 
 {% schema %}
@@ -409,7 +338,14 @@
   "name": "Cart drawer",
   "tag": "div",
   "settings": [
-    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "paragraph", "content": "The free-shipping meter, gift wrap and order note are set in Theme settings > Cart, so the drawer and cart page match." },
+    { "type": "header", "content": "Complete the look" },
+    { "type": "text", "id": "look_heading", "label": "Heading", "default": "Complete the look" },
+    { "type": "text", "id": "look_label", "label": "Label", "default": "From the campaign" },
+    { "type": "product_list", "id": "look_products", "label": "Products", "limit": 8, "info": "Pieces already in the bag are skipped. Products with sizes link to their page." },
+    { "type": "collection", "id": "look_collection", "label": "Or a collection", "info": "Used when no products are picked." },
+    { "type": "range", "id": "look_limit", "label": "Pieces to show", "min": 0, "max": 4, "step": 2, "default": 2, "info": "Set to 0 to hide." }
   ]
 }
 {% endschema %}

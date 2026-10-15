@@ -1,0 +1,35 @@
+{%- comment -%}
+  Free-shipping meter, shared by the cart page and the cart drawer.
+  The threshold is a theme setting in the store currency, so the meter only
+  shows when the customer pays in that currency.
+
+  Accepts:
+  - note {String}: optional label beside the message
+  - style {String}: 'panel' (filled card, cart page) or 'line' (hairline with a marker, drawer)
+{%- endcomment -%}
+{%- assign ship_threshold = settings.free_shipping_threshold | times: 100 -%}
+{%- if ship_threshold > 0 and cart.currency.iso_code == shop.currency -%}
+  {%- liquid
+    assign ship_left = ship_threshold | minus: cart.total_price
+    assign ship_pct = cart.total_price | times: 100 | divided_by: ship_threshold
+    if ship_pct > 100
+      assign ship_pct = 100
+    endif
+  -%}
+  <div class="k-ship k-ship--{{ style | default: 'panel' }}" role="status">
+    <div class="k-ship__row">
+      <span>
+        {%- if ship_left > 0 -%}
+          {%- assign ship_left_money = ship_left | money -%}
+          {{ 'cart.free_shipping_away' | t: amount: ship_left_money }}
+        {%- else -%}
+          {{ 'cart.free_shipping_unlocked' | t }}
+        {%- endif -%}
+      </span>
+      {%- if note != blank -%}
+        <span class="k-label k-muted">{{ note }}</span>
+      {%- endif -%}
+    </div>
+    <div class="k-ship__bar"><b style="width: {{ ship_pct }}%;"></b><i style="left: {{ ship_pct }}%;" aria-hidden="true"></i></div>
+  </div>
+{%- endif -%}

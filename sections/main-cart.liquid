@@ -1,7 +1,7 @@
 {%- liquid
   assign section_id = 'cart-' | append: section.id
   assign continue_url = section.settings.continue_link | default: routes.all_products_collection_url
-  assign gift = section.settings.gift_wrap_product
+  assign gift = settings.gift_wrap_product
   assign gift_variant = gift.selected_or_first_available_variant
   assign gift_line = nil
   if gift_variant
@@ -13,7 +13,7 @@
   endif
 
   # The free-shipping bar is set in the store currency, so it only shows when the customer shops in it.
-  assign ship_threshold = section.settings.free_shipping_threshold | times: 100
+  assign ship_threshold = settings.free_shipping_threshold | times: 100
   assign show_ship = false
   if ship_threshold > 0 and cart.currency.iso_code == shop.currency
     assign show_ship = true
@@ -60,24 +60,7 @@
     {%- else -%}
       <form action="{{ routes.cart_url }}" method="post" novalidate class="k-cart__layout" id="{{ section_id }}-form">
         <div class="k-cart__main">
-          {%- if show_ship -%}
-            <div class="k-cart__ship" role="status">
-              <div class="k-cart__ship-row">
-                <span>
-                  {%- if ship_left > 0 -%}
-                    {%- assign ship_left_money = ship_left | money -%}
-                    {{ 'cart.free_shipping_away' | t: amount: ship_left_money }}
-                  {%- else -%}
-                    {{ 'cart.free_shipping_unlocked' | t }}
-                  {%- endif -%}
-                </span>
-                {%- if section.settings.shipping_note != blank -%}
-                  <span class="k-label k-muted">{{ section.settings.shipping_note }}</span>
-                {%- endif -%}
-              </div>
-              <div class="k-cart__bar"><b style="width: {{ ship_pct }}%;"></b></div>
-            </div>
-          {%- endif -%}
+          {%- render 'k-free-shipping', note: section.settings.shipping_note, style: 'panel' -%}
 
           <div class="k-cart__cols k-label k-muted" aria-hidden="true">
             <span>{{ 'cart.product' | t }}</span>
@@ -380,10 +363,6 @@
   .k-cart__continue { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
   .k-cart__layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 48px; align-items: start; }
-  .k-cart__ship { padding: 18px 20px; border-radius: 18px; background: var(--color-surface); }
-  .k-cart__ship-row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-weight: 600; }
-  .k-cart__bar { height: 6px; margin-top: 12px; border-radius: 999px; background: rgba(var(--color-text-rgb), 0.1); overflow: hidden; }
-  .k-cart__bar b { display: block; height: 100%; border-radius: inherit; background: var(--color-accent); transition: width 0.8s var(--ease-out); }
 
   .k-cart__cols, .k-cart__line { display: grid; grid-template-columns: minmax(0, 1fr) 128px 96px 44px; gap: 16px; align-items: center; }
   .k-cart__cols { margin-top: 20px; padding: 14px 0; border-bottom: 1.5px solid var(--color-text); }
@@ -500,11 +479,10 @@
     { "type": "text", "id": "summary_heading", "label": "Summary heading", "default": "Summary" },
     { "type": "url", "id": "continue_link", "label": "Continue shopping link", "info": "Defaults to all products." },
     { "type": "header", "content": "Free shipping bar" },
-    { "type": "number", "id": "free_shipping_threshold", "label": "Free shipping threshold", "info": "Order total in your store currency. Leave at 0 to hide the bar. Only shown to customers paying in your store currency.", "default": 0 },
+    { "type": "paragraph", "content": "Set the threshold and gift wrap product in Theme settings > Cart. The cart drawer uses the same values." },
     { "type": "text", "id": "shipping_note", "label": "Note beside the bar", "default": "Express over the threshold" },
     { "type": "header", "content": "Extras" },
     { "type": "checkbox", "id": "show_note", "label": "Show order note", "default": true },
-    { "type": "product", "id": "gift_wrap_product", "label": "Gift wrap product", "info": "Shown as a checkbox that adds this product to the cart." },
     { "type": "text", "id": "info_heading", "label": "Info heading", "default": "Free 30-day returns" },
     { "type": "text", "id": "info_text", "label": "Info text", "default": "Change your mind? Send it back free of charge." },
     { "type": "header", "content": "Summary" },

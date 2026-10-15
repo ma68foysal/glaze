@@ -345,6 +345,23 @@
         "id": "show_cart_note",
         "label": "t:labels.show_cart_note",
         "default": true
+      },
+      {
+        "type": "header",
+        "content": "Free shipping and gift wrap"
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping threshold",
+        "default": 0,
+        "info": "Order total in your store currency. Shows a meter in the cart page and drawer. Leave at 0 to hide. Only shown to customers paying in your store currency."
+      },
+      {
+        "type": "product",
+        "id": "gift_wrap_product",
+        "label": "Gift wrap product",
+        "info": "Shown as a checkbox in the cart page and drawer that adds this product."
       }
     ]
   }

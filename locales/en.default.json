@@ -116,6 +116,8 @@
     "bag": "Bag",
     "drawer_title": "Your bag",
     "drawer_empty": "Your bag is empty.",
+    "look_add": "Add +",
+    "checkout_total": "Checkout · {{ total }}",
     "product": "Product",
     "quantity": "Quantity",
     "total": "Total",
@@ -184,9 +186,16 @@
     "quick_view": "Quick view {{ title }}",
     "add_to_cart": "Add {{ title }} to cart"
   },
+  "pages": {
+    "updated": "Updated {{ date }}",
+    "on_this_page": "On this page"
+  },
   "collections": {
     "title": "Collections",
-    "empty": "No collections found."
+    "empty": "No collections found.",
+    "view_label": "View",
+    "view_index": "Index",
+    "view_grid": "Grid"
   },
   "contact": {
     "title": "Contact",
@@ -240,6 +249,7 @@
     "title": "This shop is private",
     "password": "Password",
     "enter": "Enter using password",
+    "submit": "Enter",
     "newsletter_email": "Email address",
     "newsletter_success": "Thanks for subscribing. We'll be in touch.",
     "social_aria": "Find us on social media"

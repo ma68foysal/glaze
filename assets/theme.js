@@ -977,3 +977,39 @@
     if (acc && el.dataset.accIndex != null) acc.open(parseInt(el.dataset.accIndex, 10));
   });
 })();
+
+/* <k-countdown>: Next drop section and the password page. */
+  if (!customElements.get('k-countdown')) {
+  customElements.define('k-countdown', class extends HTMLElement {
+    connectedCallback() {
+      var focus = this.querySelector('[data-focus-on-load]');
+      if (focus) focus.focus();
+      this.end = Date.parse(this.dataset.end);
+      if (isNaN(this.end) || this.hasAttribute('data-ended')) return;
+      this.units = {};
+      this.querySelectorAll('[data-unit]').forEach((el) => { this.units[el.dataset.unit] = el; });
+      this.tick();
+      this.timer = setInterval(() => this.tick(), 1000);
+    }
+    disconnectedCallback() { clearInterval(this.timer); }
+    tick() {
+      var s = Math.max(0, Math.floor((this.end - Date.now()) / 1000));
+      var v = { days: Math.floor(s / 86400), hours: Math.floor(s % 86400 / 3600), minutes: Math.floor(s % 3600 / 60), seconds: s % 60 };
+      Object.keys(v).forEach((k) => {
+        var el = this.units[k];
+        if (!el) return;
+        var t = (v[k] < 10 ? '0' : '') + v[k];
+        if (el.textContent === t) return;
+        el.textContent = t;
+        el.classList.remove('is-tick'); void el.offsetWidth; el.classList.add('is-tick');
+      });
+      if (s === 0) this.finish();
+    }
+    finish() {
+      clearInterval(this.timer);
+      if (this.dataset.after === 'hide' && !window.Shopify?.designMode) { this.hidden = true; return; }
+      this.querySelectorAll('[data-drop-live-hide]').forEach(function (el) { el.hidden = true; });
+      this.querySelectorAll('[data-drop-live]').forEach(function (el) { el.hidden = false; });
+    }
+  });
+}

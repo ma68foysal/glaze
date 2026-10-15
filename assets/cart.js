@@ -192,6 +192,7 @@ function cwarn() {
         this.bindHeaderIconHijack();
         this.bindQuantityStepper();
         this.bindEscape();
+        this.bindExtras();
         // Re-bind when the drawer's innerHTML is replaced via Section Rendering
         var self = this;
         this._observer = new MutationObserver(function () {
@@ -238,6 +239,40 @@ function cwarn() {
           }
         });
       }
+      // Complete the look and gift wrap. Delegated on the element itself, so it
+      // keeps working after Section Rendering swaps the drawer's inner HTML.
+      bindExtras() {
+        var self = this;
+        this.addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-k-drawer-add]');
+          if (!btn) return;
+          btn.classList.add('is-loading');
+          addToCartUniversal(btn.getAttribute('data-k-drawer-add'), { openDrawer: false, source: 'drawer-look' })
+            .catch(function (err) { btn.classList.remove('is-loading'); console.error('[skinova-cart] look add failed', err); });
+        });
+        this.addEventListener('change', function (e) {
+          var box = e.target.closest('[data-k-gift-variant]');
+          if (!box) return;
+          box.disabled = true;
+          var common = { sections: sectionsToRender().join(','), sections_url: window.location.pathname };
+          var req = box.checked
+            ? fetchJSON(cartJsUrl(window.routes && window.routes.cart_add_url, '/cart/add.js'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.assign({ items: [{ id: parseInt(box.getAttribute('data-k-gift-variant'), 10), quantity: 1 }] }, common))
+              })
+            : fetchJSON(cartJsUrl(window.routes && window.routes.cart_change_url, '/cart/change.js'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.assign({ id: box.getAttribute('data-k-gift-key'), quantity: 0 }, common))
+              });
+          req.then(function (res) {
+            if (!applyCartSections(res.sections)) refreshSection('cart-drawer', 'skinova-cart-drawer');
+            publish('cart:update', { source: 'cart-items', data: res });
+          }).catch(function (err) {
+            box.disabled = false; box.checked = !box.checked;
+            console.error('[skinova-cart] gift wrap failed', err);
+          });
+        });
+      }
       bindEscape() {
         var self = this;
         document.addEventListener('keydown', function (e) {
@@ -267,8 +302,8 @@ function cwarn() {
         this.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
         if (window.lenis && typeof window.lenis.stop === 'function') window.lenis.stop();
-        var panel = this.querySelector('.skinova-cart-drawer__panel');
-        var focusEl = this.querySelector('.skinova-cart-drawer__close') || panel;
+        var panel = this.querySelector('[data-drawer-panel]');
+        var focusEl = this.querySelector('[data-drawer-close]') || panel;
         if (panel) this._releaseFocusTrap = trapFocus(panel);
         setTimeout(function () { if (focusEl) focusEl.focus(); }, 30);
       }
@@ -333,7 +368,7 @@ function cwarn() {
         // Find the item being mutated. Could be either the drawer-styled element
         // or the cart-page-styled element — both carry data-key.
         var item = sourceInput
-          ? sourceInput.closest('.skinova-cart-drawer__item, .skinova-cart__item')
+          ? sourceInput.closest('[data-cart-line], .skinova-cart__item')
           : this.querySelector('[data-key="' + key + '"]');
         if (item) item.classList.add('is-loading');
 
@@ -410,7 +445,7 @@ function cwarn() {
           var key = self.getAttribute('data-key');
           var items = self.closest('skinova-cart-items');
           // Add .is-loading to the item immediately so the user sees feedback before fetch
-          var item = self.closest('.skinova-cart-drawer__item');
+          var item = self.closest('[data-cart-line]');
           if (item) item.classList.add('is-loading');
           if (items) items.updateLine(key, 0, null);
         });
