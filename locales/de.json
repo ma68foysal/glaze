@@ -338,6 +338,15 @@
       "result": "Wir empfehlen {{ size }}",
       "result_note": "Basierend auf Ihrer Körpergröße, Ihrer üblichen Größe, der Passform dieses Teils und Ihrer Vorliebe.",
       "for_you": "Für Sie"
+    },
+    "drop": {
+      "opens": "Ab {{ date }}",
+      "locked": "Bald verfügbar",
+      "notify": "Benachrichtigen",
+      "notify_note": "Erhalten Sie eine E-Mail, sobald es losgeht.",
+      "on_list": "Sie sind vorgemerkt. Wir melden uns, sobald es losgeht.",
+      "live": "Jetzt verfügbar",
+      "badge": "Drop · {{ date }}"
     }
   },
   "sections": {
@@ -405,6 +414,11 @@
         "one": "{{ count }} Teil",
         "other": "{{ count }} Teile"
       }
+    },
+    "runway": {
+      "pause": "{{ title }} pausieren",
+      "play": "{{ title }} abspielen",
+      "products": "Produkte in diesem Clip"
     }
   },
   "blogs": {
@@ -447,5 +461,23 @@
       "popular": "Beliebte Kollektionen",
       "ring": "Seite nicht gefunden"
     }
+  },
+  "moodboard": {
+    "save": "{{ title }} im Moodboard speichern",
+    "saved": "{{ title }} aus dem Moodboard entfernen",
+    "toast_saved": "Im Moodboard gespeichert",
+    "toast_removed": "Aus dem Moodboard entfernt",
+    "view": "Moodboard ansehen",
+    "kicker_own": "In diesem Browser gespeichert",
+    "kicker_shared": "Ein geteiltes Moodboard",
+    "copy_link": "Link kopieren",
+    "copied": "Link kopiert",
+    "adopt": "In mein Moodboard übernehmen",
+    "add_all": "Alle in den Warenkorb",
+    "empty_title": "Noch nichts gemerkt",
+    "empty_text": "Tippen Sie auf das Lesezeichen eines Teils, um es hier zu sammeln.",
+    "share_label": "Link zum Teilen",
+    "privacy": "Ihr Moodboard bleibt nur in diesem Browser. Teilen Sie den Link, um es zu verschicken.",
+    "remove": "Entfernen"
   }
 }

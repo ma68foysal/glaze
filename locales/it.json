@@ -338,6 +338,15 @@
       "result": "Ti consigliamo la {{ size }}",
       "result_note": "In base alla tua altezza, alla taglia che porti di solito, alla vestibilità del capo e a come ti piace indossarlo.",
       "for_you": "Per te"
+    },
+    "drop": {
+      "opens": "Disponibile dal {{ date }}",
+      "locked": "In arrivo",
+      "notify": "Avvisami",
+      "notify_note": "Ricevi un’email appena è disponibile.",
+      "on_list": "Sei in lista. Ti scriveremo appena è disponibile.",
+      "live": "Disponibile ora",
+      "badge": "Drop · {{ date }}"
     }
   },
   "sections": {
@@ -405,6 +414,11 @@
         "one": "{{ count }} capo",
         "other": "{{ count }} capi"
       }
+    },
+    "runway": {
+      "pause": "Metti in pausa {{ title }}",
+      "play": "Riproduci {{ title }}",
+      "products": "Capi in questo video"
     }
   },
   "blogs": {
@@ -447,5 +461,23 @@
       "popular": "Collezioni popolari",
       "ring": "Pagina non trovata"
     }
+  },
+  "moodboard": {
+    "save": "Salva {{ title }} nella tua moodboard",
+    "saved": "Rimuovi {{ title }} dalla tua moodboard",
+    "toast_saved": "Salvato nella tua moodboard",
+    "toast_removed": "Rimosso dalla tua moodboard",
+    "view": "Vedi la moodboard",
+    "kicker_own": "Salvata in questo browser",
+    "kicker_shared": "Una moodboard condivisa",
+    "copy_link": "Copia il link",
+    "copied": "Link copiato",
+    "adopt": "Salva nella mia moodboard",
+    "add_all": "Aggiungi tutto al carrello",
+    "empty_title": "Ancora niente salvato",
+    "empty_text": "Tocca il segnalibro su un capo per salvarlo qui.",
+    "share_label": "Link da condividere",
+    "privacy": "La tua moodboard resta solo in questo browser. Condividi il link per inviarla.",
+    "remove": "Rimuovi"
   }
 }

@@ -328,6 +328,19 @@
         "label": "Show quick view",
         "default": true,
         "info": "Products with options open in a quick view window from product cards. Products without options keep quick add."
+      },
+      {
+        "type": "checkbox",
+        "id": "moodboard",
+        "label": "Show save to moodboard",
+        "default": true,
+        "info": "A save button on product cards. Saved pieces stay in the shopper's browser; no account or app needed."
+      },
+      {
+        "type": "page",
+        "id": "moodboard_page",
+        "label": "Moodboard page",
+        "info": "Create a page, assign it the page.moodboard template, and pick it here."
       }
     ]
   },

@@ -49,13 +49,33 @@
         {%- endif -%}
       </a>
 
+      {%- if settings.moodboard -%}
+        <button type="button" class="k-card__save" data-save="{{ product.handle }}" aria-pressed="false" aria-label="{{ 'moodboard.save' | t: title: product.title | escape }}" data-label-save="{{ 'moodboard.save' | t: title: product.title | escape }}" data-label-saved="{{ 'moodboard.saved' | t: title: product.title | escape }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
+        </button>
+      {%- endif -%}
+
       {%- if product.available == false -%}
         <span class="k-card__badge k-tag k-label">{{ 'products.sold_out' | t }}</span>
       {%- elsif on_sale -%}
         <span class="k-card__badge k-tag k-label">{{ 'products.sale' | t }}</span>
       {%- endif -%}
 
-      {%- if show_qa -%}
+      {%- liquid
+        assign card_drop = false
+        assign card_drop_date = product.metafields.custom.drop_date.value
+        if card_drop_date != blank
+          assign card_drop_ts = card_drop_date | date: '%s' | plus: 0
+          assign card_now_ts = 'now' | date: '%s' | plus: 0
+          if card_drop_ts > card_now_ts
+            assign card_drop = true
+            assign card_drop_day = card_drop_date | date: format: 'abbreviated_date'
+          endif
+        endif
+      -%}
+      {%- if card_drop -%}
+        <span class="k-card__badge k-tag k-label">{{ 'products.drop.badge' | t: date: card_drop_day }}</span>
+      {%- elsif show_qa -%}
         {%- if product.available == false -%}
           <button type="button" class="k-card__qa" disabled>{{ 'products.sold_out' | t }}</button>
         {%- elsif product.has_only_default_variant -%}

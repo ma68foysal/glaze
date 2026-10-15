@@ -338,6 +338,15 @@
       "result": "Nous conseillons {{ size }}",
       "result_note": "D’après votre taille, votre taille habituelle, la coupe de cette pièce et l’aisance que vous aimez.",
       "for_you": "Pour vous"
+    },
+    "drop": {
+      "opens": "Ouverture le {{ date }}",
+      "locked": "Bientôt disponible",
+      "notify": "Me prévenir",
+      "notify_note": "Recevez un e-mail dès l’ouverture.",
+      "on_list": "C’est noté. Nous vous écrirons à l’ouverture.",
+      "live": "Disponible maintenant",
+      "badge": "Drop · {{ date }}"
     }
   },
   "sections": {
@@ -405,6 +414,11 @@
         "one": "{{ count }} pièce",
         "other": "{{ count }} pièces"
       }
+    },
+    "runway": {
+      "pause": "Mettre en pause {{ title }}",
+      "play": "Lire {{ title }}",
+      "products": "Pièces de ce clip"
     }
   },
   "blogs": {
@@ -447,5 +461,23 @@
       "popular": "Collections populaires",
       "ring": "Page introuvable"
     }
+  },
+  "moodboard": {
+    "save": "Enregistrer {{ title }} dans votre moodboard",
+    "saved": "Retirer {{ title }} de votre moodboard",
+    "toast_saved": "Ajouté à votre moodboard",
+    "toast_removed": "Retiré de votre moodboard",
+    "view": "Voir le moodboard",
+    "kicker_own": "Enregistré dans ce navigateur",
+    "kicker_shared": "Un moodboard partagé",
+    "copy_link": "Copier le lien",
+    "copied": "Lien copié",
+    "adopt": "Ajouter à mon moodboard",
+    "add_all": "Tout ajouter au panier",
+    "empty_title": "Rien d’épinglé pour l’instant",
+    "empty_text": "Touchez le signet d’une pièce pour l’épingler ici.",
+    "share_label": "Lien de partage",
+    "privacy": "Votre moodboard reste dans ce navigateur. Partagez le lien pour l’envoyer à quelqu’un.",
+    "remove": "Retirer"
   }
 }

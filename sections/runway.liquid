@@ -1,0 +1,215 @@
+{%- comment -%}
+  Runway: shoppable vertical clips. Each clip is a Shopify-hosted video (or a
+  still photo with a slow zoom) with up to three products whose chips appear
+  at set seconds. Clips play muted when on screen, each has a pause button,
+  and nothing moves for visitors who prefer reduced motion. Chips quick-add
+  products without options and open quick view for the rest.
+{%- endcomment -%}
+{%- assign clips = section.blocks | where: 'type', 'clip' -%}
+<section class="k-run k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <div class="k-wrap k-run__in">
+    <header class="k-run__head">
+      {%- if section.settings.heading != blank -%}<h2 class="k-h2 k-run__title">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.label != blank -%}<p class="k-label k-run__label">{{ section.settings.label }}</p>{%- endif -%}
+    </header>
+
+    <div class="k-run__row" role="list">
+      {%- for block in clips -%}
+        <k-runway-clip class="k-run__clip" role="listitem" data-length="{{ block.settings.length }}" {{ block.shopify_attributes }}>
+          <div class="k-run__media{% if block.settings.video == blank %} is-still{% endif %}">
+            {%- if block.settings.video != blank -%}
+              {%- assign poster = block.settings.image | default: block.settings.video.preview_image -%}
+              <video muted playsinline loop preload="metadata" aria-hidden="true"{% if poster %} poster="{{ poster | image_url: width: 900 }}"{% endif %} data-run-video>
+                {%- for source in block.settings.video.sources -%}
+                  {%- if source.mime_type == 'video/mp4' -%}<source src="{{ source.url }}" type="video/mp4">{%- endif -%}
+                {%- endfor -%}
+              </video>
+            {%- elsif block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 30vw, 78vw', widths: '450, 600, 900', alt: block.settings.caption }}
+            {%- else -%}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'k-ph' }}
+            {%- endif -%}
+          </div>
+
+          <div class="k-run__bar" aria-hidden="true"><b data-run-bar></b></div>
+          <div class="k-run__top">
+            <span class="k-label">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+            <button type="button" class="k-run__pp" data-run-pp aria-label="{{ 'sections.runway.pause' | t: title: block.settings.caption | escape }}" data-label-pause="{{ 'sections.runway.pause' | t: title: block.settings.caption | escape }}" data-label-play="{{ 'sections.runway.play' | t: title: block.settings.caption | escape }}">
+              <span data-run-icon-pause>{% render 'k-icon', icon: 'pause', size: 16 %}</span>
+              <span data-run-icon-play hidden>{% render 'k-icon', icon: 'play', size: 16 %}</span>
+            </button>
+          </div>
+          {%- if block.settings.caption != blank -%}<p class="k-run__cap k-label">{{ block.settings.caption }}</p>{%- endif -%}
+
+          <ul class="k-run__chips" role="list" aria-label="{{ 'sections.runway.products' | t }}">
+            {%- for n in (1..3) -%}
+              {%- liquid
+                assign pk = 'product_' | append: n
+                assign tk = 'time_' | append: n
+                assign p = block.settings[pk]
+                assign at = block.settings[tk]
+              -%}
+              {%- if p != blank -%}
+                {%- assign pv = p.selected_or_first_available_variant -%}
+                {%- capture chip_inner -%}
+                  <span class="k-run__chip-img" aria-hidden="true">
+                    {%- if p.featured_media -%}{{ p.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', sizes: '44px', widths: '60, 120', alt: '' }}{%- endif -%}
+                  </span>
+                  <span class="k-run__chip-txt"><b>{{ p.title | escape }}</b><span class="k-label">{{ p.price | money }}</span></span>
+                  <span class="k-run__chip-plus" aria-hidden="true">+</span>
+                {%- endcapture -%}
+                <li class="k-run__chip-li" data-at="{{ at }}">
+                  {%- if p.has_only_default_variant and pv.available -%}
+                    <button type="button" class="k-run__chip" data-quick-add="{{ pv.id }}">{{ chip_inner }}</button>
+                    <p class="visually-hidden" data-quick-add-error role="alert" hidden></p>
+                  {%- elsif settings.quick_view and p.available -%}
+                    <a class="k-run__chip" href="{{ p.url }}" data-quick-view aria-haspopup="dialog">{{ chip_inner }}</a>
+                  {%- else -%}
+                    <a class="k-run__chip" href="{{ p.url }}">{{ chip_inner }}</a>
+                  {%- endif -%}
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </k-runway-clip>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-run__in { display: grid; gap: 28px; }
+  .k-run__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+  .k-run__title { margin: 0; }
+  .k-run__label { margin: 0; opacity: 0.7; }
+  .k-run__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .k-run__clip { position: relative; display: block; aspect-ratio: 9 / 16; max-height: 82vh; overflow: hidden; background: rgba(var(--color-text-rgb), 0.1); color: #f2f1ec; }
+  .k-run__media { position: absolute; inset: 0; }
+  .k-run__media :is(video, img, svg) { width: 100%; height: 100%; object-fit: cover; }
+  .k-run__media.is-still img { transform-origin: 50% 30%; animation: k-run-zoom var(--k-run-len, 8s) ease-in-out infinite alternate; }
+  .k-run__clip.is-paused .k-run__media.is-still img { animation-play-state: paused; }
+  @keyframes k-run-zoom { from { transform: scale(1); } to { transform: scale(1.14) translateY(-2%); } }
+  .k-run__clip::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(0, 0, 0, 0.35), transparent 22%, transparent 60%, rgba(0, 0, 0, 0.45)); pointer-events: none; }
+  .k-run__bar { position: absolute; z-index: 2; left: 12px; right: 12px; top: 12px; height: 3px; background: rgba(242, 241, 236, 0.35); }
+  .k-run__bar b { display: block; height: 100%; width: 0; background: #f2f1ec; }
+  .k-run__top { position: absolute; z-index: 2; left: 12px; right: 12px; top: 24px; display: flex; justify-content: space-between; align-items: center; }
+  .k-run__pp { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: rgba(14, 14, 14, 0.45); color: #f2f1ec; cursor: pointer; }
+  .k-run__cap { position: absolute; z-index: 2; left: 12px; top: 76px; margin: 0; }
+  .k-run__chips { position: absolute; z-index: 2; left: 12px; right: 12px; bottom: 12px; margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+  .k-run__chip-li[hidden] { display: none; }
+  .k-run__chip-li:not([hidden]) { animation: k-rise-in 0.5s var(--ease-out) both; }
+  .k-run__chip {
+    width: 100%; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px;
+    border: 0; border-radius: 999px; background: #f2f1ec; color: #0e0e0e; text-align: left; font: inherit; cursor: pointer;
+  }
+  .k-run__chip-img { width: 44px; height: 44px; border-radius: 999px; overflow: hidden; background: #dad6cc; }
+  .k-run__chip-img img { width: 100%; height: 100%; object-fit: cover; }
+  .k-run__chip-txt { display: grid; min-width: 0; }
+  .k-run__chip-txt b { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .k-run__chip-plus { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 999px; background: var(--color-button); color: var(--color-button-label); font-size: 18px; transition: transform 0.3s var(--ease-out); }
+  .k-run__chip:hover .k-run__chip-plus { transform: rotate(90deg); }
+  @media (max-width: 989px) {
+    .k-run__row { grid-template-columns: repeat(3, 78%); overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scrollbar-width: none; }
+    .k-run__clip { scroll-snap-align: start; max-height: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .k-run__media.is-still img, .k-run__chip-li:not([hidden]) { animation: none; } }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('k-runway-clip')) {
+    customElements.define('k-runway-clip', class extends HTMLElement {
+      connectedCallback() {
+        this.video = this.querySelector('[data-run-video]');
+        this.bar = this.querySelector('[data-run-bar]');
+        this.btn = this.querySelector('[data-run-pp]');
+        this.chips = Array.from(this.querySelectorAll('[data-at]'));
+        this.len = parseFloat(this.dataset.length) || 8;
+        this.style.setProperty('--k-run-len', this.len + 's');
+        this.t = 0;
+        var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.motion === 'off';
+        this.userPaused = still;
+        this.visible = false;
+        if (still) { this.t = this.len; this.paint(); }
+        else this.chips.forEach(function (c) { c.hidden = true; });
+        this.btn.addEventListener('click', () => { this.userPaused = !this.userPaused; this.sync(); });
+        if ('IntersectionObserver' in window) {
+          this.io = new IntersectionObserver((entries) => { this.visible = entries[0].isIntersecting; this.sync(); }, { threshold: 0.35 });
+          this.io.observe(this);
+        }
+        this.sync();
+      }
+      disconnectedCallback() { if (this.io) this.io.disconnect(); cancelAnimationFrame(this.raf); }
+      sync() {
+        var playing = this.visible && !this.userPaused && !document.documentElement.classList.contains('motion-paused');
+        this.classList.toggle('is-paused', !playing);
+        this.btn.setAttribute('aria-label', playing ? this.btn.dataset.labelPause : this.btn.dataset.labelPlay);
+        this.btn.querySelector('[data-run-icon-pause]').hidden = !playing;
+        this.btn.querySelector('[data-run-icon-play]').hidden = playing;
+        if (this.video) { if (playing) this.video.play().catch(function () {}); else this.video.pause(); }
+        cancelAnimationFrame(this.raf);
+        if (playing) { this.last = performance.now(); this.raf = requestAnimationFrame(this.tick.bind(this)); }
+      }
+      tick(now) {
+        if (this.video && this.video.duration) {
+          this.len = this.video.duration;
+          this.t = this.video.currentTime;
+        } else {
+          this.t += (now - this.last) / 1000;
+          if (this.t >= this.len) this.t = 0;
+        }
+        this.last = now;
+        this.paint();
+        this.raf = requestAnimationFrame(this.tick.bind(this));
+      }
+      paint() {
+        this.bar.style.width = Math.min(100, (this.t / this.len) * 100) + '%';
+        this.chips.forEach((c) => { var show = this.t >= (parseFloat(c.dataset.at) || 0); if (c.hidden === show) c.hidden = !show; });
+      }
+    });
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Runway",
+  "tag": "section",
+  "class": "k-run-section",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Run<em>way</em>" },
+    { "type": "text", "id": "label", "label": "Label", "default": "Three looks · tap to shop" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-2" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "clip",
+      "name": "Clip",
+      "limit": 6,
+      "settings": [
+        { "type": "video", "id": "video", "label": "Video", "info": "Vertical, muted. Without a video, the photo plays with a slow zoom." },
+        { "type": "image_picker", "id": "image", "label": "Photo or poster" },
+        { "type": "text", "id": "caption", "label": "Caption", "default": "Look 01" },
+        { "type": "range", "id": "length", "label": "Photo clip length", "min": 4, "max": 20, "step": 1, "unit": "s", "default": 8, "info": "For photo clips. Video clips use the video's own length." },
+        { "type": "header", "content": "Products" },
+        { "type": "product", "id": "product_1", "label": "First product" },
+        { "type": "range", "id": "time_1", "label": "Appears at", "min": 0, "max": 60, "step": 1, "unit": "s", "default": 1 },
+        { "type": "product", "id": "product_2", "label": "Second product" },
+        { "type": "range", "id": "time_2", "label": "Appears at", "min": 0, "max": 60, "step": 1, "unit": "s", "default": 3 },
+        { "type": "product", "id": "product_3", "label": "Third product" },
+        { "type": "range", "id": "time_3", "label": "Appears at", "min": 0, "max": 60, "step": 1, "unit": "s", "default": 5 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Runway",
+      "blocks": [
+        { "type": "clip", "settings": { "caption": "Look 01" } },
+        { "type": "clip", "settings": { "caption": "Look 02" } },
+        { "type": "clip", "settings": { "caption": "Look 03" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -338,14 +338,26 @@
     "in_stock": "In stock, ready to ship",
     "add_short": "Add +",
     "view_short": "View",
-    "price_from": "From {{ price }}"
+    "price_from": "From {{ price }}",
+    "drop": {
+      "opens": "Opens {{ date }}",
+      "locked": "Coming soon",
+      "notify": "Notify me",
+      "notify_note": "Get an email the minute it opens.",
+      "on_list": "You’re on the list. We’ll email you when it opens.",
+      "live": "Live now",
+      "badge": "Drop · {{ date }}"
+    }
   },
   "sections": {
     "complete_look": {
       "include": "Include {{ title }}",
       "option_for": "Size or option for {{ title }}",
       "choose_one": "Choose at least one piece",
-      "pieces": { "one": "{{ count }} piece", "other": "{{ count }} pieces" }
+      "pieces": {
+        "one": "{{ count }} piece",
+        "other": "{{ count }} pieces"
+      }
     },
     "category_columns": {
       "placeholder_title": "Category"
@@ -402,6 +414,11 @@
       "hours": "Hours",
       "minutes": "Minutes",
       "seconds": "Seconds"
+    },
+    "runway": {
+      "pause": "Pause {{ title }}",
+      "play": "Play {{ title }}",
+      "products": "Products in this clip"
     }
   },
   "blogs": {
@@ -444,5 +461,23 @@
       "popular": "Popular collections",
       "ring": "Page not found"
     }
+  },
+  "moodboard": {
+    "save": "Save {{ title }} to your moodboard",
+    "saved": "Remove {{ title }} from your moodboard",
+    "toast_saved": "Saved to your moodboard",
+    "toast_removed": "Removed from your moodboard",
+    "view": "View board",
+    "kicker_own": "Saved in this browser",
+    "kicker_shared": "A shared moodboard",
+    "copy_link": "Copy share link",
+    "copied": "Link copied",
+    "adopt": "Save to my board",
+    "add_all": "Add all to bag",
+    "empty_title": "Nothing pinned yet",
+    "empty_text": "Tap the bookmark on any piece to pin it here.",
+    "share_label": "Share link",
+    "privacy": "Your board lives in this browser only. Share the link to send it to someone.",
+    "remove": "Remove"
   }
 }

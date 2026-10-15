@@ -23,6 +23,16 @@
     assign is_pre = true
   endif
   assign main_media = current_variant.featured_media | default: product.featured_media
+  assign qv_drop = false
+  assign qv_drop_date = product.metafields.custom.drop_date.value
+  if qv_drop_date != blank
+    assign qv_drop_ts = qv_drop_date | date: '%s' | plus: 0
+    assign qv_now_ts = 'now' | date: '%s' | plus: 0
+    if qv_drop_ts > qv_now_ts
+      assign qv_drop = true
+      assign qv_drop_day = qv_drop_date | date: format: 'abbreviated_date'
+    endif
+  endif
 -%}
 <div class="k-qv k-pdp" data-qv-root>
   <div class="k-qv__gallery">
@@ -111,7 +121,10 @@
       </k-variant-picker>
     {%- endunless -%}
 
-    <skinova-product-form>
+    {%- if qv_drop -%}
+      <p class="k-pdp__pre k-label">{% render 'k-icon', icon: 'lock', size: 14 %} {{ 'products.drop.opens' | t: date: qv_drop_day }}</p>
+    {%- endif -%}
+    <skinova-product-form{% if qv_drop %} hidden{% endif %}>
       {%- form 'product', product, id: form_id, novalidate: 'novalidate', class: 'k-pdp__form' -%}
         <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id-input>
         {%- if product.selling_plan_groups.size > 0 -%}

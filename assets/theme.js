@@ -1013,6 +1013,12 @@
       if (this.dataset.after === 'hide' && !window.Shopify?.designMode) { this.hidden = true; return; }
       this.querySelectorAll('[data-drop-live-hide]').forEach(function (el) { el.hidden = true; });
       this.querySelectorAll('[data-drop-live]').forEach(function (el) { el.hidden = false; });
+      // Drop mode on the product page: reveal the buy buttons and bring the gallery into focus.
+      if (this.dataset.unlock) {
+        document.querySelectorAll('[data-unlock-target="' + this.dataset.unlock + '"]').forEach(function (el) { el.hidden = false; });
+        var pdp = this.closest('.k-pdp');
+        if (pdp) pdp.classList.remove('is-drop-locked');
+      }
     }
   });
 }
@@ -1207,3 +1213,57 @@ if (!customElements.get('k-fit')) {
     }
   });
 }
+
+/* Moodboard: save buttons on product cards. Handles are kept in this browser
+   under oblique:moodboard; the moodboard page section reads the same list. */
+window.ObliqueMoodboard = (function () {
+  var KEY = 'oblique:moodboard';
+  function read() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function write(list) { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {} document.dispatchEvent(new CustomEvent('moodboard:change', { detail: { items: list } })); }
+  function has(h) { return read().indexOf(h) !== -1; }
+  function toggle(h) { var l = read(); var i = l.indexOf(h); if (i === -1) l.unshift(h); else l.splice(i, 1); write(l); return i === -1; }
+  function paint(root) {
+    var list = read();
+    (root || document).querySelectorAll('[data-save]').forEach(function (b) {
+      var on = list.indexOf(b.dataset.save) !== -1;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.setAttribute('aria-label', on ? b.dataset.labelSaved : b.dataset.labelSave);
+    });
+  }
+  var toastTimer;
+  function toast(saved) {
+    var cfg = (window.themeSettings && window.themeSettings.moodboard) || {};
+    var old = document.querySelector('.k-save-toast');
+    if (old) old.remove();
+    var el = document.createElement('div');
+    el.className = 'k-save-toast';
+    el.setAttribute('role', 'status');
+    var span = document.createElement('span');
+    span.textContent = saved ? cfg.savedText : cfg.removedText;
+    el.appendChild(span);
+    if (saved && cfg.url) {
+      var a = document.createElement('a');
+      a.href = cfg.url; a.textContent = cfg.viewText;
+      el.appendChild(a);
+    }
+    document.body.appendChild(el);
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.remove(); }, 3200);
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-save]');
+    if (!b) return;
+    e.preventDefault();
+    toast(toggle(b.dataset.save));
+  });
+  document.addEventListener('moodboard:change', function () { paint(); });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { paint(); }); else paint();
+  // Cards added later (load more, quick view, recommendations) get painted too.
+  var queued = false;
+  new MutationObserver(function () {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; paint(); });
+  }).observe(document.body, { childList: true, subtree: true });
+  return { read: read, write: write, has: has, toggle: toggle };
+})();

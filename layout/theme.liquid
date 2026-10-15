@@ -76,7 +76,15 @@
         addError: {{ 'cart.add_error' | t | json }}
       };
       window.shopMoneyFormat = {{ shop.money_format | json }};
-      window.themeSettings = { addFeedback: {{ settings.cart_add_feedback | default: 'drawer' | json }} };
+      window.themeSettings = {
+        addFeedback: {{ settings.cart_add_feedback | default: 'drawer' | json }},
+        moodboard: {
+          url: {{ settings.moodboard_page.url | json }},
+          savedText: {{ 'moodboard.toast_saved' | t | json }},
+          removedText: {{ 'moodboard.toast_removed' | t | json }},
+          viewText: {{ 'moodboard.view' | t | json }}
+        }
+      };
     </script>
 
     {{ content_for_header }}

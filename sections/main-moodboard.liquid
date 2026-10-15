@@ -1,0 +1,205 @@
+{%- comment -%}
+  Moodboard page (template page.moodboard). Shows the pieces the shopper
+  saved from product cards, pinned as a loose collage, with a share link and
+  "Add all". A shared link (?items=handle,handle) shows that board instead,
+  with a button to copy it into the shopper's own board.
+  Product details come from /products/<handle>.js, so nothing is stored but
+  the handles.
+{%- endcomment -%}
+<section class="k-mood k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
+  <k-moodboard class="k-wrap k-mood__in" data-money-format="{{ shop.money_format | escape }}" data-shop-url="{{ request.origin }}{{ request.path }}">
+    <header class="k-mood__head">
+      <div>
+        <p class="k-label k-muted" data-mood-kicker data-own="{{ 'moodboard.kicker_own' | t | escape }}" data-shared="{{ 'moodboard.kicker_shared' | t | escape }}">{{ 'moodboard.kicker_own' | t }}</p>
+        <h1 class="k-h1 k-mood__title">
+          {%- if section.settings.heading != blank -%}{{ section.settings.heading }}{%- else -%}{{ page.title | escape }}{%- endif -%}
+          <sup class="k-label" data-mood-count>0</sup>
+        </h1>
+      </div>
+      <div class="k-mood__actions">
+        <button type="button" class="k-btn k-btn--secondary" data-mood-copy data-label="{{ 'moodboard.copy_link' | t | escape }}" data-done="{{ 'moodboard.copied' | t | escape }}">{{ 'moodboard.copy_link' | t }}</button>
+        <button type="button" class="k-btn k-btn--secondary" data-mood-adopt hidden>{{ 'moodboard.adopt' | t }}</button>
+        <button type="button" class="k-btn k-btn--primary" data-mood-addall>{{ 'moodboard.add_all' | t }}</button>
+      </div>
+    </header>
+
+    <div class="k-mood__board" data-mood-board aria-live="polite">
+      <div class="k-mood__empty" data-mood-empty>
+        <p class="k-mood__empty-title">{{ 'moodboard.empty_title' | t }}</p>
+        <p class="k-muted">{{ 'moodboard.empty_text' | t }}</p>
+        {%- if section.settings.empty_link != blank -%}
+          <a class="k-btn k-btn--primary" href="{{ section.settings.empty_link }}"><span>{{ section.settings.empty_label }}</span></a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <label class="visually-hidden" for="mood-link-{{ section.id }}">{{ 'moodboard.share_label' | t }}</label>
+    <input class="k-mood__link" id="mood-link-{{ section.id }}" type="text" readonly data-mood-link>
+    <p class="k-mood__note k-label k-muted">{{ 'moodboard.privacy' | t }}</p>
+
+    <template data-mood-card>
+      <article class="k-mood__card">
+        <a class="k-mood__img k-media" href="#"><img alt="" loading="lazy" width="600" height="800"></a>
+        <div class="k-mood__meta">
+          <a class="k-mood__name" href="#"></a>
+          <span class="k-mood__price"></span>
+        </div>
+        <div class="k-mood__btns">
+          <a class="k-mood__btn" href="#" data-mood-shop>{{ 'products.quick_add' | t }}</a>
+          <button type="button" class="k-mood__btn k-mood__btn--ghost" data-mood-remove>{{ 'moodboard.remove' | t }}</button>
+        </div>
+      </article>
+    </template>
+  </k-moodboard>
+</section>
+
+{% stylesheet %}
+  .k-mood__in { display: grid; gap: 28px; }
+  .k-mood__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; padding-bottom: 24px; border-bottom: 1.5px solid var(--color-text); }
+  .k-mood__head .k-label { margin: 0 0 10px; }
+  .k-mood__title { margin: 0; }
+  .k-mood__title sup { margin-left: 0.2em; font-size: 0.16em; vertical-align: top; }
+  .k-mood__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .k-mood__board { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 24px; padding-block: 24px; }
+  .k-mood__empty { grid-column: 1 / -1; display: grid; justify-items: start; gap: 14px; padding-block: 40px; }
+  .k-mood__empty p { margin: 0; }
+  .k-mood__empty-title { font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: clamp(32px, 4vw, 52px); letter-spacing: -0.03em; line-height: 0.95; }
+  .k-mood__card { display: grid; gap: 10px; align-content: start; transform: rotate(var(--r, 0deg)) translateY(var(--y, 0)); transition: transform 0.5s var(--ease-out); animation: k-rise-in 0.5s var(--ease-out) both; }
+  .k-mood__card:hover, .k-mood__card:focus-within { transform: none; z-index: 2; }
+  .k-mood__img { aspect-ratio: 3 / 4; background: var(--color-surface); box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.45); }
+  .k-mood__img img { width: 100%; height: 100%; object-fit: cover; }
+  .k-mood__meta { display: flex; justify-content: space-between; gap: 10px; font-weight: 600; font-size: 15px; }
+  .k-mood__btns { display: flex; gap: 8px; }
+  .k-mood__btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 12px; border: 1.5px solid var(--color-text); border-radius: var(--radius-button); background: var(--color-text); color: var(--color-bg); font: 600 13px var(--font-body); cursor: pointer; }
+  .k-mood__btn--ghost { background: transparent; color: var(--color-text); }
+  .k-mood__link { width: 100%; min-height: 48px; padding: 0 16px; border: 1px solid var(--color-line); border-radius: var(--radius-button); background: transparent; color: var(--color-muted); font: 13px var(--font-label); }
+  .k-mood__note { margin: -18px 0 0; }
+  @media (max-width: 989px) { .k-mood__board { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 14px; } }
+  @media (prefers-reduced-motion: reduce) { .k-mood__card { transform: none; animation: none; } }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('k-moodboard')) {
+    customElements.define('k-moodboard', class extends HTMLElement {
+      connectedCallback() {
+        var shared = new URLSearchParams(window.location.search).get('items');
+        this.shared = shared ? shared.split(',').map(function (h) { return h.trim(); }).filter(Boolean).slice(0, 40) : null;
+        this.board = this.querySelector('[data-mood-board]');
+        this.tpl = this.querySelector('[data-mood-card]');
+        this.cache = {};
+        this.querySelector('[data-mood-copy]').addEventListener('click', () => this.copy());
+        this.querySelector('[data-mood-addall]').addEventListener('click', (e) => this.addAll(e.currentTarget));
+        var adopt = this.querySelector('[data-mood-adopt]');
+        if (this.shared) {
+          adopt.hidden = false;
+          var k = this.querySelector('[data-mood-kicker]'); k.textContent = k.dataset.shared;
+          adopt.addEventListener('click', () => {
+            var mine = this.list.call({ shared: null });
+            this.shared.forEach(function (h) { if (mine.indexOf(h) === -1) mine.push(h); });
+            window.ObliqueMoodboard.write(mine);
+            window.location.href = window.location.pathname;
+          });
+        }
+        document.addEventListener('moodboard:change', () => { if (!this.shared) this.render(); });
+        this.render();
+      }
+      list() {
+        if (this.shared) return this.shared;
+        // Read storage directly: this can run before theme.js defines ObliqueMoodboard.
+        try { var v = JSON.parse(localStorage.getItem('oblique:moodboard') || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+      }
+      money(cents) {
+        var fmt = this.dataset.moneyFormat;
+        if (!fmt) return (cents / 100).toFixed(2);
+        var n = cents / 100;
+        var sep = function (num, dec, th, ds) { var p = num.toFixed(dec).split('.'); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, th); return p.join(ds); };
+        return fmt.replace(/\{\{\s*(\w+)\s*\}\}/, function (_, key) {
+          if (key === 'amount_no_decimals') return sep(n, 0, ',', '.');
+          if (key === 'amount_with_comma_separator') return sep(n, 2, '.', ',');
+          if (key === 'amount_no_decimals_with_comma_separator') return sep(n, 0, '.', ',');
+          return sep(n, 2, ',', '.');
+        });
+      }
+      load(handle) {
+        if (!this.cache[handle]) {
+          var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+          this.cache[handle] = fetch(root + 'products/' + encodeURIComponent(handle) + '.js').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+        }
+        return this.cache[handle];
+      }
+      render() {
+        var handles = this.list();
+        this.querySelector('[data-mood-count]').textContent = handles.length;
+        this.querySelector('[data-mood-link]').value = this.dataset.shopUrl + (handles.length ? '?items=' + handles.join(',') : '');
+        this.querySelector('[data-mood-addall]').disabled = !handles.length;
+        this.querySelector('[data-mood-copy]').disabled = !handles.length;
+        this.querySelector('[data-mood-empty]').hidden = handles.length > 0;
+        this.board.querySelectorAll('.k-mood__card').forEach(function (c) { c.remove(); });
+        var tilts = [-3, 2, -1.5, 3, -2.5, 1.5];
+        Promise.all(handles.map((h) => this.load(h))).then((products) => {
+          this.products = products.filter(Boolean);
+          this.products.forEach((p, i) => {
+            var node = this.tpl.content.firstElementChild.cloneNode(true);
+            node.style.setProperty('--r', tilts[i % tilts.length] + 'deg');
+            node.style.setProperty('--y', (i % 2 ? 18 : 0) + 'px');
+            node.style.animationDelay = (i * 50) + 'ms';
+            node.querySelectorAll('a[href="#"]').forEach(function (a) { a.href = p.url; });
+            var img = node.querySelector('img');
+            if (p.featured_image) img.src = p.featured_image + (p.featured_image.indexOf('?') > -1 ? '&' : '?') + 'width=600';
+            img.alt = p.title;
+            node.querySelector('.k-mood__name').textContent = p.title;
+            node.querySelector('.k-mood__price').textContent = this.money(p.price);
+            var shop = node.querySelector('[data-mood-shop]');
+            var single = p.variants.length === 1;
+            if (single && p.variants[0].available) {
+              shop.setAttribute('role', 'button');
+              shop.addEventListener('click', (e) => { e.preventDefault(); window.SkinovaCart && window.SkinovaCart.addToCart(p.variants[0].id, { sourceButton: shop, source: 'moodboard' }); });
+            } else if (p.available && document.querySelector('dialog[data-quick-view-dialog]')) {
+              shop.setAttribute('data-quick-view', '');
+              shop.setAttribute('aria-haspopup', 'dialog');
+            }
+            var rm = node.querySelector('[data-mood-remove]');
+            if (this.shared) rm.remove();
+            else rm.addEventListener('click', () => { window.ObliqueMoodboard.toggle(p.handle); });
+            this.board.appendChild(node);
+          });
+        });
+      }
+      copy() {
+        var input = this.querySelector('[data-mood-link]');
+        var btn = this.querySelector('[data-mood-copy]');
+        var done = function () { btn.textContent = btn.dataset.done; setTimeout(function () { btn.textContent = btn.dataset.label; }, 2000); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(input.value).then(done, function () { input.select(); });
+        else { input.select(); }
+      }
+      addAll(btn) {
+        var items = (this.products || []).filter(function (p) { return p.variants.length === 1 && p.variants[0].available; }).map(function (p) { return { id: p.variants[0].id, quantity: 1 }; });
+        var withSizes = (this.products || []).filter(function (p) { return p.variants.length > 1; });
+        if (!items.length) {
+          if (withSizes.length) { var first = this.board.querySelector('[data-quick-view]'); if (first) first.click(); }
+          return;
+        }
+        btn.classList.add('k-loading');
+        window.SkinovaCart.addToCart({ items: items }, { sourceButton: btn, source: 'moodboard' })
+          .finally(function () { btn.classList.remove('k-loading'); });
+      }
+    });
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Moodboard",
+  "tag": "div",
+  "class": "k-mood-section",
+  "settings": [
+    { "type": "paragraph", "content": "Pieces shoppers save from product cards appear here. Turn saving on in Theme settings > Product cards and pick this page there." },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Leave empty to use the page title." },
+    { "type": "text", "id": "empty_label", "label": "Empty board button label", "default": "Browse new in" },
+    { "type": "url", "id": "empty_link", "label": "Empty board button link" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "medium", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ]
+}
+{% endschema %}

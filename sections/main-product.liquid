@@ -1,5 +1,16 @@
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
+  # Drop mode: a future custom.drop_date locks the page until that moment.
+  assign drop_locked = false
+  assign drop_date = product.metafields.custom.drop_date.value
+  if drop_date != blank
+    assign drop_ts = drop_date | date: '%s' | plus: 0
+    assign now_ts = 'now' | date: '%s' | plus: 0
+    if drop_ts > now_ts
+      assign drop_locked = true
+      assign drop_iso = drop_date | date: '%Y-%m-%dT%H:%M:%S%z'
+    endif
+  endif
   assign is_pre = false
   if current_variant.available and current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity <= 0 and current_variant.inventory_policy == 'continue'
     assign is_pre = true
@@ -26,7 +37,7 @@
   endfor
 -%}
 
-<section class="k-pdp k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
+<section class="k-pdp{% if drop_locked %} is-drop-locked{% endif %} k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="k-wrap">
     {%- if section.settings.show_breadcrumbs -%}
       <nav class="k-pdp__crumbs k-label" aria-label="{{ 'products.breadcrumb' | t }}">
@@ -61,6 +72,9 @@
           </ul>
         {%- endif -%}
         <div class="k-pdp__stage">
+        {%- if drop_locked -%}
+          <div class="k-pdp__lock" aria-hidden="true"><span>{% render 'k-icon', icon: 'lock', size: 36 %}{{ 'products.drop.locked' | t }}</span></div>
+        {%- endif -%}
         {%- if section.settings.show_sale_badge -%}
           <span class="k-pdp__sale k-label" data-sale-badge data-template="{{ 'products.sale_off' | t: percent: '[percent]' | escape }}"{% if sale_off == 0 %} hidden{% endif %}>{{ 'products.sale_off' | t: percent: sale_off }}</span>
         {%- endif -%}
@@ -238,7 +252,10 @@
 
             {%- when 'buy_buttons' -%}
               <div class="k-pdp__buy" {{ block.shopify_attributes }}>
-                <skinova-product-form>
+                {%- if drop_locked -%}
+                  {%- render 'k-pdp-drop', product: product, drop_iso: drop_iso, form_id: form_id -%}
+                {%- endif -%}
+                <skinova-product-form{% if drop_locked %} data-unlock-target="{{ form_id }}" hidden{% endif %}>
                   {%- form 'product', product, id: form_id, novalidate: 'novalidate', class: 'k-pdp__form' -%}
                     <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id-input>
 
@@ -365,7 +382,7 @@
   </div>
 </section>
 
-{%- if section.settings.sticky_atc and buy_block -%}
+{%- if section.settings.sticky_atc and buy_block and drop_locked == false -%}
   <div class="k-pdp__bar color-{{ section.settings.color_scheme }}" data-sticky-atc data-form-id="{{ form_id }}" aria-hidden="true" inert>
     <div class="k-wrap k-pdp__bar-in">
       {%- if featured -%}

@@ -338,6 +338,15 @@
       "result": "Te recomendamos la {{ size }}",
       "result_note": "Según tu altura, tu talla habitual, el ajuste de esta prenda y cómo te gusta llevarla.",
       "for_you": "Para ti"
+    },
+    "drop": {
+      "opens": "Disponible el {{ date }}",
+      "locked": "Próximamente",
+      "notify": "Avísame",
+      "notify_note": "Recibe un correo en cuanto esté disponible.",
+      "on_list": "Estás en la lista. Te escribiremos cuando esté disponible.",
+      "live": "Disponible ahora",
+      "badge": "Drop · {{ date }}"
     }
   },
   "sections": {
@@ -405,6 +414,11 @@
         "one": "{{ count }} prenda",
         "other": "{{ count }} prendas"
       }
+    },
+    "runway": {
+      "pause": "Pausar {{ title }}",
+      "play": "Reproducir {{ title }}",
+      "products": "Prendas de este clip"
     }
   },
   "blogs": {
@@ -447,5 +461,23 @@
       "popular": "Colecciones populares",
       "ring": "Página no encontrada"
     }
+  },
+  "moodboard": {
+    "save": "Guardar {{ title }} en tu moodboard",
+    "saved": "Quitar {{ title }} de tu moodboard",
+    "toast_saved": "Guardado en tu moodboard",
+    "toast_removed": "Quitado de tu moodboard",
+    "view": "Ver moodboard",
+    "kicker_own": "Guardado en este navegador",
+    "kicker_shared": "Un moodboard compartido",
+    "copy_link": "Copiar enlace",
+    "copied": "Enlace copiado",
+    "adopt": "Guardar en mi moodboard",
+    "add_all": "Añadir todo a la cesta",
+    "empty_title": "Aún no has guardado nada",
+    "empty_text": "Toca el marcador de cualquier prenda para guardarla aquí.",
+    "share_label": "Enlace para compartir",
+    "privacy": "Tu moodboard solo vive en este navegador. Comparte el enlace para enviarlo.",
+    "remove": "Quitar"
   }
 }

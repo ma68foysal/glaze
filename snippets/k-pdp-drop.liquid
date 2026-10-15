@@ -1,0 +1,66 @@
+{%- comment -%}
+  Drop mode panel for the product page. Shown in place of the buy buttons
+  while the product's custom.drop_date metafield (date and time) is in the
+  future. At zero, <k-countdown> unlocks the page in place: the panel hides,
+  the buy buttons appear and the gallery comes into focus.
+
+  Accepts: product, drop_iso (the date as ISO 8601), form_id
+{%- endcomment -%}
+{%- liquid
+  assign drop_form = form_id | append: '-drop'
+  assign drop_day = drop_iso | date: format: 'abbreviated_date'
+  assign drop_time = drop_iso | date: '%H:%M'
+  assign drop_label = drop_day | append: ' · ' | append: drop_time
+-%}
+<k-countdown class="k-drop-pdp" data-end="{{ drop_iso | escape }}" data-after="show" data-unlock="{{ form_id }}">
+  <div data-drop-live-hide>
+    <p class="k-drop-pdp__when k-label">
+      {%- render 'k-icon', icon: 'lock', size: 14 -%}
+      {{ 'products.drop.opens' | t: date: drop_label }}
+    </p>
+    <div class="k-drop-pdp__digits" role="timer" aria-label="{{ 'sections.countdown.label' | t }}">
+      {%- assign units = 'days,hours,minutes,seconds' | split: ',' -%}
+      {%- for unit in units -%}
+        {%- assign unit_key = 'sections.countdown.' | append: unit -%}
+        <div><b data-unit="{{ unit }}">00</b><span class="k-label k-muted">{{ unit_key | t }}</span></div>
+      {%- endfor -%}
+    </div>
+    {%- form 'customer', id: drop_form, class: 'k-drop-pdp__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter,drop-{{ product.handle }}">
+      {%- if form.posted_successfully? -%}
+        <p class="k-drop-pdp__ok" role="status">{{ 'products.drop.on_list' | t }}</p>
+      {%- else -%}
+        <p class="k-drop-pdp__note">{{ 'products.drop.notify_note' | t }}</p>
+        <div class="k-drop-pdp__row">
+          <label class="visually-hidden" for="{{ drop_form }}-email">{{ 'general.newsletter_form.email_label' | t }}</label>
+          <input type="email" id="{{ drop_form }}-email" name="contact[email]" required autocomplete="email" spellcheck="false" autocapitalize="off" placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}">
+          <button type="submit" class="k-btn k-btn--primary"><span>{{ 'products.drop.notify' | t }}</span></button>
+        </div>
+        {%- if form.errors -%}<p class="k-drop-pdp__err" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>{%- endif -%}
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+  <p class="k-drop-pdp__live k-label" data-drop-live hidden><i aria-hidden="true"></i>{{ 'products.drop.live' | t }}</p>
+</k-countdown>
+
+{% stylesheet %}
+  .k-drop-pdp { display: grid; gap: 16px; }
+  .k-drop-pdp__when { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; }
+  .k-drop-pdp__digits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1.5px solid var(--color-text); }
+  .k-drop-pdp__digits div { display: grid; gap: 2px; padding: 14px 10px; border-right: 1px solid var(--color-line); }
+  .k-drop-pdp__digits div:last-child { border-right: 0; }
+  .k-drop-pdp__digits b { font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: clamp(30px, 3.6vw, 48px); line-height: 0.9; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .k-drop-pdp__form { display: grid; gap: 10px; margin-top: 16px; }
+  .k-drop-pdp__note, .k-drop-pdp__ok, .k-drop-pdp__err { margin: 0; font-size: 15px; }
+  .k-drop-pdp__err { color: var(--color-accent); }
+  .k-drop-pdp__row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .k-drop-pdp__row input { flex: 1 1 220px; min-width: 0; min-height: 52px; padding: 0 18px; border: 1px solid var(--color-line); border-radius: var(--radius-button); background: transparent; color: inherit; font: 500 15px var(--font-body); }
+  .k-drop-pdp__live { display: flex; align-items: center; gap: 10px; margin: 0; font-weight: 700; }
+  .k-drop-pdp__live i { width: 10px; height: 10px; border-radius: 999px; background: #e5372b; animation: k-blink 1.2s infinite; }
+  .k-pdp.is-drop-locked .k-pdp__stage :is(img, video) { filter: grayscale(1) blur(8px) brightness(0.85); transform: scale(1.04); transition: filter 1.2s var(--ease-out), transform 1.2s var(--ease-out); }
+  .k-pdp .k-pdp__stage :is(img, video) { transition: filter 1.2s var(--ease-out), transform 1.2s var(--ease-out); }
+  .k-pdp__lock { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; pointer-events: none; color: #f2f1ec; text-align: center; transition: opacity 0.8s; }
+  .k-pdp:not(.is-drop-locked) .k-pdp__lock { opacity: 0; }
+  .k-pdp__lock span { display: grid; justify-items: center; gap: 10px; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: clamp(40px, 5vw, 80px); letter-spacing: -0.03em; line-height: 0.9; text-shadow: 0 4px 30px rgba(0, 0, 0, 0.35); }
+  @keyframes k-blink { 50% { opacity: 0.25; } }
+{% endstylesheet %}
