@@ -1,0 +1,246 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "kinetic-hero",
+      "settings": {
+        "heading_line": "Wear the",
+        "kinetic_word": "Motion",
+        "text": "Garments engineered to bend, stride and layer. Built for long days in a moving city.",
+        "button_label": "Shop new in",
+        "button_link": "shopify://collections/all",
+        "button2_label": "View lookbook",
+        "button2_link": "",
+        "label_left": "SS26 · Collection 04",
+        "label_center": "Cut for bodies in motion",
+        "label_right": "Scroll to explore ↓",
+        "badge_text": "New season · Shop the drop",
+        "show_counter": true,
+        "interval": 3,
+        "color_scheme": "scheme-1",
+        "padding_top": "small",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "media_1": {
+          "type": "media",
+          "settings": {}
+        },
+        "media_2": {
+          "type": "media",
+          "settings": {}
+        },
+        "media_3": {
+          "type": "media",
+          "settings": {}
+        },
+        "product_4": {
+          "type": "product",
+          "settings": {
+            "fallback_title": "Oblique Trench"
+          }
+        },
+        "product_5": {
+          "type": "product",
+          "settings": {
+            "fallback_title": "Crescent Bag"
+          }
+        }
+      },
+      "block_order": [
+        "media_1",
+        "media_2",
+        "media_3",
+        "product_4",
+        "product_5"
+      ]
+    },
+    "story": {
+      "type": "story-steps",
+      "settings": {
+        "image_position": "left",
+        "label": "How it’s made",
+        "heading": "Cut in small runs, <em>finished by hand</em>",
+        "text": "<p>Each piece is cut in limited batches so fabric isn’t wasted, then pressed and checked one at a time.</p>",
+        "color_scheme": "scheme-3",
+        "padding_top": "large",
+        "padding_bottom": "medium"
+      },
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "title": "Cut",
+            "text": "Pattern pieces laid to minimise offcuts."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "title": "Sew",
+            "text": "Seams taped and bound inside."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "Finish",
+            "text": "Pressed, inspected and tagged by hand."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ]
+    },
+    "index": {
+      "type": "collection-index",
+      "settings": {
+        "heading": "Collection <em>index</em>",
+        "text": "Hover a row. Each collection opens like a contact sheet.",
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "collection_1": {
+          "type": "collection",
+          "settings": {
+            "title": "Outerwear",
+            "description": "Trenches · shells · coats"
+          }
+        },
+        "collection_2": {
+          "type": "collection",
+          "settings": {
+            "title": "Knitwear",
+            "description": "Merino · cotton · rib"
+          }
+        },
+        "collection_3": {
+          "type": "collection",
+          "settings": {
+            "title": "Tailoring",
+            "description": "Soft blazers · trousers"
+          }
+        },
+        "collection_4": {
+          "type": "collection",
+          "settings": {
+            "title": "Denim",
+            "description": "Relaxed · straight · wide"
+          }
+        },
+        "collection_5": {
+          "type": "collection",
+          "settings": {
+            "title": "Accessories",
+            "description": "Bags · belts · knit caps"
+          }
+        }
+      },
+      "block_order": [
+        "collection_1",
+        "collection_2",
+        "collection_3",
+        "collection_4",
+        "collection_5"
+      ]
+    },
+    "stack": {
+      "type": "stacked-cards",
+      "settings": {
+        "heading": "Built for the <em>long walk</em>",
+        "color_scheme": "scheme-4",
+        "padding_top": "large",
+        "padding_bottom": "medium"
+      },
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "label": "Material",
+            "heading": "Fabrics that move first",
+            "color_scheme": "scheme-3",
+            "text": "<p>Stretch wool, washed cotton and recycled shells chosen for how they behave mid-stride, not on the hanger.</p>"
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "label": "Fit",
+            "heading": "Cut on the bias",
+            "color_scheme": "scheme-2",
+            "text": "<p>Angled seams and gusseted joints give every piece room to reach, sit and cycle without pulling.</p>"
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "label": "Care",
+            "heading": "Made to be mended",
+            "color_scheme": "scheme-4",
+            "text": "<p>Spare buttons, replaceable zips and a repair service so the coat you buy today stays in rotation.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2",
+        "card_3"
+      ]
+    },
+    "quote": {
+      "type": "pull-quote",
+      "settings": {
+        "quote": "“Clothes should get better the more you wear them — that’s the only rule we design by.”",
+        "attribution": "Head of design",
+        "show_placeholder": true,
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      }
+    },
+    "journal": {
+      "type": "journal",
+      "settings": {
+        "heading": "Journal",
+        "limit": 4,
+        "button_label": "All stories",
+        "color_scheme": "scheme-1",
+        "padding_top": "small",
+        "padding_bottom": "large"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading_outline": "Stay in",
+        "heading": "Motion",
+        "text": "<p>Early access to new drops, styling notes from the studio, and nothing you didn't ask for.</p>",
+        "color_scheme": "scheme-2",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "story",
+    "index",
+    "stack",
+    "quote",
+    "journal",
+    "newsletter"
+  ]
+}

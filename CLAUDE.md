@@ -41,6 +41,10 @@ says where the rebuild stands.
   page and the cart drawer markup. The theme started from Shopify's Skeleton
   at commit `a4f32d3` (2026-02-26), the last Shopify commit before `bf8e088`:
   diff against it to tell Skeleton files from custom ones.
+- **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
+  Club and Hush have listing homepages in `listings/<preset>/templates/`.
+  Each needs its own demo store (`oblique-club`, `oblique-hush`, to be created
+  by the user in the Partner dashboard). See `docs/design/presets-plan.md`.
 - **Two previews:** `127.0.0.1:9293` serves the repo (no demo images);
   `127.0.0.1:9294` serves the demo copy and syncs into the "Oblique demo"
   theme. The demo copy lives outside the repo; copy repo changes into it with

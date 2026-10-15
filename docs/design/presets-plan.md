@@ -1,6 +1,12 @@
 # Oblique presets plan
 
-Status: plan for discussion, nothing built. Written 2026-10-15.
+Status: Club and Hush are built (settings presets and `/listings` homepages);
+Ochre was dropped because it overlapped Hush. Each preset still needs its own
+demo store: `oblique-club` and `oblique-hush` were requested on 2026-10-15.
+Preview themes on the Oblique demo store: "Oblique Club preview"
+(167172505840) and "Oblique Hush preview" (167172538608).
+
+Written 2026-10-15.
 
 Oblique ships one preset today. Rivals in the fashion category show five on
 their listing (Halftone, Stiletto, Release). This plan adds three, for four in

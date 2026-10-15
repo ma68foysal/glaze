@@ -72,6 +72,146 @@
           }
         }
       }
+    },
+    "Club": {
+      "type_heading_font": "archivo_n9",
+      "type_primary_font": "archivo_n4",
+      "max_page_width": 1440,
+      "enable_smooth_scroll": false,
+      "cart_type": "drawer",
+      "show_cart_note": true,
+      "type_accent_font": "instrument_serif_i4",
+      "type_label_font": "space_mono_n4",
+      "heading_scale": 110,
+      "section_spacing": 112,
+      "button_shape": "rounded",
+      "card_radius": 4,
+      "motion_level": "full",
+      "show_motion_toggle": true,
+      "color_schemes": {
+        "scheme-1": {
+          "settings": {
+            "background": "#0E0E0E",
+            "text": "#F2F1EC",
+            "accent": "#8F8FFF",
+            "button": "#8F8FFF",
+            "button_label": "#0E0E0E"
+          }
+        },
+        "scheme-2": {
+          "settings": {
+            "background": "#F2F1EC",
+            "text": "#0E0E0E",
+            "accent": "#2B2BFF",
+            "button": "#0E0E0E",
+            "button_label": "#F2F1EC"
+          }
+        },
+        "scheme-3": {
+          "settings": {
+            "background": "#8F8FFF",
+            "text": "#0E0E0E",
+            "accent": "#0E0E0E",
+            "button": "#0E0E0E",
+            "button_label": "#F2F1EC"
+          }
+        },
+        "scheme-4": {
+          "settings": {
+            "background": "#1C1C1C",
+            "text": "#F2F1EC",
+            "accent": "#8F8FFF",
+            "button": "#F2F1EC",
+            "button_label": "#0E0E0E"
+          }
+        },
+        "scheme-5": {
+          "settings": {
+            "background": "#000000",
+            "text": "#FFFFFF",
+            "accent": "#8F8FFF",
+            "button": "#FFFFFF",
+            "button_label": "#000000"
+          }
+        }
+      },
+      "photo_treatment": "mono",
+      "photo_grain": true,
+      "stretch_headings": true,
+      "page_transitions": true,
+      "custom_cursor": true,
+      "cart_add_feedback": "fly",
+      "show_back_to_top": true
+    },
+    "Hush": {
+      "type_heading_font": "cormorant_n4",
+      "type_primary_font": "manrope_n4",
+      "max_page_width": 1440,
+      "enable_smooth_scroll": false,
+      "cart_type": "drawer",
+      "show_cart_note": true,
+      "type_accent_font": "cormorant_i4",
+      "type_label_font": "manrope_n5",
+      "heading_scale": 95,
+      "section_spacing": 152,
+      "button_shape": "pill",
+      "card_radius": 28,
+      "motion_level": "subtle",
+      "show_motion_toggle": true,
+      "color_schemes": {
+        "scheme-1": {
+          "settings": {
+            "background": "#FFFFFF",
+            "text": "#2A2522",
+            "accent": "#C2410C",
+            "button": "#2A2522",
+            "button_label": "#FFFFFF"
+          }
+        },
+        "scheme-2": {
+          "settings": {
+            "background": "#2A2522",
+            "text": "#F7F3EE",
+            "accent": "#E8A27C",
+            "button": "#F7F3EE",
+            "button_label": "#2A2522"
+          }
+        },
+        "scheme-3": {
+          "settings": {
+            "background": "#F3E6DA",
+            "text": "#2A2522",
+            "accent": "#C2410C",
+            "button": "#C2410C",
+            "button_label": "#FFFFFF"
+          }
+        },
+        "scheme-4": {
+          "settings": {
+            "background": "#F7F3EE",
+            "text": "#2A2522",
+            "accent": "#C2410C",
+            "button": "#2A2522",
+            "button_label": "#F7F3EE"
+          }
+        },
+        "scheme-5": {
+          "settings": {
+            "background": "#FFFFFF",
+            "text": "#2A2522",
+            "accent": "#C2410C",
+            "button": "#C2410C",
+            "button_label": "#FFFFFF"
+          }
+        }
+      },
+      "photo_treatment": "none",
+      "photo_grain": false,
+      "stretch_headings": false,
+      "page_transitions": true,
+      "custom_cursor": false,
+      "cart_add_feedback": "drawer",
+      "show_back_to_top": true
     }
   }
 }
