@@ -91,7 +91,9 @@
 
 {% stylesheet %}
   .k-look__grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 40px; align-items: stretch; }
-  .k-look__image { aspect-ratio: 5 / 4; border-radius: calc(var(--radius-card) * 0.25); }
+  /* align-self: start stops the grid stretching the image to the panel's height,
+     which would make aspect-ratio derive a width wider than the column. */
+  .k-look__image { align-self: start; width: 100%; min-width: 0; aspect-ratio: 5 / 4; border-radius: calc(var(--radius-card) * 0.25); }
   .k-look__pin {
     position: absolute; z-index: 2;
     width: 48px; height: 48px; margin: -24px 0 0 -24px;

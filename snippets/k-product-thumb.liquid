@@ -1,0 +1,28 @@
+{%- comment -%}
+  Thumbnail button for the product gallery's thumbnails layout.
+  Accepts: media, index (1-based), active (boolean)
+{%- endcomment -%}
+{%- liquid
+  case media.media_type
+    when 'video', 'external_video'
+      assign thumb_label = 'product.thumb_video' | t: index: index
+    when 'model'
+      assign thumb_label = 'product.thumb_model' | t: index: index
+    else
+      assign thumb_label = 'product.thumb_image' | t: index: index
+  endcase
+-%}
+<li>
+  <button
+    type="button"
+    class="k-pdp__thumb"
+    data-thumb="{{ media.id }}"
+    aria-label="{{ thumb_label }}"
+    aria-current="{% if active %}true{% else %}false{% endif %}"
+  >
+    {{ media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '', width: 76, height: 76 }}
+    {%- if media.media_type != 'image' -%}
+      <span class="k-pdp__thumb-badge" aria-hidden="true">{% render 'k-icon', icon: 'play', size: 10 %}</span>
+    {%- endif -%}
+  </button>
+</li>

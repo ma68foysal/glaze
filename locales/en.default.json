@@ -214,7 +214,13 @@
     "from_price": "From {{ price }}",
     "placeholder_title": "Product name",
     "add_to_cart": "Add to bag",
-    "view_details": "View details"
+    "view_details": "View details",
+    "breadcrumb": "Breadcrumb",
+    "home": "Home",
+    "sku": "SKU",
+    "size_guide": "Size guide",
+    "unavailable": "Unavailable",
+    "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout."
   },
   "sections": {
     "category_columns": {

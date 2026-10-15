@@ -1,0 +1,20 @@
+{%- comment -%}
+  Price for a variant: current price, compare-at price and unit price.
+  Accepts: variant
+  The product page re-renders this markup from variant JSON in theme.js.
+{%- endcomment -%}
+{%- if variant.compare_at_price > variant.price -%}
+  <span class="visually-hidden">{{ 'products.sale_price' | t }}</span>
+  <span class="k-price__current">{{ variant.price | money }}</span>
+  <span class="visually-hidden">{{ 'products.regular_price' | t }}</span>
+  <s class="k-price__compare">{{ variant.compare_at_price | money }}</s>
+{%- else -%}
+  <span class="k-price__current">{{ variant.price | money }}</span>
+{%- endif -%}
+{%- if variant.unit_price_measurement -%}
+  <span class="k-price__unit">
+    {{- variant.unit_price | money }} /
+    {%- if variant.unit_price_measurement.reference_value != 1 %} {{ variant.unit_price_measurement.reference_value }}{% endif %}
+    {{ variant.unit_price_measurement.reference_unit -}}
+  </span>
+{%- endif -%}

@@ -1,0 +1,40 @@
+{%- comment -%}
+  One gallery item for the product page.
+  Accepts: media, position (1-based), product, big (boolean — the wide first slot),
+           layout (section media layout; 'thumbnails' shows one item at a time)
+{%- endcomment -%}
+<li
+  class="k-pdp__media{% if big %} k-pdp__media--big{% endif %}{% if position == 1 %} is-active{% endif %}"
+  data-media-id="{{ media.id }}"
+  style="--pos: {{ position }};"
+>
+  {%- case media.media_type -%}
+    {%- when 'image' -%}
+      <div class="k-media">
+        {%- assign sizes = '(min-width: 1440px) 380px, (min-width: 900px) 28vw, 86vw' -%}
+        {%- if big or layout == 'thumbnails' -%}{%- assign sizes = '(min-width: 1440px) 770px, (min-width: 900px) 56vw, 86vw' -%}{%- endif -%}
+        {%- assign loading = 'lazy' -%}{%- if position == 1 -%}{%- assign loading = 'eager' -%}{%- endif -%}
+        {{
+          media
+          | image_url: width: 2000
+          | image_tag:
+            widths: '480, 720, 960, 1280, 1600, 2000',
+            sizes: sizes,
+            loading: loading,
+            alt: media.alt | default: product.title | escape
+        }}
+      </div>
+    {%- when 'video' -%}
+      <div class="k-pdp__media-frame">
+        {{ media | video_tag: image_size: '1200x', controls: true, muted: true, playsinline: true, loop: true, preload: 'none' }}
+      </div>
+    {%- when 'external_video' -%}
+      <div class="k-pdp__media-frame">
+        {{ media | external_video_tag: loading: 'lazy' }}
+      </div>
+    {%- when 'model' -%}
+      <div class="k-pdp__media-frame">
+        {{ media | model_viewer_tag: image_size: '1200x', reveal: 'interaction', toggleable: true, data-model-id: media.id }}
+      </div>
+  {%- endcase -%}
+</li>

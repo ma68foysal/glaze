@@ -243,6 +243,196 @@
   });
 
   // ------------------------------------------------------------------
+  // <k-product> — product page gallery and quantity stepper.
+  //   showMedia(id) brings a media item forward: in the editorial and
+  //   stacked layouts it moves to the first (wide) slot, in the thumbnails
+  //   layout it becomes the visible item. On phones the slider scrolls to it.
+  // ------------------------------------------------------------------
+  define('k-product', class extends HTMLElement {
+    connectedCallback() {
+      this.list = this.querySelector('.k-pdp__media-list');
+      this.thumbsLayout = this.classList.contains('k-pdp__grid--thumbnails');
+      this.addEventListener('click', (e) => {
+        var thumb = e.target.closest('[data-thumb]');
+        if (thumb) { this.showMedia(thumb.dataset.thumb); return; }
+        var step = e.target.closest('[data-media-step]');
+        if (step) { this.step(parseInt(step.dataset.mediaStep, 10)); return; }
+        var qty = e.target.closest('[data-qty-step]');
+        if (qty) {
+          var input = qty.parentElement.querySelector('input');
+          input.value = Math.max(1, (parseInt(input.value, 10) || 1) + parseInt(qty.dataset.qtyStep, 10));
+        }
+      });
+      if (this.list) {
+        this.counter = this.querySelector('[data-media-index]');
+        this.list.addEventListener('scroll', () => this.syncCounter(), { passive: true });
+      }
+    }
+    items() { return this.list ? Array.prototype.slice.call(this.list.children) : []; }
+    step(dir) {
+      var items = this.items();
+      var i = items.findIndex(function (el) { return el.classList.contains('is-active'); });
+      var next = items[(i + dir + items.length) % items.length];
+      if (next) this.showMedia(next.dataset.mediaId);
+    }
+    showMedia(id) {
+      var items = this.items();
+      var target = items.find(function (el) { return el.dataset.mediaId === String(id); });
+      if (!target) return;
+      var mobile = window.matchMedia('(max-width: 900px)').matches;
+      if (!this.thumbsLayout && !mobile && target !== items[0]) {
+        // Promote to the wide slot.
+        items[0].classList.remove('k-pdp__media--big');
+        this.list.prepend(target);
+        target.classList.add('k-pdp__media--big');
+        target.style.setProperty('--pos', 1);
+      }
+      this.items().forEach(function (el) { el.classList.toggle('is-active', el === target); });
+      this.querySelectorAll('[data-thumb]').forEach(function (t) {
+        t.setAttribute('aria-current', t.dataset.thumb === String(id) ? 'true' : 'false');
+      });
+      if (mobile) {
+        this.list.scrollTo({ left: target.offsetLeft - this.list.offsetLeft - parseFloat(getComputedStyle(this.list).paddingLeft), behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+      }
+      // Pause any other playing video when switching.
+      this.querySelectorAll('.k-pdp__media:not(.is-active) video').forEach(function (v) { v.pause(); });
+      this.syncCounter();
+    }
+    syncCounter() {
+      if (!this.counter) return;
+      var items = this.items();
+      var mobile = window.matchMedia('(max-width: 900px)').matches;
+      var index = 0;
+      if (mobile) {
+        var left = this.list.scrollLeft;
+        var best = Infinity;
+        items.forEach(function (el, i) {
+          var d = Math.abs(el.offsetLeft - items[0].offsetLeft - left);
+          if (d < best) { best = d; index = i; }
+        });
+      } else {
+        index = Math.max(0, items.findIndex(function (el) { return el.classList.contains('is-active'); }));
+      }
+      this.counter.textContent = index + 1;
+    }
+  });
+
+  // ------------------------------------------------------------------
+  // <k-variant-picker> — matches the selected options to a variant and
+  // updates price, SKU, the add-to-bag button, the URL and which option
+  // values are unavailable. Fires mp:variant-change for pickup availability.
+  // ------------------------------------------------------------------
+  define('k-variant-picker', class extends HTMLElement {
+    connectedCallback() {
+      try { this.variants = JSON.parse(this.querySelector('[data-variants]').textContent); } catch (e) { this.variants = []; }
+      this.fieldsets = Array.prototype.slice.call(this.querySelectorAll('[data-option-position]'));
+      this.form = document.getElementById(this.dataset.formId);
+      this.section = this.closest('.k-pdp') || document;
+      this.addEventListener('change', (e) => { if (e.target.matches('[data-option-value]')) this.onChange(); });
+      this.updateAvailability(this.selected());
+    }
+    selected() {
+      return this.fieldsets.map(function (fs) {
+        var checked = fs.querySelector('[data-option-value]:checked');
+        return checked ? checked.value : null;
+      });
+    }
+    find(options) {
+      return this.variants.find(function (v) {
+        return v.options.every(function (o, i) { return o === options[i]; });
+      }) || null;
+    }
+    updateAvailability(sel) {
+      var variants = this.variants;
+      this.fieldsets.forEach(function (fs, i) {
+        fs.querySelectorAll('[data-option-value]').forEach(function (input) {
+          var ok = variants.some(function (v) {
+            if (!v.available || v.options[i] !== input.value) return false;
+            return v.options.every(function (o, j) { return j === i || sel[j] == null || o === sel[j]; });
+          });
+          var label = fs.querySelector('label[for="' + input.id + '"]');
+          if (!label) return;
+          label.classList.toggle('is-unavailable', !ok);
+          var oos = label.querySelector('.k-pdp__oos-text');
+          if (oos) oos.hidden = ok;
+        });
+        var chosen = fs.querySelector('[data-option-value]:checked');
+        var out = fs.querySelector('[data-option-selected]');
+        if (chosen && out) out.textContent = chosen.value;
+      });
+    }
+    onChange() {
+      var sel = this.selected();
+      var v = this.find(sel);
+      this.updateAvailability(sel);
+
+      var idInput = this.form && this.form.querySelector('[data-variant-id-input]');
+      var atc = this.form && this.form.querySelector('[data-atc]');
+      var atcText = atc && atc.querySelector('[data-atc-text]');
+
+      if (atc) {
+        if (!v) {
+          atc.disabled = true;
+          atcText.textContent = atc.dataset.labelUnavailable;
+        } else if (!v.available) {
+          atc.disabled = true;
+          atcText.textContent = atc.dataset.labelSoldOut;
+        } else {
+          atc.disabled = false;
+          atcText.textContent = atc.dataset.labelAdd + ' — ' + v.price;
+        }
+      }
+      if (!v) return;
+
+      if (idInput) {
+        idInput.value = v.id;
+        idInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+
+      var price = this.section.querySelector('[data-price]');
+      if (price) {
+        price.textContent = '';
+        var cur = document.createElement('span');
+        cur.className = 'k-price__current';
+        cur.textContent = v.price;
+        price.appendChild(cur);
+        if (v.compare) {
+          var cmp = document.createElement('s');
+          cmp.className = 'k-price__compare';
+          cmp.textContent = v.compare;
+          price.appendChild(cmp);
+        }
+        if (v.unit) {
+          var unit = document.createElement('span');
+          unit.className = 'k-price__unit';
+          unit.textContent = v.unit;
+          price.appendChild(unit);
+        }
+      }
+
+      var sku = this.section.querySelector('[data-sku]');
+      if (sku) {
+        sku.hidden = !v.sku;
+        var skuValue = sku.querySelector('[data-sku-value]');
+        if (skuValue) skuValue.textContent = v.sku || '';
+      }
+
+      if (v.media) {
+        var product = this.closest('k-product');
+        if (product) product.showMedia(v.media);
+      }
+
+      if (this.dataset.url && window.history.replaceState) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('variant', v.id);
+        window.history.replaceState({}, '', url.toString());
+      }
+
+      this.dispatchEvent(new CustomEvent('mp:variant-change', { bubbles: true, detail: { variantId: v.id } }));
+    }
+  });
+
+  // ------------------------------------------------------------------
   // Quick add: any button with data-quick-add="<variant id>".
   // ------------------------------------------------------------------
   document.addEventListener('click', function (e) {

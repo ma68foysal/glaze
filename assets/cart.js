@@ -456,7 +456,7 @@ function cwarn() {
           return; // fall through to native submit (page mode)
         }
         e.preventDefault();
-        if (this.submitBtn) { this.submitBtn.setAttribute('aria-disabled', 'true'); this.submitBtn.classList.add('is-loading'); }
+        if (this.submitBtn) { this.submitBtn.setAttribute('aria-disabled', 'true'); this.submitBtn.classList.add(this.submitBtn.classList.contains('k-btn') ? 'k-loading' : 'is-loading'); }
         var formData = new FormData(this.form);
         formData.append('sections', sectionsToRender().join(','));
         formData.append('sections_url', window.location.pathname);
@@ -494,7 +494,7 @@ function cwarn() {
             self.form.submit();
           })
           .finally(function () {
-            if (self.submitBtn) { self.submitBtn.removeAttribute('aria-disabled'); self.submitBtn.classList.remove('is-loading'); }
+            if (self.submitBtn) { self.submitBtn.removeAttribute('aria-disabled'); self.submitBtn.classList.remove('is-loading', 'k-loading'); }
           });
       }
     });
