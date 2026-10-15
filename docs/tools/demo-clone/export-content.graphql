@@ -1,0 +1,37 @@
+query ExportContent {
+  pages(first: 30) { nodes { handle title body templateSuffix isPublished } }
+  blogs(first: 5) {
+    nodes {
+      handle
+      title
+      commentPolicy
+      articles(first: 30) {
+        nodes {
+          handle
+          title
+          body
+          summary
+          tags
+          isPublished
+          publishedAt
+          author { name }
+          image { url altText }
+        }
+      }
+    }
+  }
+  menus(first: 10) {
+    nodes {
+      handle
+      title
+      items {
+        title
+        type
+        url
+        resourceId
+        items { title type url resourceId items { title type url resourceId } }
+      }
+    }
+  }
+  publications(first: 10) { nodes { id name } }
+}

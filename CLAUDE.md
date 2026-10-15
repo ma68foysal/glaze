@@ -43,8 +43,14 @@ says where the rebuild stands.
   diff against it to tell Skeleton files from custom ones.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
-  Each needs its own demo store (`oblique-club`, `oblique-hush`, to be created
-  by the user in the Partner dashboard). See `docs/design/presets-plan.md`.
+  See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,
+  pages, blog and menus cloned from the Oblique store (tools in
+  `docs/tools/demo-clone/`) and the Oblique theme live on its preset:
+  - Club: `oblique-club-vrjg1qy6.myshopify.com`, live theme 155517223095.
+  - Hush: `oblique-hush-jqtqsh01.myshopify.com`, live theme 186698170583.
+  Still to do in each store's admin (not possible through the API): set the
+  store name to Club / Hush, turn on the Bogus Gateway, and decide on the
+  storefront password.
 - **Two previews:** `127.0.0.1:9293` serves the repo (no demo images);
   `127.0.0.1:9294` serves the demo copy and syncs into the "Oblique demo"
   theme. The demo copy lives outside the repo; copy repo changes into it with

@@ -1,0 +1,25 @@
+query ExportProducts {
+  products(first: 30, query: "status:active") {
+    nodes {
+      handle
+      title
+      descriptionHtml
+      vendor
+      productType
+      tags
+      options { name position optionValues { name } }
+      variants(first: 30) {
+        nodes {
+          price
+          compareAtPrice
+          sku
+          selectedOptions { name value }
+          inventoryQuantity
+          inventoryItem { tracked }
+        }
+      }
+      media(first: 10) { nodes { alt ... on MediaImage { image { url } } } }
+      collections(first: 20) { nodes { handle } }
+    }
+  }
+}

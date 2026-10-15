@@ -1,0 +1,14 @@
+query ExportCollections {
+  collections(first: 30) {
+    nodes {
+      handle
+      title
+      descriptionHtml
+      sortOrder
+      image { url altText }
+    }
+  }
+  files(first: 100, query: "media_type:IMAGE") {
+    nodes { alt ... on MediaImage { image { url } } }
+  }
+}
