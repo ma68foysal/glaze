@@ -78,6 +78,9 @@ body {
 
 [hidden] { display: none !important; }
 
+/* Custom elements are inline by default; the section-sized ones need to be blocks so their padding counts. */
+:where(k-countdown, k-press, k-rail, k-tabs, k-product, k-recently-viewed, k-recommendations, k-complementary, k-lookbook, k-rotator, k-parallax, k-variant-picker, k-accordion-media, k-predictive-search) { display: block; }
+
 .visually-hidden {
   position: absolute !important;
   width: 1px; height: 1px;

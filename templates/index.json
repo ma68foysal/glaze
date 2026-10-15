@@ -474,6 +474,63 @@
         "padding_top": "large",
         "padding_bottom": "large"
       }
+    },
+    "press": {
+      "type": "press",
+      "blocks": {
+        "p1": {
+          "type": "publication",
+          "settings": {
+            "name": "The Cut Sheet",
+            "style": "heavy",
+            "quote": "“Tailoring that moves like it was cut for the street, not the showroom.”"
+          }
+        },
+        "p2": {
+          "type": "publication",
+          "settings": {
+            "name": "Atelier Weekly",
+            "style": "serif",
+            "quote": "“The rare label that makes a trench feel like news.”"
+          }
+        },
+        "p3": {
+          "type": "publication",
+          "settings": {
+            "name": "North Review",
+            "style": "mono",
+            "quote": "“Quiet pieces, loud intent. The knitwear alone is worth the trip.”"
+          }
+        },
+        "p4": {
+          "type": "publication",
+          "settings": {
+            "name": "Form & Fold",
+            "style": "light",
+            "quote": "“A wardrobe built to be worn hard and kept for years.”"
+          }
+        },
+        "p5": {
+          "type": "publication",
+          "settings": {
+            "name": "Selvedge Daily",
+            "style": "classic",
+            "quote": "“Their denim is the reason we stopped recommending anyone else.”"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5"
+      ],
+      "settings": {
+        "eyebrow": "As written about in",
+        "padding_top": "medium",
+        "padding_bottom": "medium"
+      }
     }
   },
   "order": [
@@ -486,6 +543,7 @@
     "manifesto",
     "lookbook",
     "stack",
+    "press",
     "journal",
     "newsletter"
   ]

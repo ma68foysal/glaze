@@ -313,7 +313,5 @@ These were never reviewed and remain outstanding whichever design ships:
 - Support form at `themestudio.store/pages/contact` is missing five required
   fields: store URL (with example), problem description textarea, file upload,
   theme name, auto-populated subject — plus an auto-responder.
-- `<shopify-account>` is not in the header. The requirements say it must be
-  visible in both the desktop and mobile header. It was deliberately reverted
-  because the account sheet was not the wanted behaviour; that trade-off needs
-  revisiting.
+- `<shopify-account>` is in the header on desktop and mobile (checked
+  2026-10-16), which meets the "Account component" requirement.

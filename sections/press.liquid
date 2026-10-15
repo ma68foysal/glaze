@@ -1,0 +1,208 @@
+{%- comment -%}
+  Press: one large quote at a time, with the publications as tabs along the
+  bottom. Each publication is a logo or a wordmark set in one of five type
+  styles. The quote advances on a timer with a progress line, pauses on hover
+  or focus, and stays still for reduced motion.
+{%- endcomment -%}
+{%- assign autoplay = section.settings.autoplay -%}
+<k-press
+  class="k-press k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}"
+  data-interval="{{ section.settings.interval | times: 1000 }}"{% if autoplay %} data-autoplay{% endif %}
+  style="--k-press-ms: {{ section.settings.interval | times: 1000 }}ms;"
+>
+  <div class="k-wrap">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="k-press__eyebrow k-label k-muted">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="k-press__quotes">
+        {%- for block in section.blocks -%}
+          <figure
+            class="k-press__quote"
+            id="press-{{ section.id }}-{{ forloop.index }}"
+            role="tabpanel"
+            aria-labelledby="press-{{ section.id }}-tab-{{ forloop.index }}"
+            {% unless forloop.first %}hidden{% endunless %}
+            {{ block.shopify_attributes }}
+          >
+            <blockquote>{{ block.settings.quote }}</blockquote>
+            {%- if block.settings.link != blank -%}
+              <figcaption><a class="k-press__read k-label" href="{{ block.settings.link }}">{{ section.settings.read_label }}</a></figcaption>
+            {%- endif -%}
+          </figure>
+        {%- endfor -%}
+      </div>
+
+      <div class="k-press__tabs" role="tablist" aria-label="{{ section.settings.tabs_label | escape }}">
+        {%- for block in section.blocks -%}
+          <button
+            type="button"
+            class="k-press__tab"
+            role="tab"
+            id="press-{{ section.id }}-tab-{{ forloop.index }}"
+            aria-controls="press-{{ section.id }}-{{ forloop.index }}"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+            data-press-tab
+          >
+            {%- if block.settings.logo != blank -%}
+              {{ block.settings.logo | image_url: width: 360 | image_tag: loading: 'lazy', sizes: '180px', widths: '180, 360', alt: block.settings.name, class: 'k-press__logo' }}
+            {%- else -%}
+              <span class="k-press__mark k-press__mark--{{ block.settings.style }}">{{ block.settings.name | default: 'Publication' }}</span>
+            {%- endif -%}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</k-press>
+
+{% stylesheet %}
+  .k-press .k-wrap { display: grid; gap: clamp(28px, 4vw, 48px); }
+  .k-press__eyebrow { margin: 0; }
+  .k-press__quotes { display: grid; }
+  .k-press__quote { grid-area: 1 / 1; margin: 0; display: grid; gap: 18px; align-content: start; }
+  .k-press__quote:not([hidden]) { animation: k-rise-in 0.6s var(--ease-out) both; }
+  .k-press__quote blockquote {
+    margin: 0; max-width: 20ch; text-wrap: balance;
+    font-family: var(--font-accent); font-style: var(--font-accent-style); font-weight: 400;
+    font-size: clamp(36px, 5.6vw, 84px); line-height: 1.02; letter-spacing: -0.01em;
+  }
+  .k-press__read { justify-self: start; text-decoration: underline; text-underline-offset: 4px; }
+  .k-press__tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); border-top: 1.5px solid var(--color-text); }
+  .k-press__tab {
+    position: relative; display: grid; place-items: center; min-height: 96px; padding: 14px;
+    border: 0; border-right: 1px solid var(--color-line); background: transparent; color: rgba(var(--color-text-rgb), 0.4);
+    cursor: pointer; transition: color 0.3s;
+  }
+  .k-press__tab:last-child { border-right: 0; }
+  .k-press__tab:hover, .k-press__tab[aria-selected="true"] { color: var(--color-text); }
+  .k-press__tab[aria-selected="true"]::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -1.5px; height: 4px; background: var(--color-accent);
+    transform-origin: 0 50%;
+  }
+  .k-press[data-running] .k-press__tab[aria-selected="true"]::before { animation: k-press-prog var(--k-press-ms, 6000ms) linear both; }
+  .k-press.is-paused .k-press__tab[aria-selected="true"]::before { animation-play-state: paused; }
+  @keyframes k-press-prog { from { transform: scaleX(0); } }
+  .k-press__logo { max-width: 150px; max-height: 44px; width: auto; height: auto; object-fit: contain; opacity: 0.5; transition: opacity 0.3s; }
+  .k-press__tab:hover .k-press__logo, .k-press__tab[aria-selected="true"] .k-press__logo { opacity: 1; }
+  .k-press__mark { line-height: 1; text-align: center; overflow-wrap: anywhere; }
+  .k-press__mark--heavy { font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: 22px; letter-spacing: -0.02em; }
+  .k-press__mark--serif { font-family: var(--font-accent); font-style: var(--font-accent-style); font-size: 28px; }
+  .k-press__mark--mono { font-family: var(--font-label); font-size: 15px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .k-press__mark--light { font-family: var(--font-body); font-weight: 300; font-size: 21px; letter-spacing: 0.3em; text-transform: uppercase; }
+  .k-press__mark--classic { font-family: var(--font-accent); font-style: normal; font-size: 25px; letter-spacing: 0.02em; }
+  @media (max-width: 749px) {
+    .k-press__tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .k-press__tab { min-height: 76px; border-bottom: 1px solid var(--color-line); }
+    .k-press__tab:nth-child(2n) { border-right: 0; }
+    .k-press__tab:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .k-press__quote:not([hidden]) { animation: none; } }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('k-press')) {
+    customElements.define('k-press', class extends HTMLElement {
+      connectedCallback() {
+        this.tabs = Array.from(this.querySelectorAll('[data-press-tab]'));
+        if (this.tabs.length < 2) return;
+        this.index = 0;
+        this.ms = parseInt(this.dataset.interval, 10) || 6000;
+        this.tabs.forEach((tab, i) => {
+          tab.addEventListener('click', () => { this.show(i, true); });
+          tab.addEventListener('keydown', (e) => {
+            var step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+            if (!step) return;
+            e.preventDefault();
+            var next = (i + step + this.tabs.length) % this.tabs.length;
+            this.show(next, true);
+            this.tabs[next].focus();
+          });
+        });
+        var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.motion === 'off';
+        if (!this.hasAttribute('data-autoplay') || still) return;
+        this.addEventListener('pointerenter', () => this.pause(true));
+        this.addEventListener('pointerleave', () => this.pause(false));
+        this.addEventListener('focusin', () => this.pause(true));
+        this.addEventListener('focusout', () => this.pause(false));
+        this.setAttribute('data-running', '');
+        this.schedule();
+      }
+      disconnectedCallback() { clearTimeout(this.timer); }
+      schedule() {
+        clearTimeout(this.timer);
+        this.started = Date.now();
+        this.left = this.left || this.ms;
+        this.timer = setTimeout(() => { this.left = 0; this.show((this.index + 1) % this.tabs.length); }, this.left);
+      }
+      pause(on) {
+        if (!this.hasAttribute('data-running')) return;
+        this.classList.toggle('is-paused', on);
+        if (on) { clearTimeout(this.timer); this.left = Math.max(0, this.left - (Date.now() - this.started)); }
+        else this.schedule();
+      }
+      show(i, byUser) {
+        this.index = i;
+        this.tabs.forEach((tab, n) => {
+          var on = n === i;
+          tab.setAttribute('aria-selected', on ? 'true' : 'false');
+          tab.tabIndex = on ? 0 : -1;
+          var panel = document.getElementById(tab.getAttribute('aria-controls'));
+          if (panel) panel.hidden = !on;
+        });
+        if (byUser && this.hasAttribute('data-running')) { this.removeAttribute('data-running'); clearTimeout(this.timer); return; }
+        if (this.hasAttribute('data-running')) {
+          this.left = this.ms;
+          // Restart the progress line on the newly active tab.
+          this.removeAttribute('data-running'); void this.offsetWidth; this.setAttribute('data-running', '');
+          this.schedule();
+        }
+      }
+    });
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Press",
+  "tag": "section",
+  "class": "k-press-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "As written about in" },
+    { "type": "checkbox", "id": "autoplay", "label": "Change quotes automatically", "default": true, "info": "Stops when a shopper picks a publication, and never runs for visitors who prefer reduced motion." },
+    { "type": "range", "id": "interval", "label": "Seconds per quote", "min": 4, "max": 12, "step": 1, "unit": "s", "default": 6 },
+    { "type": "text", "id": "tabs_label", "label": "Publications label for screen readers", "default": "Publications" },
+    { "type": "text", "id": "read_label", "label": "Article link label", "default": "Read the article" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "publication",
+      "name": "Publication",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "name", "label": "Publication name", "default": "Publication" },
+        { "type": "image_picker", "id": "logo", "label": "Logo", "info": "Optional. Without a logo, the name is set as a wordmark." },
+        { "type": "select", "id": "style", "label": "Wordmark style", "options": [ { "value": "heavy", "label": "Heavy" }, { "value": "serif", "label": "Serif italic" }, { "value": "mono", "label": "Mono" }, { "value": "light", "label": "Light spaced" }, { "value": "classic", "label": "Classic serif" } ], "default": "heavy" },
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "“A wardrobe built to be worn hard and kept for years.”" },
+        { "type": "url", "id": "link", "label": "Article link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Press",
+      "blocks": [
+        { "type": "publication", "settings": { "name": "The Cut Sheet", "style": "heavy", "quote": "“Tailoring that moves like it was cut for the street, not the showroom.”" } },
+        { "type": "publication", "settings": { "name": "Atelier Weekly", "style": "serif", "quote": "“The rare label that makes a trench feel like news.”" } },
+        { "type": "publication", "settings": { "name": "North Review", "style": "mono", "quote": "“Quiet pieces, loud intent. The knitwear alone is worth the trip.”" } },
+        { "type": "publication", "settings": { "name": "Form & Fold", "style": "light", "quote": "“A wardrobe built to be worn hard and kept for years.”" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
