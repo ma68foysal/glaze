@@ -694,6 +694,30 @@
     });
   })();
 
+  // "View" cursor over photos (settings.custom_cursor). Mouse users only.
+  (function () {
+    var label = document.documentElement.dataset.cursor;
+    if (!label || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var TARGETS = '.k-card__media, a .k-media, a.k-media, .k-tile, .k-look__image, .k-acard__img';
+    var SKIP = 'button, input, select, textarea, [data-quick-add], .k-look__pin, .k-details__pin, .k-card__qa';
+    var el = document.createElement('div');
+    el.className = 'k-cursor';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = '<span class="k-cursor__dot"></span>';
+    el.firstChild.textContent = label;
+    document.body.appendChild(el);
+    var x = 0, y = 0, frame = 0;
+    document.addEventListener('pointermove', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      var on = !!e.target.closest(TARGETS) && !e.target.closest(SKIP);
+      el.classList.toggle('is-on', on);
+      x = e.clientX; y = e.clientY;
+      if (!frame) frame = requestAnimationFrame(function () { frame = 0; el.style.transform = 'translate(' + x + 'px, ' + y + 'px)'; });
+    }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', function () { el.classList.remove('is-on'); });
+    window.addEventListener('blur', function () { el.classList.remove('is-on'); });
+  })();
+
   // "/" opens the header search from anywhere outside a text field.
   document.addEventListener('keydown', function (e) {
     if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;

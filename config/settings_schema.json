@@ -227,6 +227,13 @@
         "label": "Stretch headings while scrolling",
         "info": "Only at the Full motion level.",
         "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "custom_cursor",
+        "label": "Show a \"View\" cursor over photos",
+        "info": "For mouse users only. Buttons and the product gallery keep their usual cursor.",
+        "default": true
       }
     ]
   },

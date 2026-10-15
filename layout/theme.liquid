@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}" data-motion="{{ settings.motion_level | default: 'full' }}"{% if settings.photo_treatment != 'none' %} data-ink="{{ settings.photo_treatment }}"{% endif %}{% if settings.photo_grain %} data-grain{% endif %}{% if settings.stretch_headings %} data-stretch{% endif %}>
+<html lang="{{ request.locale.iso_code }}" data-motion="{{ settings.motion_level | default: 'full' }}"{% if settings.photo_treatment != 'none' %} data-ink="{{ settings.photo_treatment }}"{% endif %}{% if settings.photo_grain %} data-grain{% endif %}{% if settings.stretch_headings %} data-stretch{% endif %}{% if settings.custom_cursor %} data-cursor="{{ 'general.view' | t | escape }}"{% endif %}>
   <head>
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}

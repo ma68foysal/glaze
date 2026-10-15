@@ -53,7 +53,8 @@
     "popular_searches": "Popular searches",
     "search_keys": "↑ ↓ to move · Enter to open · Esc to close",
     "search_no_results_hint": "Check the spelling, or try one of these instead.",
-    "back_to_top": "Back to top"
+    "back_to_top": "Back to top",
+    "view": "View"
   },
   "404": {
     "title": "404",
@@ -349,7 +350,8 @@
       "reset": "Reset",
       "show_results": "Show results",
       "next_collection": "Next collection",
-      "in_stock_only": "In stock only"
+      "in_stock_only": "In stock only",
+      "index_view": "Index view"
     },
     "details": {
       "pin": "Detail {{ number }}: {{ title }}"

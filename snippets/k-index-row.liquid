@@ -1,0 +1,41 @@
+{%- comment -%}
+  A product as one large-type row, for the collection's index layout.
+  Accepts: product, number (position in the collection)
+  Hidden until the grid has .is-index; the card and the row never show together.
+{%- endcomment -%}
+{%- liquid
+  assign num = number | prepend: '0' | slice: -2, 2
+  if number > 99
+    assign num = number
+  endif
+  assign image = product.featured_media.preview_image
+  assign peek = ''
+  if image
+    assign peek = image | image_url: width: 480
+  endif
+-%}
+<a class="k-irow{% unless product.available %} is-soldout{% endunless %}" href="{{ product.url }}"{% if peek != blank %} data-peek-src="{{ peek }}"{% endif %}>
+  <span class="k-label k-muted k-irow__num" aria-hidden="true">{{ num }}</span>
+  <span class="k-irow__thumb k-media" aria-hidden="true">
+    {%- if image -%}
+      {{ image | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', sizes: '64px', alt: '' }}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag: 'k-ph' }}
+    {%- endif -%}
+  </span>
+  <span class="k-irow__name">{{ product.title }}</span>
+  {%- if product.type != blank -%}<span class="k-label k-muted k-irow__type">{{ product.type }}</span>{%- else -%}<span class="k-irow__type"></span>{%- endif -%}
+  <span class="k-irow__price">
+    {%- if product.compare_at_price > product.price -%}
+      <span class="visually-hidden">{{ 'products.regular_price' | t }}</span><s>{{ product.compare_at_price | money }}</s>
+      <span class="visually-hidden">{{ 'products.sale_price' | t }}</span>
+    {%- endif -%}
+    {%- if product.price_varies -%}
+      {%- assign min_price = product.price_min | money -%}
+      {{ 'products.price_from' | t: price: min_price }}
+    {%- else -%}
+      {{ product.price | money }}
+    {%- endif -%}
+    {%- unless product.available -%}<span class="k-label k-muted"> · {{ 'products.sold_out' | t }}</span>{%- endunless -%}
+  </span>
+</a>

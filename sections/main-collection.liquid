@@ -90,6 +90,9 @@
               <button type="button" data-density="4" aria-label="{{ 'sections.collection.columns' | t: count: 4 }}" aria-pressed="false">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="3" width="4" height="18" rx="1"/><rect x="7.33" y="3" width="4" height="18" rx="1"/><rect x="12.66" y="3" width="4" height="18" rx="1"/><rect x="18" y="3" width="4" height="18" rx="1"/></svg>
               </button>
+              <button type="button" data-density="index" aria-label="{{ 'sections.collection.index_view' | t }}" aria-pressed="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+              </button>
             </div>
           {%- endif -%}
           {%- if section.settings.show_sort -%}{%- render 'k-facets', part: 'sort', results: collection, url: collection.url, form_id: form_id, sort_by: sort_by -%}{%- endif -%}
@@ -97,9 +100,13 @@
       </div>
 
       {%- if collection.products.size > 0 -%}
-        <ul class="k-col__grid" role="list" data-grid style="--cols: {{ section.settings.columns }};">
+        <ul class="k-col__grid{% if section.settings.default_layout == 'index' %} is-index{% endif %}" role="list" data-grid data-default="{% if section.settings.default_layout == 'index' %}index{% else %}{{ section.settings.columns }}{% endif %}" style="--cols: {{ section.settings.columns }};">
           {%- for product in collection.products -%}
-            <li class="k-col__item k-reveal">{% render 'k-card', product: product, quick_add: section.settings.quick_add %}</li>
+            <li class="k-col__item k-reveal">
+              {% render 'k-card', product: product, quick_add: section.settings.quick_add %}
+              {%- assign row_number = paginate.current_offset | plus: forloop.index -%}
+              {%- render 'k-index-row', product: product, number: row_number -%}
+            </li>
             {%- if editorial and paginate.current_page == 1 and forloop.index == editorial.settings.position -%}
               <li class="k-col__ed color-{{ editorial.settings.color_scheme }}" {{ editorial.shopify_attributes }}>
                 <div class="k-col__ed-media k-media" aria-hidden="true">
@@ -117,6 +124,7 @@
             {%- endif -%}
           {%- endfor -%}
         </ul>
+        <div class="k-col__peek k-media" aria-hidden="true" data-peek></div>
       {%- else -%}
         <div class="k-col__empty">
           {%- if active_count > 0 -%}
@@ -208,6 +216,37 @@
     margin: 0; padding: 32px 0 0;
     list-style: none;
   }
+  .k-irow { display: none; }
+  .k-col__grid.is-index { display: block; padding-top: 20px; }
+  .k-col__grid.is-index > .k-col__item { opacity: 1; transform: none; animation: none; }
+  .k-col__grid.is-index .k-card, .k-col__grid.is-index > .k-col__ed { display: none; }
+  .k-col__grid.is-index .k-irow { display: grid; }
+  .k-irow {
+    grid-template-columns: 56px minmax(0, 1fr) auto auto; gap: 20px; align-items: baseline;
+    padding: 16px 0; border-top: 1px solid var(--color-line); transition: padding 0.35s var(--ease-out), color var(--dur-fast);
+  }
+  .k-col__item:last-child .k-irow { border-bottom: 1px solid var(--color-line); }
+  .k-irow__thumb { display: none; }
+  .k-irow__name {
+    font-family: var(--font-heading); font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(28px, 4.4vw, 60px) * var(--heading-scale)); letter-spacing: -0.035em; line-height: 1;
+    transform-origin: 0 100%; transition: transform 0.45s var(--ease-out);
+  }
+  .k-irow__type { white-space: nowrap; }
+  .k-irow__price { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .k-irow__price s { margin-right: 6px; font-weight: 400; color: var(--color-muted); }
+  .k-irow:hover, .k-irow:focus-visible { padding-left: 14px; }
+  .k-irow:hover .k-irow__name, .k-irow:focus-visible .k-irow__name { transform: scaleX(1.06); }
+  .k-irow:hover .k-irow__price { color: var(--color-accent); }
+  .k-irow.is-soldout .k-irow__name { color: var(--color-muted); }
+  .k-col__peek {
+    position: fixed; left: 0; top: 0; z-index: 15; width: 200px; aspect-ratio: 4 / 5; border-radius: 12px;
+    pointer-events: none; opacity: 0; transform: translate(-50%, -60%) scale(0.85) rotate(-3deg);
+    transition: opacity 0.25s, transform 0.35s var(--ease-out);
+    box-shadow: 0 30px 50px -30px rgba(14, 14, 14, 0.6);
+  }
+  .k-col__peek.is-on { opacity: 1; transform: translate(-50%, -60%) scale(1) rotate(-3deg); }
+  @media (max-width: 900px), (hover: none) { .k-col__peek { display: none; } }
   .k-col__ed {
     grid-column: span 2;
     position: relative;
@@ -254,7 +293,11 @@
     .k-col__hero { grid-template-columns: 1fr; gap: 20px; }
     .k-col__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px var(--space-sm); }
     .k-col__ed { grid-column: 1 / -1; min-height: 420px; padding: 24px; }
-    .k-col__dens { display: none; }
+    .k-col__dens button:not([data-density="index"]):not([data-density="2"]) { display: none; }
+    .k-irow { grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 10px 0; }
+    .k-irow__num, .k-irow__type { display: none; }
+    .k-irow__thumb { display: block; aspect-ratio: 4 / 5; border-radius: 8px; }
+    .k-irow:hover, .k-irow:focus-visible { padding-left: 0; }
   }
 {% endstylesheet %}
 
@@ -272,14 +315,33 @@
         var dens = sec.querySelectorAll('[data-density]');
         function applyCols(n) {
           if (!grid || !n) return;
-          grid.style.setProperty('--cols', n);
+          grid.classList.toggle('is-index', n === 'index');
+          if (n !== 'index') grid.style.setProperty('--cols', n);
           dens.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.density === String(n) ? 'true' : 'false'); });
         }
         if (dens.length) {
-          applyCols(get(KEY) || grid.style.getPropertyValue('--cols').trim());
+          applyCols(get(KEY) || grid.dataset.default || grid.style.getPropertyValue('--cols').trim());
           dens.forEach(function (b) {
             b.addEventListener('click', function () { set(KEY, b.dataset.density); applyCols(b.dataset.density); });
           });
+        }
+
+        // Index view: one photo follows the pointer over the rows.
+        var peek = sec.querySelector('[data-peek]');
+        if (grid && peek && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+          var img = document.createElement('img');
+          img.alt = '';
+          peek.appendChild(img);
+          grid.addEventListener('pointermove', function (e) {
+            var row = grid.classList.contains('is-index') && e.target.closest('[data-peek-src]');
+            if (!row) { peek.classList.remove('is-on'); return; }
+            if (img.getAttribute('src') !== row.dataset.peekSrc) img.src = row.dataset.peekSrc;
+            peek.style.left = e.clientX + 'px';
+            peek.style.top = e.clientY + 'px';
+            peek.classList.add('is-on');
+          });
+          grid.addEventListener('pointerleave', function () { peek.classList.remove('is-on'); });
+          window.addEventListener('scroll', function () { peek.classList.remove('is-on'); }, { passive: true });
         }
 
         // Show more: fetch the next page and append its products.
@@ -326,7 +388,8 @@
     { "type": "header", "content": "Products" },
     { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 36, "step": 4, "default": 12 },
     { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 4, "step": 1, "default": 3 },
-    { "type": "checkbox", "id": "show_density", "label": "Let customers change the column count", "default": true },
+    { "type": "select", "id": "default_layout", "label": "Default layout", "default": "grid", "options": [ { "value": "grid", "label": "Grid" }, { "value": "index", "label": "Index (large type rows)" } ] },
+    { "type": "checkbox", "id": "show_density", "label": "Let customers change the layout", "default": true },
     { "type": "checkbox", "id": "quick_add", "label": "Show quick add", "default": true },
     { "type": "header", "content": "Filtering and sorting" },
     { "type": "checkbox", "id": "show_filters", "label": "Enable filtering", "default": true, "info": "Customize filters with the Search and Discovery app." },
