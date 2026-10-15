@@ -33,8 +33,6 @@
       </div>
     </div>
 
-    <label class="visually-hidden" for="mood-link-{{ section.id }}">{{ 'moodboard.share_label' | t }}</label>
-    <input class="k-mood__link" id="mood-link-{{ section.id }}" type="text" readonly data-mood-link>
     <p class="k-mood__note k-label k-muted">{{ 'moodboard.privacy' | t }}</p>
 
     <template data-mood-card>
@@ -72,8 +70,7 @@
   .k-mood__btns { display: flex; gap: 8px; }
   .k-mood__btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 12px; border: 1.5px solid var(--color-text); border-radius: var(--radius-button); background: var(--color-text); color: var(--color-bg); font: 600 13px var(--font-body); cursor: pointer; }
   .k-mood__btn--ghost { background: transparent; color: var(--color-text); }
-  .k-mood__link { width: 100%; min-height: 48px; padding: 0 16px; border: 1px solid var(--color-line); border-radius: var(--radius-button); background: transparent; color: var(--color-muted); font: 13px var(--font-label); }
-  .k-mood__note { margin: -18px 0 0; }
+  .k-mood__note { margin: 0; }
   @media (max-width: 989px) { .k-mood__board { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 14px; } }
   @media (prefers-reduced-motion: reduce) { .k-mood__card { transform: none; animation: none; } }
 {% endstylesheet %}
@@ -130,7 +127,7 @@
       render() {
         var handles = this.list();
         this.querySelector('[data-mood-count]').textContent = handles.length;
-        this.querySelector('[data-mood-link]').value = this.dataset.shopUrl + (handles.length ? '?items=' + handles.join(',') : '');
+        this.link = this.dataset.shopUrl + (handles.length ? '?items=' + handles.join(',') : '');
         this.querySelector('[data-mood-addall]').disabled = !handles.length;
         this.querySelector('[data-mood-copy]').disabled = !handles.length;
         this.querySelector('[data-mood-empty]').hidden = handles.length > 0;
@@ -166,11 +163,19 @@
         });
       }
       copy() {
-        var input = this.querySelector('[data-mood-link]');
+        var link = this.link;
         var btn = this.querySelector('[data-mood-copy]');
         var done = function () { btn.textContent = btn.dataset.done; setTimeout(function () { btn.textContent = btn.dataset.label; }, 2000); };
-        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(input.value).then(done, function () { input.select(); });
-        else { input.select(); }
+        var fallback = function () {
+          // Older browsers: copy through a temporary, off-screen field.
+          var t = document.createElement('textarea');
+          t.value = link; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+          document.body.appendChild(t); t.select();
+          try { document.execCommand('copy'); done(); } catch (e) {}
+          t.remove();
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, fallback);
+        else fallback();
       }
       addAll(btn) {
         var items = (this.products || []).filter(function (p) { return p.variants.length === 1 && p.variants[0].available; }).map(function (p) { return { id: p.variants[0].id, quantity: 1 }; });
