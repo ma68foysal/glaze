@@ -57,8 +57,13 @@ Used as product media on the demo store (12 products, 2 photos each).
 | Field overshirt | [1719418730257-a9da9282da37](https://images.unsplash.com/photo-1719418730257-a9da9282da37) | [1621343342498-a0b6a9b40510](https://images.unsplash.com/photo-1621343342498-a0b6a9b40510) |
 | Relaxed denim | [1602293589930-45aad59ba3ab](https://images.unsplash.com/photo-1602293589930-45aad59ba3ab) | [1721637222188-fa7bf56ceaf5](https://images.unsplash.com/photo-1721637222188-fa7bf56ceaf5) |
 | Ribbed tank | [1785273751496-f1a76f54a16f](https://images.unsplash.com/photo-1785273751496-f1a76f54a16f) | [1785273926065-d8e61a4c55dc](https://images.unsplash.com/photo-1785273926065-d8e61a4c55dc) |
-| Arc loafer | [1661332445185-6e2ca6754fc4](https://images.unsplash.com/photo-1661332445185-6e2ca6754fc4) | [1760616172899-0681b97a2de3](https://images.unsplash.com/photo-1760616172899-0681b97a2de3) |
+| Arc loafer | [1642978599272-affe5c2ba90b](https://images.unsplash.com/photo-1642978599272-affe5c2ba90b) | [1760616172899-0681b97a2de3](https://images.unsplash.com/photo-1760616172899-0681b97a2de3) |
 | Heavy tee | [1581655353564-df123a1eb820](https://images.unsplash.com/photo-1581655353564-df123a1eb820) | [1592994238317-fcf75c5466fd](https://images.unsplash.com/photo-1592994238317-fcf75c5466fd) |
 | Merino crew | [1784651988954-c206a8494270](https://images.unsplash.com/photo-1784651988954-c206a8494270) | [1623393807211-3d70dc56395c](https://images.unsplash.com/photo-1623393807211-3d70dc56395c) |
 | Soft blazer | [1616065297556-f05bc00c9a3e](https://images.unsplash.com/photo-1616065297556-f05bc00c9a3e) | [1674451089045-31d5cdc4d55d](https://images.unsplash.com/photo-1674451089045-31d5cdc4d55d) |
 | Commuter shell | [1721745740020-ed1e8e0d4db8](https://images.unsplash.com/photo-1721745740020-ed1e8e0d4db8) | [1655972670403-243839675e06](https://images.unsplash.com/photo-1655972670403-243839675e06) |
+
+Replaced 2026-10-15: the Arc loafer's first photo (1661332445185-6e2ca6754fc4)
+showed a third-party brand logo. It was detached from the product (the file stays
+in Files) and replaced with the unbranded photo above. Check every new demo
+photo for visible logos before using it.
