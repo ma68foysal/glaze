@@ -298,4 +298,10 @@ These were never reviewed and remain outstanding whichever design ships:
 - `<shopify-account>` is not in the header. The requirements say it must be
   visible in both the desktop and mobile header. It was deliberately reverted
   because the account sheet was not the wanted behaviour; that trade-off needs
-  revisiting.
+  revisiting.**Still to rebuild:** the all-collections page (`collections`), the plain
+  page (`page`) and the password page, which still use old Skinova markup and
+  the trimmed `base.css`. The unused Skinova sections, `global.js` and
+  `quick-view.js` were deleted on 2026-10-15; theme check is clean. The theme
+  started from Shopify's Skeleton at commit `a4f32d3` (2026-02-26), the last
+  Shopify commit before `bf8e088`: diff against it to tell Skeleton files from
+  custom ones.
