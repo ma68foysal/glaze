@@ -702,7 +702,7 @@
     if (!label || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     // Only photos that open something; the lookbook photo holds hotspots, not a link.
     var TARGETS = '.k-card__media, a .k-media, a.k-media, .k-tile, .k-acard__img';
-    var SKIP = 'button, input, select, textarea, [data-quick-add], .k-look__pin, .k-details__pin, .k-card__qa';
+    var SKIP = 'button, input, select, textarea, [data-quick-add], [data-save], .k-look__pin, .k-details__pin, .k-card__qa';
     var el = document.createElement('div');
     el.className = 'k-cursor';
     el.setAttribute('aria-hidden', 'true');

@@ -704,7 +704,10 @@ body:has(.k-pdp__bar.is-visible) .k-totop { bottom: calc(100px + env(safe-area-i
    Mouse users only; buttons inside photos keep the normal pointer. */
 @media (hover: hover) and (pointer: fine) {
   [data-cursor] :is(.k-card__media, a .k-media, a.k-media, .k-tile, .k-acard__img),
-  [data-cursor] :is(.k-card__media, a .k-media, a.k-media, .k-tile, .k-acard__img) :not(button, [data-quick-add], .k-look__pin, .k-details__pin, .k-card__qa, .k-card__qa *) { cursor: none; }
+  [data-cursor] :is(.k-card__media, a .k-media, a.k-media, .k-tile, .k-acard__img) * { cursor: none; }
+  /* Controls inside a photo (heart, quick add, pins) and everything inside them keep the pointer. */
+  [data-cursor] :is(.k-card__media, a .k-media, a.k-media, .k-tile, .k-acard__img) :is(button, a.k-card__qa, [data-quick-add], [data-save], .k-look__pin, .k-details__pin),
+  [data-cursor] :is(.k-card__media, a .k-media, a.k-media, .k-tile, .k-acard__img) :is(button, a.k-card__qa, [data-quick-add], [data-save], .k-look__pin, .k-details__pin) * { cursor: pointer; }
 }
 .k-cursor { position: fixed; left: 0; top: 0; z-index: 80; pointer-events: none; will-change: transform; }
 .k-cursor__dot {
