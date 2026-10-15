@@ -1,0 +1,182 @@
+{%- comment -%}
+  Quick view. Not addable: theme.js fetches it with the Section Rendering API
+  (/products/<handle>?section_id=quick-view) and shows it in the
+  <dialog data-quick-view> from layout/theme.liquid.
+
+  It reuses the product page's <k-variant-picker> and <skinova-product-form>,
+  so variant matching, pre-order labels and adding to the bag behave the same.
+  Combined listings: option values that belong to a sibling product render as
+  links, and theme.js loads the sibling into the same window.
+{%- endcomment -%}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign form_id = 'qv-' | append: product.id
+  assign color_index = 0
+  for option in product.options_with_values
+    assign oname = option.name | downcase
+    if oname == 'color' or oname == 'colour'
+      assign color_index = option.position
+    endif
+  endfor
+  assign is_pre = false
+  if current_variant.available and current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity <= 0 and current_variant.inventory_policy == 'continue'
+    assign is_pre = true
+  endif
+  assign main_media = current_variant.featured_media | default: product.featured_media
+-%}
+<div class="k-qv k-pdp" data-qv-root>
+  <div class="k-qv__gallery">
+    <div class="k-qv__main k-media" data-qv-main>
+      {%- if main_media -%}
+        {{ main_media.preview_image | image_url: width: 1200 | image_tag: widths: '500, 800, 1000, 1200', sizes: '(min-width: 900px) 360px, 90vw', alt: main_media.alt | default: product.title }}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'k-ph' }}
+      {%- endif -%}
+    </div>
+    {%- assign images = product.media | where: 'media_type', 'image' -%}
+    {%- if images.size > 1 -%}
+      <div class="k-qv__thumbs" role="group" aria-label="{{ 'product.gallery_thumbs_aria' | t }}">
+        {%- for m in images limit: 6 -%}
+          <button type="button" class="k-media" data-qv-thumb="{{ m.id }}" data-src="{{ m.preview_image | image_url: width: 1200 }}" data-alt="{{ m.alt | default: product.title | escape }}" aria-pressed="{% if m.id == main_media.id %}true{% else %}false{% endif %}" aria-label="{{ 'product.thumb_image' | t: index: forloop.index }}">
+            {{ m.preview_image | image_url: width: 200 | image_tag: loading: 'lazy', sizes: '80px', widths: '100, 200', alt: '' }}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="k-qv__info">
+    {%- if product.vendor != blank and product.vendor != shop.name -%}
+      <span class="k-label k-muted">{{ product.vendor }}</span>
+    {%- elsif product.type != blank -%}
+      <span class="k-label k-muted">{{ product.type }}</span>
+    {%- endif -%}
+    <h2 class="k-qv__title" id="{{ form_id }}-title">{{ product.title | escape }}</h2>
+    <div class="k-qv__price" data-price>{%- render 'k-price', variant: current_variant -%}</div>
+
+    {%- unless product.has_only_default_variant -%}
+      <k-variant-picker class="k-pdp__options k-qv__options" data-form-id="{{ form_id }}">
+        {%- for option in product.options_with_values -%}
+          {%- assign is_color = false -%}
+          {%- if option.position == color_index -%}{%- assign is_color = true -%}{%- endif -%}
+          <fieldset class="k-pdp__option" data-option-position="{{ option.position }}">
+            <div class="k-pdp__option-head">
+              <legend class="k-label">{{ option.name }} — <strong data-option-selected>{{ option.selected_value }}</strong></legend>
+            </div>
+            <div class="k-pdp__values{% if is_color %} k-pdp__values--swatch{% endif %}">
+              {%- for value in option.values -%}
+                {%- liquid
+                  assign input_id = form_id | append: '-' | append: option.position | append: '-' | append: forloop.index
+                  assign swatch_style = ''
+                  if is_color
+                    if value.swatch.image
+                      assign swatch_url = value.swatch.image | image_url: width: 88
+                      assign swatch_style = 'background-image: url(' | append: swatch_url | append: ');'
+                    elsif value.swatch.color
+                      assign swatch_style = '--swatch: ' | append: value.swatch.color | append: ';'
+                    else
+                      assign swatch_style = '--swatch: ' | append: value | downcase | append: ';'
+                    endif
+                  endif
+                  assign sibling = false
+                  if value.product_url != blank and value.product_url != product.url
+                    assign sibling = true
+                  endif
+                -%}
+                {%- if sibling -%}
+                  <a
+                    class="{% if is_color %}k-pdp__swatch{% else %}k-pdp__size{% endif %}{% unless value.available %} is-unavailable{% endunless %}"
+                    href="{{ value.product_url }}"
+                    data-qv-swap
+                    {% if is_color %}style="{{ swatch_style }}" title="{{ value | escape }}"{% endif %}
+                  >
+                    {%- if is_color -%}<span class="visually-hidden">{{ value }}</span>{%- else -%}{{ value }}{%- endif -%}
+                  </a>
+                {%- else -%}
+                  <input class="visually-hidden" type="radio" id="{{ input_id }}" name="qv-option-{{ product.id }}-{{ option.position }}" value="{{ value | escape }}"{% if value.selected %} checked{% endif %} data-option-value>
+                  <label
+                    for="{{ input_id }}"
+                    class="{% if is_color %}k-pdp__swatch{% else %}k-pdp__size{% endif %}{% unless value.available %} is-unavailable{% endunless %}"
+                    {% if is_color %}style="{{ swatch_style }}" title="{{ value | escape }}"{% endif %}
+                  >
+                    {%- if is_color -%}<span class="visually-hidden">{{ value }}</span>{%- else -%}{{ value }}{%- endif -%}
+                    <span class="visually-hidden k-pdp__oos-text"{% if value.available %} hidden{% endif %}>, {{ 'products.sold_out' | t }}</span>
+                  </label>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </fieldset>
+        {%- endfor -%}
+        {%- render 'k-variant-json', product: product -%}
+      </k-variant-picker>
+    {%- endunless -%}
+
+    <skinova-product-form>
+      {%- form 'product', product, id: form_id, novalidate: 'novalidate', class: 'k-pdp__form' -%}
+        <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id-input>
+        {%- if product.selling_plan_groups.size > 0 -%}
+          <fieldset class="k-pdp__plans">
+            <legend class="k-label">{{ 'product.purchase_options' | t }}</legend>
+            {%- unless product.requires_selling_plan -%}
+              <label class="k-pdp__plan"><input type="radio" name="selling_plan" value="" checked> {{ 'product.one_time_purchase' | t }}</label>
+            {%- endunless -%}
+            {%- for group in product.selling_plan_groups -%}
+              {%- for plan in group.selling_plans -%}
+                <label class="k-pdp__plan"><input type="radio" name="selling_plan" value="{{ plan.id }}"{% if product.requires_selling_plan and forloop.parentloop.first and forloop.first %} checked{% endif %}> {{ plan.name }}</label>
+              {%- endfor -%}
+            {%- endfor -%}
+          </fieldset>
+        {%- endif -%}
+        <p class="k-pdp__pre k-label" data-preorder{% unless is_pre %} hidden{% endunless %}>{{ 'products.preorder_note' | t }}</p>
+        <button
+          type="submit"
+          name="add"
+          class="k-btn k-btn--primary k-btn--block k-pdp__atc"
+          data-atc
+          data-label-add="{{ 'products.add_to_cart' | t }}"
+          data-label-preorder="{{ 'products.preorder' | t }}"
+          data-label-sold-out="{{ 'products.sold_out' | t }}"
+          data-label-unavailable="{{ 'products.unavailable' | t }}"
+          {% unless current_variant.available %}disabled{% endunless %}
+        >
+          <span data-atc-text>
+            {%- if current_variant.available == false -%}
+              {{ 'products.sold_out' | t }}
+            {%- elsif is_pre -%}
+              {{ 'products.preorder' | t }} — {{ current_variant.price | money }}
+            {%- else -%}
+              {{ 'products.add_to_cart' | t }} — {{ current_variant.price | money }}
+            {%- endif -%}
+          </span>
+        </button>
+      {%- endform -%}
+    </skinova-product-form>
+
+    <a class="k-qv__more" href="{{ current_variant.url | default: product.url }}">{{ 'products.view_details' | t }}</a>
+  </div>
+</div>
+
+{% stylesheet %}
+  .k-qv { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 24px; align-items: start; }
+  .k-qv__gallery { display: grid; gap: 8px; }
+  .k-qv__main { aspect-ratio: 3 / 4; overflow: hidden; background: var(--color-surface); }
+  .k-qv__main :is(img, svg) { width: 100%; height: 100%; object-fit: cover; }
+  .k-qv__thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .k-qv__thumbs button { aspect-ratio: 1; padding: 0; border: 1.5px solid transparent; background: var(--color-surface); cursor: pointer; overflow: hidden; }
+  .k-qv__thumbs button[aria-pressed="true"] { border-color: var(--color-text); }
+  .k-qv__thumbs img { width: 100%; height: 100%; object-fit: cover; }
+  .k-qv__info { display: grid; gap: 16px; align-content: start; }
+  .k-qv__title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: clamp(30px, 3.4vw, 42px); line-height: 0.92; letter-spacing: -0.03em; }
+  .k-qv__price { font-size: 20px; font-weight: 700; }
+  .k-qv .k-pdp__atc { flex: none; }
+  .k-qv__more { justify-self: start; font-weight: 600; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+  @media (max-width: 640px) { .k-qv { grid-template-columns: minmax(0, 1fr); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Quick view",
+  "tag": "div",
+  "settings": []
+}
+{% endschema %}

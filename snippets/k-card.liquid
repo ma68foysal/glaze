@@ -64,9 +64,15 @@
           </button>
           <p class="visually-hidden" data-quick-add-error role="alert" hidden></p>
         {%- else -%}
-          <a class="k-card__qa" href="{{ product.url }}">
-            {{ 'products.choose_options' | t }}<span class="visually-hidden">: {{ product.title }}</span>
-          </a>
+          {%- if settings.quick_view -%}
+            <a class="k-card__qa" href="{{ product.url }}" data-quick-view aria-haspopup="dialog">
+              {{ 'products.quick_view_label' | t }}<span class="visually-hidden">: {{ product.title }}</span>
+            </a>
+          {%- else -%}
+            <a class="k-card__qa" href="{{ product.url }}">
+              {{ 'products.choose_options' | t }}<span class="visually-hidden">: {{ product.title }}</span>
+            </a>
+          {%- endif -%}
         {%- endif -%}
       {%- endif -%}
     </div>

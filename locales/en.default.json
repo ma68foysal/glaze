@@ -9,6 +9,7 @@
  */
 {
   "general": {
+    "quick_view_dialog": "Quick view",
     "search": "Search",
     "close": "Close",
     "search_error": "Couldn't load search results. Try again.",
@@ -293,6 +294,9 @@
     "sold_out": "Sold out",
     "sale": "Sale",
     "quick_add": "Quick add +",
+    "quick_view_label": "Quick view",
+    "preorder": "Pre-order",
+    "preorder_note": "Pre-order: ships as soon as it’s back in stock",
     "choose_options": "Choose options",
     "regular_price": "Regular price",
     "sale_price": "Sale price",

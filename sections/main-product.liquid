@@ -1,5 +1,9 @@
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
+  assign is_pre = false
+  if current_variant.available and current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity <= 0 and current_variant.inventory_policy == 'continue'
+    assign is_pre = true
+  endif
   assign form_id = 'product-form-' | append: section.id
   assign featured = current_variant.featured_media | default: product.featured_media
   assign has_model = false
@@ -193,6 +197,15 @@
                               endif
                             endif
                           -%}
+                          {%- if value.product_url != blank and value.product_url != product.url -%}
+                            <a
+                              class="{% if is_color %}k-pdp__swatch{% else %}k-pdp__size{% endif %}{% unless value.available %} is-unavailable{% endunless %}"
+                              href="{{ value.product_url }}"
+                              {% if is_color %}style="{{ swatch_style }}" title="{{ value | escape }}"{% endif %}
+                            >
+                              {%- if is_color -%}<span class="visually-hidden">{{ value }}</span>{%- else -%}{{ value }}{%- endif -%}
+                            </a>
+                          {%- else -%}
                           <input
                             class="visually-hidden"
                             type="radio"
@@ -214,30 +227,12 @@
                             {%- endif -%}
                             <span class="visually-hidden k-pdp__oos-text"{% if value.available %} hidden{% endif %}>, {{ 'products.sold_out' | t }}</span>
                           </label>
+                          {%- endif -%}
                         {%- endfor -%}
                       </div>
                     </fieldset>
                   {%- endfor -%}
-                  <script type="application/json" data-variants>
-                    [
-                      {%- for v in product.variants -%}
-                        {
-                          "id": {{ v.id }},
-                          "options": {{ v.options | json }},
-                          "available": {{ v.available | json }},
-                          "price": {{ v.price | money | json }},
-                          "compare": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}null{% endif %},
-                          "unit": {% if v.unit_price_measurement %}{{ v.unit_price | money | append: ' / ' | append: v.unit_price_measurement.reference_unit | json }}{% else %}null{% endif %},
-                          "sku": {{ v.sku | json }},
-                          "save": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | minus: v.price | money | json }}{% else %}null{% endif %},
-                          "off": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | minus: v.price | times: 100 | divided_by: v.compare_at_price }}{% else %}0{% endif %},
-                          "qty": {% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity }}{% else %}null{% endif %},
-                          "title": {{ v.title | json }},
-                          "media": {% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %}
-                        }{% unless forloop.last %},{% endunless %}
-                      {%- endfor -%}
-                    ]
-                  </script>
+                  {%- render 'k-variant-json', product: product -%}
                 </k-variant-picker>
               {%- endunless -%}
 
@@ -280,6 +275,7 @@
                       </details>
                     {%- endif -%}
 
+                    <p class="k-pdp__pre k-label" data-preorder{% unless is_pre %} hidden{% endunless %}>{{ 'products.preorder_note' | t }}</p>
                     <div class="k-pdp__actions">
                       {%- if block.settings.show_quantity -%}
                         <div class="k-pdp__qty">
@@ -295,12 +291,15 @@
                         class="k-btn k-btn--primary k-btn--block k-pdp__atc"
                         data-atc
                         data-label-add="{{ 'products.add_to_cart' | t }}"
+                        data-label-preorder="{{ 'products.preorder' | t }}"
                         data-label-sold-out="{{ 'products.sold_out' | t }}"
                         data-label-unavailable="{{ 'products.unavailable' | t }}"
                         {% unless current_variant.available %}disabled{% endunless %}
                       >
                         <span data-atc-text>
-                          {%- if current_variant.available -%}
+                          {%- if current_variant.available and is_pre -%}
+                            {{ 'products.preorder' | t }} — {{ current_variant.price | money }}
+                          {%- elsif current_variant.available -%}
                             {{ 'products.add_to_cart' | t }} — {{ current_variant.price | money }}
                           {%- else -%}
                             {{ 'products.sold_out' | t }}
@@ -479,42 +478,7 @@
   .k-pdp__tax a { text-decoration: underline; text-underline-offset: 3px; }
   .k-pdp__desc, .k-pdp__text { max-width: 480px; font-size: 17px; line-height: 1.55; color: rgba(var(--color-text-rgb), 0.85); }
 
-  .k-pdp__options { display: flex; flex-direction: column; gap: 22px; }
-  .k-pdp__option { margin: 0; padding: 0; border: 0; min-width: 0; }
-  .k-pdp__option-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
-  .k-pdp__option legend { float: left; padding: 0; }
   .k-pdp__guide { text-decoration: underline; text-underline-offset: 3px; }
-  .k-pdp__values { clear: both; display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
-  .k-pdp__values--swatch { display: flex; flex-wrap: wrap; gap: 12px; }
-  .k-pdp__size {
-    display: grid; place-items: center;
-    min-height: 52px; padding: 0 10px;
-    border: 1.5px solid var(--color-line);
-    border-radius: calc(var(--radius-card) * 0.5);
-    font-weight: 600; font-size: 15px; text-align: center;
-    cursor: pointer;
-    transition: border-color var(--dur-fast), background-color var(--dur), color var(--dur);
-  }
-  .k-pdp__size:hover { border-color: var(--color-text); }
-  .k-pdp__swatch {
-    position: relative;
-    width: 44px; height: 44px;
-    border-radius: 999px;
-    background: var(--swatch, rgba(var(--color-text-rgb), 0.2));
-    background-size: cover; background-position: center;
-    box-shadow: inset 0 0 0 1px rgba(var(--color-text-rgb), 0.2);
-    cursor: pointer;
-    transition: transform var(--dur-fast), box-shadow var(--dur-fast);
-  }
-  .k-pdp__swatch:hover { transform: scale(1.08); }
-  input:checked + .k-pdp__size { background: var(--color-text); border-color: var(--color-text); color: var(--color-bg); }
-  input:checked + .k-pdp__swatch { box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-text); }
-  input:focus-visible + label { outline: 2px solid var(--color-accent); outline-offset: 3px; }
-  .k-pdp__size.is-unavailable { color: var(--color-muted); text-decoration: line-through; border-style: dashed; }
-  .k-pdp__swatch.is-unavailable::after {
-    content: ""; position: absolute; left: 50%; top: 6px; bottom: 6px; width: 1.5px;
-    background: var(--color-text); rotate: 45deg;
-  }
 
   .k-pdp__stock { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; font-weight: 600; }
   .k-pdp__stock i { width: 8px; height: 8px; border-radius: 999px; background: #1F7A4D; }
@@ -553,9 +517,7 @@
   .k-pdp__guide-body th { font-family: var(--font-label); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
 
   .k-pdp__buy { display: flex; flex-direction: column; gap: 10px; }
-  .k-pdp__form { display: flex; flex-direction: column; gap: 10px; }
   .k-pdp__actions { display: flex; flex-wrap: wrap; gap: 10px; }
-  .k-pdp__atc { flex: 1 1 240px; min-width: 0; min-height: 56px; padding: 0 18px; font-size: 16px; white-space: nowrap; }
   .k-pdp__qty { display: inline-flex; flex: none; align-items: center; min-height: 56px; border: 1.5px solid rgba(var(--color-text-rgb), 0.2); border-radius: 999px; }
   .k-pdp__qty button { width: 48px; height: 52px; border: 0; background: none; color: inherit; font: 500 18px var(--font-body); cursor: pointer; }
   .k-pdp__qty input { width: 36px; border: 0; background: none; color: inherit; font: 600 15px var(--font-body); text-align: center; -moz-appearance: textfield; }
@@ -569,9 +531,6 @@
   .k-pdp__dynamic .shopify-payment-button__button--unbranded:hover:not([disabled]) { background: var(--color-text); color: var(--color-bg); opacity: 0.88; }
   .k-pdp__dynamic .shopify-payment-button__more-options { margin-top: 10px; color: var(--color-text); font-size: 14px; text-decoration: underline; }
   .k-pdp__terms:empty { display: none; }
-  .k-pdp__plans { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; }
-  .k-pdp__plans legend { margin-bottom: 8px; }
-  .k-pdp__plan { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px; border: 1px solid var(--color-line); border-radius: calc(var(--radius-card) * 0.5); cursor: pointer; }
   .k-pdp__gift summary { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
   .k-pdp__gift-fields { display: grid; gap: 6px; padding-top: 8px; }
   .k-pdp__gift-fields input, .k-pdp__gift-fields textarea { min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-line); border-radius: calc(var(--radius-card) * 0.4); background: transparent; color: inherit; font: inherit; }

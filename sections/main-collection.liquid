@@ -145,7 +145,7 @@
           assign shown = paginate.current_offset | plus: collection.products.size
           assign progress = shown | times: 1.0 | divided_by: paginate.items
         -%}
-        <div class="k-col__more" data-more>
+        <div class="k-col__more" data-more{% if section.settings.paging == 'infinite' %} data-infinite{% endif %}>
           <p class="k-label" style="margin: 0;" data-more-label>{{ 'sections.collection.showing_count' | t: shown: shown, total: paginate.items }}</p>
           <div class="k-col__prog" aria-hidden="true"><i data-more-bar style="transform: scaleX({{ progress }});"></i></div>
           {%- if paginate.next -%}
@@ -366,11 +366,15 @@
           window.addEventListener('scroll', function () { peek.classList.remove('is-on'); }, { passive: true });
         }
 
-        // Show more: fetch the next page and append its products.
+        // Show more: fetch the next page and append its products. With
+        // "Load as you scroll" the same request fires as the button nears the viewport.
         var more = sec.querySelector('[data-more-link]');
         if (more && grid) {
-          more.addEventListener('click', function (e) {
-            e.preventDefault();
+          var busy = false;
+          var io = null;
+          var loadMore = function () {
+            if (busy || !more.isConnected) return;
+            busy = true;
             more.classList.add('k-loading');
             var url = new URL(more.href, location.href);
             url.searchParams.set('section_id', sec.closest('[id^="shopify-section-"]').id.replace('shopify-section-', ''));
@@ -385,10 +389,24 @@
               if (label && freshLabel) label.textContent = freshLabel.textContent;
               var bar = sec.querySelector('[data-more-bar]');
               if (bar) bar.style.transform = 'scaleX(' + Math.min(1, shown / total) + ')';
-              if (nextLink) { more.href = nextLink.href; more.classList.remove('k-loading'); }
-              else more.remove();
+              busy = false;
+              if (nextLink) {
+                more.href = nextLink.href;
+                more.classList.remove('k-loading');
+                if (io) { io.unobserve(more); io.observe(more); }
+              } else {
+                if (io) io.disconnect();
+                more.remove();
+              }
             }).catch(function () { window.location.href = more.href; });
-          });
+          };
+          more.addEventListener('click', function (e) { e.preventDefault(); loadMore(); });
+          if (sec.querySelector('[data-infinite]') && 'IntersectionObserver' in window) {
+            io = new IntersectionObserver(function (entries) {
+              if (entries.some(function (en) { return en.isIntersecting; })) loadMore();
+            }, { rootMargin: '600px 0px' });
+            io.observe(more);
+          }
         }
       });
     }
@@ -409,6 +427,7 @@
     { "type": "checkbox", "id": "show_image", "label": "Show collection image", "default": true },
     { "type": "header", "content": "Products" },
     { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 36, "step": 4, "default": 12 },
+    { "type": "select", "id": "paging", "label": "Loading more products", "options": [ { "value": "button", "label": "Show more button" }, { "value": "infinite", "label": "Load as you scroll" } ], "default": "button", "info": "The button stays visible as a fallback, and shoppers can still go to the previous page." },
     { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 4, "step": 1, "default": 3 },
     { "type": "select", "id": "default_layout", "label": "Default layout", "default": "grid", "options": [ { "value": "grid", "label": "Grid" }, { "value": "index", "label": "Index (large type rows)" } ] },
     { "type": "checkbox", "id": "show_density", "label": "Let customers change the layout", "default": true },

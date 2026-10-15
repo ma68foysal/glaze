@@ -448,9 +448,11 @@
           atcText.textContent = atc.dataset.labelSoldOut;
         } else {
           atc.disabled = false;
-          atcText.textContent = atc.dataset.labelAdd + ' — ' + v.price;
+          atcText.textContent = (v.pre && atc.dataset.labelPreorder ? atc.dataset.labelPreorder : atc.dataset.labelAdd) + ' — ' + v.price;
         }
       }
+      var pre = this.form && this.form.querySelector('[data-preorder]');
+      if (pre) pre.hidden = !(v && v.pre);
       if (!v) return;
 
       if (idInput) {
@@ -1013,3 +1015,88 @@
     }
   });
 }
+
+/* Quick view: links with data-quick-view open the product in the side dialog.
+   The content is the quick-view section, rendered by Shopify for that product. */
+(function () {
+  var dialog = document.querySelector('dialog[data-quick-view-dialog]');
+  if (!dialog || typeof dialog.showModal !== 'function') return;
+  var body = dialog.querySelector('[data-qv-body]');
+  var opener = null;
+  var seq = 0;
+
+  function load(href) {
+    var mine = ++seq;
+    var url = new URL(href, window.location.href);
+    url.searchParams.set('section_id', 'quick-view');
+    body.classList.add('is-loading');
+    if (!body.firstElementChild) body.innerHTML = '<div class="k-qv-dialog__skel" aria-hidden="true"><i></i><i></i></div>';
+    return fetch(url.toString(), { headers: { Accept: 'text/html' } })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function (html) {
+        if (mine !== seq) return;
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var root = doc.querySelector('[data-qv-root]');
+        if (!root) throw new Error('no quick view');
+        body.innerHTML = '';
+        body.appendChild(document.importNode(root, true));
+        body.classList.remove('is-loading');
+        var title = body.querySelector('h2[id]');
+        if (title) dialog.setAttribute('aria-labelledby', title.id);
+        var first = body.querySelector('[data-option-value]:checked, [data-atc]');
+        if (first) first.focus({ preventScroll: true });
+      });
+  }
+
+  function open(link) {
+    opener = link;
+    body.innerHTML = '';
+    dialog.showModal();
+    document.documentElement.classList.add('k-qv-lock');
+    if (window.lenis && typeof window.lenis.stop === 'function') window.lenis.stop();
+    load(link.href).catch(function () { window.location.href = link.href; });
+  }
+
+  function close() { if (dialog.open) dialog.close(); }
+
+  dialog.addEventListener('close', function () {
+    document.documentElement.classList.remove('k-qv-lock');
+    if (window.lenis && typeof window.lenis.start === 'function') window.lenis.start();
+    if (opener && document.contains(opener)) opener.focus({ preventScroll: true });
+  });
+
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[data-quick-view]');
+    if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    open(link);
+  });
+
+  dialog.addEventListener('click', function (e) {
+    if (e.target === dialog || e.target.closest('[data-qv-close]')) { close(); return; }
+    var swap = e.target.closest('a[data-qv-swap]');
+    if (swap) { e.preventDefault(); load(swap.href).catch(function () { window.location.href = swap.href; }); return; }
+    var thumb = e.target.closest('[data-qv-thumb]');
+    if (thumb) showMedia(thumb.dataset.qvThumb);
+  });
+
+  function showMedia(id) {
+    var thumb = body.querySelector('[data-qv-thumb="' + id + '"]');
+    var img = body.querySelector('[data-qv-main] img');
+    if (!thumb || !img) return;
+    img.removeAttribute('srcset');
+    img.src = thumb.dataset.src;
+    img.alt = thumb.dataset.alt || '';
+    body.querySelectorAll('[data-qv-thumb]').forEach(function (b) { b.setAttribute('aria-pressed', b === thumb ? 'true' : 'false'); });
+  }
+
+  // A variant with its own photo shows it.
+  dialog.addEventListener('mp:variant-change', function (e) {
+    var picker = e.target.closest('k-variant-picker');
+    var v = picker && picker.variants && picker.variants.find(function (x) { return x.id === e.detail.variantId; });
+    if (v && v.media) showMedia(v.media);
+  });
+
+  // Adding to the bag hands over to the cart drawer, so close the window first.
+  dialog.addEventListener('submit', function () { setTimeout(close, 0); });
+})();

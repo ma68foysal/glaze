@@ -115,6 +115,16 @@
       {% section 'cart-drawer' %}
     {%- endif -%}
 
+    {%- if settings.quick_view -%}
+      <dialog class="k-qv-dialog color-{{ settings.color_schemes.first.id | default: 'scheme-1' }}" data-quick-view-dialog aria-label="{{ 'general.quick_view_dialog' | t }}">
+        <div class="k-qv-dialog__head">
+          <span class="k-label">{{ 'general.quick_view_dialog' | t }}</span>
+          <button type="button" class="k-qv-dialog__close" data-qv-close aria-label="{{ 'general.close' | t }}">{% render 'k-icon', icon: 'close', size: 18 %}</button>
+        </div>
+        <div class="k-qv-dialog__body" data-qv-body></div>
+      </dialog>
+    {%- endif -%}
+
     {%- if settings.show_back_to_top -%}
       <button type="button" class="k-totop" data-back-to-top aria-label="{{ 'general.back_to_top' | t }}" tabindex="-1">
         <svg class="k-totop__ring" viewBox="0 0 56 56" aria-hidden="true" focusable="false"><circle cx="28" cy="28" r="26"/></svg>
