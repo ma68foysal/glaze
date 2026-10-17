@@ -99,7 +99,8 @@ says where the rebuild stands.
   address stays `skinova-hveyg6a1.myshopify.com`: use it for `--store` in CLI
   commands (the CLI's store auth is stored under it) and for admin login. It
   holds the fashion catalogue (10
-  collections, 12 products, vendor "Oblique"); the skincare products are Draft.
+  collections, 36 products with 4–6 photos each, vendor "Oblique"; 24 added on
+  2026-10-18, see `docs/demo-images.md`); the skincare products are Draft.
   The **"Oblique demo"** theme (ID 167169687792) carries the store image
   references; it was published as the live theme on 2026-10-16 (the old
   skinova-1-0-0 theme is kept unpublished). Publish with the Admin API
