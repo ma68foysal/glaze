@@ -3,19 +3,19 @@
 // Rendering response is not what the theme expects — i.e. a real fault worth
 // seeing in a merchant console. No verbose request tracing ships.
 function cwarn() {
-  var args = ['[skinova-cart]'].concat(Array.prototype.slice.call(arguments));
+  var args = ['[oblique-cart]'].concat(Array.prototype.slice.call(arguments));
   try { console.warn.apply(console, args); } catch (e) {}
 }
 
 /**
- * Skinova cart system — drawer + product-form ATC interceptor.
+ * Oblique cart system — drawer + product-form ATC interceptor.
  *
  * Custom elements:
- *   <skinova-cart-drawer>   — the drawer panel (open/close, focus trap, Escape, refresh)
- *   <skinova-cart-items>    — items wrapper, syncs across drawer + page when cart updates
- *   <skinova-cart-remove>   — wraps each line's remove button → quantity 0
- *   <skinova-cart-note>     — wraps the cart note textarea → debounced /cart/update.js
- *   <skinova-product-form>  — wraps the product page <form 'product'> → AJAX add to /cart/add.js
+ *   <oblique-cart-drawer>   — the drawer panel (open/close, focus trap, Escape, refresh)
+ *   <oblique-cart-items>    — items wrapper, syncs across drawer + page when cart updates
+ *   <oblique-cart-remove>   — wraps each line's remove button → quantity 0
+ *   <oblique-cart-note>     — wraps the cart note textarea → debounced /cart/update.js
+ *   <k-product-form>  — wraps the product page <form 'product'> → AJAX add to /cart/add.js
  *
  * Section Rendering API:
  *   On every cart mutation we POST `sections=cart-drawer,cart-icon-bubble` so
@@ -141,10 +141,10 @@ function cwarn() {
 
     if (sectionsObj['cart-drawer']) {
       // Absent when cart_type is "page" — no drawer is mounted by design.
-      var drawer = document.querySelector('skinova-cart-drawer');
+      var drawer = document.querySelector('oblique-cart-drawer');
       if (drawer) {
         var doc = new DOMParser().parseFromString(sectionsObj['cart-drawer'], 'text/html');
-        var freshDrawer = doc.querySelector('skinova-cart-drawer');
+        var freshDrawer = doc.querySelector('oblique-cart-drawer');
         if (freshDrawer) {
           drawer.innerHTML = freshDrawer.innerHTML;
           // Mirror the empty/non-empty class flag from the freshly rendered server HTML
@@ -152,7 +152,7 @@ function cwarn() {
           else drawer.classList.remove('is-empty');
           anySwapped = true;
         } else {
-          cwarn('cart-drawer section HTML had no <skinova-cart-drawer> element inside');
+          cwarn('cart-drawer section HTML had no <oblique-cart-drawer> element inside');
         }
       }
     }
@@ -182,10 +182,10 @@ function cwarn() {
   }
 
   // ----------------------------------------------------------------------
-  // <skinova-cart-drawer>
+  // <oblique-cart-drawer>
   // ----------------------------------------------------------------------
-  if (!customElements.get('skinova-cart-drawer')) {
-    customElements.define('skinova-cart-drawer', class SkinovaCartDrawer extends HTMLElement {
+  if (!customElements.get('oblique-cart-drawer')) {
+    customElements.define('oblique-cart-drawer', class ObliqueCartDrawer extends HTMLElement {
       connectedCallback() {
         this._releaseFocusTrap = null;
         this.bindCloseHandlers();
@@ -207,7 +207,7 @@ function cwarn() {
       }
       bindCloseHandlers() {
         var self = this;
-        this.querySelectorAll('[data-skinova-cart-close]').forEach(function (el) {
+        this.querySelectorAll('[data-oblique-cart-close]').forEach(function (el) {
           el.addEventListener('click', function (e) {
             // Don't intercept the empty-state "continue shopping" link's navigation
             if (el.tagName === 'A' && el.getAttribute('href')) {
@@ -222,11 +222,11 @@ function cwarn() {
       bindHeaderIconHijack() {
         // When in drawer mode, clicking the cart icon opens this drawer
         var anchor = document.getElementById('cart-icon-bubble');
-        if (!anchor || anchor.dataset.skinovaCartBound === '1') return;
-        anchor.dataset.skinovaCartBound = '1';
+        if (!anchor || anchor.dataset.obliqueCartBound === '1') return;
+        anchor.dataset.obliqueCartBound = '1';
         anchor.setAttribute('role', 'button');
         anchor.setAttribute('aria-haspopup', 'dialog');
-        anchor.setAttribute('aria-controls', 'skinova-cart-drawer');
+        anchor.setAttribute('aria-controls', 'oblique-cart-drawer');
         var self = this;
         anchor.addEventListener('click', function (e) {
           e.preventDefault();
@@ -248,7 +248,7 @@ function cwarn() {
           if (!btn) return;
           btn.classList.add('is-loading');
           addToCartUniversal(btn.getAttribute('data-k-drawer-add'), { openDrawer: false, source: 'drawer-look' })
-            .catch(function (err) { btn.classList.remove('is-loading'); console.error('[skinova-cart] look add failed', err); });
+            .catch(function (err) { btn.classList.remove('is-loading'); console.error('[oblique-cart] look add failed', err); });
         });
         this.addEventListener('change', function (e) {
           var box = e.target.closest('[data-k-gift-variant]');
@@ -265,11 +265,11 @@ function cwarn() {
                 body: JSON.stringify(Object.assign({ id: box.getAttribute('data-k-gift-key'), quantity: 0 }, common))
               });
           req.then(function (res) {
-            if (!applyCartSections(res.sections)) refreshSection('cart-drawer', 'skinova-cart-drawer');
+            if (!applyCartSections(res.sections)) refreshSection('cart-drawer', 'oblique-cart-drawer');
             publish('cart:update', { source: 'cart-items', data: res });
           }).catch(function (err) {
             box.disabled = false; box.checked = !box.checked;
-            console.error('[skinova-cart] gift wrap failed', err);
+            console.error('[oblique-cart] gift wrap failed', err);
           });
         });
       }
@@ -281,11 +281,11 @@ function cwarn() {
       }
       bindQuantityStepper() {
         var self = this;
-        this.querySelectorAll('[data-skinova-cart-qty-step]').forEach(function (btn) {
+        this.querySelectorAll('[data-oblique-cart-qty-step]').forEach(function (btn) {
           if (btn.dataset.bound === '1') return;
           btn.dataset.bound = '1';
           btn.addEventListener('click', function () {
-            var step = parseInt(btn.getAttribute('data-skinova-cart-qty-step'), 10);
+            var step = parseInt(btn.getAttribute('data-oblique-cart-qty-step'), 10);
             // getElementById tolerates colons + other special chars in IDs (cart item keys
             // are formatted like "62760579727731:2d7174f57f7e6281…" which break #id selectors).
             var input = document.getElementById(btn.getAttribute('data-target'));
@@ -324,10 +324,10 @@ function cwarn() {
       // Legacy code (featured-product, product-bundle, shoppable-tabs, sticky-collections)
       // calls document.querySelector('cart-drawer') and expects Dawn's API: getSectionsToRender(),
       // renderContents(data), setActiveElement(el). Exposing these aliases means the legacy
-      // sections find Skinova's drawer and work without modification.
+      // sections find Oblique's drawer and work without modification.
       getSectionsToRender() {
         return [
-          { id: 'cart-drawer', selector: 'skinova-cart-drawer' },
+          { id: 'cart-drawer', selector: 'oblique-cart-drawer' },
           { id: 'cart-icon-bubble' }
         ];
       }
@@ -344,10 +344,10 @@ function cwarn() {
   }
 
   // ----------------------------------------------------------------------
-  // <skinova-cart-items>
+  // <oblique-cart-items>
   // ----------------------------------------------------------------------
-  if (!customElements.get('skinova-cart-items')) {
-    customElements.define('skinova-cart-items', class SkinovaCartItems extends HTMLElement {
+  if (!customElements.get('oblique-cart-items')) {
+    customElements.define('oblique-cart-items', class ObliqueCartItems extends HTMLElement {
       connectedCallback() {
         this.onChange = debounce(this.handleChange.bind(this), 300);
         this.addEventListener('change', this.onChange);
@@ -356,19 +356,19 @@ function cwarn() {
       disconnectedCallback() { if (this._unsub) this._unsub(); }
       handleChange(e) {
         var input = e.target;
-        if (!input || !input.matches('[data-skinova-cart-qty-input]')) return;
+        if (!input || !input.matches('[data-oblique-cart-qty-input]')) return;
         var key = input.getAttribute('data-key');
         var qty = Math.max(0, parseInt(input.value, 10) || 0);
         this.updateLine(key, qty, input);
       }
       updateLine(key, quantity, sourceInput) {
         var self = this;
-        var isOnCartPage = !this.closest('skinova-cart-drawer');
+        var isOnCartPage = !this.closest('oblique-cart-drawer');
 
         // Find the item being mutated. Could be either the drawer-styled element
         // or the cart-page-styled element — both carry data-key.
         var item = sourceInput
-          ? sourceInput.closest('[data-cart-line], .skinova-cart__item')
+          ? sourceInput.closest('[data-cart-line], .oblique-cart__item')
           : this.querySelector('[data-key="' + key + '"]');
         if (item) item.classList.add('is-loading');
 
@@ -396,7 +396,7 @@ function cwarn() {
           if (isOnCartPage) return self.refreshCartPage(res);
         }).catch(function (err) {
           if (item) item.classList.remove('is-loading');
-          console.error('[skinova-cart] updateLine failed', err);
+          console.error('[oblique-cart] updateLine failed', err);
         }).finally(function () {
           clearTimeout(stuckTimer);
         });
@@ -408,14 +408,14 @@ function cwarn() {
           .then(function (r) { return r.text(); })
           .then(function (html) {
             var doc = new DOMParser().parseFromString(html, 'text/html');
-            // .skinova-cart__inner wraps both the populated form AND the empty state,
+            // .oblique-cart__inner wraps both the populated form AND the empty state,
             // so swapping it covers the transition when the user removes the last item.
-            var fresh = doc.querySelector('.skinova-cart__inner');
-            var current = document.querySelector('.skinova-cart__inner');
+            var fresh = doc.querySelector('.oblique-cart__inner');
+            var current = document.querySelector('.oblique-cart__inner');
             if (fresh && current) {
               current.innerHTML = fresh.innerHTML;
             } else {
-              cwarn('cart page swap: .skinova-cart__inner not found, reloading');
+              cwarn('cart page swap: .oblique-cart__inner not found, reloading');
               window.location.reload();
             }
           })
@@ -426,16 +426,16 @@ function cwarn() {
       refresh(payload) {
         // Skip our own publish so we don't refetch what we just rendered
         if (payload && payload.source === 'cart-items') return;
-        refreshSection('cart-drawer', 'skinova-cart-drawer');
+        refreshSection('cart-drawer', 'oblique-cart-drawer');
       }
     });
   }
 
   // ----------------------------------------------------------------------
-  // <skinova-cart-remove>
+  // <oblique-cart-remove>
   // ----------------------------------------------------------------------
-  if (!customElements.get('skinova-cart-remove')) {
-    customElements.define('skinova-cart-remove', class SkinovaCartRemove extends HTMLElement {
+  if (!customElements.get('oblique-cart-remove')) {
+    customElements.define('oblique-cart-remove', class ObliqueCartRemove extends HTMLElement {
       connectedCallback() {
         var self = this;
         var btn = this.querySelector('button');
@@ -443,7 +443,7 @@ function cwarn() {
         btn.addEventListener('click', function (e) {
           e.preventDefault();
           var key = self.getAttribute('data-key');
-          var items = self.closest('skinova-cart-items');
+          var items = self.closest('oblique-cart-items');
           // Add .is-loading to the item immediately so the user sees feedback before fetch
           var item = self.closest('[data-cart-line]');
           if (item) item.classList.add('is-loading');
@@ -454,10 +454,10 @@ function cwarn() {
   }
 
   // ----------------------------------------------------------------------
-  // <skinova-cart-note>
+  // <oblique-cart-note>
   // ----------------------------------------------------------------------
-  if (!customElements.get('skinova-cart-note')) {
-    customElements.define('skinova-cart-note', class SkinovaCartNote extends HTMLElement {
+  if (!customElements.get('oblique-cart-note')) {
+    customElements.define('oblique-cart-note', class ObliqueCartNote extends HTMLElement {
       connectedCallback() {
         var textarea = this.querySelector('textarea');
         if (!textarea) return;
@@ -473,15 +473,15 @@ function cwarn() {
   }
 
   // ----------------------------------------------------------------------
-  // <skinova-product-form>
+  // <k-product-form>
   // ----------------------------------------------------------------------
-  if (!customElements.get('skinova-product-form')) {
-    customElements.define('skinova-product-form', class SkinovaProductForm extends HTMLElement {
+  if (!customElements.get('k-product-form')) {
+    customElements.define('k-product-form', class KProductForm extends HTMLElement {
       connectedCallback() {
         this.form = this.querySelector('form');
         this.submitBtn = this.form ? this.form.querySelector('[type="submit"]') : null;
         if (!this.form) return;
-        this.cartMailbox = document.querySelector('skinova-cart-drawer');
+        this.cartMailbox = document.querySelector('oblique-cart-drawer');
         // Only intercept when drawer is mounted (cart_type == 'drawer')
         if (!this.cartMailbox) return;
         this.form.addEventListener('submit', this.onSubmit.bind(this));
@@ -522,7 +522,7 @@ function cwarn() {
             if (!flyToBag(self.submitBtn)) self.cartMailbox.open(self.submitBtn);
           })
           .catch(function (err) {
-            console.error('[skinova-cart] add failed', err);
+            console.error('[oblique-cart] add failed', err);
             // Fall back to a native form submit so the user still gets to /cart
             // with the line item added (or sees a Shopify error page).
             self.form.removeEventListener('submit', self.onSubmit.bind(self));
@@ -538,10 +538,10 @@ function cwarn() {
   // ----------------------------------------------------------------------
   // Universal add-to-cart helper — call from anywhere in the theme.
   //
-  //   SkinovaCart.addToCart(123456789)
-  //   SkinovaCart.addToCart(123456789, { quantity: 2, sourceButton: btn })
-  //   SkinovaCart.addToCart({ id: 123, quantity: 2, properties: {...} })
-  //   SkinovaCart.addToCart({ items: [{ id: 1, quantity: 1 }, { id: 2, quantity: 1 }] })
+  //   ObliqueCart.addToCart(123456789)
+  //   ObliqueCart.addToCart(123456789, { quantity: 2, sourceButton: btn })
+  //   ObliqueCart.addToCart({ id: 123, quantity: 2, properties: {...} })
+  //   ObliqueCart.addToCart({ items: [{ id: 1, quantity: 1 }, { id: 2, quantity: 1 }] })
   //
   // The items[] form adds every line in ONE /cart/add.js call. Prefer it over
   // chaining single adds: in page mode each call redirects to /cart, so a chain
@@ -596,7 +596,7 @@ function cwarn() {
 
   function addToCartUniversal(payload, options) {
     options = options || {};
-    var drawer = document.querySelector('skinova-cart-drawer');
+    var drawer = document.querySelector('oblique-cart-drawer');
     var sourceButton = options.sourceButton || null;
 
     var body;
@@ -639,7 +639,7 @@ function cwarn() {
 
         if (drawer) {
           if (data.sections) drawer.renderFromSections(data.sections);
-          else cwarn('SkinovaCart.addToCart: response missing sections — drawer will be stale until next refresh');
+          else cwarn('ObliqueCart.addToCart: response missing sections — drawer will be stale until next refresh');
 
           if (options.openDrawer !== false && flyToBag(sourceButton)) {
             drawer.classList.remove('is-empty');
@@ -654,19 +654,19 @@ function cwarn() {
           return data;
         }
 
-        publish('cart:update', { source: options.source || 'SkinovaCart.addToCart', data: data });
+        publish('cart:update', { source: options.source || 'ObliqueCart.addToCart', data: data });
         document.dispatchEvent(new CustomEvent('cart:refresh', { detail: data }));
         return data;
       });
   }
 
   // Expose API for other theme code.
-  window.SkinovaCart = {
+  window.ObliqueCart = {
     addToCart: addToCartUniversal,
     subscribe: subscribe,
     publish: publish,
     refreshSection: refreshSection,
     applyCartSections: applyCartSections,
-    getDrawer: function () { return document.querySelector('skinova-cart-drawer'); }
+    getDrawer: function () { return document.querySelector('oblique-cart-drawer'); }
   };
 })();

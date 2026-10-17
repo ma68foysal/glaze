@@ -6,10 +6,10 @@
   default storefront stays clean.
 
   Optional inputs:
-    class_prefix — root class for CSS scoping (default: 'skinova-localization').
+    class_prefix — root class for CSS scoping (default: 'oblique-localization').
 {%- endcomment -%}
 
-{%- assign cp = class_prefix | default: 'skinova-localization' -%}
+{%- assign cp = class_prefix | default: 'oblique-localization' -%}
 {%- comment -%} Same reason as contact-form: no filters inside a form tag. {%- endcomment -%}
 {%- assign form_class = cp | append: '__form' -%}
 

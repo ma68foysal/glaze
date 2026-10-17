@@ -3,7 +3,7 @@
  *
  * Small custom elements, one per interaction. Each one is idempotent so the
  * theme editor can re-render sections (shopify:section:load) without leaks.
- * Cart writes go through window.SkinovaCart (assets/cart.js).
+ * Cart writes go through window.ObliqueCart (assets/cart.js).
  */
 (function () {
   'use strict';
@@ -488,7 +488,7 @@
         if (skuValue) skuValue.textContent = v.sku || '';
       }
 
-      var save = this.section.querySelector('[data-save]');
+      var save = this.section.querySelector('[data-save-amount]');
       if (save) {
         save.hidden = !v.save;
         if (v.save) save.textContent = save.dataset.template.replace('[amount]', v.save);
@@ -536,11 +536,11 @@
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('[data-quick-add]');
     if (!btn || btn.disabled) return;
-    if (!window.SkinovaCart) return; // falls through to the product link
+    if (!window.ObliqueCart) return; // falls through to the product link
     e.preventDefault();
     btn.classList.add('k-loading');
     btn.setAttribute('aria-busy', 'true');
-    window.SkinovaCart.addToCart(btn.dataset.quickAdd, { quantity: 1, sourceButton: btn, source: 'quick-add' })
+    window.ObliqueCart.addToCart(btn.dataset.quickAdd, { quantity: 1, sourceButton: btn, source: 'quick-add' })
       .catch(function (err) {
         var msg = btn.parentElement.querySelector('[data-quick-add-error]');
         if (msg) { msg.textContent = err.message; msg.hidden = false; }

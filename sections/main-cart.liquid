@@ -26,7 +26,7 @@
 -%}
 
 <section id="{{ section_id }}" class="k-cart k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
-  <div class="k-wrap skinova-cart__inner">
+  <div class="k-wrap oblique-cart__inner">
     <header class="k-cart__head">
       <h1 class="k-cart__title">{{ section.settings.heading }}</h1>
       <div class="k-cart__head-meta">
@@ -69,10 +69,10 @@
             <span></span>
           </div>
 
-          <skinova-cart-items>
+          <oblique-cart-items>
             <ul class="k-cart__items" role="list">
               {%- for item in cart.items -%}
-                <li class="k-cart__line skinova-cart__item" data-key="{{ item.key }}">
+                <li class="k-cart__line oblique-cart__item" data-key="{{ item.key }}">
                   <div class="k-cart__product">
                     <a class="k-cart__img" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
                       {%- if item.image -%}
@@ -139,7 +139,7 @@
                       value="{{ item.quantity }}"
                       min="0"
                       inputmode="numeric"
-                      data-skinova-cart-qty-input
+                      data-oblique-cart-qty-input
                       data-key="{{ item.key }}"
                     >
                     <button type="button" aria-label="{{ 'cart.qty_increase' | t }}" data-cart-step="1" data-target="updates_{{ item.key }}">+</button>
@@ -152,15 +152,15 @@
                     <span>{{ item.final_line_price | money }}</span>
                   </div>
 
-                  <skinova-cart-remove data-key="{{ item.key }}">
+                  <oblique-cart-remove data-key="{{ item.key }}">
                     <button type="button" class="k-cart__remove" aria-label="{{ 'cart.remove_aria' | t: title: item.product.title }}">
                       {%- render 'k-icon', icon: 'close', size: 18 -%}
                     </button>
-                  </skinova-cart-remove>
+                  </oblique-cart-remove>
                 </li>
               {%- endfor -%}
             </ul>
-          </skinova-cart-items>
+          </oblique-cart-items>
 
           {%- if section.settings.show_note or gift_variant or section.settings.info_heading != blank -%}
             <div class="k-cart__extras">
@@ -270,7 +270,7 @@
     if (!section || section.dataset.bound) return;
     section.dataset.bound = '1';
     var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
-    var items = function () { return section.querySelector('skinova-cart-items'); };
+    var items = function () { return section.querySelector('oblique-cart-items'); };
     var refresh = function () {
       var el = items();
       if (el && el.refreshCartPage) return el.refreshCartPage();

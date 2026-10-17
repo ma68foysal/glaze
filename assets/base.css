@@ -1,5 +1,5 @@
 /**
- * Skinova base.css — global design system, utilities, and shared components.
+ * Oblique base.css — global design system, utilities, and shared components.
  *
  * Loaded once in layout/theme.liquid after critical.css. Every per-section
  * {% stylesheet %} block loads AFTER this file, so sections can override
@@ -15,9 +15,9 @@
  *   6. Visibility helpers (visually-hidden, .hidden, responsive hide)
  *   7. Links
  *   8. Skip-to-content (enhanced)
- *   9. Button system (.skinova-btn family)
- *  10. Product card system (.skinova-pcard family)
- *  11. Form field system (.skinova-field)
+ *   9. Button system (.oblique-btn family)
+ *  10. Product card system (.oblique-pcard family)
+ *  11. Form field system (.oblique-field)
  *  12. Pagination
  *  13. RTE / prose content
  *  14. Lists / table base
@@ -168,7 +168,7 @@ a:not([href]) { cursor: not-allowed; }
 /* ========================================================================
    9. Button system
    ======================================================================== */
-.skinova-btn {
+.oblique-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -188,22 +188,22 @@ a:not([href]) { cursor: not-allowed; }
   box-sizing: border-box;
   user-select: none;
 }
-.skinova-btn:focus-visible {
+.oblique-btn:focus-visible {
   outline: 2px solid var(--g-rose);
   outline-offset: 2px;
 }
-.skinova-btn:disabled,
-.skinova-btn[aria-disabled="true"] {
+.oblique-btn:disabled,
+.oblique-btn[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
 }
-.skinova-btn--solid {
+.oblique-btn--solid {
   background: var(--g-ink);
   color: #ffffff;
   border-color: var(--g-ink);
 }
-.skinova-btn--solid:hover { filter: brightness(1.08); }
+.oblique-btn--solid:hover { filter: brightness(1.08); }
 
 input[type="checkbox"],
 input[type="radio"] {
@@ -215,7 +215,7 @@ input[type="radio"] {
    12. Pagination
    ======================================================================== */
 .pagination,
-.skinova-pagination {
+.oblique-pagination {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
@@ -226,8 +226,8 @@ input[type="radio"] {
 }
 .pagination a,
 .pagination span,
-.skinova-pagination a,
-.skinova-pagination span {
+.oblique-pagination a,
+.oblique-pagination span {
   min-width: var(--g-touch);
   min-height: var(--g-touch);
   padding: 0 12px;
@@ -242,14 +242,14 @@ input[type="radio"] {
   transition: background var(--duration-short) ease, color var(--duration-short) ease;
 }
 .pagination a:hover,
-.skinova-pagination a:hover { background: var(--g-card-bg); }
+.oblique-pagination a:hover { background: var(--g-card-bg); }
 .pagination .page.current,
-.skinova-pagination .page.current {
+.oblique-pagination .page.current {
   background: var(--g-ink);
   color: #ffffff;
 }
 .pagination a:focus-visible,
-.skinova-pagination a:focus-visible {
+.oblique-pagination a:focus-visible {
   outline: 2px solid var(--g-rose);
   outline-offset: 2px;
 }
@@ -400,7 +400,7 @@ summary:focus-visible {
   border: 2px solid rgba(0, 0, 0, 0.15);
   border-top-color: var(--g-ink);
   border-radius: 50%;
-  animation: skinova-spin 0.7s linear infinite;
+  animation: oblique-spin 0.7s linear infinite;
   z-index: 2;
 }
 
@@ -446,7 +446,7 @@ a.is-loading::after {
   border: 2px solid rgba(255, 255, 255, 0.25) !important;
   border-top-color: #ffffff !important;
   border-radius: 50% !important;
-  animation: skinova-spin 0.7s linear infinite !important;
+  animation: oblique-spin 0.7s linear infinite !important;
   z-index: 10 !important;
   display: block !important;
   opacity: 1 !important;
@@ -479,18 +479,18 @@ a.is-loading::after {
 /* ========================================================================
    19. Animation primitives + reduced-motion handling
    ======================================================================== */
-@keyframes skinova-spin {
+@keyframes oblique-spin {
   to { transform: rotate(360deg); }
 }
-@keyframes skinova-fade-in {
+@keyframes oblique-fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-@keyframes skinova-slide-up {
+@keyframes oblique-slide-up {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes skinova-slide-down {
+@keyframes oblique-slide-down {
   from { opacity: 0; transform: translateY(-12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
@@ -584,14 +584,14 @@ a.is-loading::after {
 
 /* Parallax — native CSS scroll-driven animations where supported. The JS
    path (--parallax-progress) is reserved for browsers that lack
-   `animation-timeline: view()`, which Skinova leaves as a graceful no-op. */
+   `animation-timeline: view()`, which Oblique leaves as a graceful no-op. */
 @supports (animation-timeline: view()) {
   [data-parallax] {
-    animation: skinova-parallax linear both;
+    animation: oblique-parallax linear both;
     animation-timeline: view();
     animation-range: cover 0% cover 100%;
   }
-  @keyframes skinova-parallax {
+  @keyframes oblique-parallax {
     from { transform: translate3d(0, calc(var(--parallax-strength, 60) * -1px), 0); }
     to   { transform: translate3d(0, calc(var(--parallax-strength, 60) *  1px), 0); }
   }
@@ -599,28 +599,28 @@ a.is-loading::after {
 @media (prefers-reduced-motion: reduce) {
   [data-parallax] { animation: none !important; transform: none !important; }
 }
-@keyframes skinova-hero-kenburns {
+@keyframes oblique-hero-kenburns {
   from { transform: scale(1); }
   to   { transform: scale(1.06); }
 }
-@keyframes skinova-hero-progress {
+@keyframes oblique-hero-progress {
   from { transform: translateX(-100%); }
   to   { transform: translateX(0); }
 }
 
-@keyframes skinova-mq-scroll {
+@keyframes oblique-mq-scroll {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
 
-@keyframes skinova-hti-in {
+@keyframes oblique-hti-in {
   to { opacity: 1; transform: translateY(0); }
 }
-@keyframes skinova-st-panel-in {
+@keyframes oblique-st-panel-in {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes skinova-fp-panel-in {
+@keyframes oblique-fp-panel-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
@@ -631,8 +631,8 @@ a.is-loading::after {
 @media print {
   .skip-to-content,
   predictive-search,
-  .skinova-drawer,
-  .skinova-search-toggle,
+  .oblique-drawer,
+  .oblique-search-toggle,
   header,
   footer { display: none !important; }
 

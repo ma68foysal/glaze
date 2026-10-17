@@ -101,7 +101,7 @@ body {
   color: var(--color-foreground);
 }
 
-/** Section layout — sections are full-bleed by default (the Skinova convention).
+/** Section layout — sections are full-bleed by default (the Oblique convention).
  *  Each section handles its own internal max-width + side-padding via
  *  --page-width / --page-margin tokens set in snippets/css-variables.liquid
  *  from theme settings. The legacy `.full-width` utility is left as a no-op
@@ -115,7 +115,7 @@ body {
 
 /* Optional helper: constrain children to the theme's max-page width.
    Sections opt in by wrapping content with this class. */
-.skinova-container {
+.oblique-container {
   max-width: var(--page-width, 1440px);
   margin-left: auto;
   margin-right: auto;

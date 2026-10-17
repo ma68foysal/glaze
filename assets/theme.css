@@ -650,7 +650,7 @@ input:focus-visible + .k-col__pill, input:focus-visible + .k-col__swatch { outli
 [data-ink="mono"] :is(.k-media, .k-card__media) img { filter: grayscale(1) contrast(1.06); }
 [data-ink="duotone"] :is(.k-media, .k-card__media) img { filter: url(#k-duotone) contrast(1.04); }
 [data-ink] :is(.k-card:hover, a:hover, .k-media:hover, .k-card__media:hover) img,
-[data-ink] :is(.k-pdp, .k-cart, skinova-cart-drawer, .k-pdp__bar, .k-ps__thumb, .k-cart__img) img { filter: none; }
+[data-ink] :is(.k-pdp, .k-cart, oblique-cart-drawer, .k-pdp__bar, .k-ps__thumb, .k-cart__img) img { filter: none; }
 
 [data-grain] :is(.k-media, .k-card__media)::after {
   content: ""; position: absolute; inset: -50%; z-index: 1; pointer-events: none;
@@ -658,7 +658,7 @@ input:focus-visible + .k-col__pill, input:focus-visible + .k-col__swatch { outli
   opacity: 0.16; mix-blend-mode: overlay;
   animation: k-grain 1.2s steps(6) infinite;
 }
-[data-grain] :is(.k-pdp, .k-cart, skinova-cart-drawer, .k-ps) :is(.k-media, .k-card__media)::after { content: none; }
+[data-grain] :is(.k-pdp, .k-cart, oblique-cart-drawer, .k-ps) :is(.k-media, .k-card__media)::after { content: none; }
 @keyframes k-grain {
   0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-4%, 3%); } 40% { transform: translate(3%, -5%); }
   60% { transform: translate(-6%, 2%); } 80% { transform: translate(5%, 4%); }

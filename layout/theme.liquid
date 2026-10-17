@@ -171,7 +171,7 @@
 
             // Pause/resume around modals + drawers
             function refreshLockedState() {
-              const hasOpen = document.querySelector('predictive-search[open], .skinova-drawer.is-open, dialog[open]');
+              const hasOpen = document.querySelector('predictive-search[open], .oblique-drawer.is-open, dialog[open]');
               if (hasOpen) { lenis.stop(); } else { lenis.start(); }
             }
             const mo = new MutationObserver(refreshLockedState);

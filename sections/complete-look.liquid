@@ -247,11 +247,11 @@
       }
       add() {
         var list = this.chosen().filter(function (x) { return !x.opt.disabled; });
-        if (!list.length || !window.SkinovaCart) return;
+        if (!list.length || !window.ObliqueCart) return;
         var err = this.querySelector('[data-ctl-error]');
         err.hidden = true;
         this.btn.classList.add('k-loading');
-        window.SkinovaCart.addToCart({ items: list.map(function (x) { return { id: x.id, quantity: 1 }; }) }, { sourceButton: this.btn, source: 'complete-look' })
+        window.ObliqueCart.addToCart({ items: list.map(function (x) { return { id: x.id, quantity: 1 }; }) }, { sourceButton: this.btn, source: 'complete-look' })
           .catch(function (e) { err.textContent = e.message; err.hidden = false; })
           .finally(() => { this.btn.classList.remove('k-loading'); });
       }

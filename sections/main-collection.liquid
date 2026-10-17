@@ -177,15 +177,15 @@
   .k-col { --pt: 0.2; }
   .k-col__crumbs { display: flex; flex-wrap: wrap; gap: 10px; color: var(--color-muted); }
   .k-col__crumbs a:hover { color: var(--color-text); }
-  .k-col__hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 48px; align-items: end; padding: 28px 0 36px; }
+  .k-col__hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 48px; align-items: end; padding: 28px 0 36px; }
+  .k-col__hero:not(:has(.k-col__intro)) { grid-template-columns: minmax(0, 1fr); }
   .k-col__title {
     margin: 0;
     font-family: var(--font-heading);
     font-weight: var(--font-heading-weight-black);
-    grid-column: 1 / -1;
     /* Sized so the longest common single words (Accessories, Bestsellers) fit whole at every width;
        longer titles wrap between words. */
-    font-size: calc(clamp(40px, 9.2vw, 150px) * var(--heading-scale));
+    font-size: calc(clamp(40px, 7.2vw, 120px) * var(--heading-scale));
     line-height: 0.86;
     letter-spacing: -0.04em;
     overflow-wrap: break-word;
@@ -199,8 +199,11 @@
     font: 600 18px var(--font-body); letter-spacing: 0;
     vertical-align: super;
   }
-  .k-col__intro { display: flex; flex-direction: column; gap: 18px; padding-bottom: 10px; }
-  .k-col__image { width: min(240px, 50%); aspect-ratio: 4 / 5; border-radius: calc(var(--radius-card) * 0.25); }
+  .k-col__intro { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px 20px; align-items: end; width: min(440px, 100%); padding-bottom: 10px; }
+  .k-col__intro:has(.k-col__image) { grid-template-columns: 150px minmax(0, 1fr); }
+  .k-col__intro > :not(.k-col__image) { grid-column: -2 / -1; }
+  .k-col__intro .k-lead { font-size: 16px; }
+  .k-col__image { grid-row: 1 / span 3; width: 100%; aspect-ratio: 4 / 5; border-radius: calc(var(--radius-card) * 0.25); }
   .k-col__subs { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 28px; }
   .k-col__subs .k-chip[aria-current] { background: var(--color-text); color: var(--color-bg); }
   .k-col__sub-n { font-family: var(--font-label); font-size: 11px; opacity: 0.7; }

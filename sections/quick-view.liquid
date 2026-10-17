@@ -3,7 +3,7 @@
   (/products/<handle>?section_id=quick-view) and shows it in the
   <dialog data-quick-view> from layout/theme.liquid.
 
-  It reuses the product page's <k-variant-picker> and <skinova-product-form>,
+  It reuses the product page's <k-variant-picker> and <k-product-form>,
   so variant matching, pre-order labels and adding to the bag behave the same.
   Combined listings: option values that belong to a sibling product render as
   links, and theme.js loads the sibling into the same window.
@@ -124,7 +124,7 @@
     {%- if qv_drop -%}
       <p class="k-pdp__pre k-label">{% render 'k-icon', icon: 'lock', size: 14 %} {{ 'products.drop.opens' | t: date: qv_drop_day }}</p>
     {%- endif -%}
-    <skinova-product-form{% if qv_drop %} hidden{% endif %}>
+    <k-product-form{% if qv_drop %} hidden{% endif %}>
       {%- form 'product', product, id: form_id, novalidate: 'novalidate', class: 'k-pdp__form' -%}
         <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id-input>
         {%- if product.selling_plan_groups.size > 0 -%}
@@ -163,7 +163,7 @@
           </span>
         </button>
       {%- endform -%}
-    </skinova-product-form>
+    </k-product-form>
 
     <a class="k-qv__more" href="{{ current_variant.url | default: product.url }}">{{ 'products.view_details' | t }}</a>
   </div>

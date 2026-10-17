@@ -150,7 +150,7 @@
             var single = p.variants.length === 1;
             if (single && p.variants[0].available) {
               shop.setAttribute('role', 'button');
-              shop.addEventListener('click', (e) => { e.preventDefault(); window.SkinovaCart && window.SkinovaCart.addToCart(p.variants[0].id, { sourceButton: shop, source: 'moodboard' }); });
+              shop.addEventListener('click', (e) => { e.preventDefault(); window.ObliqueCart && window.ObliqueCart.addToCart(p.variants[0].id, { sourceButton: shop, source: 'moodboard' }); });
             } else if (p.available && document.querySelector('dialog[data-quick-view-dialog]')) {
               shop.setAttribute('data-quick-view', '');
               shop.setAttribute('aria-haspopup', 'dialog');
@@ -185,7 +185,7 @@
           return;
         }
         btn.classList.add('k-loading');
-        window.SkinovaCart.addToCart({ items: items }, { sourceButton: btn, source: 'moodboard' })
+        window.ObliqueCart.addToCart({ items: items }, { sourceButton: btn, source: 'moodboard' })
           .finally(function () { btn.classList.remove('k-loading'); });
       }
     });

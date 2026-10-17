@@ -2,12 +2,12 @@
   Cart drawer: slides in from the right when cart_type == 'drawer'.
   Rendered once per page from layout/theme.liquid. The Section Rendering API
   refetches this section after every cart change and swaps the inner HTML of
-  <skinova-cart-drawer>, so nothing here is patched by hand.
+  <oblique-cart-drawer>, so nothing here is patched by hand.
 
   Hooks cart.js relies on (keep them when restyling):
-  - <skinova-cart-drawer>, [data-drawer-panel], [data-drawer-close], [data-skinova-cart-close]
-  - <skinova-cart-items> with [data-skinova-cart-qty-input] and [data-skinova-cart-qty-step]
-  - [data-cart-line] on each line (gets .is-loading), <skinova-cart-remove>, <skinova-cart-note>
+  - <oblique-cart-drawer>, [data-drawer-panel], [data-drawer-close], [data-oblique-cart-close]
+  - <oblique-cart-items> with [data-oblique-cart-qty-input] and [data-oblique-cart-qty-step]
+  - [data-cart-line] on each line (gets .is-loading), <oblique-cart-remove>, <oblique-cart-note>
   - [data-k-drawer-add] (Complete the look), [data-k-gift-variant] (gift wrap)
 {%- endcomment -%}
 {%- liquid
@@ -37,22 +37,22 @@
   assign look_limit = section.settings.look_limit
 -%}
 
-<skinova-cart-drawer
-  id="skinova-cart-drawer"
+<oblique-cart-drawer
+  id="oblique-cart-drawer"
   class="k-drawer{% if cart.item_count == 0 %} is-empty{% endif %}"
   role="dialog"
   aria-modal="true"
   aria-labelledby="k-drawer-title"
   aria-hidden="true"
 >
-  <div class="k-drawer__scrim" data-skinova-cart-close aria-hidden="true"></div>
+  <div class="k-drawer__scrim" data-oblique-cart-close aria-hidden="true"></div>
   <aside class="k-drawer__panel color-{{ section.settings.color_scheme | default: 'scheme-1' }}" tabindex="-1" data-drawer-panel>
     <header class="k-drawer__head">
       <h2 id="k-drawer-title" class="k-drawer__title">
         {{ 'cart.drawer_title' | t }}
         {%- if cart.item_count > 0 %} <span class="k-drawer__count">({{ cart.item_count }})</span>{%- endif -%}
       </h2>
-      <button type="button" class="k-drawer__close" data-drawer-close data-skinova-cart-close aria-label="{{ 'general.close' | t }}">
+      <button type="button" class="k-drawer__close" data-drawer-close data-oblique-cart-close aria-label="{{ 'general.close' | t }}">
         {% render 'k-icon', icon: 'close', size: 18 %}
       </button>
     </header>
@@ -61,14 +61,14 @@
       {%- if cart.item_count == 0 -%}
         <div class="k-drawer__empty">
           <p class="k-drawer__empty-title">{{ 'cart.drawer_empty' | t }}</p>
-          <a class="k-btn k-btn--secondary" href="{{ routes.all_products_collection_url }}" data-skinova-cart-close>
+          <a class="k-btn k-btn--secondary" href="{{ routes.all_products_collection_url }}" data-oblique-cart-close>
             <span>{{ 'cart.continue_shopping' | t }}</span>
           </a>
         </div>
       {%- else -%}
         {%- render 'k-free-shipping', style: 'line' -%}
 
-        <skinova-cart-items class="k-drawer__items">
+        <oblique-cart-items class="k-drawer__items">
           <form action="{{ routes.cart_url }}" method="post" id="k-drawer-form" novalidate>
             <ul class="k-drawer__list" role="list">
               {%- for item in cart.items -%}
@@ -103,7 +103,7 @@
                     {%- endif -%}
                     <div class="k-drawer__qty">
                       <label for="k-drawer-qty-{{ item.key }}" class="visually-hidden">{{ 'cart.qty_label' | t: title: item.product.title | escape }}</label>
-                      <button type="button" aria-label="{{ 'cart.qty_decrease' | t }}" data-skinova-cart-qty-step="-1" data-target="k-drawer-qty-{{ item.key }}">−</button>
+                      <button type="button" aria-label="{{ 'cart.qty_decrease' | t }}" data-oblique-cart-qty-step="-1" data-target="k-drawer-qty-{{ item.key }}">−</button>
                       <input
                         type="number"
                         id="k-drawer-qty-{{ item.key }}"
@@ -111,11 +111,11 @@
                         value="{{ item.quantity }}"
                         min="0"
                         inputmode="numeric"
-                        data-skinova-cart-qty-input
+                        data-oblique-cart-qty-input
                         data-index="{{ forloop.index }}"
                         data-key="{{ item.key }}"
                       >
-                      <button type="button" aria-label="{{ 'cart.qty_increase' | t }}" data-skinova-cart-qty-step="1" data-target="k-drawer-qty-{{ item.key }}">+</button>
+                      <button type="button" aria-label="{{ 'cart.qty_increase' | t }}" data-oblique-cart-qty-step="1" data-target="k-drawer-qty-{{ item.key }}">+</button>
                     </div>
                   </div>
                   <div class="k-drawer__end">
@@ -125,9 +125,9 @@
                       {%- endif -%}
                       {{ item.final_line_price | money }}
                     </span>
-                    <skinova-cart-remove data-key="{{ item.key }}" data-index="{{ forloop.index }}">
+                    <oblique-cart-remove data-key="{{ item.key }}" data-index="{{ forloop.index }}">
                       <button type="button" class="k-drawer__remove" aria-label="{{ 'cart.remove_aria' | t: title: item.product.title | escape }}">{{ 'cart.remove' | t }}</button>
-                    </skinova-cart-remove>
+                    </oblique-cart-remove>
                   </div>
                 </li>
               {%- endfor -%}
@@ -140,7 +140,7 @@
               </ul>
             {%- endif -%}
           </form>
-        </skinova-cart-items>
+        </oblique-cart-items>
       {%- endif -%}
 
       {%- if look_count > 0 and look_limit > 0 -%}
@@ -195,10 +195,10 @@
         {%- if settings.show_cart_note -%}
           <details class="k-drawer__note">
             <summary>{{ 'cart.note_toggle' | t }}<span aria-hidden="true">+</span></summary>
-            <skinova-cart-note>
+            <oblique-cart-note>
               <label for="k-drawer-note" class="k-label">{{ 'cart.notes_label' | t }}</label>
               <textarea id="k-drawer-note" form="k-drawer-form" name="note" rows="3" placeholder="{{ 'cart.note_placeholder' | t }}">{{ cart.note }}</textarea>
-            </skinova-cart-note>
+            </oblique-cart-note>
           </details>
         {%- endif -%}
       {%- endif -%}
@@ -229,7 +229,7 @@
       </footer>
     {%- endif -%}
   </aside>
-</skinova-cart-drawer>
+</oblique-cart-drawer>
 
 {% stylesheet %}
   .k-drawer { position: fixed; inset: 0; z-index: 9000; visibility: hidden; pointer-events: none; transition: visibility 0s linear 0.55s; }

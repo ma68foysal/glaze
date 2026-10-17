@@ -25,8 +25,9 @@ says where the rebuild stands.
   sections, the product page and related products. Every remaining page uses
   colour schemes.
 - **New code conventions:** `assets/theme.css` and `assets/theme.js` hold the
-  design system; new classes use the `k-` prefix. Old `skinova-*` classes and
-  `window.Skinova` stay until their sections are rebuilt or deleted.
+  design system; new classes use the `k-` prefix. The old Skinova names were
+  renamed on 2026-10-17 (`oblique-cart-*` elements, `window.ObliqueCart`,
+  `<k-product-form>`); no "skinova" is left in theme code except the manual URL.
 - **Rebuilt to the canvas:** home, collection, product (thumbnails gallery,
   details hotspots, story with steps, recently viewed, sticky add-to-bag),
   cart, contact, blog and article, search (with faceted filters) and 404.

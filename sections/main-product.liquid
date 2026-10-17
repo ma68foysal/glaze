@@ -145,7 +145,7 @@
                       endif
                       assign saved_money = saved | money
                     -%}
-                    <span class="k-pdp__save k-label" data-save data-template="{{ 'products.save_amount' | t: amount: '[amount]' | escape }}"{% if saved == 0 %} hidden{% endif %}>{{ 'products.save_amount' | t: amount: saved_money }}</span>
+                    <span class="k-pdp__save k-label" data-save-amount data-template="{{ 'products.save_amount' | t: amount: '[amount]' | escape }}"{% if saved == 0 %} hidden{% endif %}>{{ 'products.save_amount' | t: amount: saved_money }}</span>
                   {%- endif -%}
                 </div>
                 {%- if block.settings.show_tax_note -%}
@@ -254,7 +254,7 @@
                 {%- if drop_locked -%}
                   {%- render 'k-pdp-drop', product: product, drop_iso: drop_iso, form_id: form_id -%}
                 {%- endif -%}
-                <skinova-product-form{% if drop_locked %} data-unlock-target="{{ form_id }}" hidden{% endif %}>
+                <k-product-form{% if drop_locked %} data-unlock-target="{{ form_id }}" hidden{% endif %}>
                   {%- form 'product', product, id: form_id, novalidate: 'novalidate', class: 'k-pdp__form' -%}
                     <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id-input>
 
@@ -329,7 +329,7 @@
                     {%- endif -%}
                     <div class="k-pdp__terms">{{ form | payment_terms }}</div>
                   {%- endform -%}
-                </skinova-product-form>
+                </k-product-form>
                 {%- render 'pickup-availability', current_variant: current_variant, section: section, product: product -%}
               </div>
 
