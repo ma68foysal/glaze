@@ -50,7 +50,7 @@
     letter-spacing: -0.04em;
     text-transform: uppercase;
   }
-  .k-news__outline { display: block; color: transparent; -webkit-text-stroke: 1.5px var(--color-text); }
+  .k-news__outline { display: block; color: var(--color-accent); } /* solid accent instead of outline-only text, for contrast */
   .k-news__solid { display: block; color: var(--color-accent); }
   @supports (animation-timeline: view()) {
     .js .k-news__h { animation: k-news-skew linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }

@@ -17,7 +17,7 @@
       <div class="k-popup__body">
         <button type="button" class="k-icon-btn k-popup__close" data-popup-close aria-label="{{ 'general.close' | t }}">{% render 'k-icon', icon: 'close', size: 22 %}</button>
         {%- if section.settings.label != blank -%}<p class="k-label k-muted">{{ section.settings.label }}</p>{%- endif -%}
-        <h2 class="k-popup__title" id="{{ section.id }}-title">{{ section.settings.heading }}</h2>
+        <h2 class="k-popup__title" id="{{ section.id }}-title">{{ section.settings.heading | default: 'general.newsletter_form.subscribe' | t }}</h2>
         {%- if section.settings.text != blank -%}<div class="k-rte k-muted k-popup__text">{{ section.settings.text }}</div>{%- endif -%}
         {%- form 'customer', id: form_id, class: 'k-popup__form' -%}
           <input type="hidden" name="contact[tags]" value="newsletter,popup">
@@ -64,7 +64,12 @@
         if (this.seen()) return;
         // Not over a product page on phones, where it would cover the buy button.
         if (this.hasAttribute('data-product') && window.matchMedia('(max-width: 900px)').matches) return;
-        setTimeout(() => this.open(), (parseInt(this.dataset.delay, 10) || 8) * 1000);
+        // Shown once per visitor: only after the delay AND a real scroll, never on a first glance.
+        var ready = false, scrolled = false;
+        var tryOpen = () => { if (ready && scrolled) { window.removeEventListener('scroll', onScroll); this.open(); } };
+        var onScroll = () => { if (window.scrollY > window.innerHeight * 0.4) { scrolled = true; tryOpen(); } };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        setTimeout(() => { ready = true; onScroll(); tryOpen(); }, (parseInt(this.dataset.delay, 10) || 8) * 1000);
       }
       seen() {
         try { var until = parseInt(localStorage.getItem(this.key), 10); return until && Date.now() < until; } catch (e) { return false; }
@@ -75,6 +80,8 @@
       }
       open() {
         if (this.dialog.open || document.querySelector('dialog[open]')) return;
+        // Counted as seen the moment it opens, so leaving without closing it doesn't bring it back on the next page.
+        if (!(window.Shopify && window.Shopify.designMode)) this.remember();
         this.dialog.showModal();
       }
       close() {
@@ -128,7 +135,7 @@
   "tag": "div",
   "class": "k-popup-section",
   "settings": [
-    { "type": "paragraph", "content": "Opens once per visitor after the delay. Never shown on the cart or over product pages on phones. Select the section to preview it." },
+    { "type": "paragraph", "content": "Opens once per visitor, after the delay and once they have scrolled. Never shown on the cart or over product pages on phones. Select the section to preview it." },
     { "type": "range", "id": "delay", "label": "Delay", "min": 2, "max": 30, "step": 1, "unit": "s", "default": 8 },
     { "type": "range", "id": "days", "label": "Show again after", "min": 1, "max": 60, "step": 1, "unit": "d", "default": 14 },
     { "type": "image_picker", "id": "image", "label": "Image" },

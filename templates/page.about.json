@@ -1,0 +1,124 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "settings": {
+        "eyebrow": "The studio",
+        "heading": "",
+        "lede": "We make clothes for long days on foot: cut to move, made to be mended, and kept for years.",
+        "show_toc": false,
+        "padding_top": "medium",
+        "padding_bottom": "small"
+      }
+    },
+    "manifesto": {
+      "type": "manifesto",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      },
+      "blocks": {
+        "text_1": {
+          "type": "text",
+          "settings": {
+            "text": "We cut garments for <em>bodies</em>"
+          }
+        },
+        "image_2": {
+          "type": "image",
+          "settings": {}
+        },
+        "text_3": {
+          "type": "text",
+          "settings": {
+            "text": "in motion, built to bend, stride and <em>carry</em> the city"
+          }
+        },
+        "image_4": {
+          "type": "image",
+          "settings": {}
+        },
+        "text_5": {
+          "type": "text",
+          "settings": {
+            "text": "on their back."
+          }
+        }
+      },
+      "block_order": [
+        "text_1",
+        "image_2",
+        "text_3",
+        "image_4",
+        "text_5"
+      ]
+    },
+    "steps": {
+      "type": "story-steps",
+      "settings": {
+        "image_position": "left",
+        "label": "How it’s made",
+        "heading": "Cut in small runs, <em>finished by hand</em>",
+        "text": "<p>Each piece is cut in limited batches so fabric isn’t wasted, then pressed and checked one at a time.</p>",
+        "color_scheme": "scheme-2",
+        "padding_top": "medium",
+        "padding_bottom": "medium"
+      },
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "title": "Cut",
+            "text": "Pattern pieces laid to minimise offcuts."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "title": "Sew",
+            "text": "Seams taped and bound inside."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "Finish",
+            "text": "Pressed, inspected and tagged by hand."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ]
+    },
+    "quote": {
+      "type": "pull-quote",
+      "settings": {
+        "quote": "“Clothes should get better the more you wear them — that’s the only rule we design by.”",
+        "attribution": "Head of design",
+        "show_placeholder": true,
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "manifesto",
+    "steps",
+    "quote"
+  ]
+}

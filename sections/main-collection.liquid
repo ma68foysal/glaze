@@ -31,8 +31,8 @@
 
     <header class="k-col__hero">
       <h1 class="k-col__title">
-        {{- collection.title -}}
-        <span class="k-col__count" aria-label="{{ 'sections.collection.product_count' | t: count: collection.products_count }}">{{ collection.products_count }}</span>
+        {{- collection.title -}}&nbsp;<span class="k-col__count" aria-hidden="true">{{ collection.products_count }}</span>
+        <span class="visually-hidden">, {{ 'sections.collection.product_count' | t: count: collection.products_count }}</span>
       </h1>
       {%- if collection.description != blank or section.settings.meta != blank or collection.image -%}
         <div class="k-col__intro">
@@ -182,11 +182,14 @@
     margin: 0;
     font-family: var(--font-heading);
     font-weight: var(--font-heading-weight-black);
-    font-size: calc(clamp(56px, 8vw, 150px) * var(--heading-scale));
+    grid-column: 1 / -1;
+    /* Sized so the longest common single words (Accessories, Bestsellers) fit whole at every width;
+       longer titles wrap between words. */
+    font-size: calc(clamp(40px, 9.2vw, 150px) * var(--heading-scale));
     line-height: 0.86;
     letter-spacing: -0.04em;
     overflow-wrap: break-word;
-    hyphens: auto;
+    hyphens: manual;
   }
   .k-col__count {
     display: inline-grid; place-items: center;

@@ -805,3 +805,10 @@ input:focus-visible + label { outline: 2px solid var(--color-accent); outline-of
 .k-pdp__plans { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; }
 .k-pdp__plans legend { margin-bottom: 8px; }
 .k-pdp__plan { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px; border: 1px solid var(--color-line); border-radius: calc(var(--radius-card) * 0.5); cursor: pointer; }
+
+/* ---------------------------------------------------------------
+   Target size: standalone text links get at least 24px of height (WCAG 2.2, 2.5.8).
+   --------------------------------------------------------------- */
+:is(.k-footer a, .k-card__title a, .k-dropdown__all, .k-pdp__pair-name, .k-pdp__guide, .k-drawer__name, .k-drawer__look-info a, .k-art__sp-name, .k-col__crumbs a, .k-pdp__crumbs a) {
+  display: inline-flex; align-items: center; min-height: 24px;
+}
