@@ -28,7 +28,6 @@
     assign sale_off = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price
   endif
   assign buy_block = section.blocks | where: 'type', 'buy_buttons' | first
-  assign models_block = section.blocks | where: 'type', 'models' | first
   assign color_index = 0
   for option in product.options_with_values
     assign oname = option.name | downcase
@@ -73,7 +72,6 @@
           </ul>
         {%- endif -%}
         <div class="k-pdp__stage">
-        {%- if models_block and product.media.size > 1 -%}{%- render 'k-pdp-models', block: models_block, product: product -%}{%- endif -%}
         {%- if drop_locked -%}
           <div class="k-pdp__lock" aria-hidden="true"><span>{% render 'k-icon', icon: 'lock', size: 36 %}{{ 'products.drop.locked' | t }}</span></div>
         {%- endif -%}
@@ -93,7 +91,6 @@
             {%- endfor -%}
           </ul>
           {%- if product.media.size > 1 -%}
-            <p class="k-pdp__media-count k-label" aria-hidden="true"><span data-media-index>1</span> / {{ product.media.size }}{% if section.settings.image_zoom %}<span class="k-pdp__zoom-hint"> · {{ 'product.click_to_zoom' | t }}</span>{% endif %}</p>
             {%- comment -%} Arrows: always in the thumbnails layout; on the phone slider only for mouse users. {%- endcomment -%}
             <button type="button" class="k-pdp__arrow k-pdp__arrow--prev" data-media-step="-1" aria-label="{{ 'product.media_prev' | t }}">
               <span style="display: inline-flex; transform: rotate(180deg);">{% render 'k-icon', icon: 'arrow', size: 18 %}</span>
@@ -360,7 +357,8 @@
               {%- render 'k-pdp-fit', block: block, product: product, form_id: form_id -%}
 
             {%- when 'models' -%}
-              {%- comment -%} Rendered over the gallery, above. {%- endcomment -%}
+
+              {%- render 'k-pdp-models', block: block, product: product -%}
 
             {%- when 'material' -%}
 
@@ -441,10 +439,8 @@
   .k-pdp__media-frame > * { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .k-pdp__media-frame video { object-fit: cover; }
   .k-pdp__media-frame model-viewer { width: 100%; height: 100%; }
-  .k-pdp__media-count { display: none; }
   .k-pdp__stage { position: relative; min-width: 0; }
   .k-pdp__sale { position: absolute; left: 14px; top: 14px; z-index: 2; padding: 6px 10px; background: var(--color-accent); color: var(--color-bg); pointer-events: none; }
-  .k-pdp__zoom-hint { display: none; }
 
   /* Zoom on click (desktop, images only) */
   @media (min-width: 901px) {
@@ -456,12 +452,6 @@
   /* Thumbnails layout: one large item, arrows and a thumbnail strip */
   .k-pdp__grid--thumbnails .k-pdp__gallery { position: sticky; top: calc(var(--header-height, 0px) + 20px); display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 14px; align-items: start; }
   .k-pdp__grid--thumbnails .k-pdp__gallery:not(:has(.k-pdp__thumbs)) { grid-template-columns: minmax(0, 1fr); }
-  .k-pdp__grid--thumbnails .k-pdp__media-count {
-    display: block; position: absolute; right: 14px; bottom: 14px; z-index: 2; margin: 0;
-    padding: 8px 12px; border-radius: 999px; background: var(--color-bg); color: var(--color-text);
-    font-size: 12px; pointer-events: none;
-  }
-  .k-pdp__grid--thumbnails .k-pdp__zoom-hint { display: inline; }
   .k-pdp__grid--thumbnails .k-pdp__arrow { top: calc(50% - 24px); }
   .k-pdp__grid--thumbnails .k-pdp__media-list { display: grid; grid-template-columns: 1fr; }
   .k-pdp__grid--thumbnails .k-pdp__media { grid-area: 1 / 1; visibility: hidden; opacity: 0; animation: none; transition: opacity var(--dur) var(--ease-out), visibility var(--dur); }
@@ -617,19 +607,12 @@
     .k-pdp__media { flex: 0 0 86%; scroll-snap-align: center; }
     .k-pdp__media--big > .k-media, .k-pdp__media--big > .k-pdp__media-frame,
     .k-pdp__media > .k-media, .k-pdp__media > .k-pdp__media-frame { aspect-ratio: 4 / 5; }
-    .k-pdp__media-count {
-      display: block; position: absolute; right: calc(var(--gutter) + 12px); bottom: 12px;
-      margin: 0; padding: 4px 10px; border-radius: 999px;
-      background: var(--color-bg); color: var(--color-text);
-    }
     .k-pdp__values { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
     .k-pdp__grid--thumbnails .k-pdp__media-list { display: flex; }
     .k-pdp__grid--thumbnails .k-pdp__media { visibility: visible; opacity: 1; }
     .k-pdp__grid--thumbnails .k-pdp__gallery { position: relative; top: auto; display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
     .k-pdp__grid--thumbnails .k-pdp__thumbs { order: 2; flex-direction: row; max-height: none; padding-inline: var(--gutter); overflow-x: auto; overflow-y: visible; }
     .k-pdp__grid--thumbnails .k-pdp__thumb { width: 64px; }
-    .k-pdp__grid--thumbnails .k-pdp__media-count { right: calc(var(--gutter) + 12px); bottom: 12px; padding: 4px 10px; }
-    .k-pdp__zoom-hint, .k-pdp__grid--thumbnails .k-pdp__zoom-hint { display: none; }
     .k-pdp__sale { left: calc(var(--gutter) + 12px); top: 12px; }
     .k-pdp__bar-name { display: none; }
     .k-pdp__bar-in { justify-content: space-between; }

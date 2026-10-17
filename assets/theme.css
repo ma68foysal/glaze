@@ -816,19 +816,21 @@ input:focus-visible + label { outline: 2px solid var(--color-accent); outline-of
 /* ---------------------------------------------------------------
    Product page: model switcher, material lens, cost per wear
    --------------------------------------------------------------- */
-.k-models { position: absolute; top: 14px; left: 14px; z-index: 4; display: grid; justify-items: start; gap: 8px; max-width: calc(100% - 28px); pointer-events: none; }
-.k-models > * { pointer-events: auto; }
-.k-models__list { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px; border-radius: 999px; background: rgba(242, 241, 236, 0.82); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.k-models { display: grid; gap: 12px; padding-block: 16px; border-block: 1px solid var(--color-line); }
+.k-models + .k-fit, .k-fit + .k-models, .k-models + .k-mat { border-top: 0; }
+.k-models__label { margin: 0; }
+.k-models__list { display: flex; flex-wrap: wrap; gap: 8px; }
 .k-models__btn {
-  min-height: 36px; padding: 0 16px; border: 0; border-radius: 999px;
-  background: transparent; color: #0e0e0e; font: 600 14px var(--font-body); cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  display: grid; gap: 2px; min-height: var(--touch, 44px); padding: 8px 16px; text-align: left;
+  border: 1.5px solid var(--color-line); border-radius: calc(var(--radius-card) * 0.5);
+  background: transparent; color: inherit; font: inherit; cursor: pointer;
+  transition: border-color 0.3s, background-color 0.3s, color 0.3s;
 }
-.k-models__btn:hover { background: rgba(14, 14, 14, 0.08); }
-.k-models__btn[aria-pressed="true"] { background: #0e0e0e; color: #f2f1ec; }
-.k-models__btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
-.k-models__worn { margin: 0; padding: 6px 12px; border-radius: 999px; background: rgba(242, 241, 236, 0.82); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #0e0e0e; font-size: 13px; line-height: 1.35; }
-@media (max-width: 900px) { .k-models { top: 10px; left: 10px; } .k-models__worn { font-size: 12px; } }
+.k-models__btn:hover { border-color: var(--color-text); }
+.k-models__btn[aria-pressed="true"] { border-color: var(--color-text); background: var(--color-text); color: var(--color-bg); }
+.k-models__name { font-weight: 700; font-size: 15px; }
+.k-models__meta { opacity: 0.75; }
+.k-models__worn { margin: 0; font-size: 15px; }
 .k-pdp__media.is-wipe .k-media, .k-pdp__media.is-wipe .k-pdp__media-frame { animation: k-wipe 0.7s var(--ease-out) both; }
 @keyframes k-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 

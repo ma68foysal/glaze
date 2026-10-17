@@ -1,6 +1,6 @@
 {%- comment -%}
   Model switcher: the same piece on models of different builds.
-  Sits over the product photo as tabs. The block's Models setting holds one
+  The block's Models setting holds one
   model per line as Name | height | size worn | photo number | fit note
   (the note is optional), so it can be connected to a multi-line text
   metafield. Choosing a model brings that product photo forward with a
@@ -25,7 +25,8 @@
 {%- if count > 1 -%}
   <k-models class="k-models" {{ block.shopify_attributes }}>
     {%- assign first_worn = '' -%}
-    <div class="k-models__list" role="group" aria-label="{{ 'products.models.group' | t }}">
+    <p class="k-label k-muted k-models__label" id="{{ block.id }}-label">{{ 'products.models.group' | t }}</p>
+    <div class="k-models__list" role="group" aria-labelledby="{{ block.id }}-label">
       {%- for line in lines -%}
         {%- liquid
           assign parts = line | split: '|'
@@ -56,7 +57,10 @@
             assign first_worn = worn
           endif
         -%}
-        <button type="button" class="k-models__btn" aria-pressed="{% if first_worn == worn %}true{% else %}false{% endif %}" data-media="{{ m_media }}" data-worn="{{ worn | escape }}">{{ m_name | escape }}</button>
+        <button type="button" class="k-models__btn" aria-pressed="{% if first_worn == worn %}true{% else %}false{% endif %}" data-media="{{ m_media }}" data-worn="{{ worn | escape }}">
+          <span class="k-models__name">{{ m_name | escape }}</span>
+          <span class="k-models__meta k-label">{{ m_height | escape }} · {{ m_size | escape }}</span>
+        </button>
       {%- endfor -%}
     </div>
     <p class="k-models__worn" aria-live="polite" data-models-worn>{{ first_worn }}</p>
