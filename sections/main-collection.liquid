@@ -105,8 +105,9 @@
       {%- if collection.products.size > 0 -%}
         <ul class="k-col__grid{% if section.settings.default_layout == 'index' %} is-index{% endif %}" role="list" data-grid data-default="{% if section.settings.default_layout == 'index' %}index{% else %}{{ section.settings.columns }}{% endif %}" style="--cols: {{ section.settings.columns }};">
           {%- for product in collection.products -%}
-            <li class="k-col__item k-reveal">
-              {% render 'k-card', product: product, quick_add: section.settings.quick_add %}
+            {%- comment -%} The first row shows without the scroll reveal, so it never paints half-faded. {%- endcomment -%}
+            <li class="k-col__item{% if forloop.index > 4 %} k-reveal{% endif %}">
+              {% render 'k-card', product: product, quick_add: section.settings.quick_add, heading_tag: 'h2' %}
               {%- assign row_number = paginate.current_offset | plus: forloop.index -%}
               {%- render 'k-index-row', product: product, number: row_number -%}
             </li>

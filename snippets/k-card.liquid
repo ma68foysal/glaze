@@ -6,13 +6,15 @@
     quick_add    — boolean, default true
     sizes        — the image sizes attribute
     eager        — boolean, load images eagerly
+    heading_tag  — tag for the title, default 'h3'; use 'h2' straight under the page h1
 {%- endcomment -%}
 {%- liquid
   assign show_qa = true
   if quick_add == false
     assign show_qa = false
   endif
-  assign img_sizes = sizes | default: '(min-width: 1440px) 340px, (min-width: 900px) 25vw, 50vw'
+  assign img_sizes = sizes | default: '(min-width: 1440px) 340px, (min-width: 900px) 25vw, calc(50vw - 24px)'
+  assign title_tag = heading_tag | default: 'h3'
   assign loading = 'lazy'
   if eager
     assign loading = 'eager'
@@ -106,9 +108,9 @@
     {%- endif -%}
 
     <div class="k-card__meta">
-      <h3 class="k-card__title" style="margin: 0; font: inherit;">
+      <{{ title_tag }} class="k-card__title" style="margin: 0; font: inherit;">
         <a class="k-link-underline" href="{{ product.url }}">{{ product.title }}</a>
-      </h3>
+      </{{ title_tag }}>
       <p class="k-card__price" style="margin: 0;">
         {%- if on_sale -%}
           <span class="visually-hidden">{{ 'products.regular_price' | t }}</span>

@@ -39,7 +39,7 @@
     {%- endfor -%}
   </video>
 {%- elsif image != blank -%}
-  {{ image | image_url: width: 2400 | image_tag: widths: '480, 720, 960, 1280, 1600, 2000, 2400', sizes: img_sizes, loading: loading, fetchpriority: fetch, alt: img_alt }}
+  {{ image | image_url: width: 2400 | image_tag: widths: '360, 480, 720, 960, 1280, 1600, 2000, 2400', sizes: img_sizes, loading: loading, fetchpriority: fetch, alt: img_alt }}
 {%- else -%}
   {{ placeholder | default: 'image' | placeholder_svg_tag: 'k-ph' }}
 {%- endif -%}

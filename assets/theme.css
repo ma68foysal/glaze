@@ -399,6 +399,18 @@ a.k-card__qa { display: flex; align-items: center; justify-content: center; text
   .k-card__qa { transform: none; min-height: 44px; font-size: 13px; }
 }
 
+/* ---------- Deferred rendering ----------
+   Sections from the third one down skip layout and paint until they come
+   near the viewport, which cuts the first layout of a long page by about
+   two thirds. Containment clips overflow and traps position: fixed, so
+   sections with a cursor-following peek, a sticky bar or a drawer keep
+   normal rendering. */
+#main-content > .shopify-section:nth-child(n+3):not(:has(.k-clist__peek, .k-fidx__peek, .k-jidx__peek, .k-art__progress, .k-pdp__bar, .k-modal__panel, .k-col__drawer)),
+.shopify-section-group-footer-group {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
 /* ---------- Grids ---------- */
 .k-grid {
   display: grid;
@@ -432,7 +444,10 @@ a.k-card__qa { display: flex; align-items: center; justify-content: center; text
     transition: none;
     animation: k-rise-in linear both;
     animation-timeline: view();
-    animation-range: entry 0% cover 28%;
+    /* A fixed scroll distance, not a share of the viewport: in a very tall
+       viewport (Lighthouse's full-page capture) percentage ranges leave the
+       lower half of the page frozen mid-fade, which fails contrast checks. */
+    animation-range: entry 0% entry 320px;
   }
 }
 
@@ -459,8 +474,10 @@ a.k-card__qa { display: flex; align-items: center; justify-content: center; text
 @keyframes k-marquee { to { transform: translateX(-50%); } }
 @keyframes k-spin { to { transform: rotate(360deg); } }
 @keyframes k-rise-in { from { opacity: 0; transform: translateY(var(--reveal-distance, 70px)); } to { opacity: 1; transform: none; } }
-@keyframes k-letter-rise { from { transform: translateY(105%); } to { transform: none; } }
-@keyframes k-breathe { 0%, 100% { transform: scaleX(0.9); } 50% { transform: scaleX(1.1); } }
+/* Letters rise on translate and breathe on scale: two separate properties, so
+   both animations stay on the compositor instead of restyling every frame. */
+@keyframes k-letter-rise { from { translate: 0 105%; } to { translate: 0 0; } }
+@keyframes k-breathe { 0%, 100% { scale: 0.9 1; } 50% { scale: 1.1 1; } }
 @keyframes k-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -14px; } }
 @keyframes k-fade { from { opacity: 0; } }
 @keyframes k-slide-in { from { transform: translateX(100%); } }
@@ -669,7 +686,7 @@ input:focus-visible + .k-col__pill, input:focus-visible + .k-col__swatch { outli
     transform-origin: var(--stretch-origin, 0 100%);
     animation: k-stretch linear both;
     animation-timeline: view();
-    animation-range: entry 0% cover 45%;
+    animation-range: entry 0% entry 360px;
   }
   [data-stretch][data-motion="full"] :is(.k-sec-head--center, [style*="text-align: center"]) .k-h2 { --stretch-origin: 50% 100%; }
 }

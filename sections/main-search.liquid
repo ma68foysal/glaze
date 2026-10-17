@@ -167,7 +167,7 @@
               {%- if products.size > 0 -%}
                 <ul class="k-srch__grid" role="list" data-results="product" data-view-target>
                   {%- for item in products -%}
-                    <li class="k-reveal">{%- render 'k-card', product: item, quick_add: section.settings.quick_add -%}</li>
+                    <li{% if forloop.index > 4 %} class="k-reveal"{% endif %}>{%- render 'k-card', product: item, quick_add: section.settings.quick_add, heading_tag: 'h2' -%}</li>
                   {%- endfor -%}
                 </ul>
               {%- else -%}
