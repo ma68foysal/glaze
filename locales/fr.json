@@ -347,6 +347,36 @@
       "on_list": "C’est noté. Nous vous écrirons à l’ouverture.",
       "live": "Disponible maintenant",
       "badge": "Drop · {{ date }}"
+    },
+    "models": {
+      "group": "Voir la pièce portée",
+      "count": {
+        "one": "Portée par {{ count }} mannequin",
+        "other": "Portée par {{ count }} mannequins"
+      },
+      "worn": "{{ name }} mesure {{ height }} et porte du {{ size }}"
+    },
+    "material": {
+      "heading": "Matière",
+      "composition": "Composition",
+      "care": "Entretien",
+      "lens_hint": "Survolez le tissu pour voir de plus près",
+      "lens_alt": "Gros plan du tissu",
+      "wash_30": "Lavage en machine à 30 °C",
+      "wash_hand": "Lavage à la main",
+      "no_bleach": "Ne pas javelliser",
+      "no_tumble": "Pas de sèche-linge",
+      "iron_low": "Repassage à basse température",
+      "dry_flat": "Séchage à plat",
+      "dry_clean": "Nettoyage à sec",
+      "no_dry_clean": "Pas de nettoyage à sec"
+    },
+    "cpw": {
+      "heading": "Coût par port",
+      "per_wear": "par port",
+      "wears": "Ports par mois",
+      "years": "Années de port",
+      "sum": "{{ price }} ÷ ({{ wears }} ports par mois × 12 × {{ years }} ans) = {{ result }}"
     }
   },
   "sections": {

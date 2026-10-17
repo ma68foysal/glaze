@@ -347,6 +347,36 @@
       "on_list": "You’re on the list. We’ll email you when it opens.",
       "live": "Live now",
       "badge": "Drop · {{ date }}"
+    },
+    "models": {
+      "group": "See it on a model",
+      "count": {
+        "one": "Seen on {{ count }} model",
+        "other": "Seen on {{ count }} models"
+      },
+      "worn": "{{ name }} is {{ height }} and wears {{ size }}"
+    },
+    "material": {
+      "heading": "Material",
+      "composition": "Composition",
+      "care": "Care",
+      "lens_hint": "Move over the fabric to look closer",
+      "lens_alt": "Close-up of the fabric",
+      "wash_30": "Machine wash at 30°C",
+      "wash_hand": "Hand wash",
+      "no_bleach": "Do not bleach",
+      "no_tumble": "Do not tumble dry",
+      "iron_low": "Iron on low heat",
+      "dry_flat": "Dry flat",
+      "dry_clean": "Dry clean",
+      "no_dry_clean": "Do not dry clean"
+    },
+    "cpw": {
+      "heading": "Cost per wear",
+      "per_wear": "per wear",
+      "wears": "Wears a month",
+      "years": "Years kept",
+      "sum": "{{ price }} ÷ ({{ wears }} wears a month × 12 × {{ years }} years) = {{ result }}"
     }
   },
   "sections": {

@@ -17,7 +17,7 @@
       <div class="k-popup__body">
         <button type="button" class="k-icon-btn k-popup__close" data-popup-close aria-label="{{ 'general.close' | t }}">{% render 'k-icon', icon: 'close', size: 22 %}</button>
         {%- if section.settings.label != blank -%}<p class="k-label k-muted">{{ section.settings.label }}</p>{%- endif -%}
-        <h2 class="k-popup__title" id="{{ section.id }}-title">{{ section.settings.heading | default: 'general.newsletter_form.subscribe' | t }}</h2>
+        <h2 class="k-popup__title" id="{{ section.id }}-title">{%- if section.settings.heading != blank -%}{{ section.settings.heading }}{%- else -%}{{ 'general.newsletter_form.subscribe' | t }}{%- endif -%}</h2>
         {%- if section.settings.text != blank -%}<div class="k-rte k-muted k-popup__text">{{ section.settings.text }}</div>{%- endif -%}
         {%- form 'customer', id: form_id, class: 'k-popup__form' -%}
           <input type="hidden" name="contact[tags]" value="newsletter,popup">

@@ -10,6 +10,32 @@
 -%}
 <section id="{{ sid }}" class="k-ctl k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
   <k-complete-look class="k-wrap k-ctl__grid" data-money-format="{{ shop.money_format | escape }}">
+    {%- if section.settings.layout == 'layers' -%}
+    <div class="k-ctl__layers" style="--n: {{ pieces.size }};">
+      {%- for block in pieces -%}
+        {%- liquid
+          assign p = block.settings.product
+          assign p_title = p.title
+          if p_title == blank
+            assign p_title = 'products.placeholder_title' | t
+          endif
+          assign mid = pieces.size | minus: 1 | times: 50
+          assign off = forloop.index0 | times: 100 | minus: mid
+        -%}
+        <button type="button" class="k-ctl__layer" data-ctl-i="{{ forloop.index0 }}" style="--i: {{ forloop.index0 }}; --off: {{ off }};" aria-label="{{ p_title | escape }}" {{ block.shopify_attributes }}>
+          <span class="k-ctl__layer-img k-media">
+            {%- if p.featured_media -%}
+              {{ p.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 28vw, 60vw', widths: '360, 540, 720, 900', alt: '' }}
+            {%- else -%}
+              {%- capture ph -%}product-{{ forloop.index | modulo: 4 | plus: 1 }}{%- endcapture -%}
+              {{ ph | placeholder_svg_tag: 'k-ph' }}
+            {%- endif -%}
+          </span>
+          <span class="k-ctl__layer-tag k-label"><b>{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</b> {{ p_title | escape }}</span>
+        </button>
+      {%- endfor -%}
+    </div>
+    {%- else -%}
     <div class="k-ctl__pic k-media">
       {%- render 'k-media', image: section.settings.image, sizes: '(min-width: 990px) 55vw, 100vw', placeholder: 'lifestyle-1' -%}
       {%- for block in pieces -%}
@@ -29,6 +55,7 @@
         </button>
       {%- endfor -%}
     </div>
+    {%- endif -%}
 
     <div class="k-ctl__panel">
       {%- if section.settings.eyebrow != blank -%}<p class="k-label k-muted">{{ section.settings.eyebrow }}</p>{%- endif -%}
@@ -105,6 +132,21 @@
   }
   .k-ctl__dot.is-on b, .k-ctl__dot:hover b, .k-ctl__dot:focus-visible b { background: var(--color-button); color: var(--color-button-label); box-shadow: 0 0 0 8px rgba(var(--color-bg-rgb), 0.35); }
   .k-ctl__dot.is-on span, .k-ctl__dot:hover span, .k-ctl__dot:focus-visible span { max-width: 240px; padding: 0 14px 0 10px; }
+  /* Layers layout: each piece is a card in a fanned stack; unticked pieces slide away. */
+  .k-ctl__layers { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius-card); background: var(--color-surface); }
+  .k-ctl__layer {
+    grid-area: 1 / 1; position: relative; width: 50%; padding: 0; border: 0; background: none; color: inherit; cursor: pointer;
+    z-index: calc(10 + var(--i));
+    transform: translate(calc(var(--off) * 0.2%), calc(var(--i) * 5% - 6%)) rotate(calc(var(--off) * 0.06deg));
+    transition: transform 0.7s var(--ease-out), opacity 0.5s, box-shadow 0.4s;
+  }
+  .k-ctl__layer-img { display: block; aspect-ratio: 4 / 5; border-radius: calc(var(--radius-card) * 0.6); box-shadow: 0 30px 50px -28px rgba(14, 14, 14, 0.55); background: var(--color-bg); }
+  .k-ctl__layer-img :is(img, svg) { width: 100%; height: 100%; object-fit: cover; }
+  .k-ctl__layer-tag { position: absolute; left: 10px; bottom: 10px; display: inline-flex; gap: 6px; padding: 6px 10px; border-radius: 999px; background: #f2f1ec; color: #0e0e0e; font-size: 11px; max-width: calc(100% - 20px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .k-ctl__layer.is-on { z-index: 30; transform: translate(calc(var(--off) * 0.2%), calc(var(--i) * 5% - 9%)) rotate(0deg) scale(1.04); }
+  .k-ctl__layer.is-out { opacity: 0; pointer-events: none; transform: translate(calc(var(--off) * 0.2%), 70%) rotate(calc(var(--off) * 0.12deg)); }
+  .k-ctl__layer:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+  @media (prefers-reduced-motion: reduce) { .k-ctl__layer { transition: opacity 0.2s; } }
   .k-ctl__panel { display: grid; gap: 18px; }
   .k-ctl__panel > .k-label { margin: 0; }
   .k-ctl__title { margin: 0; }
@@ -136,7 +178,7 @@
     customElements.define('k-complete-look', class extends HTMLElement {
       connectedCallback() {
         this.items = Array.from(this.querySelectorAll('.k-ctl__item'));
-        this.dots = Array.from(this.querySelectorAll('.k-ctl__dot'));
+        this.dots = Array.from(this.querySelectorAll('.k-ctl__dot, .k-ctl__layer'));
         this.btn = this.querySelector('[data-ctl-add]');
         this.addEventListener('change', () => this.update());
         var hl = (i) => {
@@ -190,6 +232,11 @@
           row.querySelector('[data-ctl-price]').textContent = this.money(parseInt(v.selectedOptions[0].dataset.price, 10) || 0);
         });
         var list = this.chosen();
+        this.querySelectorAll('.k-ctl__layer').forEach((layer) => {
+          var box = this.items[parseInt(layer.dataset.ctlI, 10)].querySelector('[data-ctl-check]');
+          layer.classList.toggle('is-out', !box || !box.checked);
+          layer.setAttribute('aria-pressed', box && box.checked ? 'true' : 'false');
+        });
         var total = list.reduce(function (a, b) { return a + b.price; }, 0);
         var count = this.querySelector('[data-ctl-count]');
         count.textContent = list.length === 1 ? count.dataset.one : count.dataset.other.replace('[count]', list.length);
@@ -218,7 +265,8 @@
   "tag": "section",
   "class": "k-ctl-section",
   "settings": [
-    { "type": "image_picker", "id": "image", "label": "Campaign photo" },
+    { "type": "select", "id": "layout", "label": "Layout", "default": "photo", "options": [ { "value": "photo", "label": "Campaign photo with callouts" }, { "value": "layers", "label": "Layered pieces" } ], "info": "Layered pieces stacks each product's photo; unticked pieces slide out of the stack." },
+    { "type": "image_picker", "id": "image", "label": "Campaign photo", "info": "For the campaign photo layout." },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Look 07" },
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "The soft <em>suit</em>", "info": "Italic words use the accent font." },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "Add the look" },

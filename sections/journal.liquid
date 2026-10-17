@@ -2,6 +2,63 @@
   assign blog = section.settings.blog
   assign limit = section.settings.limit
 -%}
+{%- if section.settings.layout == 'contents' -%}
+<section class="k-jidx k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}" data-k-jidx>
+  <div class="k-wrap">
+    <div class="k-jidx__head k-reveal">
+      <div>
+        {%- if settings.issue_label != blank -%}<p class="k-label k-muted k-jidx__issue">{{ settings.issue_label }}</p>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h2 class="k-h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      </div>
+      {%- if blog != blank and section.settings.button_label != blank -%}
+        <a class="k-btn k-btn--secondary" href="{{ blog.url }}">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div>
+
+    <ol class="k-jidx__list" role="list">
+      {%- if blog != blank and blog.articles_count > 0 -%}
+        {%- for article in blog.articles limit: limit -%}
+          {%- liquid
+            assign words = article.content | strip_html | split: ' ' | size
+            assign minutes = words | divided_by: 200 | at_least: 1
+          -%}
+          <li class="k-reveal">
+            <a class="k-jidx__row" href="{{ article.url }}"{% if article.image != blank %} data-peek-src="{{ article.image | image_url: width: 480 }}"{% endif %}>
+              <span class="k-jidx__n k-label">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+              <span class="k-jidx__thumb k-media" aria-hidden="true">
+                {%- if article.image != blank -%}
+                  {{ article.image | image_url: width: 240 | image_tag: widths: '120, 240', sizes: '72px', loading: 'lazy', alt: '' }}
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag: 'k-ph' }}
+                {%- endif -%}
+              </span>
+              <span class="k-jidx__title">{{ article.title }}</span>
+              <span class="k-jidx__meta k-label k-muted">
+                {%- if article.tags.size > 0 -%}<span class="k-jidx__tag">{{ article.tags.first }}</span>{%- endif -%}
+                <span>{{ article.published_at | time_tag: format: 'date' }}</span>
+                <span>{{ 'blogs.read_time' | t: count: minutes }}</span>
+              </span>
+              <span class="k-jidx__arrow" aria-hidden="true">{% render 'k-icon', icon: 'arrow', size: 16 %}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..limit) -%}
+          <li>
+            <div class="k-jidx__row">
+              <span class="k-jidx__n k-label">0{{ i }}</span>
+              <span class="k-jidx__thumb k-media" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'k-ph' }}</span>
+              <span class="k-jidx__title">{{ 'sections.journal.placeholder_title' | t }}</span>
+              <span class="k-jidx__meta k-label k-muted"><span>{{ 'sections.journal.placeholder_meta' | t }}</span></span>
+            </div>
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ol>
+    <div class="k-jidx__peek k-media" aria-hidden="true" data-peek></div>
+  </div>
+</section>
+{%- else -%}
 <k-rail class="k-journal-rail-wrap"><section class="k-journal k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}">
   <div class="k-wrap">
     <div class="k-sec-head k-reveal">
@@ -55,8 +112,48 @@
     </ul>
   </div>
 </section></k-rail>
+{%- endif -%}
 
 {% stylesheet %}
+  /* Contents layout: the journal set like an issue's table of contents. */
+  .k-jidx__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; padding-bottom: 24px; border-bottom: 1.5px solid var(--color-text); }
+  .k-jidx__issue { margin: 0 0 10px; }
+  .k-jidx__list { margin: 0; padding: 0; list-style: none; }
+  .k-jidx__row {
+    display: grid; grid-template-columns: 64px minmax(0, 1fr) minmax(0, auto) 44px; gap: 24px; align-items: center;
+    padding: 22px 0; border-bottom: 1px solid var(--color-line);
+    transition: padding-left 0.5s var(--ease-out);
+  }
+  .k-jidx__thumb { display: none; }
+  .k-jidx__title {
+    font-family: var(--font-heading); font-weight: var(--font-heading-weight-black);
+    font-size: calc(clamp(26px, 3.4vw, 52px) * var(--heading-scale, 1)); line-height: 1; letter-spacing: -0.03em;
+    text-wrap: balance; transition: color 0.3s;
+  }
+  .k-jidx__meta { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 14px; text-align: right; }
+  .k-jidx__tag { color: var(--color-text); }
+  .k-jidx__arrow { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--color-line); border-radius: 999px; transition: background-color 0.3s, color 0.3s, transform 0.4s var(--ease-out); }
+  a.k-jidx__row:hover, a.k-jidx__row:focus-visible { padding-left: 14px; }
+  a.k-jidx__row:hover .k-jidx__title, a.k-jidx__row:focus-visible .k-jidx__title { color: var(--color-accent); }
+  a.k-jidx__row:hover .k-jidx__arrow, a.k-jidx__row:focus-visible .k-jidx__arrow { background: var(--color-text); color: var(--color-bg); transform: rotate(-45deg); }
+  .k-jidx__peek {
+    position: fixed; left: 0; top: 0; z-index: 15; width: 240px; aspect-ratio: 4 / 5;
+    pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(0.88) rotate(3deg);
+    transition: opacity 0.25s, transform 0.4s var(--ease-out);
+    box-shadow: 0 30px 50px -30px rgba(14, 14, 14, 0.6);
+  }
+  .k-jidx__peek.is-on { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(3deg); }
+  .k-jidx__peek img { width: 100%; height: 100%; object-fit: cover; }
+  @media (hover: none), (pointer: coarse) { .k-jidx__peek { display: none; } }
+  @media (max-width: 749px) {
+    .k-jidx__row { grid-template-columns: 26px 72px minmax(0, 1fr); grid-template-areas: 'n thumb title' 'n thumb meta'; gap: 6px 14px; padding: 16px 0; }
+    .k-jidx__n { grid-area: n; align-self: start; padding-top: 4px; }
+    .k-jidx__thumb { display: block; grid-area: thumb; aspect-ratio: 1; border-radius: calc(var(--radius-card) * 0.5); }
+    .k-jidx__title { grid-area: title; align-self: end; font-size: 21px; }
+    .k-jidx__meta { grid-area: meta; align-self: start; justify-content: flex-start; text-align: left; }
+    .k-jidx__arrow { display: none; }
+  }
+
   .k-journal__rail {
     display: grid;
     grid-auto-flow: column;
@@ -95,6 +192,35 @@
   @media (max-width: 900px) { .k-journal__rail { grid-auto-columns: 82%; } }
 {% endstylesheet %}
 
+{% javascript %}
+  (function () {
+    function setup(sec) {
+      if (sec.dataset.ready) return;
+      sec.dataset.ready = '1';
+      var peek = sec.querySelector('[data-peek]');
+      var list = sec.querySelector('.k-jidx__list');
+      if (!peek || !list || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      var img = document.createElement('img');
+      img.alt = '';
+      peek.appendChild(img);
+      list.addEventListener('pointermove', function (e) {
+        var row = e.target.closest('[data-peek-src]');
+        if (!row) { peek.classList.remove('is-on'); return; }
+        if (img.getAttribute('src') !== row.dataset.peekSrc) img.src = row.dataset.peekSrc;
+        peek.style.left = Math.min(e.clientX + 170, window.innerWidth - 130) + 'px';
+        peek.style.top = e.clientY + 'px';
+        peek.classList.add('is-on');
+      });
+      list.addEventListener('pointerleave', function () { peek.classList.remove('is-on'); });
+      window.addEventListener('scroll', function () { peek.classList.remove('is-on'); }, { passive: true });
+    }
+    function init() { document.querySelectorAll('[data-k-jidx]').forEach(setup); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    document.addEventListener('shopify:section:load', init);
+  })();
+{% endjavascript %}
+
+
 {% schema %}
 {
   "name": "Journal",
@@ -105,6 +231,7 @@
     { "type": "blog", "id": "blog", "label": "Blog" },
     { "type": "range", "id": "limit", "label": "Posts to show", "min": 2, "max": 8, "step": 1, "default": 4 },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "All stories" },
+    { "type": "select", "id": "layout", "label": "Layout", "default": "contents", "options": [ { "value": "contents", "label": "Contents list" }, { "value": "rail", "label": "Card rail" } ], "info": "Contents list numbers each story like an issue's contents page and shows its photo beside the pointer." },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
     { "type": "select", "id": "padding_top", "label": "Top padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
     { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }

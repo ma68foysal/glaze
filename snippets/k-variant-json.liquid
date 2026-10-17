@@ -19,6 +19,7 @@
         "available": {{ v.available | json }},
         "pre": {{ v_pre | json }},
         "price": {{ v.price | money | json }},
+        "cents": {{ v.price }},
         "compare": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}null{% endif %},
         "unit": {% if v.unit_price_measurement %}{{ v.unit_price | money | append: ' / ' | append: v.unit_price_measurement.reference_unit | json }}{% else %}null{% endif %},
         "sku": {{ v.sku | json }},

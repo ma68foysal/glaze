@@ -102,6 +102,29 @@
             "fit_text": "True to size",
             "show_finder": true
           }
+        },
+        "models": {
+          "type": "models",
+          "settings": {
+            "models": ""
+          }
+        },
+        "material": {
+          "type": "material",
+          "settings": {
+            "heading": "Material",
+            "composition": "",
+            "origin": ""
+          }
+        },
+        "cost_per_wear": {
+          "type": "cost_per_wear",
+          "settings": {
+            "heading": "Cost per wear",
+            "wears": 4,
+            "years": 3,
+            "note": ""
+          }
         }
       },
       "block_order": [
@@ -109,11 +132,14 @@
         "title",
         "price",
         "description",
+        "models",
         "fit",
         "variant_picker",
         "inventory",
         "buy_buttons",
+        "cost_per_wear",
         "complementary",
+        "material",
         "details",
         "care",
         "shipping",

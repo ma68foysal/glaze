@@ -56,6 +56,19 @@ says where the rebuild stands.
   stacked cards, callout hotspots, contact-sheet card style, Feature index.
   Club is cobalt/acid with no photo filter; Hush uses contact-sheet cards and
   the Still preset.
+- **Review fixes, phase 2 (2026-10-17):** the Oblique homepage is down to 10
+  sections (no tapes, stacked cards, countdown or press; the lookbook became
+  `sections/model-spotlight.liquid`). Journal defaults to a numbered contents
+  list. New product blocks: Model switcher (`k-pdp-models`), Material lens
+  (`k-pdp-material`, care icons in `k-care-icon`) and Cost per wear
+  (`k-pdp-cpw`). Complete the look has a "Layered pieces" layout. On the
+  Oblique store they read `custom.models`, `custom.composition`,
+  `custom.origin`, `custom.fabric_image` and `custom.care` metafields.
+  Dynamic sources: multi-line text metafields only connect to `richtext`
+  settings (written as `| metafield_tag`), and checkboxes can't be connected
+  at all, so care is a text list of codes. Eight unused `custom.care_*`
+  boolean definitions remain on that store. Commuter Shell's drop date is now
+  in the past, so no product demos drop mode.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,

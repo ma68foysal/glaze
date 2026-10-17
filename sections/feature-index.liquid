@@ -21,7 +21,13 @@
   <k-feature-index class="k-wrap k-fidx__in">
     <header class="k-fidx__head">
       {%- if section.settings.eyebrow != blank -%}<p class="k-label k-muted">{{ section.settings.eyebrow }}</p>{%- endif -%}
-      {%- if section.settings.heading != blank -%}<h2 class="k-h-display k-fidx__title">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- liquid
+        assign h_tag = 'h2'
+        if template.name == 'page' and section.index == 1
+          assign h_tag = 'h1'
+        endif
+      -%}
+      {%- if section.settings.heading != blank -%}<{{ h_tag }} class="k-h-display k-fidx__title">{{ section.settings.heading }}</{{ h_tag }}>{%- endif -%}
       {%- assign real_cats = 0 -%}
       {%- for c in cat_list -%}{%- if c != blank -%}{%- assign real_cats = real_cats | plus: 1 -%}{%- endif -%}{%- endfor -%}
       {%- if real_cats > 1 -%}

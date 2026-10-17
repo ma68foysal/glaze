@@ -1267,3 +1267,107 @@ window.ObliqueMoodboard = (function () {
   }).observe(document.body, { childList: true, subtree: true });
   return { read: read, write: write, has: has, toggle: toggle };
 })();
+
+// --------------------------------------------------------------------
+// Product page blocks: model switcher, material lens, cost per wear.
+// --------------------------------------------------------------------
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function define(name, ctor) { if (!customElements.get(name)) customElements.define(name, ctor); }
+
+  // Money in the shop's own format (window.shopMoneyFormat from theme.liquid).
+  function formatMoney(cents) {
+    var format = window.shopMoneyFormat || '${{amount}}';
+    function delimit(n, decimals, thousands, decimal) {
+      var parts = (n / 100).toFixed(decimals).split('.');
+      return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands) + (parts[1] ? decimal + parts[1] : '');
+    }
+    return format.replace(/\{\{\s*(\w+)\s*\}\}/, function (_, key) {
+      switch (key) {
+        case 'amount_no_decimals': return delimit(cents, 0, ',', '.');
+        case 'amount_with_comma_separator': return delimit(cents, 2, '.', ',');
+        case 'amount_no_decimals_with_comma_separator': return delimit(cents, 0, '.', ',');
+        case 'amount_with_apostrophe_separator': return delimit(cents, 2, "'", '.');
+        case 'amount_with_space_separator': return delimit(cents, 2, ' ', ',');
+        default: return delimit(cents, 2, ',', '.');
+      }
+    }).replace(/<[^>]*>/g, '');
+  }
+  window.ObliqueMoney = formatMoney;
+
+  // Model switcher: a model's button brings its photo forward with a wipe.
+  define('k-models', class extends HTMLElement {
+    connectedCallback() {
+      var out = this.querySelector('[data-models-worn]');
+      var buttons = Array.prototype.slice.call(this.querySelectorAll('.k-models__btn'));
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+          if (out) out.textContent = btn.dataset.worn;
+          var product = this.closest('k-product');
+          if (!product || !btn.dataset.media) return;
+          product.showMedia(btn.dataset.media);
+          var item = product.querySelector('.k-pdp__media[data-media-id="' + btn.dataset.media + '"]');
+          if (!item || reduce.matches) return;
+          item.classList.remove('is-wipe');
+          void item.offsetWidth;
+          item.classList.add('is-wipe');
+          item.addEventListener('animationend', function () { item.classList.remove('is-wipe'); }, { once: true });
+        });
+      });
+    }
+  });
+
+  // Material lens: a round magnifier follows the pointer over the fabric.
+  // On touch, a tap places it and a second tap outside the photo hides it.
+  define('k-lens', class extends HTMLElement {
+    connectedCallback() {
+      var frame = this.querySelector('.k-mat__frame');
+      var glass = this.querySelector('.k-mat__glass');
+      if (!frame || !glass) return;
+      var loaded = false;
+      var place = (e) => {
+        if (!loaded) { glass.style.backgroundImage = 'url("' + this.dataset.src + '")'; loaded = true; }
+        var r = frame.getBoundingClientRect();
+        var x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+        var y = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+        glass.style.left = (x * 100) + '%';
+        glass.style.top = (y * 100) + '%';
+        glass.style.backgroundPosition = (x * 100) + '% ' + (y * 100) + '%';
+        frame.classList.add('is-on');
+      };
+      frame.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse') place(e); });
+      frame.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') place(e); });
+      frame.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') frame.classList.remove('is-on'); });
+      document.addEventListener('pointerdown', function (e) { if (!frame.contains(e.target)) frame.classList.remove('is-on'); });
+    }
+  });
+
+  // Cost per wear: price ÷ (wears a month × 12 × years), redrawn on input
+  // and when the variant changes.
+  define('k-cpw', class extends HTMLElement {
+    connectedCallback() {
+      this.price = parseInt(this.dataset.price, 10) || 0;
+      this.querySelectorAll('[data-cpw-input]').forEach((input) => input.addEventListener('input', () => this.render()));
+      var section = this.closest('.k-pdp') || document;
+      section.addEventListener('mp:variant-change', (e) => {
+        var data = section.querySelector('[data-variants]');
+        if (!data) return;
+        try {
+          var v = JSON.parse(data.textContent).find(function (x) { return x.id === e.detail.variantId; });
+          if (v && v.cents != null) { this.price = v.cents; this.render(); }
+        } catch (err) {}
+      });
+    }
+    render() {
+      var w = parseInt(this.querySelector('[data-cpw-input="wears"]').value, 10);
+      var y = parseInt(this.querySelector('[data-cpw-input="years"]').value, 10);
+      this.querySelector('[data-cpw-out="wears"]').textContent = w;
+      this.querySelector('[data-cpw-out="years"]').textContent = y;
+      var per = Math.floor(this.price / (w * 12 * y));
+      this.querySelector('[data-cpw-result]').textContent = formatMoney(per);
+      this.querySelector('[data-cpw-sum]').textContent = this.dataset.sum
+        .replace('[price]', formatMoney(this.price)).replace('[wears]', w).replace('[years]', y).replace('[result]', formatMoney(per));
+    }
+  });
+})();

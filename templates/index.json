@@ -63,70 +63,6 @@
         "product_5"
       ]
     },
-    "tapes": {
-      "type": "scrolling-tapes",
-      "settings": {
-        "layout": "crossed",
-        "speed": 26,
-        "aria_label": "Highlights",
-        "color_scheme_a": "scheme-3",
-        "color_scheme_b": "scheme-2",
-        "padding_top": "small",
-        "padding_bottom": "none"
-      },
-      "blocks": {
-        "item_1": {
-          "type": "item",
-          "settings": {
-            "text": "New season",
-            "tape": "top"
-          }
-        },
-        "item_2": {
-          "type": "item",
-          "settings": {
-            "text": "Collection 04",
-            "tape": "top"
-          }
-        },
-        "item_3": {
-          "type": "item",
-          "settings": {
-            "text": "Free returns",
-            "tape": "top"
-          }
-        },
-        "item_4": {
-          "type": "item",
-          "settings": {
-            "text": "Made to move",
-            "tape": "bottom"
-          }
-        },
-        "item_5": {
-          "type": "item",
-          "settings": {
-            "text": "Layer it",
-            "tape": "bottom"
-          }
-        },
-        "item_6": {
-          "type": "item",
-          "settings": {
-            "text": "Repair it",
-            "tape": "bottom"
-          }
-        }
-      },
-      "block_order": [
-        "item_1",
-        "item_2",
-        "item_3",
-        "item_4",
-        "item_5",
-        "item_6"
-      ]
-    },
     "categories": {
       "type": "category-columns",
       "settings": {
@@ -372,87 +308,6 @@
         "text_5"
       ]
     },
-    "lookbook": {
-      "type": "lookbook",
-      "settings": {
-        "heading": "Shop the <em>look</em>",
-        "text": "Look 04 / Collection 04",
-        "color_scheme": "scheme-1",
-        "padding_top": "none",
-        "padding_bottom": "large"
-      },
-      "blocks": {
-        "hotspot_1": {
-          "type": "hotspot",
-          "settings": {
-            "x": 38,
-            "y": 30
-          }
-        },
-        "hotspot_2": {
-          "type": "hotspot",
-          "settings": {
-            "x": 58,
-            "y": 58
-          }
-        },
-        "hotspot_3": {
-          "type": "hotspot",
-          "settings": {
-            "x": 44,
-            "y": 84
-          }
-        }
-      },
-      "block_order": [
-        "hotspot_1",
-        "hotspot_2",
-        "hotspot_3"
-      ]
-    },
-    "stack": {
-      "type": "stacked-cards",
-      "settings": {
-        "heading": "Built for the <em>long walk</em>",
-        "color_scheme": "scheme-1",
-        "padding_top": "none",
-        "padding_bottom": "medium"
-      },
-      "blocks": {
-        "card_1": {
-          "type": "card",
-          "settings": {
-            "label": "Material",
-            "heading": "Fabrics that move first",
-            "color_scheme": "scheme-3",
-            "text": "<p>Stretch wool, washed cotton and recycled shells chosen for how they behave mid-stride, not on the hanger.</p>"
-          }
-        },
-        "card_2": {
-          "type": "card",
-          "settings": {
-            "label": "Fit",
-            "heading": "Cut on the bias",
-            "color_scheme": "scheme-2",
-            "text": "<p>Angled seams and gusseted joints give every piece room to reach, sit and cycle without pulling.</p>"
-          }
-        },
-        "card_3": {
-          "type": "card",
-          "settings": {
-            "label": "Care",
-            "heading": "Made to be mended",
-            "color_scheme": "scheme-4",
-            "text": "<p>Spare buttons, replaceable zips and a repair service so the coat you buy today stays in rotation.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "card_1",
-        "card_2",
-        "card_3"
-      ]
-    },
     "journal": {
       "type": "journal",
       "settings": {
@@ -475,75 +330,90 @@
         "padding_bottom": "large"
       }
     },
-    "press": {
-      "type": "press",
+    "runway": {
+      "type": "runway",
+      "settings": {
+        "heading": "Run<em>way</em>",
+        "label": "Three looks · tap to shop",
+        "color_scheme": "scheme-2",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      },
       "blocks": {
-        "p1": {
-          "type": "publication",
+        "r1": {
+          "type": "clip",
           "settings": {
-            "name": "The Cut Sheet",
-            "style": "heavy",
-            "quote": "“Tailoring that moves like it was cut for the street, not the showroom.”"
+            "caption": "Look 01 · Soft suit",
+            "length": 8
           }
         },
-        "p2": {
-          "type": "publication",
+        "r2": {
+          "type": "clip",
           "settings": {
-            "name": "Atelier Weekly",
-            "style": "serif",
-            "quote": "“The rare label that makes a trench feel like news.”"
+            "caption": "Look 02 · Field day",
+            "length": 8
           }
         },
-        "p3": {
-          "type": "publication",
+        "r3": {
+          "type": "clip",
           "settings": {
-            "name": "North Review",
-            "style": "mono",
-            "quote": "“Quiet pieces, loud intent. The knitwear alone is worth the trip.”"
-          }
-        },
-        "p4": {
-          "type": "publication",
-          "settings": {
-            "name": "Form & Fold",
-            "style": "light",
-            "quote": "“A wardrobe built to be worn hard and kept for years.”"
-          }
-        },
-        "p5": {
-          "type": "publication",
-          "settings": {
-            "name": "Selvedge Daily",
-            "style": "classic",
-            "quote": "“Their denim is the reason we stopped recommending anyone else.”"
+            "caption": "Look 03 · Weather",
+            "length": 8
           }
         }
       },
       "block_order": [
-        "p1",
-        "p2",
-        "p3",
-        "p4",
-        "p5"
-      ],
+        "r1",
+        "r2",
+        "r3"
+      ]
+    },
+    "spotlight": {
+      "type": "model-spotlight",
       "settings": {
-        "eyebrow": "As written about in",
-        "padding_top": "medium",
-        "padding_bottom": "medium"
-      }
+        "label": "One piece, two bodies",
+        "heading": "See it <em>on you</em>",
+        "text": "<p>The same piece on models of different heights, each in the size they chose.</p>",
+        "product": "",
+        "color_scheme": "scheme-1",
+        "padding_top": "none",
+        "padding_bottom": "large"
+      },
+      "blocks": {
+        "m1": {
+          "type": "model",
+          "settings": {
+            "name": "Lena",
+            "height": "178 cm",
+            "size": "S",
+            "photo": 1
+          }
+        },
+        "m2": {
+          "type": "model",
+          "settings": {
+            "name": "Noor",
+            "height": "170 cm",
+            "size": "M",
+            "photo": 2
+          }
+        }
+      },
+      "block_order": [
+        "m1",
+        "m2"
+      ]
     }
   },
   "order": [
     "hero",
-    "tapes",
     "categories",
     "index",
     "edit",
     "explorer",
     "manifesto",
-    "lookbook",
-    "stack",
-    "press",
+    "spotlight",
+    "runway",
     "journal",
     "newsletter"
   ]

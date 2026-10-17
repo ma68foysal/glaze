@@ -1,0 +1,84 @@
+{%- comment -%}
+  Material lens: a fabric close-up with a magnifier, the composition as
+  bars, and care symbols. Every setting can be connected to a product
+  metafield. Care takes symbol codes separated by commas, as "wash-30, no-bleach". Composition takes one fibre per line, as "72% Wool".
+  Renders nothing when the photo, composition and care are all empty.
+  Accepts: block
+{%- endcomment -%}
+{%- liquid
+  assign img = block.settings.image
+  assign comp_lines = block.settings.composition | replace: '<br>', '~~' | replace: '<br/>', '~~' | replace: '<br />', '~~' | replace: '</p>', '~~' | newline_to_br | replace: '<br />', '~~' | strip_html | split: '~~'
+  assign care_keys = 'wash_30,wash_hand,no_bleach,no_tumble,iron_low,dry_flat,dry_clean,no_dry_clean' | split: ','
+  assign care_codes = block.settings.care | downcase | replace: '-', '_' | replace: ' ', '' | split: ','
+  assign care_on = ''
+  for k in care_codes
+    if care_keys contains k
+      assign care_on = care_on | append: k | append: ','
+    endif
+  endfor
+  assign care_list = care_on | split: ','
+  assign has_comp = false
+  assign comp_text = block.settings.composition | strip_html | strip
+  if comp_text != blank
+    assign has_comp = true
+  endif
+-%}
+{%- if img != blank or has_comp or care_list.size > 0 -%}
+  <div class="k-mat" {{ block.shopify_attributes }}>
+    <p class="k-label k-mat__heading">{% if block.settings.heading != blank %}{{ block.settings.heading | escape }}{% else %}{{ 'products.material.heading' | t }}{% endif %}</p>
+    <div class="k-mat__body{% if img == blank %} k-mat__body--text{% endif %}">
+      {%- if img != blank -%}
+        <k-lens class="k-mat__lens" data-src="{{ img | image_url: width: 1600 }}">
+          <span class="k-mat__frame k-media">
+            {{ img | image_url: width: 600 | image_tag: widths: '300, 450, 600', sizes: '(min-width: 900px) 180px, 40vw', loading: 'lazy', alt: img.alt | default: '' }}
+            <span class="k-mat__glass" aria-hidden="true"></span>
+          </span>
+          <span class="k-mat__hint k-label k-muted">{{ 'products.material.lens_hint' | t }}</span>
+        </k-lens>
+      {%- endif -%}
+      {%- if has_comp -%}
+        <div class="k-mat__comp">
+          <p class="k-mat__sub">{{ 'products.material.composition' | t }}</p>
+          <ul class="k-mat__fibres" role="list">
+            {%- for line in comp_lines -%}
+              {%- assign l = line | strip -%}
+              {%- if l == blank -%}{%- continue -%}{%- endif -%}
+              {%- liquid
+                assign first = l | split: ' ' | first
+                assign pct = 0
+                if first contains '%'
+                  assign pct = first | remove: '%' | plus: 0 | at_most: 100 | at_least: 0
+                endif
+                assign rest = l | remove_first: first | strip
+              -%}
+              <li class="k-mat__fibre">
+                {%- if pct > 0 -%}
+                  <span class="k-mat__pct">{{ pct }}%</span>
+                  <span class="k-mat__name">{{ rest | escape }}</span>
+                  <span class="k-mat__bar" aria-hidden="true"><i style="--w: {{ pct }}%;"></i></span>
+                {%- else -%}
+                  <span class="k-mat__name k-mat__name--full">{{ l | escape }}</span>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+          {%- if block.settings.origin != blank -%}<p class="k-mat__origin k-muted">{{ block.settings.origin | escape }}</p>{%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+    {%- if care_list.size > 0 -%}
+      <div class="k-mat__care">
+        <p class="k-mat__sub">{{ 'products.material.care' | t }}</p>
+        <ul class="k-mat__symbols" role="list">
+          {%- for k in care_list -%}
+            {%- assign label_key = 'products.material.' | append: k -%}
+            <li class="k-mat__symbol">
+              {%- render 'k-care-icon', icon: k -%}
+              <span>{{ label_key | t }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}

@@ -1,0 +1,27 @@
+{%- comment -%}
+  Garment care symbols, drawn after the ISO 3758 set. Decorative: the label
+  sits next to each one. Accepts: icon
+{%- endcomment -%}
+<svg class="k-care" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {%- case icon -%}
+    {%- when 'wash_30' -%}
+      <path d="M4 9l2.6 15h18.8L28 9"/><path d="M4 9c2 2 4 2 6 0s4-2 6 0 4 2 6 0 4-2 6 0"/>
+      <text x="16" y="21.5" text-anchor="middle" font-size="8" font-weight="700" fill="currentColor" stroke="none" font-family="inherit">30</text>
+    {%- when 'wash_hand' -%}
+      <path d="M4 13l2 11h20l2-11"/><path d="M4 13c2 1.6 4 1.6 6 0s4-1.6 6 0 4 1.6 6 0 4-1.6 6 0"/>
+      <path d="M12 9V4.5a1.3 1.3 0 0 1 2.6 0V8m0-3.5a1.3 1.3 0 0 1 2.6 0V8m0-2.5a1.3 1.3 0 0 1 2.6 0V10"/>
+    {%- when 'no_bleach' -%}
+      <path d="M16 5L28 26H4z"/><path d="M8 9l16 16M24 9L8 25"/>
+    {%- when 'no_tumble' -%}
+      <rect x="5" y="5" width="22" height="22" rx="1"/><circle cx="16" cy="16" r="7.5"/><path d="M5 5l22 22M27 5L5 27"/>
+    {%- when 'iron_low' -%}
+      <path d="M5 23h22c0-6-3.5-11-11-11H9"/><path d="M5 23l2-7h9"/><circle cx="17" cy="18.5" r="1" fill="currentColor" stroke="none"/>
+    {%- when 'dry_flat' -%}
+      <rect x="5" y="5" width="22" height="22" rx="1"/><path d="M10 16h12"/>
+    {%- when 'dry_clean' -%}
+      <circle cx="16" cy="16" r="11"/>
+      <text x="16" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor" stroke="none" font-family="inherit">P</text>
+    {%- when 'no_dry_clean' -%}
+      <circle cx="16" cy="16" r="11"/><path d="M8 8l16 16M24 8L8 24"/>
+  {%- endcase -%}
+</svg>

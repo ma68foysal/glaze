@@ -1,0 +1,160 @@
+{%- comment -%}
+  Model spotlight: one piece on several models. Each model block names the
+  model, their height and the size worn, and shows either its own photo or
+  one of the product's photos. Choosing a model wipes to their photo.
+{%- endcomment -%}
+{%- liquid
+  assign product = section.settings.product
+  assign models = section.blocks | where: 'type', 'model'
+-%}
+<section class="k-spot k-section pt-{{ section.settings.padding_top }} pb-{{ section.settings.padding_bottom }} color-{{ section.settings.color_scheme }}" data-k-spot>
+  <div class="k-wrap k-spot__grid">
+    <div class="k-spot__stage" aria-hidden="true">
+      {%- for block in models -%}
+        {%- liquid
+          assign img = block.settings.image
+          if img == blank and product != blank
+            assign pos = block.settings.photo | minus: 1
+            assign media = product.media[pos] | default: product.featured_media
+            assign img = media.preview_image
+          endif
+        -%}
+        <div class="k-spot__photo k-media{% if forloop.first %} is-on{% endif %}" data-spot-photo="{{ forloop.index0 }}">
+          {%- if img != blank -%}
+            {{ img | image_url: width: 1600 | image_tag: widths: '540, 720, 960, 1280, 1600', sizes: '(min-width: 900px) 55vw, 100vw', loading: 'lazy', alt: '' }}
+          {%- else -%}
+            {%- capture ph -%}lifestyle-{% cycle '1', '2' %}{%- endcapture -%}
+            {{ ph | placeholder_svg_tag: 'k-ph' }}
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        <div class="k-spot__photo k-media is-on">{{ 'lifestyle-1' | placeholder_svg_tag: 'k-ph' }}</div>
+      {%- endfor -%}
+    </div>
+
+    <div class="k-spot__info">
+      {%- if section.settings.label != blank -%}<p class="k-label k-muted">{{ section.settings.label | escape }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="k-h2 k-spot__heading">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.text != blank -%}<div class="k-spot__text k-rte">{{ section.settings.text }}</div>{%- endif -%}
+
+      {%- if models.size > 0 -%}
+        <div class="k-models__list k-spot__models" role="group" aria-label="{{ 'products.models.group' | t }}">
+          {%- for block in models -%}
+            {%- assign worn = 'products.models.worn' | t: name: block.settings.name, height: block.settings.height, size: block.settings.size -%}
+            <button type="button" class="k-models__btn" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" data-spot-btn="{{ forloop.index0 }}" data-worn="{{ worn | escape }}" {{ block.shopify_attributes }}>
+              <span class="k-models__name">{{ block.settings.name | escape }}</span>
+              <span class="k-models__meta k-label">{{ block.settings.height | escape }} · {{ block.settings.size | escape }}</span>
+            </button>
+          {%- endfor -%}
+        </div>
+        {%- assign first = models | first -%}
+        <p class="k-models__worn k-spot__worn" aria-live="polite" data-spot-worn>{{ 'products.models.worn' | t: name: first.settings.name, height: first.settings.height, size: first.settings.size }}</p>
+      {%- endif -%}
+
+      <div class="k-spot__product">
+        {%- if product != blank -%}
+          <a class="k-spot__name" href="{{ product.url }}">{{ product.title }}</a>
+          <span class="k-spot__price">{% render 'k-price', variant: product.selected_or_first_available_variant %}</span>
+          <div class="k-spot__ctas">
+            <a class="k-btn k-btn--primary" href="{{ product.url }}"{% if settings.quick_view %} data-quick-view aria-haspopup="dialog"{% endif %}>{% if settings.quick_view %}{{ 'products.quick_add' | t }}{% else %}{{ 'products.choose_options' | t }}{% endif %}<span class="visually-hidden">: {{ product.title }}</span></a>
+          </div>
+        {%- else -%}
+          <span class="k-spot__name">{{ 'onboarding.product_title' | t }}</span>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .k-spot__grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
+  .k-spot__stage { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius-card); overflow: hidden; }
+  .k-spot__photo { position: absolute; inset: 0; clip-path: inset(0 100% 0 0); transition: clip-path 0.8s var(--ease-out); }
+  .k-spot__photo.is-on { clip-path: inset(0 0 0 0); z-index: 1; }
+  .k-spot__photo.is-leaving { clip-path: inset(0 0 0 0); z-index: 0; transition: none; }
+  .k-spot__photo img, .k-spot__photo svg { width: 100%; height: 100%; object-fit: cover; }
+  .k-spot__info { display: grid; gap: 18px; align-content: center; }
+  .k-spot__info > * { margin: 0; }
+  .k-spot__text { max-width: 44ch; color: var(--color-muted); }
+  .k-spot__worn { font-size: 17px; }
+  .k-spot__product { display: grid; gap: 8px; padding-top: 18px; border-top: 1.5px solid var(--color-text); }
+  .k-spot__name { font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: clamp(24px, 2.6vw, 36px); letter-spacing: -0.03em; line-height: 1; }
+  a.k-spot__name:hover { color: var(--color-accent); }
+  .k-spot__ctas { padding-top: 8px; }
+  @media (prefers-reduced-motion: reduce) { .k-spot__photo { transition: none; } }
+  @media (max-width: 899px) { .k-spot__grid { grid-template-columns: minmax(0, 1fr); } }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    function setup(sec) {
+      if (sec.dataset.ready) return;
+      sec.dataset.ready = '1';
+      var photos = sec.querySelectorAll('[data-spot-photo]');
+      var worn = sec.querySelector('[data-spot-worn]');
+      sec.querySelectorAll('[data-spot-btn]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          sec.querySelectorAll('[data-spot-btn]').forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+          if (worn) worn.textContent = btn.dataset.worn;
+          photos.forEach(function (p) {
+            var on = p.dataset.spotPhoto === btn.dataset.spotBtn;
+            if (p.classList.contains('is-on') && !on) {
+              p.classList.remove('is-on');
+              p.classList.add('is-leaving');
+              setTimeout(function () { p.classList.remove('is-leaving'); }, 820);
+            }
+            if (on) { p.classList.remove('is-leaving'); p.classList.add('is-on'); }
+          });
+        });
+      });
+    }
+    function init() { document.querySelectorAll('[data-k-spot]').forEach(setup); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    document.addEventListener('shopify:section:load', init);
+    document.addEventListener('shopify:block:select', function (e) {
+      var btn = e.target.closest && e.target.closest('[data-spot-btn]');
+      if (btn) btn.click();
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Model spotlight",
+  "tag": "div",
+  "class": "k-spot-section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "One piece, three bodies" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "See it <em>on you</em>" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>The same coat on models of different heights, each in the size they chose.</p>" },
+    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "select", "id": "padding_top", "label": "Top padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
+    { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "large", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "model",
+      "name": "Model",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Name", "default": "Lena" },
+        { "type": "text", "id": "height", "label": "Height", "default": "178 cm" },
+        { "type": "text", "id": "size", "label": "Size worn", "default": "S" },
+        { "type": "image_picker", "id": "image", "label": "Photo", "info": "Leave empty to use one of the product's photos." },
+        { "type": "range", "id": "photo", "label": "Product photo number", "min": 1, "max": 10, "step": 1, "default": 1 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Model spotlight",
+      "blocks": [
+        { "type": "model", "settings": { "name": "Lena", "height": "178 cm", "size": "S", "photo": 1 } },
+        { "type": "model", "settings": { "name": "Noor", "height": "170 cm", "size": "M", "photo": 2 } },
+        { "type": "model", "settings": { "name": "Ada", "height": "164 cm", "size": "M", "photo": 3 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

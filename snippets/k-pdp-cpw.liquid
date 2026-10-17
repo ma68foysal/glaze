@@ -1,0 +1,39 @@
+{%- comment -%}
+  Cost per wear: the selected variant's price divided by how often it will
+  be worn. Two sliders set wears a month and years kept; the sum is written
+  out under the figure. Follows variant changes.
+  Accepts: block, variant
+{%- endcomment -%}
+{%- liquid
+  assign wears = block.settings.wears
+  assign years = block.settings.years
+  assign total = wears | times: 12 | times: years
+  assign per = variant.price | divided_by: total
+  assign price_money = variant.price | money
+  assign per_money = per | money
+-%}
+{%- if variant.price > 0 -%}
+  <k-cpw
+    class="k-cpw"
+    data-price="{{ variant.price }}"
+    data-sum="{{ 'products.cpw.sum' | t: price: '[price]', wears: '[wears]', years: '[years]', result: '[result]' | escape }}"
+    {{ block.shopify_attributes }}
+  >
+    <div class="k-cpw__head">
+      <p class="k-label k-cpw__heading">{% if block.settings.heading != blank %}{{ block.settings.heading | escape }}{% else %}{{ 'products.cpw.heading' | t }}{% endif %}</p>
+      <p class="k-cpw__figure"><output data-cpw-result>{{ per_money }}</output> <span class="k-cpw__unit">{{ 'products.cpw.per_wear' | t }}</span></p>
+    </div>
+    <div class="k-cpw__inputs">
+      <label class="k-cpw__field">
+        <span class="k-cpw__field-head"><span>{{ 'products.cpw.wears' | t }}</span><output data-cpw-out="wears">{{ wears }}</output></span>
+        <input type="range" min="1" max="30" step="1" value="{{ wears }}" data-cpw-input="wears">
+      </label>
+      <label class="k-cpw__field">
+        <span class="k-cpw__field-head"><span>{{ 'products.cpw.years' | t }}</span><output data-cpw-out="years">{{ years }}</output></span>
+        <input type="range" min="1" max="10" step="1" value="{{ years }}" data-cpw-input="years">
+      </label>
+    </div>
+    <p class="k-cpw__sum k-muted" data-cpw-sum>{{ 'products.cpw.sum' | t: price: price_money, wears: wears, years: years, result: per_money }}</p>
+    {%- if block.settings.note != blank -%}<p class="k-cpw__note k-muted">{{ block.settings.note | escape }}</p>{%- endif -%}
+  </k-cpw>
+{%- endif -%}

@@ -347,6 +347,36 @@
       "on_list": "Sie sind vorgemerkt. Wir melden uns, sobald es losgeht.",
       "live": "Jetzt verfügbar",
       "badge": "Drop · {{ date }}"
+    },
+    "models": {
+      "group": "Am Model ansehen",
+      "count": {
+        "one": "An {{ count }} Model zu sehen",
+        "other": "An {{ count }} Models zu sehen"
+      },
+      "worn": "{{ name }} ist {{ height }} groß und trägt {{ size }}"
+    },
+    "material": {
+      "heading": "Material",
+      "composition": "Zusammensetzung",
+      "care": "Pflege",
+      "lens_hint": "Fahre über den Stoff, um ihn näher zu sehen",
+      "lens_alt": "Nahaufnahme des Stoffs",
+      "wash_30": "Maschinenwäsche bei 30 °C",
+      "wash_hand": "Handwäsche",
+      "no_bleach": "Nicht bleichen",
+      "no_tumble": "Nicht im Trockner trocknen",
+      "iron_low": "Bei niedriger Temperatur bügeln",
+      "dry_flat": "Liegend trocknen",
+      "dry_clean": "Chemische Reinigung",
+      "no_dry_clean": "Keine chemische Reinigung"
+    },
+    "cpw": {
+      "heading": "Kosten pro Tragen",
+      "per_wear": "pro Tragen",
+      "wears": "Tragen pro Monat",
+      "years": "Jahre im Einsatz",
+      "sum": "{{ price }} ÷ ({{ wears }}× im Monat × 12 × {{ years }} Jahre) = {{ result }}"
     }
   },
   "sections": {

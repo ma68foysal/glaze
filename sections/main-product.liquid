@@ -357,6 +357,18 @@
 
               {%- render 'k-pdp-fit', block: block, product: product, form_id: form_id -%}
 
+            {%- when 'models' -%}
+
+              {%- render 'k-pdp-models', block: block, product: product -%}
+
+            {%- when 'material' -%}
+
+              {%- render 'k-pdp-material', block: block -%}
+
+            {%- when 'cost_per_wear' -%}
+
+              {%- render 'k-pdp-cpw', block: block, variant: current_variant -%}
+
             {%- when 'inventory' -%}
 
               {%- render 'k-pdp-inventory', block: block, variant: current_variant -%}
@@ -725,6 +737,39 @@
         { "type": "text", "id": "model_note", "label": "Model note", "info": "For example: Model is 178 cm and wears S." },
         { "type": "checkbox", "id": "show_finder", "label": "Show size finder", "default": true, "info": "Needs an option named Size and a size chart." },
         { "type": "textarea", "id": "size_chart", "label": "Size chart (height in cm)", "default": "XS: 150-160\nS: 158-168\nM: 166-176\nL: 174-184\nXL: 182-194", "info": "One size per line as Size: shortest-tallest. Size names must match the product's size option." }
+      ]
+    },
+    {
+      "type": "models",
+      "name": "Model switcher",
+      "limit": 1,
+      "settings": [
+        { "type": "paragraph", "content": "Shows the piece on models of different builds. Connect Models to a multi-line text metafield (the database icon) so every product lists its own models." },
+        { "type": "richtext", "id": "models", "label": "Models", "info": "One model per line or paragraph as Name | height | size worn | photo number, for example: Ana | 178 cm | S | 3. The photo number counts the product's media from 1. Needs at least two models to show." }
+      ]
+    },
+    {
+      "type": "material",
+      "name": "Material lens",
+      "limit": 1,
+      "settings": [
+        { "type": "paragraph", "content": "Connect these to product metafields so every product shows its own fabric. The block hides when all of them are empty." },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Material" },
+        { "type": "image_picker", "id": "image", "label": "Fabric close-up", "info": "A sharp, close photo of the cloth. Visitors move a magnifier over it." },
+        { "type": "richtext", "id": "composition", "label": "Composition", "info": "One fibre per line or paragraph, for example: 72% Wool" },
+        { "type": "text", "id": "origin", "label": "Origin note", "info": "For example: Woven in Biella, Italy" },
+        { "type": "text", "id": "care", "label": "Care symbols", "info": "Codes separated by commas: wash-30, wash-hand, no-bleach, no-tumble, iron-low, dry-flat, dry-clean, no-dry-clean. Connect to a single-line text metafield so each product has its own." }
+      ]
+    },
+    {
+      "type": "cost_per_wear",
+      "name": "Cost per wear",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Cost per wear" },
+        { "type": "range", "id": "wears", "label": "Starting wears a month", "min": 1, "max": 30, "step": 1, "default": 4 },
+        { "type": "range", "id": "years", "label": "Starting years kept", "min": 1, "max": 10, "step": 1, "default": 3 },
+        { "type": "text", "id": "note", "label": "Note", "info": "Optional. For example: Repairs are free for the first two years." }
       ]
     },
     {
