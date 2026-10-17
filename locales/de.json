@@ -369,7 +369,8 @@
       "iron_low": "Bei niedriger Temperatur bügeln",
       "dry_flat": "Liegend trocknen",
       "dry_clean": "Chemische Reinigung",
-      "no_dry_clean": "Keine chemische Reinigung"
+      "no_dry_clean": "Keine chemische Reinigung",
+      "lens_hint_touch": "Tippe und ziehe über den Stoff, um ihn näher zu sehen"
     },
     "cpw": {
       "heading": "Kosten pro Tragen",

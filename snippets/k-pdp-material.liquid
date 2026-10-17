@@ -33,12 +33,24 @@
             {{ img | image_url: width: 600 | image_tag: widths: '300, 450, 600', sizes: '(min-width: 900px) 180px, 40vw', loading: 'lazy', alt: img.alt | default: '' }}
             <span class="k-mat__glass" aria-hidden="true"></span>
           </span>
-          <span class="k-mat__hint k-label k-muted">{{ 'products.material.lens_hint' | t }}</span>
+          <span class="k-mat__hint k-label k-muted"><span class="k-mat__hint-mouse">{{ 'products.material.lens_hint' | t }}</span><span class="k-mat__hint-touch">{{ 'products.material.lens_hint_touch' | t }}</span></span>
         </k-lens>
       {%- endif -%}
       {%- if has_comp -%}
         <div class="k-mat__comp">
           <p class="k-mat__sub">{{ 'products.material.composition' | t }}</p>
+          <span class="k-mat__split" aria-hidden="true">
+            {%- assign seg = 0 -%}
+            {%- for line in comp_lines -%}
+              {%- assign l = line | strip -%}
+              {%- assign first = l | split: ' ' | first -%}
+              {%- if first contains '%' -%}
+                {%- assign pct = first | remove: '%' | plus: 0 | at_most: 100 | at_least: 0 -%}
+                {%- if pct > 0 -%}{%- assign seg = seg | plus: 1 -%}<i class="k-mat__seg k-mat__seg--{{ seg | at_most: 5 }}" style="--w: {{ pct }}%;"></i>{%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </span>
+          {%- assign seg2 = 0 -%}
           <ul class="k-mat__fibres" role="list">
             {%- for line in comp_lines -%}
               {%- assign l = line | strip -%}
@@ -52,10 +64,10 @@
                 assign rest = l | remove_first: first | strip
               -%}
               <li class="k-mat__fibre">
-                {%- if pct > 0 -%}
+                {%- if pct > 0 -%}{%- assign seg2 = seg2 | plus: 1 -%}
+                  <span class="k-mat__swatch k-mat__seg--{{ seg2 | at_most: 5 }}" aria-hidden="true"></span>
                   <span class="k-mat__pct">{{ pct }}%</span>
                   <span class="k-mat__name">{{ rest | escape }}</span>
-                  <span class="k-mat__bar" aria-hidden="true"><i style="--w: {{ pct }}%;"></i></span>
                 {%- else -%}
                   <span class="k-mat__name k-mat__name--full">{{ l | escape }}</span>
                 {%- endif -%}

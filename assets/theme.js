@@ -1300,11 +1300,24 @@ window.ObliqueMoodboard = (function () {
     connectedCallback() {
       var out = this.querySelector('[data-models-worn]');
       var buttons = Array.prototype.slice.call(this.querySelectorAll('.k-models__btn'));
+      var select = function (btn) {
+        buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+        if (out) out.textContent = btn.dataset.worn;
+      };
+      // Start on the model whose photo is showing; keep in step when the
+      // gallery moves to another model's photo by thumbnail or arrow.
+      var product = this.closest('k-product');
+      var sync = function () {
+        if (!product) return;
+        var active = product.querySelector('.k-pdp__media.is-active');
+        var match = active && buttons.find(function (b) { return b.dataset.media === active.dataset.mediaId; });
+        if (match) select(match);
+      };
+      sync();
+      if (product) product.addEventListener('click', function (e) { if (e.target.closest('[data-thumb], [data-media-step]')) setTimeout(sync, 0); });
       buttons.forEach((btn) => {
         btn.addEventListener('click', () => {
-          buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
-          if (out) out.textContent = btn.dataset.worn;
-          var product = this.closest('k-product');
+          select(btn);
           if (!product || !btn.dataset.media) return;
           product.showMedia(btn.dataset.media);
           var item = product.querySelector('.k-pdp__media[data-media-id="' + btn.dataset.media + '"]');
@@ -1319,7 +1332,7 @@ window.ObliqueMoodboard = (function () {
   });
 
   // Material lens: a round magnifier follows the pointer over the fabric.
-  // On touch, a tap places it and a second tap outside the photo hides it.
+  // On touch, tap and drag moves it; a tap outside the photo hides it.
   define('k-lens', class extends HTMLElement {
     connectedCallback() {
       var frame = this.querySelector('.k-mat__frame');
@@ -1336,8 +1349,16 @@ window.ObliqueMoodboard = (function () {
         glass.style.backgroundPosition = (x * 100) + '% ' + (y * 100) + '%';
         frame.classList.add('is-on');
       };
-      frame.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse') place(e); });
-      frame.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') place(e); });
+      var dragging = false;
+      frame.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'mouse') return;
+        dragging = true;
+        try { frame.setPointerCapture(e.pointerId); } catch (err) {}
+        place(e);
+      });
+      frame.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse' || dragging) place(e); });
+      frame.addEventListener('pointerup', function () { dragging = false; });
+      frame.addEventListener('pointercancel', function () { dragging = false; });
       frame.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') frame.classList.remove('is-on'); });
       document.addEventListener('pointerdown', function (e) { if (!frame.contains(e.target)) frame.classList.remove('is-on'); });
     }
@@ -1366,6 +1387,9 @@ window.ObliqueMoodboard = (function () {
       this.querySelector('[data-cpw-out="years"]').textContent = y;
       var per = Math.floor(this.price / (w * 12 * y));
       this.querySelector('[data-cpw-result]').textContent = formatMoney(per);
+      var row = this.closest('.k-cpw-row');
+      var peek = row && row.querySelector('[data-cpw-peek]');
+      if (peek) peek.textContent = formatMoney(per) + ' ' + this.dataset.perWear;
       this.querySelector('[data-cpw-sum]').textContent = this.dataset.sum
         .replace('[price]', formatMoney(this.price)).replace('[wears]', w).replace('[years]', y).replace('[result]', formatMoney(per));
     }

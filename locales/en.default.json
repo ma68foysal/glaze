@@ -369,7 +369,8 @@
       "iron_low": "Iron on low heat",
       "dry_flat": "Dry flat",
       "dry_clean": "Dry clean",
-      "no_dry_clean": "Do not dry clean"
+      "no_dry_clean": "Do not dry clean",
+      "lens_hint_touch": "Tap and drag over the fabric to look closer"
     },
     "cpw": {
       "heading": "Cost per wear",

@@ -40,15 +40,14 @@
       {%- if models.size > 0 -%}
         <div class="k-models__list k-spot__models" role="group" aria-label="{{ 'products.models.group' | t }}">
           {%- for block in models -%}
-            {%- assign worn = 'products.models.worn' | t: name: block.settings.name, height: block.settings.height, size: block.settings.size -%}
-            <button type="button" class="k-models__btn" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" data-spot-btn="{{ forloop.index0 }}" data-worn="{{ worn | escape }}" {{ block.shopify_attributes }}>
+            <button type="button" class="k-models__btn k-spot__btn" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" data-spot-btn="{{ forloop.index0 }}" data-note="{{ block.settings.note | escape }}" {{ block.shopify_attributes }}>
               <span class="k-models__name">{{ block.settings.name | escape }}</span>
               <span class="k-models__meta k-label">{{ block.settings.height | escape }} · {{ block.settings.size | escape }}</span>
             </button>
           {%- endfor -%}
         </div>
         {%- assign first = models | first -%}
-        <p class="k-models__worn k-spot__worn" aria-live="polite" data-spot-worn>{{ 'products.models.worn' | t: name: first.settings.name, height: first.settings.height, size: first.settings.size }}</p>
+        <p class="k-models__worn k-spot__worn" aria-live="polite" data-spot-worn{% if first.settings.note == blank %} hidden{% endif %}>{{ first.settings.note | escape }}</p>
       {%- endif -%}
 
       <div class="k-spot__product">
@@ -57,6 +56,7 @@
           <span class="k-spot__price">{% render 'k-price', variant: product.selected_or_first_available_variant %}</span>
           <div class="k-spot__ctas">
             <a class="k-btn k-btn--primary" href="{{ product.url }}"{% if settings.quick_view %} data-quick-view aria-haspopup="dialog"{% endif %}>{% if settings.quick_view %}{{ 'products.quick_add' | t }}{% else %}{{ 'products.choose_options' | t }}{% endif %}<span class="visually-hidden">: {{ product.title }}</span></a>
+            <a class="k-spot__more" href="{{ product.url }}">{{ 'products.view_details' | t }} <span aria-hidden="true">→</span><span class="visually-hidden">: {{ product.title }}</span></a>
           </div>
         {%- else -%}
           <span class="k-spot__name">{{ 'onboarding.product_title' | t }}</span>
@@ -80,7 +80,16 @@
   .k-spot__product { display: grid; gap: 8px; padding-top: 18px; border-top: 1.5px solid var(--color-text); }
   .k-spot__name { font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: clamp(24px, 2.6vw, 36px); letter-spacing: -0.03em; line-height: 1; }
   a.k-spot__name:hover { color: var(--color-accent); }
-  .k-spot__ctas { padding-top: 8px; }
+  .k-spot__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-top: 8px; }
+  .k-spot__more { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+  .k-spot__more:hover { color: var(--color-accent); }
+  .k-spot .k-spot__btn { display: grid; gap: 2px; min-height: var(--touch, 44px); padding: 8px 16px; text-align: left; border: 1.5px solid var(--color-line); border-radius: calc(var(--radius-card) * 0.5); color: inherit; font: inherit; }
+  .k-spot .k-spot__btn:hover { border-color: var(--color-text); background: transparent; }
+  .k-spot .k-spot__btn[aria-pressed="true"] { border-color: var(--color-text); background: var(--color-text); color: var(--color-bg); }
+  .k-spot .k-models__list { padding: 0; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; border-radius: 0; gap: 8px; }
+  .k-spot .k-spot__worn { padding: 0; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; color: inherit; font-size: 17px; }
+  .k-spot .k-models__name { font-weight: 700; font-size: 15px; }
+  .k-spot .k-models__meta { opacity: 0.75; }
   @media (prefers-reduced-motion: reduce) { .k-spot__photo { transition: none; } }
   @media (max-width: 899px) { .k-spot__grid { grid-template-columns: minmax(0, 1fr); } }
 {% endstylesheet %}
@@ -95,7 +104,7 @@
       sec.querySelectorAll('[data-spot-btn]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           sec.querySelectorAll('[data-spot-btn]').forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
-          if (worn) worn.textContent = btn.dataset.worn;
+          if (worn) { worn.textContent = btn.dataset.note; worn.hidden = !btn.dataset.note; }
           photos.forEach(function (p) {
             var on = p.dataset.spotPhoto === btn.dataset.spotBtn;
             if (p.classList.contains('is-on') && !on) {
@@ -141,6 +150,7 @@
         { "type": "text", "id": "name", "label": "Name", "default": "Lena" },
         { "type": "text", "id": "height", "label": "Height", "default": "178 cm" },
         { "type": "text", "id": "size", "label": "Size worn", "default": "S" },
+        { "type": "text", "id": "note", "label": "Fit note", "info": "Optional. For example: Hits mid-thigh." },
         { "type": "image_picker", "id": "image", "label": "Photo", "info": "Leave empty to use one of the product's photos." },
         { "type": "range", "id": "photo", "label": "Product photo number", "min": 1, "max": 10, "step": 1, "default": 1 }
       ]
@@ -150,9 +160,9 @@
     {
       "name": "Model spotlight",
       "blocks": [
-        { "type": "model", "settings": { "name": "Lena", "height": "178 cm", "size": "S", "photo": 1 } },
-        { "type": "model", "settings": { "name": "Noor", "height": "170 cm", "size": "M", "photo": 2 } },
-        { "type": "model", "settings": { "name": "Ada", "height": "164 cm", "size": "M", "photo": 3 } }
+        { "type": "model", "settings": { "name": "Lena", "height": "178 cm", "size": "S", "note": "Hits mid-thigh", "photo": 1 } },
+        { "type": "model", "settings": { "name": "Noor", "height": "170 cm", "size": "M", "note": "Sized up for a relaxed fit", "photo": 2 } },
+        { "type": "model", "settings": { "name": "Ada", "height": "164 cm", "size": "M", "note": "Falls just below the knee", "photo": 3 } }
       ]
     }
   ]

@@ -369,7 +369,8 @@
       "iron_low": "Planchar a baja temperatura",
       "dry_flat": "Secar en plano",
       "dry_clean": "Limpieza en seco",
-      "no_dry_clean": "No limpiar en seco"
+      "no_dry_clean": "No limpiar en seco",
+      "lens_hint_touch": "Toca y arrastra sobre el tejido para verlo de cerca"
     },
     "cpw": {
       "heading": "Coste por uso",

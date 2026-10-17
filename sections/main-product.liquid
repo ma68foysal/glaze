@@ -28,6 +28,7 @@
     assign sale_off = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price
   endif
   assign buy_block = section.blocks | where: 'type', 'buy_buttons' | first
+  assign models_block = section.blocks | where: 'type', 'models' | first
   assign color_index = 0
   for option in product.options_with_values
     assign oname = option.name | downcase
@@ -72,6 +73,7 @@
           </ul>
         {%- endif -%}
         <div class="k-pdp__stage">
+        {%- if models_block and product.media.size > 1 -%}{%- render 'k-pdp-models', block: models_block, product: product -%}{%- endif -%}
         {%- if drop_locked -%}
           <div class="k-pdp__lock" aria-hidden="true"><span>{% render 'k-icon', icon: 'lock', size: 36 %}{{ 'products.drop.locked' | t }}</span></div>
         {%- endif -%}
@@ -358,8 +360,7 @@
               {%- render 'k-pdp-fit', block: block, product: product, form_id: form_id -%}
 
             {%- when 'models' -%}
-
-              {%- render 'k-pdp-models', block: block, product: product -%}
+              {%- comment -%} Rendered over the gallery, above. {%- endcomment -%}
 
             {%- when 'material' -%}
 

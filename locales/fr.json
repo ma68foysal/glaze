@@ -369,7 +369,8 @@
       "iron_low": "Repassage à basse température",
       "dry_flat": "Séchage à plat",
       "dry_clean": "Nettoyage à sec",
-      "no_dry_clean": "Pas de nettoyage à sec"
+      "no_dry_clean": "Pas de nettoyage à sec",
+      "lens_hint_touch": "Touchez et faites glisser sur le tissu pour voir de plus près"
     },
     "cpw": {
       "heading": "Coût par port",

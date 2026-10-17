@@ -369,7 +369,8 @@
       "iron_low": "Stirare a bassa temperatura",
       "dry_flat": "Asciugare in piano",
       "dry_clean": "Lavaggio a secco",
-      "no_dry_clean": "Non lavare a secco"
+      "no_dry_clean": "Non lavare a secco",
+      "lens_hint_touch": "Tocca e trascina sul tessuto per vederlo da vicino"
     },
     "cpw": {
       "heading": "Costo per utilizzo",

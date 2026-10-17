@@ -1,9 +1,10 @@
 {%- comment -%}
   Model switcher: the same piece on models of different builds.
-  The block's Models setting holds one model per line as
-  Name | height | size worn | photo number, so it can be connected to a
-  multi-line text metafield. Choosing a model brings that product photo
-  forward with a wipe. Renders nothing with fewer than two complete lines.
+  Sits over the product photo as tabs. The block's Models setting holds one
+  model per line as Name | height | size worn | photo number | fit note
+  (the note is optional), so it can be connected to a multi-line text
+  metafield. Choosing a model brings that product photo forward with a
+  wipe. Renders nothing with fewer than two complete lines.
   Accepts: block, product
 {%- endcomment -%}
 {%- liquid
@@ -23,8 +24,8 @@
 -%}
 {%- if count > 1 -%}
   <k-models class="k-models" {{ block.shopify_attributes }}>
-    <p class="k-label k-muted k-models__label" id="{{ block.id }}-label">{{ 'products.models.group' | t }}</p>
-    <div class="k-models__list" role="group" aria-labelledby="{{ block.id }}-label">
+    {%- assign first_worn = '' -%}
+    <div class="k-models__list" role="group" aria-label="{{ 'products.models.group' | t }}">
       {%- for line in lines -%}
         {%- liquid
           assign parts = line | split: '|'
@@ -45,13 +46,19 @@
             endif
           endif
           assign worn = 'products.models.worn' | t: name: m_name, height: m_height, size: m_size
+          if parts.size > 4
+            assign m_note = parts[4] | strip
+            if m_note != blank
+              assign worn = worn | append: '. ' | append: m_note
+            endif
+          endif
+          if first_worn == blank
+            assign first_worn = worn
+          endif
         -%}
-        <button type="button" class="k-models__btn" aria-pressed="false" data-media="{{ m_media }}" data-worn="{{ worn | escape }}">
-          <span class="k-models__name">{{ m_name | escape }}</span>
-          <span class="k-models__meta k-label">{{ m_height | escape }} · {{ m_size | escape }}</span>
-        </button>
+        <button type="button" class="k-models__btn" aria-pressed="{% if first_worn == worn %}true{% else %}false{% endif %}" data-media="{{ m_media }}" data-worn="{{ worn | escape }}">{{ m_name | escape }}</button>
       {%- endfor -%}
     </div>
-    <p class="k-models__worn" aria-live="polite" data-models-worn>{{ 'products.models.count' | t: count: count }}</p>
+    <p class="k-models__worn" aria-live="polite" data-models-worn>{{ first_worn }}</p>
   </k-models>
 {%- endif -%}
