@@ -60,7 +60,9 @@
     <div class="k-drawer__body">
       {%- if cart.item_count == 0 -%}
         <div class="k-drawer__empty">
+          <span class="k-drawer__empty-icon" aria-hidden="true">{% render 'k-icon', icon: 'bag', size: 28 %}</span>
           <p class="k-drawer__empty-title">{{ 'cart.drawer_empty' | t }}</p>
+          <p class="k-drawer__empty-text k-muted">{{ 'cart.drawer_empty_text' | t }}</p>
           <a class="k-btn k-btn--secondary" href="{{ routes.all_products_collection_url }}" data-oblique-cart-close>
             <span>{{ 'cart.continue_shopping' | t }}</span>
           </a>
@@ -142,8 +144,11 @@
           </form>
         </oblique-cart-items>
       {%- endif -%}
+    </div>
 
-      {%- if look_count > 0 and look_limit > 0 -%}
+    {%- comment -%} Stays in view under the scrolling items: the look, gift wrap and note. {%- endcomment -%}
+    <div class="k-drawer__extras">
+      {%- if look_count > 0 and look_limit > 0 and cart.item_count > 0 -%}
         <div class="k-drawer__look">
           <div class="k-drawer__look-head">
             <strong>{{ section.settings.look_heading }}</strong>
@@ -290,7 +295,9 @@
   .k-drawer__remove { min-height: 32px; padding: 0; border: 0; background: none; color: var(--color-muted); font: 500 13px var(--font-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
   .k-drawer__remove:hover { color: var(--color-text); }
 
-  .k-drawer__look { margin: 22px 0; padding: 18px; background: var(--color-text); color: var(--color-bg); }
+  .k-drawer__extras { flex: none; max-height: 46vh; overflow-y: auto; overscroll-behavior: contain; padding: 0 24px; border-top: 1px solid var(--color-line); }
+  .k-drawer__extras:not(:has(*)) { display: none; }
+  .k-drawer__look { margin: 14px 0; padding: 14px 16px; background: var(--color-text); color: var(--color-bg); }
   .k-drawer__look-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .k-drawer__look-head strong { font-size: 17px; }
   .k-drawer__look-head .k-label { opacity: 0.7; }
@@ -315,7 +322,8 @@
   .k-drawer__opt-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-top: 1px solid var(--color-line); line-height: 1.4; font-size: 15px; cursor: pointer; }
   .k-drawer__opt-row input { flex: none; width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--color-accent); }
   .k-drawer__opt-row .k-muted { font-size: 14px; }
-  .k-drawer__note { padding: 14px 0; border-top: 1px solid var(--color-line); }
+  .k-drawer__note { padding: 10px 0; border-top: 1px solid var(--color-line); }
+  .k-drawer__extras > :first-child:not(.k-drawer__look) { border-top: 0; }
   .k-drawer__note summary { display: flex; justify-content: space-between; align-items: center; min-height: 32px; font-weight: 600; cursor: pointer; list-style: none; }
   .k-drawer__note summary::-webkit-details-marker { display: none; }
   .k-drawer__note[open] summary span { transform: rotate(45deg); }
@@ -329,7 +337,10 @@
   .k-drawer__tax a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
   .k-drawer__view { min-height: 46px; }
 
-  .k-drawer__empty { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding: 40px 0 8px; }
+  .k-drawer__body:has(> .k-drawer__empty) { display: flex; flex-direction: column; justify-content: center; }
+  .k-drawer__empty { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 40px 0; text-align: center; }
+  .k-drawer__empty-icon { display: grid; place-items: center; width: 64px; height: 64px; border: 1.5px solid var(--color-line); border-radius: 999px; }
+  .k-drawer__empty-text { max-width: 30ch; margin: 0 0 8px; font-size: 15px; line-height: 1.5; }
   .k-drawer__empty-title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 40px; line-height: 0.95; letter-spacing: -0.03em; }
 {% endstylesheet %}
 

@@ -63,7 +63,7 @@
                 assign is_current = true
               endif
             -%}
-            <a class="k-chip" href="{{ c.url }}"{% if is_current %} aria-current="page" aria-pressed="true"{% endif %} {{ block.shopify_attributes }}>
+            <a class="k-chip" href="{{ c.url }}"{% if is_current %} aria-current="page"{% endif %} {{ block.shopify_attributes }}>
               {{ chip_label }} <span class="k-col__sub-n">{{ c.products_count }}</span>
             </a>
           {%- endif -%}

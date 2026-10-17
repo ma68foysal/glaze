@@ -1,8 +1,13 @@
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
-  # Drop mode: a future custom.drop_date locks the page until that moment.
+  # Drop mode: a future date in the metafield named by the Drop date metafield
+  # theme setting locks the page until that moment.
   assign drop_locked = false
-  assign drop_date = product.metafields.custom.drop_date.value
+  assign drop_date = blank
+  if settings.drop_metafield contains '.'
+    assign drop_parts = settings.drop_metafield | strip | split: '.'
+    assign drop_date = product.metafields[drop_parts[0]][drop_parts[1]].value
+  endif
   if drop_date != blank
     assign drop_ts = drop_date | date: '%s' | plus: 0
     assign now_ts = 'now' | date: '%s' | plus: 0
@@ -79,7 +84,7 @@
           <span class="k-pdp__sale k-label" data-sale-badge data-template="{{ 'products.sale_off' | t: percent: '[percent]' | escape }}"{% if sale_off == 0 %} hidden{% endif %}>{{ 'products.sale_off' | t: percent: sale_off }}</span>
         {%- endif -%}
         {%- if product.media.size > 0 -%}
-          <ul class="k-pdp__media-list" role="list" aria-label="{{ 'product.gallery_thumbs_aria' | t }}">
+          <ul class="k-pdp__media-list" role="list" tabindex="0" aria-label="{{ 'product.gallery_thumbs_aria' | t }}">
             {%- if featured != blank -%}
               {%- render 'k-product-media', media: featured, position: 1, product: product, big: true, layout: section.settings.media_layout -%}
             {%- endif -%}
@@ -715,8 +720,9 @@
       "name": "Fit and size finder",
       "limit": 1,
       "settings": [
-        { "type": "paragraph", "content": "Connect these to product metafields (the database icon next to each setting) so every product shows its own fit." },
-        { "type": "range", "id": "fit_scale", "label": "Fit", "min": 1, "max": 5, "step": 1, "default": 3, "info": "1 runs small, 3 true to size, 5 runs large." },
+        { "type": "paragraph", "content": "Connect the text settings to product metafields (the database icon next to each setting) so every product shows its own fit." },
+        { "type": "range", "id": "fit_scale", "label": "Fit", "min": 1, "max": 5, "step": 1, "default": 3, "info": "1 runs small, 3 true to size, 5 runs large. Used when Fit per product is empty." },
+        { "type": "text", "id": "fit_value", "label": "Fit per product", "info": "A number from 1 to 5. Connect it to a number metafield so each product has its own fit." },
         { "type": "text", "id": "fit_text", "label": "Fit note", "default": "True to size" },
         { "type": "text", "id": "model_note", "label": "Model note", "info": "For example: Model is 178 cm and wears S." },
         { "type": "checkbox", "id": "show_finder", "label": "Show size finder", "default": true, "info": "Needs an option named Size and a size chart." },

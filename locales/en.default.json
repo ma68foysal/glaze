@@ -138,7 +138,8 @@
     "shipping": "Shipping",
     "shipping_free": "Free",
     "shipping_at_checkout": "Calculated at checkout",
-    "secure_checkout": "Secure checkout"
+    "secure_checkout": "Secure checkout",
+    "drawer_empty_text": "Start with the new season, or pick up a favourite."
   },
   "customer": {
     "account": {

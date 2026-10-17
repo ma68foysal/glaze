@@ -358,6 +358,16 @@
         "id": "moodboard_page",
         "label": "Moodboard page",
         "info": "Create a page, assign it the page.moodboard template, and pick it here."
+      },
+      {
+        "type": "header",
+        "content": "Drops"
+      },
+      {
+        "type": "text",
+        "id": "drop_metafield",
+        "label": "Drop date metafield",
+        "info": "Optional. The product metafield that holds a drop date, written as namespace.key (for example custom.drop_date). Products with a future date show a countdown and can't be bought until then. Use a date or date and time metafield."
       }
     ]
   },
@@ -380,23 +390,6 @@
         ],
         "default": "page",
         "info": "t:labels.cart_type_info"
-      },
-      {
-        "type": "select",
-        "id": "cart_add_feedback",
-        "label": "After adding to cart",
-        "options": [
-          {
-            "value": "drawer",
-            "label": "Open the cart drawer"
-          },
-          {
-            "value": "fly",
-            "label": "Fly the photo to the bag"
-          }
-        ],
-        "default": "drawer",
-        "info": "Applies when the cart type is Drawer."
       },
       {
         "type": "checkbox",

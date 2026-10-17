@@ -15,6 +15,10 @@
     endif
   endfor
   assign scale = block.settings.fit_scale | default: 3 | plus: 0
+  assign fit_value = block.settings.fit_value | strip | plus: 0
+  if fit_value >= 1 and fit_value <= 5
+    assign scale = fit_value | round
+  endif
   assign scale_pct = scale | minus: 1 | times: 25
   assign chart = block.settings.size_chart | strip | newline_to_br | split: '<br />'
   assign uid = form_id | append: '-fit'

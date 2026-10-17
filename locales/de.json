@@ -138,7 +138,8 @@
     "shipping": "Versand",
     "shipping_free": "Kostenlos",
     "shipping_at_checkout": "Wird an der Kasse berechnet",
-    "secure_checkout": "Sicher bezahlen"
+    "secure_checkout": "Sicher bezahlen",
+    "drawer_empty_text": "Starte mit der neuen Saison oder hol dir einen Favoriten."
   },
   "customer": {
     "account": {

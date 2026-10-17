@@ -142,7 +142,6 @@
       "stretch_headings": true,
       "page_transitions": true,
       "custom_cursor": true,
-      "cart_add_feedback": "fly",
       "show_back_to_top": true,
       "issue_label": "Drop 03 · No restock",
       "card_style": "standard"
@@ -214,7 +213,6 @@
       "stretch_headings": false,
       "page_transitions": true,
       "custom_cursor": false,
-      "cart_add_feedback": "drawer",
       "show_back_to_top": true,
       "issue_label": "Roll 12 · Autumn",
       "card_style": "contact"

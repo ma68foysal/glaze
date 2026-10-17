@@ -24,7 +24,11 @@
   endif
   assign main_media = current_variant.featured_media | default: product.featured_media
   assign qv_drop = false
-  assign qv_drop_date = product.metafields.custom.drop_date.value
+  assign qv_drop_date = blank
+  if settings.drop_metafield contains '.'
+    assign qv_drop_parts = settings.drop_metafield | strip | split: '.'
+    assign qv_drop_date = product.metafields[qv_drop_parts[0]][qv_drop_parts[1]].value
+  endif
   if qv_drop_date != blank
     assign qv_drop_ts = qv_drop_date | date: '%s' | plus: 0
     assign qv_now_ts = 'now' | date: '%s' | plus: 0

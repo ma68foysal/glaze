@@ -66,6 +66,8 @@ body {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
+/* Shopify's account button keeps focus inside its own shadow root, so ring the host. */
+:where(.k-scope) shopify-account:focus-within { outline: 2px solid var(--color-accent); outline-offset: 3px; border-radius: 999px; }
 
 .k-wrap {
   width: 100%;
@@ -656,12 +658,8 @@ input:focus-visible + .k-col__pill, input:focus-visible + .k-col__swatch { outli
   content: ""; position: absolute; inset: -50%; z-index: 1; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   opacity: 0.16; mix-blend-mode: overlay;
-  animation: k-grain 1.2s steps(6) infinite;
 }
 [data-grain] :is(.k-pdp, .k-cart, oblique-cart-drawer, .k-ps) :is(.k-media, .k-card__media)::after { content: none; }
-@keyframes k-grain {
-  0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-4%, 3%); } 40% { transform: translate(3%, -5%); }
-  60% { transform: translate(-6%, 2%); } 80% { transform: translate(5%, 4%); }
 }
 
 /* ---------- Stretching headings (settings.stretch_headings) ----------
@@ -678,14 +676,8 @@ input:focus-visible + .k-col__pill, input:focus-visible + .k-col__swatch { outli
 @keyframes k-stretch { from { transform: scaleX(0.78); opacity: 0.4; } to { transform: none; opacity: 1; } }
 .motion-paused .k-h2, .motion-paused :is(.k-media, .k-card__media)::after { animation: none !important; }
 @media (prefers-reduced-motion: reduce) {
-  [data-stretch] .k-h2, [data-grain] :is(.k-media, .k-card__media)::after { animation: none !important; }
+  [data-stretch] .k-h2 { animation: none !important; }
 }
-
-/* ---------- Fly to bag (settings.cart_add_feedback) ---------- */
-.k-fly { position: fixed; z-index: 70; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 10px; pointer-events: none; box-shadow: 0 20px 40px -20px rgba(14, 14, 14, 0.6); }
-.k-fly img { width: 100%; height: 100%; object-fit: cover; display: block; }
-#cart-icon-bubble.is-bumped .k-bubble { animation: k-bag-bump 0.5s var(--ease-out); }
-@keyframes k-bag-bump { 40% { transform: scale(1.45); } }
 
 /* ---------- Back to top (settings.show_back_to_top) ---------- */
 .k-totop {

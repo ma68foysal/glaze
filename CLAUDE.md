@@ -70,6 +70,15 @@ says where the rebuild stands.
   at all, so care is a text list of codes. Eight unused `custom.care_*`
   boolean definitions remain on that store. Commuter Shell's drop date is now
   in the past, so no product demos drop mode.
+- **Settings and checks (2026-10-18):** drop mode reads the metafield named in
+  the `drop_metafield` theme setting (blank by default; the demo stores set
+  `custom.drop_date` in their own settings, never in presets). The Fit block
+  has a linkable `fit_value` text setting. The fly-to-bag option was removed;
+  Add to bag always opens the drawer. Film grain is static (the animated grain
+  was the biggest idle cost). axe: 0 violations on home, collection, product,
+  cart, search and article at desktop and phone. Lighthouse through the dev
+  server: accessibility 95–97, performance 30–46 (not representative; measure
+  the live store before resubmitting).
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,

@@ -519,7 +519,7 @@ function cwarn() {
             } else {
               cwarn('product-form: response had no sections — drawer content will be stale until next refresh');
             }
-            if (!flyToBag(self.submitBtn)) self.cartMailbox.open(self.submitBtn);
+            self.cartMailbox.open(self.submitBtn);
           })
           .catch(function (err) {
             console.error('[oblique-cart] add failed', err);
@@ -556,44 +556,6 @@ function cwarn() {
   // The caller manages the source button's .is-loading class — different
   // sections want different timing (clear immediately vs after drawer opens).
   // ----------------------------------------------------------------------
-  // "Fly the photo to the bag" (settings.cart_add_feedback): a copy of the
-  // product photo arcs into the header bag and the count bumps. Returns false
-  // when the setting is off so the caller opens the drawer as usual.
-  function flyToBag(source) {
-    if (!window.themeSettings || window.themeSettings.addFeedback !== 'fly') return false;
-    var bag = document.getElementById('cart-icon-bubble');
-    if (!bag) return false;
-    var bump = function () {
-      var el = document.getElementById('cart-icon-bubble') || bag;
-      el.classList.remove('is-bumped'); void el.offsetWidth; el.classList.add('is-bumped');
-    };
-    var root = source && source.closest('.k-card, k-product, .k-pdp, .k-pdp__pair, .k-art__sp, .k-ps__pr');
-    var img = root && (root.querySelector('.k-pdp__media.is-active img') || root.querySelector('img'));
-    var html = document.documentElement;
-    var still = html.dataset.motion === 'off' || html.classList.contains('motion-paused') ||
-      (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    if (!img || still || !Element.prototype.animate) { bump(); return true; }
-    var a = img.getBoundingClientRect(), b = bag.getBoundingClientRect();
-    if (!a.width) { bump(); return true; }
-    var size = Math.min(a.width, 160);
-    var fly = document.createElement('div');
-    fly.className = 'k-fly';
-    fly.style.cssText = 'left:' + (a.left + a.width / 2 - size / 2) + 'px;top:' + (a.top + a.height / 2 - size * 0.625) + 'px;width:' + size + 'px;';
-    var copy = img.cloneNode(false);
-    copy.removeAttribute('srcset'); copy.removeAttribute('sizes'); copy.removeAttribute('loading');
-    copy.src = img.currentSrc || img.src;
-    copy.alt = '';
-    fly.appendChild(copy);
-    document.body.appendChild(fly);
-    var dx = b.left + b.width / 2 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2);
-    fly.animate([
-      { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-      { transform: 'translate(' + dx * 0.5 + 'px, ' + (dy - 90) + 'px) scale(0.5) rotate(-8deg)', opacity: 1, offset: 0.55 },
-      { transform: 'translate(' + dx + 'px, ' + dy + 'px) scale(0.1)', opacity: 0.2 }
-    ], { duration: 750, easing: 'cubic-bezier(0.5, 0, 0.2, 1)' }).finished.then(function () { fly.remove(); bump(); });
-    return true;
-  }
-
   function addToCartUniversal(payload, options) {
     options = options || {};
     var drawer = document.querySelector('oblique-cart-drawer');
@@ -641,9 +603,7 @@ function cwarn() {
           if (data.sections) drawer.renderFromSections(data.sections);
           else cwarn('ObliqueCart.addToCart: response missing sections — drawer will be stale until next refresh');
 
-          if (options.openDrawer !== false && flyToBag(sourceButton)) {
-            drawer.classList.remove('is-empty');
-          } else if (options.openDrawer !== false) {
+          if (options.openDrawer !== false) {
             drawer.classList.remove('is-empty');
             if (typeof drawer.setActiveElement === 'function') drawer.setActiveElement(sourceButton);
             drawer.open(sourceButton);

@@ -63,7 +63,11 @@
 
       {%- liquid
         assign card_drop = false
-        assign card_drop_date = product.metafields.custom.drop_date.value
+        assign card_drop_date = blank
+        if settings.drop_metafield contains '.'
+          assign card_drop_parts = settings.drop_metafield | strip | split: '.'
+          assign card_drop_date = product.metafields[card_drop_parts[0]][card_drop_parts[1]].value
+        endif
         if card_drop_date != blank
           assign card_drop_ts = card_drop_date | date: '%s' | plus: 0
           assign card_now_ts = 'now' | date: '%s' | plus: 0

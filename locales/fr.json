@@ -138,7 +138,8 @@
     "shipping": "Livraison",
     "shipping_free": "Offerte",
     "shipping_at_checkout": "Calculée lors du paiement",
-    "secure_checkout": "Paiement sécurisé"
+    "secure_checkout": "Paiement sécurisé",
+    "drawer_empty_text": "Commencez par la nouvelle saison, ou retrouvez un favori."
   },
   "customer": {
     "account": {

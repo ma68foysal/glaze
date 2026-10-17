@@ -77,7 +77,6 @@
       };
       window.shopMoneyFormat = {{ shop.money_format | json }};
       window.themeSettings = {
-        addFeedback: {{ settings.cart_add_feedback | default: 'drawer' | json }},
         moodboard: {
           url: {{ settings.moodboard_page.url | json }},
           savedText: {{ 'moodboard.toast_saved' | t | json }},
