@@ -16,7 +16,7 @@
         "kinetic_word": "Motion",
         "text": "Garments engineered to bend, stride and layer. Built for long days in a moving city.",
         "button_label": "Shop new in",
-        "button_link": "shopify://collections/all",
+        "button_link": "/collections/all",
         "button2_label": "View lookbook",
         "button2_link": "",
         "label_left": "SS26 · Collection 04",
@@ -77,7 +77,7 @@
           "settings": {
             "title": "Women",
             "button_label": "Shop women",
-            "link": "shopify://collections/all"
+            "link": "/collections/all"
           }
         },
         "column_2": {
@@ -85,7 +85,7 @@
           "settings": {
             "title": "Men",
             "button_label": "Shop men",
-            "link": "shopify://collections/all"
+            "link": "/collections/all"
           }
         },
         "column_3": {
@@ -93,7 +93,7 @@
           "settings": {
             "title": "Accessories",
             "button_label": "Shop accessories",
-            "link": "shopify://collections/all"
+            "link": "/collections/all"
           }
         }
       },
@@ -205,7 +205,7 @@
         "card_text": "Pieces designed to move with you, on the bike, on the platform and on the long walk home.",
         "card_heading": "Engineered everyday <em>wear</em>",
         "button_label": "Shop the collection",
-        "button_link": "shopify://collections/all",
+        "button_link": "/collections/all",
         "badge": "New season",
         "color_scheme": "scheme-1",
         "card_color_scheme": "scheme-5",

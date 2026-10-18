@@ -20,7 +20,7 @@
         {%- for article in blog.articles limit: limit -%}
           {%- liquid
             assign words = article.content | strip_html | split: ' ' | size
-            assign minutes = words | divided_by: 200 | at_least: 1
+            assign minutes = words | plus: 199 | divided_by: 200 | at_least: 1
           -%}
           <li class="k-reveal">
             <a class="k-jidx__row" href="{{ article.url }}"{% if article.image != blank %} data-peek-src="{{ article.image | image_url: width: 480 }}"{% endif %}>

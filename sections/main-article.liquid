@@ -1,6 +1,6 @@
 {%- liquid
   assign words = article.content | strip_html | split: ' ' | size
-  assign minutes = words | divided_by: 200 | at_least: 1
+  assign minutes = words | plus: 199 | divided_by: 200 | at_least: 1
   assign author_parts = article.author | split: ' '
   assign author_initials = ''
   for part in author_parts limit: 2

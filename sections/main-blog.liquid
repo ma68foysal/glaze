@@ -50,7 +50,7 @@
         {%- if forloop.first and show_featured and paginate.current_page == 1 -%}
           {%- liquid
             assign words = article.content | strip_html | split: ' ' | size
-            assign minutes = words | divided_by: 200 | at_least: 1
+            assign minutes = words | plus: 199 | divided_by: 200 | at_least: 1
           -%}
           <article class="k-blog__feat color-{{ section.settings.featured_color_scheme }} k-reveal">
             <a class="k-blog__feat-img k-media" href="{{ article.url }}" tabindex="-1" aria-hidden="true">
