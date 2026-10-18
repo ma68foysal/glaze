@@ -76,9 +76,12 @@ says where the rebuild stands.
   has a linkable `fit_value` text setting. The fly-to-bag option was removed;
   Add to bag always opens the drawer. Film grain is static (the animated grain
   was the biggest idle cost). axe: 0 violations on home, collection, product,
-  cart, search and article at desktop and phone. Lighthouse through the dev
-  server: accessibility 95–97, performance 30–46 (not representative; measure
-  the live store before resubmitting).
+  cart, search and article at desktop and phone. Lighthouse on the LIVE store
+  (mobile, 3 runs each, 2026-10-18, after 818463b and 3244741): home 66/70/68,
+  collection 78/68/66, product 78/79/82, accessibility 100 everywhere. Runner:
+  `C:\Users\Foysal\lhrun\run.mjs` (run with `MSYS_NO_PATHCONV=1` from Git
+  Bash; it leaves theme preview first, since a draft preview adds the preview
+  bar). `<shopify-account>` is required and stays; Horizon loads it the same way.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,
