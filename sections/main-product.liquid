@@ -34,9 +34,10 @@
   endif
   assign buy_block = section.blocks | where: 'type', 'buy_buttons' | first
   assign color_index = 0
+  assign color_names = 'color,colour,couleur,farbe,colore' | split: ','
   for option in product.options_with_values
     assign oname = option.name | downcase
-    if oname == 'color' or oname == 'colour'
+    if color_names contains oname
       assign color_index = option.position
     endif
   endfor
@@ -682,7 +683,7 @@
       "name": "Variant picker",
       "limit": 1,
       "settings": [
-        { "type": "paragraph", "content": "Options named Color or Colour show as swatches. Set swatch colors in Settings > Custom data > Variants, or the color name is used." },
+        { "type": "paragraph", "content": "Options named Color, Colour, Couleur, Farbe or Colore show as swatches. Set swatch colors in Settings > Custom data > Variants, or the color name is used." },
         { "type": "page", "id": "size_guide", "label": "Size guide page", "info": "Opens in a window from a link next to the last option. Tables in the page are styled." }
       ]
     },

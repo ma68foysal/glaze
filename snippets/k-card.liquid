@@ -31,9 +31,10 @@
       assign on_sale = true
     endif
     assign color_option = nil
+    assign color_names = 'color,colour,couleur,farbe,colore' | split: ','
     for option in product.options_with_values
       assign oname = option.name | downcase
-      if oname == 'color' or oname == 'colour'
+      if color_names contains oname
         assign color_option = option
       endif
     endfor

@@ -12,9 +12,10 @@
   assign current_variant = product.selected_or_first_available_variant
   assign form_id = 'qv-' | append: product.id
   assign color_index = 0
+  assign color_names = 'color,colour,couleur,farbe,colore' | split: ','
   for option in product.options_with_values
     assign oname = option.name | downcase
-    if oname == 'color' or oname == 'colour'
+    if color_names contains oname
       assign color_index = option.position
     endif
   endfor

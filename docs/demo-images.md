@@ -162,3 +162,51 @@ uploaded in the first pass stay in Files, unused.
 | Ash overcoat | [1699245111017-658557db0abb](https://images.unsplash.com/photo-1699245111017-658557db0abb) | Already in its photos |
 | Western chambray shirt | [1645859610425-f0f4177df5f0](https://images.unsplash.com/photo-1645859610425-f0f4177df5f0) | Already in its photos |
 | Cashmere crew | [1716110260578-723e285f8f8e](https://images.unsplash.com/photo-1716110260578-723e285f8f8e) | Already in its photos |
+
+## Product photos, review fixes (2026-10-18)
+
+From the browser review. Same source and licence as above: free-licence Unsplash
+photos, checked for visible logos. Photos that no longer belong to a product were
+detached from it (the files stay in Files). The tables above for these products
+are out of date; these lists replace them. The last photo is the fabric close-up
+that `custom.fabric_image` points at.
+
+Reshot, so every photo shows the same garment (and a close-up in its colour):
+
+| Product | Photos, in media order |
+| --- | --- |
+| Stride trench | [1763766274625-3b502e267f26](https://images.unsplash.com/photo-1763766274625-3b502e267f26) · [1763766274735-744ca07039d9](https://images.unsplash.com/photo-1763766274735-744ca07039d9) · [1763766275231-22daa78595c9](https://images.unsplash.com/photo-1763766275231-22daa78595c9) · [1763766275974-9f6e8ad94ab7](https://images.unsplash.com/photo-1763766275974-9f6e8ad94ab7) · [1763766276188-135ebab92957](https://images.unsplash.com/photo-1763766276188-135ebab92957) · [1599753931952-654e960af582](https://images.unsplash.com/photo-1599753931952-654e960af582) |
+| Bias knit polo | [1761956255479-484d7d4fe68a](https://images.unsplash.com/photo-1761956255479-484d7d4fe68a) · [1761956256342-bed2cacc5f2c](https://images.unsplash.com/photo-1761956256342-bed2cacc5f2c) · [1761956261160-5219e7d7fd52](https://images.unsplash.com/photo-1761956261160-5219e7d7fd52) · [1605871665507-46679ed05528](https://images.unsplash.com/photo-1605871665507-46679ed05528) |
+| Commuter shell | [1721745763258-7de78db8b78e](https://images.unsplash.com/photo-1721745763258-7de78db8b78e) · [1721745848080-3ed6f21e7ba8](https://images.unsplash.com/photo-1721745848080-3ed6f21e7ba8) · [1721745889171-feeae3a64d75](https://images.unsplash.com/photo-1721745889171-feeae3a64d75) · [1563942833988-0803533bd016](https://images.unsplash.com/photo-1563942833988-0803533bd016) |
+| Crescent bag | [1654707501152-b9d9acc26926](https://images.unsplash.com/photo-1654707501152-b9d9acc26926) · [1654707501753-e2cd18c2c416](https://images.unsplash.com/photo-1654707501753-e2cd18c2c416) · [1654707501601-f116db8944ca](https://images.unsplash.com/photo-1654707501601-f116db8944ca) · [1654707635472-15b150245847](https://images.unsplash.com/photo-1654707635472-15b150245847) · [1776278515610-7152762ef64d](https://images.unsplash.com/photo-1776278515610-7152762ef64d) |
+| Field overshirt | [1719418730257-a9da9282da37](https://images.unsplash.com/photo-1719418730257-a9da9282da37) · [1719417850549-56a81bb87eb3](https://images.unsplash.com/photo-1719417850549-56a81bb87eb3) · [1719418431478-52e0557e9625](https://images.unsplash.com/photo-1719418431478-52e0557e9625) · [1719418730257-a9da9282da37](https://images.unsplash.com/photo-1719418730257-a9da9282da37) · [1673168779973-876b8809c259](https://images.unsplash.com/photo-1673168779973-876b8809c259) |
+| Merino crew | [1672646696727-d85ea0a1c1cf](https://images.unsplash.com/photo-1672646696727-d85ea0a1c1cf) · [1672646719033-95156d0f0f33](https://images.unsplash.com/photo-1672646719033-95156d0f0f33) · [1672646779621-143133d2ed24](https://images.unsplash.com/photo-1672646779621-143133d2ed24) · [1672646762012-59885452b935](https://images.unsplash.com/photo-1672646762012-59885452b935) · [1615705592748-029c989e6d5c](https://images.unsplash.com/photo-1615705592748-029c989e6d5c) |
+| Soft blazer | [1779400201925-6c6048bee7e5](https://images.unsplash.com/photo-1779400201925-6c6048bee7e5) · [1779400202112-f1661a4c8637](https://images.unsplash.com/photo-1779400202112-f1661a4c8637) · [1779400202380-ae490bd3b995](https://images.unsplash.com/photo-1779400202380-ae490bd3b995) · [1779400202564-ac01487e35e7](https://images.unsplash.com/photo-1779400202564-ac01487e35e7) · [1691445005319-4d0295dbf00c](https://images.unsplash.com/photo-1691445005319-4d0295dbf00c) |
+| Arc loafer | [1784822041007-a2083ecb1b37](https://images.unsplash.com/photo-1784822041007-a2083ecb1b37) · [1784822041091-c827cb005dcd](https://images.unsplash.com/photo-1784822041091-c827cb005dcd) · [1784822041102-274cf37c7304](https://images.unsplash.com/photo-1784822041102-274cf37c7304) · [1788178319918-c9ff959fb17c](https://images.unsplash.com/photo-1788178319918-c9ff959fb17c) |
+| Chelsea boot | [1788478963164-a2eb8fabc3bc](https://images.unsplash.com/photo-1788478963164-a2eb8fabc3bc) · [1788478963145-4b90e3010698](https://images.unsplash.com/photo-1788478963145-4b90e3010698) · [1788478963173-39bb60c744e7](https://images.unsplash.com/photo-1788478963173-39bb60c744e7) · [1755541608110-3440a0f168ed](https://images.unsplash.com/photo-1755541608110-3440a0f168ed) |
+
+New fabric close-up only (the old one was the wrong colour):
+
+| Product | Close-up |
+| --- | --- |
+| Cord sherpa jacket | [1772912139533-8e47f434406a](https://images.unsplash.com/photo-1772912139533-8e47f434406a) |
+| Western chambray shirt | [1541763029361-21b1788343db](https://images.unsplash.com/photo-1541763029361-21b1788343db) |
+
+Pleated wide trouser: photo 2 (1789111161072-766f7c6284cc, jeans) was detached.
+
+New products, so Accessories and Denim each have 7:
+
+| Product | Collections | Photos, in media order |
+| --- | --- | --- |
+| Leather carryall | accessories, women, new-in | [1774702535778-37a779bc5b35](https://images.unsplash.com/photo-1774702535778-37a779bc5b35) · [1774702535821-771213a40dff](https://images.unsplash.com/photo-1774702535821-771213a40dff) · [1774702535771-eec0c74d6cb9](https://images.unsplash.com/photo-1774702535771-eec0c74d6cb9) · [1774702535929-5f2043e2ee93](https://images.unsplash.com/photo-1774702535929-5f2043e2ee93) · [1778882996728-952ed23dc6f4](https://images.unsplash.com/photo-1778882996728-952ed23dc6f4) |
+| Leather backpack | accessories, men | [1622560257067-108402fcedc0](https://images.unsplash.com/photo-1622560257067-108402fcedc0) · [1622560480605-d83c853bc5c3](https://images.unsplash.com/photo-1622560480605-d83c853bc5c3) · [1622560480654-d96214fdc887](https://images.unsplash.com/photo-1622560480654-d96214fdc887) · [1622560482357-789dc8a50923](https://images.unsplash.com/photo-1622560482357-789dc8a50923) · [1622560482379-c9813322e95a](https://images.unsplash.com/photo-1622560482379-c9813322e95a) · [1778883004138-f6eacbfdbef9](https://images.unsplash.com/photo-1778883004138-f6eacbfdbef9) |
+| Stitched leather belt | accessories, men, essentials | [1664286074176-5206ee5dc878](https://images.unsplash.com/photo-1664286074176-5206ee5dc878) · [1664286022007-9d2eb1003165](https://images.unsplash.com/photo-1664286022007-9d2eb1003165) · [1664286022075-8e997e95bd17](https://images.unsplash.com/photo-1664286022075-8e997e95bd17) · [1778883004941-a8b1f9d085cc](https://images.unsplash.com/photo-1778883004941-a8b1f9d085cc) |
+| Canvas bucket hat | accessories, women, new-in | [1627681828965-048a32cdf16f](https://images.unsplash.com/photo-1627681828965-048a32cdf16f) · [1627680925143-57883fb665b5](https://images.unsplash.com/photo-1627680925143-57883fb665b5) · [1627683566270-bf7e75dfec0a](https://images.unsplash.com/photo-1627683566270-bf7e75dfec0a) · [1627691541764-85b6e9003bec](https://images.unsplash.com/photo-1627691541764-85b6e9003bec) · [1695131023163-1e04e1345a91](https://images.unsplash.com/photo-1695131023163-1e04e1345a91) |
+| Denim overalls | denim, women, new-in | [1781366636398-51bdc1f75970](https://images.unsplash.com/photo-1781366636398-51bdc1f75970) · [1781366636403-72c23257fa0c](https://images.unsplash.com/photo-1781366636403-72c23257fa0c) · [1781366636414-2946dce775ad](https://images.unsplash.com/photo-1781366636414-2946dce775ad) · [1781366636395-99f57b27d94b](https://images.unsplash.com/photo-1781366636395-99f57b27d94b) · [1781366636398-97a79a7a10d0](https://images.unsplash.com/photo-1781366636398-97a79a7a10d0) · [1645859610425-f0f4177df5f0](https://images.unsplash.com/photo-1645859610425-f0f4177df5f0) |
+| Denim chore jacket | denim, women, outerwear | [1740809220796-8fd01c593577](https://images.unsplash.com/photo-1740809220796-8fd01c593577) · [1740808205729-1132953b8153](https://images.unsplash.com/photo-1740808205729-1132953b8153) · [1740809220792-54e1f3a55f9a](https://images.unsplash.com/photo-1740809220792-54e1f3a55f9a) · [1740809220796-861f315248d5](https://images.unsplash.com/photo-1740809220796-861f315248d5) · [1532190370294-e81fe487b61a](https://images.unsplash.com/photo-1532190370294-e81fe487b61a) |
+| Bleached denim jacket | denim, men, new-in | [1738543737130-2b04daa075ee](https://images.unsplash.com/photo-1738543737130-2b04daa075ee) · [1738543737071-2ffd340162ec](https://images.unsplash.com/photo-1738543737071-2ffd340162ec) · [1738543737166-05c5145dd1b8](https://images.unsplash.com/photo-1738543737166-05c5145dd1b8) · [1738543737119-41cb021f8305](https://images.unsplash.com/photo-1738543737119-41cb021f8305) · [1738543737186-baae4e86d635](https://images.unsplash.com/photo-1738543737186-baae4e86d635) · [1645859724073-d9bff094b1c7](https://images.unsplash.com/photo-1645859724073-d9bff094b1c7) |
+| Straight indigo jean | denim, men, bestsellers | [1714143136367-7bb68f3f0669](https://images.unsplash.com/photo-1714143136367-7bb68f3f0669) · [1714143164139-8fdc14bf3054](https://images.unsplash.com/photo-1714143164139-8fdc14bf3054) · [1714143136372-ddaf8b606da7](https://images.unsplash.com/photo-1714143136372-ddaf8b606da7) · [1714143164072-7646ef5cb24d](https://images.unsplash.com/photo-1714143164072-7646ef5cb24d) · [1673173044976-1f49df814171](https://images.unsplash.com/photo-1673173044976-1f49df814171) |
+
+Rejected for logos or a mismatched garment in this pass: an engraved zip pull on the
+carryall shoot, a brand tag on one jean shot, text on one commuter-shell sleeve, a
+printed insole on one loafer shot, and a white-skirt set that mixed three skirts.
