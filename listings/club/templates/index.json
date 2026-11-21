@@ -17,7 +17,7 @@
         "text": "Garments engineered to bend, stride and layer. Built for long days in a moving city.",
         "button_label": "Shop new in",
         "button_link": "/collections/all",
-        "button2_label": "View lookbook",
+        "button2_label": "Shop the look",
         "button2_link": "",
         "label_left": "SS26 · Collection 04",
         "label_center": "Cut for bodies in motion",
@@ -184,44 +184,6 @@
         "tab_3"
       ]
     },
-    "lookbook": {
-      "type": "lookbook",
-      "settings": {
-        "heading": "Shop the <em>look</em>",
-        "text": "Look 04 / Collection 04",
-        "color_scheme": "scheme-1",
-        "padding_top": "large",
-        "padding_bottom": "large"
-      },
-      "blocks": {
-        "hotspot_1": {
-          "type": "hotspot",
-          "settings": {
-            "x": 38,
-            "y": 30
-          }
-        },
-        "hotspot_2": {
-          "type": "hotspot",
-          "settings": {
-            "x": 58,
-            "y": 58
-          }
-        },
-        "hotspot_3": {
-          "type": "hotspot",
-          "settings": {
-            "x": 44,
-            "y": 84
-          }
-        }
-      },
-      "block_order": [
-        "hotspot_1",
-        "hotspot_2",
-        "hotspot_3"
-      ]
-    },
     "stack": {
       "type": "stacked-cards",
       "settings": {
@@ -321,15 +283,55 @@
         "r2",
         "r3"
       ]
+    },
+    "look": {
+      "type": "complete-look",
+      "settings": {
+        "layout": "photo",
+        "heading": "Shop the <em>look</em>",
+        "eyebrow": "Look 04 / Collection 04",
+        "button_label": "Add the look",
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      },
+      "blocks": {
+        "piece_1": {
+          "type": "piece",
+          "settings": {
+            "x": 38,
+            "y": 30
+          }
+        },
+        "piece_2": {
+          "type": "piece",
+          "settings": {
+            "x": 58,
+            "y": 58
+          }
+        },
+        "piece_3": {
+          "type": "piece",
+          "settings": {
+            "x": 44,
+            "y": 84
+          }
+        }
+      },
+      "block_order": [
+        "piece_1",
+        "piece_2",
+        "piece_3"
+      ]
     }
   },
   "order": [
     "hero",
-    "drop",
     "runway",
-    "tapes",
     "edit",
-    "lookbook",
+    "look",
+    "drop",
+    "tapes",
     "stack",
     "journal",
     "newsletter"

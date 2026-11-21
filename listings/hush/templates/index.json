@@ -17,7 +17,7 @@
         "text": "Garments engineered to bend, stride and layer. Built for long days in a moving city.",
         "button_label": "Shop new in",
         "button_link": "/collections/all",
-        "button2_label": "View lookbook",
+        "button2_label": "Shop the look",
         "button2_link": "",
         "label_left": "SS26 · Collection 04",
         "label_center": "Cut for bodies in motion",
@@ -104,13 +104,14 @@
       ]
     },
     "index": {
-      "type": "collection-index",
+      "type": "collection-list",
       "settings": {
         "heading": "Collection <em>index</em>",
         "text": "Hover a row. Each collection opens like a contact sheet.",
         "color_scheme": "scheme-1",
         "padding_top": "large",
-        "padding_bottom": "none"
+        "padding_bottom": "none",
+        "layout": "index"
       },
       "blocks": {
         "collection_1": {
@@ -232,14 +233,51 @@
         "padding_top": "large",
         "padding_bottom": "large"
       }
+    },
+    "spotlight": {
+      "type": "model-spotlight",
+      "settings": {
+        "label": "One piece, two bodies",
+        "heading": "See it <em>on you</em>",
+        "text": "<p>The same piece on models of different heights, each in the size they chose.</p>",
+        "product": "",
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      },
+      "blocks": {
+        "m1": {
+          "type": "model",
+          "settings": {
+            "name": "Lena",
+            "height": "178 cm",
+            "size": "S",
+            "photo": 1
+          }
+        },
+        "m2": {
+          "type": "model",
+          "settings": {
+            "name": "Noor",
+            "height": "170 cm",
+            "size": "M",
+            "photo": 2
+          }
+        }
+      },
+      "block_order": [
+        "m1",
+        "m2"
+      ]
     }
   },
   "order": [
     "hero",
+    "spotlight",
     "story",
     "index",
-    "stack",
     "quote",
+    "stack",
     "journal",
     "newsletter"
   ]

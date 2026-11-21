@@ -19,10 +19,7 @@
         "color_scheme": "scheme-1",
         "padding_top": "small",
         "padding_bottom": "small"
-      }
-    },
-    "ways": {
-      "type": "contact-ways",
+      },
       "blocks": {
         "email": {
           "type": "method",
@@ -62,13 +59,7 @@
         "email",
         "phone",
         "visit"
-      ],
-      "settings": {
-        "heading": "Ways to reach us",
-        "color_scheme": "scheme-1",
-        "padding_top": "small",
-        "padding_bottom": "small"
-      }
+      ]
     },
     "form": {
       "type": "contact-form",
@@ -185,7 +176,6 @@
   },
   "order": [
     "hero",
-    "ways",
     "form",
     "faq",
     "store"

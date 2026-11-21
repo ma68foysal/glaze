@@ -17,7 +17,7 @@
         "text": "Garments engineered to bend, stride and layer. Built for long days in a moving city.",
         "button_label": "Shop new in",
         "button_link": "/collections/all",
-        "button2_label": "View lookbook",
+        "button2_label": "Shop the look",
         "button2_link": "",
         "label_left": "SS26 · Collection 04",
         "label_center": "Cut for bodies in motion",
@@ -64,16 +64,18 @@
       ]
     },
     "categories": {
-      "type": "category-columns",
+      "type": "collection-list",
       "settings": {
-        "aria_label": "Shop by category",
+        "layout": "columns",
+        "heading": "Shop by category",
+        "text": "",
         "color_scheme": "scheme-2",
         "padding_top": "small",
         "padding_bottom": "none"
       },
       "blocks": {
         "column_1": {
-          "type": "column",
+          "type": "collection",
           "settings": {
             "title": "Women",
             "button_label": "Shop women",
@@ -81,7 +83,7 @@
           }
         },
         "column_2": {
-          "type": "column",
+          "type": "collection",
           "settings": {
             "title": "Men",
             "button_label": "Shop men",
@@ -89,7 +91,7 @@
           }
         },
         "column_3": {
-          "type": "column",
+          "type": "collection",
           "settings": {
             "title": "Accessories",
             "button_label": "Shop accessories",
@@ -104,13 +106,14 @@
       ]
     },
     "index": {
-      "type": "collection-index",
+      "type": "collection-list",
       "settings": {
         "heading": "Collection <em>index</em>",
         "text": "Hover a row. Each collection opens like a contact sheet.",
         "color_scheme": "scheme-1",
         "padding_top": "large",
-        "padding_bottom": "none"
+        "padding_bottom": "none",
+        "layout": "index"
       },
       "blocks": {
         "collection_1": {

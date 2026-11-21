@@ -82,6 +82,13 @@ says where the rebuild stands.
   `C:\Users\Foysal\lhrun\run.mjs` (run with `MSYS_NO_PATHCONV=1` from Git
   Bash; it leaves theme preview first, since a draft preview adds the preview
   bar). `<shopify-account>` is required and stays; Horizon loads it the same way.
+- **Phase 2, fewer sections (2026-11-21):** 27 addable sections, down from 31.
+  Lookbook folded into Complete the look (its campaign-photo layout); Category
+  columns and Collection index merged into `collection-list` (Columns / Index
+  layouts, two presets); Contact methods folded into Contact hero as blocks;
+  Press removed; Feature index renamed Index list. Club opens on Runway and
+  Hush on a Model spotlight; tapes, stacked cards and the countdown sit lower.
+  Club and Hush still have the original 12 products with the old photos.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,
@@ -93,10 +100,15 @@ says where the rebuild stands.
   store name to Club / Hush, turn on the Bogus Gateway, and decide on the
   storefront password.
 - **Two previews:** `127.0.0.1:9293` serves the repo (no demo images);
-  `127.0.0.1:9294` serves the demo copy and syncs into the "Oblique demo"
-  theme. The demo copy lives outside the repo; copy repo changes into it with
-  a sync script, never by hand-editing both. Don't use `sed -i` in the repo
-  while `theme dev` runs: its temp files break the dev server.
+  `127.0.0.1:9294` serves the Oblique demo copy (`docs/tools/demo-sync/dev.cmd`).
+  The three demo copies live outside the repo in `D:\cracktab\oblique-demo\`
+  (`oblique`, `club`, `hush`); they hold each store's templates and settings,
+  which carry demo-store resources. `python docs/tools/demo-sync/demo.py sync`
+  copies repo code into them; `demo.py rebuild <name>` rebuilds one from its live
+  theme (JSON through the Admin API, code from the repo; never `theme pull`).
+  Temp scratch folders get cleared, so keep tools in `docs/tools/` (screenshots:
+  `docs/tools/shots/cdp.mjs`; translations: `docs/tools/locale-strings.py`).
+  Don't use `sed -i` in the repo while `theme dev` runs.
 - **Demo store:** primary address `oblique-theme.myshopify.com`, changed on
   2026-10-15; that was 1 of 2 allowed changes, so 1 is left. The technical
   address stays `skinova-hveyg6a1.myshopify.com`: use it for `--store` in CLI
