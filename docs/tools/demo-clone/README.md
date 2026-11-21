@@ -29,3 +29,24 @@ theme.
 
 Only published blog articles are copied. The store name, payments (Bogus
 Gateway) and the storefront password are admin settings the API can't change.
+
+## Catalogue copy (products only, 2026-11-22)
+
+Brings an existing demo store's products up to date with the Oblique store,
+including categories, colour entries and metafields. Nothing is deleted:
+existing products are matched by handle, their old photos are detached (the
+files stay in Files), and every product is set Active and published.
+
+1. `.\auth.ps1 <store>` in PowerShell (adds the metaobject scopes the colour
+   entries need; the user approves in the browser).
+2. `python export_catalogue.py` writes `catalogue.json` from the Oblique store.
+3. `python copy_catalogue.py <target>` runs colours, products, fabric and
+   publish (pass step names to run fewer; `ONLY=handle,handle` limits products).
+4. `python verify_catalogue.py <target>` compares the store with the export.
+
+Progress goes to `copy-state-<target>.json`; products listed there as done are
+skipped. Without that file a rerun re-uploads every product's photos and
+detaches the previous copies.
+
+The eight unused `custom.care_*` booleans are not copied; care is the
+`custom.care` text list. Search & Discovery filters are admin-only.
