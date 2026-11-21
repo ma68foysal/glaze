@@ -2,7 +2,7 @@
 // then save a screenshot. usage: node cdp.mjs <jobs.json>
 // jobs.json: [{ "url", "out", "w", "h", "js"?, "jsFile"?, "load"?, "wait"?, "full"?, "motion"? }]
 // js runs as an async function body; its return value is printed as JSON.
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -13,13 +13,17 @@ const port = 9333 + Math.floor(Math.random() * 300);
 const profile = mkdtempSync(join(tmpdir(), 'kcdp-'));
 const edge = spawn(EDGE, ['--headless', '--disable-gpu', '--hide-scrollbars', '--no-first-run', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// Edge starts helper processes; close the whole tree so none keep running (and skewing CPU-sensitive tests).
+const closeEdge = () => { try { spawnSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } };
+process.on('SIGINT', () => { closeEdge(); process.exit(1); });
+process.on('SIGTERM', () => { closeEdge(); process.exit(1); });
 
 let target;
 for (let i = 0; i < 50 && !target; i++) {
   await sleep(200);
   try { target = (await (await fetch(`http://127.0.0.1:${port}/json`)).json()).find((t) => t.type === 'page'); } catch {}
 }
-if (!target) { console.error('no edge target'); edge.kill(); process.exit(1); }
+if (!target) { console.error('no edge target'); closeEdge(); process.exit(1); }
 
 const ws = new WebSocket(target.webSocketDebuggerUrl);
 await new Promise((r) => ws.addEventListener('open', r));
@@ -46,5 +50,5 @@ for (const job of jobs) {
   console.log('saved', job.out);
 }
 ws.close();
-edge.kill();
+closeEdge();
 process.exit(0);

@@ -89,6 +89,15 @@ says where the rebuild stands.
   Press removed; Feature index renamed Index list. Club opens on Runway and
   Hush on a Model spotlight; tapes, stacked cards and the countdown sit lower.
   Club and Hush still have the original 12 products with the old photos.
+- **Phase 3, performance (2026-11-22, f2a50ab, live on all three stores):**
+  base.css folded into theme.css, critical.css inlined, first-row collection
+  photos eager and the first preloaded, product main photo preloaded, the
+  black heading weight preloaded, looping motion starts after load. Measured
+  live with the machine busier than in October (CPU benchmark 530–730 vs
+  1,100–1,700, so absolute scores read low): before home 66/56/60, collection
+  50/47/53, product 49/60/59; after home 46/53/52, collection 57/53/55,
+  product 55 (one run, stopped). Re-measure before and after back to back on
+  a quiet machine. Club and Hush now have the 44-product catalogue too.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,
