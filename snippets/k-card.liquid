@@ -43,7 +43,11 @@
     <div class="k-card__media">
       <a class="k-card__link" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
         {%- if first_media != blank -%}
-          {{ first_media | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: img_sizes, loading: loading, alt: first_media.alt | default: product.title }}
+          {%- if preload -%}
+            {{ first_media | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: img_sizes, loading: 'eager', fetchpriority: 'high', preload: true, alt: first_media.alt | default: product.title }}
+          {%- else -%}
+            {{ first_media | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: img_sizes, loading: loading, alt: first_media.alt | default: product.title }}
+          {%- endif -%}
           {%- if second_media != blank and second_media.media_type == 'image' -%}
             {{ second_media | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: img_sizes, loading: 'lazy', alt: '', class: 'k-card__alt' }}
           {%- endif -%}

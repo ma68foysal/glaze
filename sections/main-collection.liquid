@@ -107,7 +107,13 @@
           {%- for product in collection.products -%}
             {%- comment -%} The first row shows without the scroll reveal, so it never paints half-faded. {%- endcomment -%}
             <li class="k-col__item{% if forloop.index > 4 %} k-reveal{% endif %}">
-              {% render 'k-card', product: product, quick_add: section.settings.quick_add, heading_tag: 'h2' %}
+              {%- liquid
+                assign card_eager = false
+                if forloop.index <= 4
+                  assign card_eager = true
+                endif
+              -%}
+              {% render 'k-card', product: product, quick_add: section.settings.quick_add, heading_tag: 'h2', eager: card_eager, preload: forloop.first %}
               {%- assign row_number = paginate.current_offset | plus: forloop.index -%}
               {%- render 'k-index-row', product: product, number: row_number -%}
             </li>

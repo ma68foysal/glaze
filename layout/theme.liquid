@@ -41,19 +41,15 @@
       {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
     {% endunless %}
     {% unless settings.type_heading_font.system? %}
-      {{ settings.type_heading_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+      {%- comment -%} Display headings use the black weight, so that is the one worth preloading. {%- endcomment -%}
+      {%- assign heading_black = settings.type_heading_font | font_modify: 'weight', '900' | default: settings.type_heading_font -%}
+      {{ heading_black | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
     {% endunless %}
 
-    {% # Load and preload the critical CSS %}
-    {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+    {% # Critical rules inline, so the first paint needs no extra request. %}
+    <style>{{ 'critical.css' | inline_asset_content }}</style>
 
-    {% comment %}
-      Global legacy styles (buttons, product cards, pagination, RTE prose, form fields).
-      Loads once theme-wide so individual sections don't re-emit duplicated rules.
-    {% endcomment %}
-    {{ 'base.css' | asset_url | stylesheet_tag }}
-
-    {% # Kinetic design system. Loads after base.css; base.css goes once every section is rebuilt. %}
+    {% # Design system: shared base rules and the Kinetic components, in one stylesheet. %}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
 
     {% # Social, title, etc. %}
@@ -75,6 +71,11 @@
         error: {{ 'cart.error' | t | json }},
         addError: {{ 'cart.add_error' | t | json }}
       };
+      // Looping motion starts once the page has loaded and the browser is idle (see theme.css).
+      window.addEventListener('load', function () {
+        var go = function () { document.documentElement.classList.add('k-loaded'); };
+        if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 2500 }); else setTimeout(go, 1200);
+      });
       window.shopMoneyFormat = {{ shop.money_format | json }};
       window.themeSettings = {
         moodboard: {

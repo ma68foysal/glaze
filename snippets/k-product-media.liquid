@@ -14,15 +14,29 @@
         {%- assign sizes = '(min-width: 1440px) 380px, (min-width: 900px) 28vw, 86vw' -%}
         {%- if big or layout == 'thumbnails' -%}{%- assign sizes = '(min-width: 1440px) 770px, (min-width: 900px) 56vw, 86vw' -%}{%- endif -%}
         {%- assign loading = 'lazy' -%}{%- if position == 1 -%}{%- assign loading = 'eager' -%}{%- endif -%}
-        {{
-          media
-          | image_url: width: 2000
-          | image_tag:
-            widths: '480, 720, 960, 1280, 1600, 2000',
-            sizes: sizes,
-            loading: loading,
-            alt: media.alt | default: product.title | escape
-        }}
+        {%- if position == 1 -%}
+          {{
+            media
+            | image_url: width: 2000
+            | image_tag:
+              widths: '480, 640, 720, 960, 1280, 1600, 2000',
+              sizes: sizes,
+              loading: 'eager',
+              fetchpriority: 'high',
+              preload: true,
+              alt: media.alt | default: product.title | escape
+          }}
+        {%- else -%}
+          {{
+            media
+            | image_url: width: 2000
+            | image_tag:
+              widths: '480, 640, 720, 960, 1280, 1600, 2000',
+              sizes: sizes,
+              loading: loading,
+              alt: media.alt | default: product.title | escape
+          }}
+        {%- endif -%}
       </div>
     {%- when 'video' -%}
       <div class="k-pdp__media-frame">
