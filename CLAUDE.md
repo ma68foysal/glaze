@@ -157,7 +157,9 @@ says where the rebuild stands.
 - **Store name:** "Oblique", changed 2026-10-15 in Settings → General; it
   drives the header and footer wordmark. The business entity name in
   Organization settings still says skinova, which is billing and tax only.
-- **Open:** the manual still lives at `skinova-manual.vercel.app`;
+- **Open:** the manual still lives at `skinova-manual.vercel.app`; it moves to
+  `oblique-manual.vercel.app` (user renames the Vercel project), then
+  `theme_documentation_url` in `config/settings_schema.json` changes to match;
   trademark and handle checks for "Oblique"; store currency is BDT.
 
 ---
