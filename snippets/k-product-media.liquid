@@ -14,16 +14,30 @@
         {%- assign sizes = '(min-width: 1440px) 380px, (min-width: 900px) 28vw, 86vw' -%}
         {%- if big or layout == 'thumbnails' -%}{%- assign sizes = '(min-width: 1440px) 770px, (min-width: 900px) 56vw, 86vw' -%}{%- endif -%}
         {%- assign loading = 'lazy' -%}{%- if position == 1 -%}{%- assign loading = 'eager' -%}{%- endif -%}
-        {%- if position == 1 -%}
+        {%- liquid
+          # The thumbnails and stacked layouts always frame photos at 4:5 (object-fit: cover),
+          # so the CDN crops to 4:5 first and the browser never downloads the hidden part.
+          assign crop_45 = false
+          if layout == 'thumbnails' or layout == 'stacked'
+            assign crop_45 = true
+          endif
+          assign img_fetch = 'auto'
+          assign img_preload = false
+          if position == 1
+            assign img_fetch = 'high'
+            assign img_preload = true
+          endif
+        -%}
+        {%- if crop_45 -%}
           {{
             media
-            | image_url: width: 2000
+            | image_url: width: 2000, height: 2500, crop: 'center'
             | image_tag:
               widths: '480, 640, 720, 960, 1280, 1600, 2000',
               sizes: sizes,
-              loading: 'eager',
-              fetchpriority: 'high',
-              preload: true,
+              loading: loading,
+              fetchpriority: img_fetch,
+              preload: img_preload,
               alt: media.alt | default: product.title | escape
           }}
         {%- else -%}
@@ -34,6 +48,8 @@
               widths: '480, 640, 720, 960, 1280, 1600, 2000',
               sizes: sizes,
               loading: loading,
+              fetchpriority: img_fetch,
+              preload: img_preload,
               alt: media.alt | default: product.title | escape
           }}
         {%- endif -%}
