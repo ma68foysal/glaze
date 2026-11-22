@@ -37,13 +37,13 @@
 
     <template data-mood-card>
       <article class="k-mood__card">
-        <a class="k-mood__img k-media" href="#"><img alt="" loading="lazy" width="600" height="800"></a>
+        <a class="k-mood__img k-media" data-mood-link><img alt="" loading="lazy" width="600" height="800"></a>
         <div class="k-mood__meta">
-          <a class="k-mood__name" href="#"></a>
+          <a class="k-mood__name" data-mood-link></a>
           <span class="k-mood__price"></span>
         </div>
         <div class="k-mood__btns">
-          <a class="k-mood__btn" href="#" data-mood-shop>{{ 'products.quick_add' | t }}</a>
+          <a class="k-mood__btn" data-mood-link data-mood-shop>{{ 'products.quick_add' | t }}</a>
           <button type="button" class="k-mood__btn k-mood__btn--ghost" data-mood-remove>{{ 'moodboard.remove' | t }}</button>
         </div>
       </article>
@@ -140,7 +140,7 @@
             node.style.setProperty('--r', tilts[i % tilts.length] + 'deg');
             node.style.setProperty('--y', (i % 2 ? 18 : 0) + 'px');
             node.style.animationDelay = (i * 50) + 'ms';
-            node.querySelectorAll('a[href="#"]').forEach(function (a) { a.href = p.url; });
+            node.querySelectorAll('[data-mood-link]').forEach(function (a) { a.href = p.url; });
             var img = node.querySelector('img');
             if (p.featured_image) img.src = p.featured_image + (p.featured_image.indexOf('?') > -1 ? '&' : '?') + 'width=600';
             img.alt = p.title;

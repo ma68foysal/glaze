@@ -110,8 +110,9 @@ says where the rebuild stands.
   missing translations, every page renders. Fixed: footer wordmark now shrinks
   to fit long store names, empty footer columns hide, model spotlight shows a
   sample price and button with no product, the empty all-products page links
-  home instead of to itself. Push code files to all three demo stores with
-  `docs/tools/demo-sync/push-files.cmd <files>` (one store: `push-one.cmd`).
+  home instead of to itself. Push code files with `docs/tools/demo-sync/push-one.cmd <store> <theme-id>
+  <files>`, one store per terminal run (chaining several pushes in one script
+  hangs after the first), then `demo.py sync`.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,
