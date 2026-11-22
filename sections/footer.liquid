@@ -1,20 +1,48 @@
 {%- liquid
   assign wordmark = section.settings.wordmark | default: shop.name
   assign wordmark_letters = wordmark | split: ''
+  # Columns with nothing to show (an empty menu, blank text, no social links) are skipped.
+  assign col_count = 0
+  for block in section.blocks
+    case block.type
+      when 'menu'
+        if block.settings.menu.links.size > 0
+          assign col_count = col_count | plus: 1
+        endif
+      when 'text'
+        if block.settings.text != blank
+          assign col_count = col_count | plus: 1
+        endif
+      when 'social'
+        assign social_urls = block.settings.instagram | append: block.settings.tiktok | append: block.settings.pinterest | append: block.settings.facebook | append: block.settings.youtube | append: block.settings.x
+        if social_urls != blank
+          assign col_count = col_count | plus: 1
+        endif
+    endcase
+  endfor
 -%}
 
 <footer class="k-footer color-{{ section.settings.color_scheme }}">
   <div class="k-wrap">
-    {%- if section.blocks.size > 0 -%}
-      <div class="k-footer__cols" style="--cols: {{ section.blocks.size | at_most: 4 }};">
+    {%- if col_count > 0 -%}
+      <div class="k-footer__cols" style="--cols: {{ col_count | at_most: 4 }};">
         {%- for block in section.blocks -%}
           {%- liquid
-            if block.type == 'social'
-              assign social_urls = block.settings.instagram | append: block.settings.tiktok | append: block.settings.pinterest | append: block.settings.facebook | append: block.settings.youtube | append: block.settings.x
-              if social_urls == blank
-                continue
-              endif
-            endif
+            case block.type
+              when 'menu'
+                if block.settings.menu.links.size == 0
+                  continue
+                endif
+              when 'text'
+                if block.settings.text == blank
+                  continue
+                endif
+              when 'social'
+                assign social_urls = block.settings.instagram | append: block.settings.tiktok | append: block.settings.pinterest | append: block.settings.facebook | append: block.settings.youtube | append: block.settings.x
+                if social_urls == blank
+                  continue
+                endif
+            endcase
           -%}
           <div class="k-footer__col" {{ block.shopify_attributes }}>
             {%- if block.settings.heading != blank -%}
@@ -22,13 +50,11 @@
             {%- endif -%}
             {%- case block.type -%}
               {%- when 'menu' -%}
-                {%- if block.settings.menu.links.size > 0 -%}
-                  <ul class="k-footer__links" role="list">
-                    {%- for link in block.settings.menu.links -%}
-                      <li><a class="k-link-underline" href="{{ link.url }}">{{ link.title }}</a></li>
-                    {%- endfor -%}
-                  </ul>
-                {%- endif -%}
+                <ul class="k-footer__links" role="list">
+                  {%- for link in block.settings.menu.links -%}
+                    <li><a class="k-link-underline" href="{{ link.url }}">{{ link.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
               {%- when 'text' -%}
                 <div class="k-rte k-footer__text">{{ block.settings.text }}</div>
               {%- when 'social' -%}
@@ -47,11 +73,13 @@
     {%- endif -%}
 
     {%- if section.settings.show_wordmark -%}
-      <p class="k-footer__giant" aria-hidden="true">
-        {%- for letter in wordmark_letters -%}
-          {%- if letter == ' ' -%}<span class="k-footer__gap"></span>{%- else -%}<span>{{ letter }}</span>{%- endif -%}
-        {%- endfor -%}
-      </p>
+      <div class="k-footer__giant-wrap">
+        <p class="k-footer__giant" aria-hidden="true" style="--wm-n: {{ wordmark_letters.size | at_least: 1 }};">
+          {%- for letter in wordmark_letters -%}
+            {%- if letter == ' ' -%}<span class="k-footer__gap"></span>{%- else -%}<span>{{ letter }}</span>{%- endif -%}
+          {%- endfor -%}
+        </p>
+      </div>
     {%- endif -%}
 
     <div class="k-footer__bottom">
@@ -93,6 +121,7 @@
   .k-footer__links { margin: 0; padding: 0; list-style: none; }
   .k-footer__links a { display: inline-block; padding: 6px 0; font-size: 15px; }
   .k-footer__text { font-size: 15px; max-width: 32ch; }
+  .k-footer__giant-wrap { container-type: inline-size; }
   .k-footer__giant {
     display: flex;
     justify-content: space-between;
@@ -101,7 +130,8 @@
     overflow: hidden;
     font-family: var(--font-heading);
     font-weight: var(--font-heading-weight-black);
-    font-size: calc(clamp(64px, 17vw, 265px) * var(--wordmark-scale, 1));
+    /* Shrinks long names so every letter fits the row (about 0.76em per black capital, spacing included). */
+    font-size: min(clamp(64px, 17vw, 265px), calc(100cqi / (var(--wm-n, 7) * 0.76)));
     line-height: 0.8;
     letter-spacing: -0.04em;
     text-transform: uppercase;

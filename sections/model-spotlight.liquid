@@ -60,6 +60,10 @@
           </div>
         {%- else -%}
           <span class="k-spot__name">{{ 'onboarding.product_title' | t }}</span>
+          <span class="k-spot__price">{{ 4900 | money }}</span>
+          <div class="k-spot__ctas">
+            <span class="k-btn k-btn--primary" aria-disabled="true">{{ 'products.choose_options' | t }}</span>
+          </div>
         {%- endif -%}
       </div>
     </div>

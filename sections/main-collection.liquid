@@ -142,7 +142,11 @@
             <a class="k-btn k-btn--secondary" href="{{ clear_url }}">{{ 'sections.collection.clear_filters' | t }}</a>
           {%- else -%}
             <p class="k-h3" style="margin: 0;">{{ 'sections.collection.empty' | t }}</p>
-            <a class="k-btn k-btn--secondary" href="{{ routes.all_products_collection_url }}">{{ 'sections.collection.shop_all' | t }}</a>
+            {%- if collection.handle == 'all' -%}
+              <a class="k-btn k-btn--secondary" href="{{ routes.root_url }}">{{ 'cart.continue_shopping' | t }}</a>
+            {%- else -%}
+              <a class="k-btn k-btn--secondary" href="{{ routes.all_products_collection_url }}">{{ 'sections.collection.shop_all' | t }}</a>
+            {%- endif -%}
           {%- endif -%}
         </div>
       {%- endif -%}

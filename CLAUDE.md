@@ -103,6 +103,15 @@ says where the rebuild stands.
   busier machine (benchmark 540–900, TBT 1.6–2.4 s, all from CPU). Home's LCP
   is the hero card image, already high priority; what's left is Shopify's
   own scripts. Club and Hush now have the 44-product catalogue too.
+- **Phase 4, fresh install (2026-11-22):** test store `dawn-mastary.myshopify.com`
+  (user's dev store; products, collections, pages, blog and custom menus
+  deleted at the user's request, other themes kept). Theme "Oblique fresh
+  install" 191153963119, unpublished. Empty-store pass: no dead links, no
+  missing translations, every page renders. Fixed: footer wordmark now shrinks
+  to fit long store names, empty footer columns hide, model spotlight shows a
+  sample price and button with no product, the empty all-products page links
+  home instead of to itself. Push code files to all three demo stores with
+  `docs/tools/demo-sync/push-files.cmd <files>` (one store: `push-one.cmd`).
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,
