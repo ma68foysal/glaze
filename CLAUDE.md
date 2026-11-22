@@ -96,8 +96,13 @@ says where the rebuild stands.
   live with the machine busier than in October (CPU benchmark 530–730 vs
   1,100–1,700, so absolute scores read low): before home 66/56/60, collection
   50/47/53, product 49/60/59; after home 46/53/52, collection 57/53/55,
-  product 55 (one run, stopped). Re-measure before and after back to back on
-  a quiet machine. Club and Hush now have the 44-product catalogue too.
+  product 55 (one run, stopped). Re-run 2026-11-22 with the CPU benchmark
+  checked per run: home 67/67/64, collection 81/81/71, product 62/69/60
+  (product LCP 4.3–4.8 s). 9215d2d then crops product photos to 4:5 at the
+  CDN (main photo 111 KB → 70 KB): product LCP 3.0 s, scores 49/61/63 on a
+  busier machine (benchmark 540–900, TBT 1.6–2.4 s, all from CPU). Home's LCP
+  is the hero card image, already high priority; what's left is Shopify's
+  own scripts. Club and Hush now have the 44-product catalogue too.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,
