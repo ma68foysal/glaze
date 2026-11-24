@@ -2,10 +2,11 @@
 // scrolls the whole page so lazy images load, then crops one section by its
 // section id and saves it as a JPEG in ultimate-doc/public/screenshots/section/.
 // usage: node manual-shots.mjs [handle ...]   (no args = every job)
-// Needs the demo previews running: 9294 Oblique (docs/tools/demo-sync/dev.cmd),
-// 9295 Club (theme dev from D:\cracktab\oblique-demo\club on port 9295).
+// Shoots the live demo stores in a visible Edge window with a kept profile. The
+// first run opens each store's password page: type the password there and the
+// script carries on by itself once both stores are unlocked.
 import { spawn, spawnSync } from 'node:child_process';
-import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,8 +15,8 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, '..', '..', '..', 'ultimate-doc', 'public', 'screenshots', 'section');
 mkdirSync(OUT, { recursive: true });
 
-const O = 'http://127.0.0.1:9294';
-const C = 'http://127.0.0.1:9295';
+const O = 'https://oblique-theme.myshopify.com';
+const C = 'https://oblique-club-vrjg1qy6.myshopify.com';
 const PDP = `${O}/products/stride-trench`;
 // handle: [url, section id ('viewport' = whole screen), optional max height, optional setup js]
 const JOBS = {
@@ -34,12 +35,12 @@ const JOBS = {
   'product-details': [PDP, 'details'],
   'story-steps': [PDP, 'story'],
   'related-products': [PDP, 'related'],
-  'recently-viewed': [PDP, 'recently_viewed', 0, "localStorage.setItem('oblique:recent', JSON.stringify(['soft-blazer','cashmere-crew','pleated-wide-trouser','arc-loafer','crescent-bag'])); location.reload(); await new Promise(r => setTimeout(r, 6000));"],
+  'recently-viewed': [PDP, 'recently_viewed', 0, "localStorage.setItem('oblique:recently-viewed', JSON.stringify(['soft-blazer','cashmere-crew','pleated-wide-trouser','arc-loafer','crescent-bag']));", 'reload'],
   'contact-hero': [O + '/pages/contact', 'hero'],
   'contact-form': [O + '/pages/contact', 'form'],
   'faq-list': [O + '/pages/contact', 'faq'],
   'store-info': [O + '/pages/contact', 'store'],
-  'feature-index': [O + '/pages/features', 'main'],
+  'feature-index': [O + '/pages/theme-features', 'main'],
   'pull-quote': [O + '/pages/about', 'quote'],
   'countdown': [C + '/', 'drop'],
   'scrolling-tapes': [C + '/', 'tapes'],
@@ -51,8 +52,9 @@ const jobs = Object.entries(JOBS).filter(([h]) => !want.length || want.includes(
 
 const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 const port = 9333 + Math.floor(Math.random() * 300);
-const profile = mkdtempSync(join(tmpdir(), 'kshots-'));
-const edge = spawn(EDGE, ['--headless', '--disable-gpu', '--hide-scrollbars', '--no-first-run', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
+const profile = join(process.env.LOCALAPPDATA || tmpdir(), 'oblique-shots-profile');
+mkdirSync(profile, { recursive: true });
+const edge = spawn(EDGE, ['--hide-scrollbars', '--no-first-run', '--no-default-browser-check', '--window-size=1460,1000', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
 const closeEdge = () => { try { spawnSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -62,6 +64,23 @@ for (let i = 0; i < 50 && !target; i++) {
   try { target = (await (await fetch(`http://127.0.0.1:${port}/json`)).json()).find((t) => t.type === 'page'); } catch {}
 }
 if (!target) { console.error('no edge target'); closeEdge(); process.exit(1); }
+// Unlock: open each store; wait until neither tab sits on /password.
+const stores = [...new Set(jobs.map(([, [u]]) => new URL(u).origin))];
+const unlockTabs = [];
+for (const origin of stores) unlockTabs.push(await (await fetch(`http://127.0.0.1:${port}/json/new?${origin}/`, { method: 'PUT' })).json());
+let clear = 0;
+for (let i = 0; ; i++) {
+  await sleep(2000);
+  const list = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
+  const locked = unlockTabs.filter((t) => (list.find((l) => l.id === t.id)?.url || '/password').includes('/password'));
+  // A tab reads its target URL before the redirect lands, so wait for three clear checks.
+  clear = locked.length ? 0 : clear + 1;
+  if (clear >= 3) break;
+  if (i % 15 === 0) console.log('waiting for the storefront password on:', locked.map((t) => new URL(t.url || 'http://x').host).join(', '));
+  if (i > 450) { console.error('gave up waiting for unlock'); closeEdge(); process.exit(1); }
+}
+for (const t of unlockTabs) await fetch(`http://127.0.0.1:${port}/json/close/${t.id}`);
+console.log('stores unlocked, shooting');
 const ws = new WebSocket(target.webSocketDebuggerUrl);
 await new Promise((r) => ws.addEventListener('open', r));
 let id = 0; const pending = new Map();
@@ -76,6 +95,7 @@ await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-m
 
 let current = '';
 for (const [handle, [url, sid, maxH = 1600, setup = '', extend = '']] of jobs) {
+  const reload = extend === 'reload';
   if (url !== current || setup) {
     await send('Page.navigate', { url });
     await sleep(7000);
@@ -84,6 +104,18 @@ for (const [handle, [url, sid, maxH = 1600, setup = '', extend = '']] of jobs) {
     current = setup ? '' : url;
   }
   if (setup) await evaluate(setup);
+  if (reload) {
+    await send('Page.navigate', { url });
+    await sleep(7000);
+    await evaluate(`for (let y = 0; y < document.body.scrollHeight; y += 600) { scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); } await new Promise(r => setTimeout(r, 2500));`);
+  }
+  // Keep overlays out of section shots: the timed popup, sticky header, add-to-bag bar, back-to-top.
+  await evaluate(`
+    let st = document.getElementById('kshots-clean');
+    if (!st) { st = document.createElement('style'); st.id = 'kshots-clean'; document.head.append(st); }
+    st.textContent = '.shopify-section-group-header-group { position: relative !important; } .k-totop, .k-pdp__bar, .k-cursor { display: none !important; }' + (${handle === 'newsletter-popup'} ? '' : ' dialog.k-popup, .k-modal__scrim { display: none !important; }');
+    ${handle === 'newsletter-popup' ? '' : "document.querySelectorAll('dialog[open]').forEach(d => d.close());"}
+    await new Promise(r => setTimeout(r, 300));`);
   let clip;
   if (sid === 'viewport') {
     clip = { x: 0, y: 0, width: 1440, height: 900, scale: 1 };
@@ -99,10 +131,10 @@ for (const [handle, [url, sid, maxH = 1600, setup = '', extend = '']] of jobs) {
       ${extend === 'header' ? "const h = document.querySelector('.k-header, header'); if (h) bottom = Math.max(bottom, h.getBoundingClientRect().bottom + scrollY);" : ''}
       return { x: 0, y: top, width: innerWidth, height: bottom - top };`);
     if (!rect || rect.height < 20) { console.error(handle, 'section not found:', sid); continue; }
-    clip = { ...rect, height: Math.min(rect.height, maxH), scale: 1 };
+    clip = { ...rect, height: Math.min(rect.height, maxH || 1600), scale: 1 };
   }
   const shot = await send('Page.captureScreenshot', { format: 'jpeg', quality: 82, clip, captureBeyondViewport: true });
-  if (!shot.result) { console.error(handle, 'capture failed'); continue; }
+  if (!shot.result) { console.error(handle, 'capture failed', JSON.stringify(shot.error), JSON.stringify(clip)); continue; }
   const file = join(OUT, `${handle}.jpg`);
   writeFileSync(file, Buffer.from(shot.result.data, 'base64'));
   console.log('saved', handle, Math.round(clip.height) + 'px');
