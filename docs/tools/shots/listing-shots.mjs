@@ -65,8 +65,8 @@ for (const k of want) {
     await send('Emulation.setTouchEmulationEnabled', { enabled: metrics.mobile });
     await send('Page.navigate', { url: STORES[k] + '/' });
     await sleep(8000);
-    // Load lazy images, return to the top, then hide the timed popup and back-to-top button.
-    await evaluate(`for (let y = 0; y < document.body.scrollHeight; y += 400) { scrollTo(0, y); await new Promise(r => setTimeout(r, 350)); } scrollTo(0, 0); await new Promise(r => setTimeout(r, 6000)); await Promise.all([...document.images].filter(i => i.getBoundingClientRect().top < innerHeight).map(i => Promise.race([i.decode().catch(() => {}), new Promise(r => setTimeout(r, 4000))])));
+    // Load lazy images, return to the top (retried: smooth scrolling can pull it back), then hide the timed popup and back-to-top button.
+    await evaluate(`for (let y = 0; y < document.body.scrollHeight; y += 400) { scrollTo(0, y); await new Promise(r => setTimeout(r, 350)); } await new Promise(r => setTimeout(r, 1200)); for (let i = 0; i < 8 && scrollY > 0; i++) { scrollTo(0, 0); document.documentElement.scrollTop = 0; await new Promise(r => setTimeout(r, 700)); } await new Promise(r => setTimeout(r, 5000)); await Promise.all([...document.images].filter(i => i.getBoundingClientRect().top < innerHeight).map(i => Promise.race([i.decode().catch(() => {}), new Promise(r => setTimeout(r, 4000))])));
       const st = document.createElement('style'); st.textContent = 'dialog.k-popup, .k-modal__scrim, .k-totop, .k-cursor { display: none !important; }'; document.head.append(st);
       document.querySelectorAll('dialog[open]').forEach(d => d.close()); await new Promise(r => setTimeout(r, 1200));`);
     const shot = await send('Page.captureScreenshot', { format: 'png' });

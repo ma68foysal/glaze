@@ -125,7 +125,8 @@ says where the rebuild stands.
   folder. A draft submission "oblique" exists in the Partner dashboard
   (BeLuxurious org); nothing submitted. Listing still needs a tagline (70
   characters max) and 3 highlights with 1600 x 1200 images; all demo stores
-  share one password.
+  share one password. Club and Hush now have header logos (PNGs in
+  `docs/listing/logos/`, in each store's Files) and are named "club" and "hush".
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,

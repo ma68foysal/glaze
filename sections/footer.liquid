@@ -136,8 +136,9 @@
     overflow: hidden;
     font-family: var(--font-heading);
     font-weight: var(--font-heading-weight-black);
-    /* Shrinks long names so every letter fits the row (about 0.76em per black capital, spacing included). */
-    font-size: min(clamp(64px, 17vw, 265px), calc(100cqi / (var(--wm-n, 7) * 0.76)));
+    /* Fits the name to the row (about 0.76em per black capital, spacing included): long names shrink,
+       short ones grow up to the cap so the letters don't drift apart. */
+    font-size: min(clamp(64px, 25vw, 360px), calc(100cqi / (var(--wm-n, 7) * 0.76)));
     line-height: 0.8;
     letter-spacing: -0.04em;
     text-transform: uppercase;
