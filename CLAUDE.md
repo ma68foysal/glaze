@@ -408,8 +408,9 @@ npm run build                 # 52 static pages
 
 These were never reviewed and remain outstanding whichever design ships:
 
-- Support form at `themestudio.store/pages/contact` is missing five required
-  fields: store URL (with example), problem description textarea, file upload,
-  theme name, auto-populated subject — plus an auto-responder.
+- Support form: themestudio.store is closed ("store unavailable"), so the form
+  lives at https://oblique-manual.vercel.app/support (`ultimate-doc/app/support`,
+  route `app/api/support/route.js`, sends through Resend). It needs
+  RESEND_API_KEY, SUPPORT_TO and SUPPORT_FROM set in Vercel before it works.
 - `<shopify-account>` is in the header on desktop and mobile (checked
   2026-10-16), which meets the "Account component" requirement.

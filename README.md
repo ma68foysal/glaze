@@ -16,7 +16,7 @@ Merchant-facing setup and customization docs: <https://skinova-manual.vercel.app
 
 ## Support
 
-Contact: <https://themestudio.store/pages/contact>
+Contact: <https://oblique-manual.vercel.app/support>
 
 ## License
 
