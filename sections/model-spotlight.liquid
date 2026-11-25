@@ -65,6 +65,9 @@
             <span class="k-btn k-btn--primary" aria-disabled="true">{{ 'products.choose_options' | t }}</span>
           </div>
         {%- endif -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == '@app' -%}<div class="k-spot__app">{% render block %}</div>{%- endif -%}
+        {%- endfor -%}
       </div>
     </div>
   </div>
@@ -84,6 +87,7 @@
   .k-spot__product { display: grid; gap: 8px; padding-top: 18px; border-top: 1.5px solid var(--color-text); }
   .k-spot__name { font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: clamp(24px, 2.6vw, 36px); letter-spacing: -0.03em; line-height: 1; }
   a.k-spot__name:hover { color: var(--color-accent); }
+  .k-spot__app:not(:empty) { padding-top: 16px; }
   .k-spot__ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-top: 8px; }
   .k-spot__more { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
   .k-spot__more:hover { color: var(--color-accent); }
@@ -136,7 +140,7 @@
   "name": "Model spotlight",
   "tag": "div",
   "class": "k-spot-section",
-  "max_blocks": 4,
+  "max_blocks": 6,
   "settings": [
     { "type": "text", "id": "label", "label": "Label", "default": "One piece, three bodies" },
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "See it <em>on you</em>" },
@@ -158,7 +162,8 @@
         { "type": "image_picker", "id": "image", "label": "Photo", "info": "Leave empty to use one of the product's photos." },
         { "type": "range", "id": "photo", "label": "Product photo number", "min": 1, "max": 10, "step": 1, "default": 1 }
       ]
-    }
+    },
+    { "type": "@app" }
   ],
   "presets": [
     {

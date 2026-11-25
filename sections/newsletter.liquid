@@ -14,7 +14,7 @@
       {%- endif -%}
       <div>
         {%- if form.posted_successfully? -%}
-          <p class="k-news__msg" role="status" tabindex="-1" autofocus>{{ 'general.newsletter_form.confirmation' | t }}</p>
+          <p class="k-news__msg" role="status" tabindex="-1">{{ 'general.newsletter_form.confirmation' | t }}</p>
         {%- else -%}
           <label class="k-label k-muted" for="k-news-email-{{ section.id }}" style="display: block; margin-bottom: 12px;">{{ 'general.newsletter_form.email_label' | t }}</label>
           <div class="k-news__field">

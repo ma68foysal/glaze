@@ -497,23 +497,5 @@
       "popular": "Collections populaires",
       "ring": "Page introuvable"
     }
-  },
-  "moodboard": {
-    "save": "Enregistrer {{ title }} dans votre moodboard",
-    "saved": "Retirer {{ title }} de votre moodboard",
-    "toast_saved": "Ajouté à votre moodboard",
-    "toast_removed": "Retiré de votre moodboard",
-    "view": "Voir le moodboard",
-    "kicker_own": "Enregistré dans ce navigateur",
-    "kicker_shared": "Un moodboard partagé",
-    "copy_link": "Copier le lien",
-    "copied": "Lien copié",
-    "adopt": "Ajouter à mon moodboard",
-    "add_all": "Tout ajouter au panier",
-    "empty_title": "Rien d’épinglé pour l’instant",
-    "empty_text": "Touchez le cœur d’une pièce pour l’épingler ici.",
-    "share_label": "Lien de partage",
-    "privacy": "Votre moodboard reste dans ce navigateur. Partagez le lien pour l’envoyer à quelqu’un.",
-    "remove": "Retirer"
   }
 }

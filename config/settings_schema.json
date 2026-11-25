@@ -199,7 +199,7 @@
             "label": "Still"
           }
         ],
-        "info": "Sets every animation at once. Kinetic: long eased reveals, looping type and stretching headings. Editorial: short, quiet reveals and no loops. Still: no movement, hovers change colour only. Visitors who prefer reduced motion always get Still, and shoppers can pause motion."
+        "info": "Sets every animation at once. Kinetic: long eased reveals, looping type and stretching headings. Editorial: short, quiet reveals and no loops. Still: no movement, hovers change color only. Visitors who prefer reduced motion always get Still, and shoppers can pause motion."
       },
       {
         "type": "checkbox",
@@ -275,7 +275,7 @@
           }
         ],
         "default": "none",
-        "info": "Gives mixed photography one look. Colour returns on hover. Product pages and the cart always show true colour."
+        "info": "Gives mixed photography one look. Color returns on hover. Product pages and the cart always show true color."
       },
       {
         "type": "checkbox",
@@ -345,19 +345,6 @@
         "label": "Show quick view",
         "default": true,
         "info": "Products with options open in a quick view window from product cards. Products without options keep quick add."
-      },
-      {
-        "type": "checkbox",
-        "id": "moodboard",
-        "label": "Show save to moodboard",
-        "default": true,
-        "info": "A save button on product cards. Saved pieces stay in the shopper's browser; no account or app needed."
-      },
-      {
-        "type": "page",
-        "id": "moodboard_page",
-        "label": "Moodboard page",
-        "info": "Create a page, assign it the page.moodboard template, and pick it here."
       },
       {
         "type": "header",

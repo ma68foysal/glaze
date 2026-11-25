@@ -157,9 +157,7 @@
   a.k-index__row:hover::before, a.k-index__row:focus-visible::before { transform: scaleY(1); }
   .k-index__name {
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
     font-family: var(--font-heading);
     font-weight: var(--font-heading-weight);
     font-size: calc(clamp(40px, 6.2vw, 96px) * var(--heading-scale));
@@ -201,7 +199,7 @@
       "name": "Collection",
       "settings": [
         { "type": "collection", "id": "collection", "label": "Collection", "info": "Fills the title, image and link when those are empty." },
-        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "text", "id": "title", "label": "Heading" },
         { "type": "image_picker", "id": "image", "label": "Image", "info": "Columns: tall portrait images work best. Index: shown on hover." },
         { "type": "video", "id": "video", "label": "Video", "info": "Columns layout only. Plays muted on a loop instead of the image." },
         { "type": "text", "id": "description", "label": "Short description", "info": "Index layout only." },

@@ -81,12 +81,12 @@
     "secondary_background_info": "Used for cream surfaces — cart drawer, modals, hero sub-areas.",
     "secondary_foreground": "Secondary foreground",
     "accent_background": "Accent background",
-    "accent_background_info": "Primary call-to-action colour — buttons, links, focus rings.",
+    "accent_background_info": "Used for buttons, links and focus rings.",
     "accent_foreground": "Accent foreground",
     "card_background": "Card background",
     "card_foreground": "Card foreground",
     "favicon": "Favicon image",
-    "favicon_info": "Will be scaled down to 32 × 32 px. Use a square PNG or SVG."
+    "favicon_info": "Shown at 32 x 32px. Use a square .png or .svg image."
   },
   "options": {
     "alignment": {

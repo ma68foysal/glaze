@@ -113,6 +113,19 @@ says where the rebuild stands.
   home instead of to itself. Push code files with `docs/tools/demo-sync/push-one.cmd <store> <theme-id>
   <files>`, one store per terminal run (chaining several pushes in one script
   hangs after the first), then `demo.py sync`.
+- **Requirements pass (2026-11-25):** checked against the requirements page and
+  ~40 pages it links to. Added Follow on Shop (footer setting, `login_button`;
+  shows only with Shop Pay), social media icons (`snippets/k-social-icon`),
+  `@app` blocks in Model spotlight, Shop Pay Installments in quick view,
+  pickup limited to `pick_up_enabled` locations, language field renamed to
+  `language_code` (untested live: the stores have one language). Moodboard
+  removed (reads as a wishlist, which section 8 bans); its demo pages are
+  unpublished. American English and Shopify terminology in settings text.
+  `listings/oblique/` is required: with several presets every preset needs a
+  folder. A draft submission "oblique" exists in the Partner dashboard
+  (BeLuxurious org); nothing submitted. Listing still needs a tagline (70
+  characters max) and 3 highlights with 1600 x 1200 images; all demo stores
+  share one password.
 - **Presets:** Oblique, Club and Hush live in `config/settings_data.json`;
   Club and Hush have listing homepages in `listings/<preset>/templates/`.
   See `docs/design/presets-plan.md`. Demo stores, each with the catalogue,

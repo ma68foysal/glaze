@@ -139,7 +139,7 @@
     "shipping_free": "Free",
     "shipping_at_checkout": "Calculated at checkout",
     "secure_checkout": "Secure checkout",
-    "drawer_empty_text": "Start with the new season, or pick up a favourite."
+    "drawer_empty_text": "Start with the new season, or pick up a favorite."
   },
   "customer": {
     "account": {
@@ -497,23 +497,5 @@
       "popular": "Popular collections",
       "ring": "Page not found"
     }
-  },
-  "moodboard": {
-    "save": "Save {{ title }} to your moodboard",
-    "saved": "Remove {{ title }} from your moodboard",
-    "toast_saved": "Saved to your moodboard",
-    "toast_removed": "Removed from your moodboard",
-    "view": "View board",
-    "kicker_own": "Saved in this browser",
-    "kicker_shared": "A shared moodboard",
-    "copy_link": "Copy share link",
-    "copied": "Link copied",
-    "adopt": "Save to my board",
-    "add_all": "Add all to bag",
-    "empty_title": "Nothing pinned yet",
-    "empty_text": "Tap the heart on any piece to pin it here.",
-    "share_label": "Share link",
-    "privacy": "Your board lives in this browser only. Share the link to send it to someone.",
-    "remove": "Remove"
   }
 }

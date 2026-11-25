@@ -167,6 +167,7 @@
             {%- endif -%}
           </span>
         </button>
+        <div class="k-qv__terms">{{ form | payment_terms }}</div>
       {%- endform -%}
     </k-product-form>
 
@@ -187,6 +188,8 @@
   .k-qv__title { margin: 0; font-family: var(--font-heading); font-weight: var(--font-heading-weight-black); font-size: clamp(30px, 3.4vw, 42px); line-height: 0.92; letter-spacing: -0.03em; }
   .k-qv__price { font-size: 20px; font-weight: 700; }
   .k-qv .k-pdp__atc { flex: none; }
+  .k-qv__terms { margin-top: 12px; font-size: 14px; }
+  .k-qv__terms:empty { display: none; }
   .k-qv__more { justify-self: start; font-weight: 600; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
   @media (max-width: 640px) { .k-qv { grid-template-columns: minmax(0, 1fr); } }
 {% endstylesheet %}

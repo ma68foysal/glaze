@@ -15,7 +15,7 @@
         "label": "Customer care · Studio · Press",
         "heading": "Get in <em>touch</em>",
         "text": "<p>Questions about an order, sizing or a repair? Our team answers every message, usually within one working day.</p>",
-        "status": "Customer care is online",
+        "status": "Replies within one working day",
         "color_scheme": "scheme-1",
         "padding_top": "small",
         "padding_bottom": "small"

@@ -12,14 +12,15 @@
 {%- enddoc -%}
 
 {%- if current_variant -%}
+  {%- assign pickups = current_variant.store_availabilities | where: 'pick_up_enabled', true -%}
   <pickup-availability
     class="mp__pickup"
     data-product-handle="{{ product.handle }}"
     data-variant-id="{{ current_variant.id }}"
     data-section-id="{{ section.id }}"
   >
-    {%- if current_variant.store_availabilities.size > 0 -%}
-      {%- assign first_available = current_variant.store_availabilities | where: 'available' | first -%}
+    {%- if pickups.size > 0 -%}
+      {%- assign first_available = pickups | where: 'available' | first -%}
 
       {%- if first_available -%}
         <p class="mp__pickup-status">
@@ -39,11 +40,11 @@
         </p>
       {%- endif -%}
 
-      {%- if current_variant.store_availabilities.size > 1 -%}
+      {%- if pickups.size > 1 -%}
         <details class="mp__pickup-details">
-          <summary>{{ 'product.pickup_check_others' | t: count: current_variant.store_availabilities.size }}</summary>
+          <summary>{{ 'product.pickup_check_others' | t: count: pickups.size }}</summary>
           <ul>
-            {%- for availability in current_variant.store_availabilities -%}
+            {%- for availability in pickups -%}
               <li>
                 <strong>{{ availability.location.name }}</strong>
                 <span>

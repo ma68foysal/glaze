@@ -63,10 +63,8 @@
     display: flex; align-items: center; gap: 10px; padding: 10px 16px;
     border-radius: 999px; background: var(--color-bg); color: var(--color-text); font-size: 14px; font-weight: 600;
   }
-  .k-chero__status i { width: 8px; height: 8px; border-radius: 999px; background: #1F7A4D; animation: k-blink 1.6s ease-in-out infinite; }
-  @keyframes k-blink { 50% { opacity: 0.25; } }
+  .k-chero__status i { width: 8px; height: 8px; border-radius: 999px; background: var(--color-accent); }
   @media (max-width: 900px) { .k-chero { grid-template-columns: 1fr; } }
-  @media (prefers-reduced-motion: reduce) { .k-chero__status i { animation: none; } }
   /* Ways to reach us: cards under the hero */
   .k-chero__ways { margin-top: clamp(32px, 4vw, 56px); }
   .k-ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
@@ -102,7 +100,7 @@
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Get in <em>touch</em>", "info": "Italic words use the accent font and start a new line. Leave empty to use the page title." },
     { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Questions about an order, sizing or a repair? Our team answers every message, usually within one working day.</p>" },
     { "type": "image_picker", "id": "image", "label": "Image" },
-    { "type": "text", "id": "status", "label": "Status label on image", "default": "Customer care is online" },
+    { "type": "text", "id": "status", "label": "Status label on image", "default": "Replies within one working day" },
     { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
     { "type": "select", "id": "padding_top", "label": "Top padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] },
     { "type": "select", "id": "padding_bottom", "label": "Bottom padding", "default": "small", "options": [ { "value": "none", "label": "None" }, { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ] }

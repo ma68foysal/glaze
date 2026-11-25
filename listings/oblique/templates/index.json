@@ -1,0 +1,423 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "kinetic-hero",
+      "settings": {
+        "heading_line": "Wear the",
+        "kinetic_word": "Motion",
+        "text": "Garments engineered to bend, stride and layer. Built for long days in a moving city.",
+        "button_label": "Shop new in",
+        "button_link": "/collections/all",
+        "button2_label": "Shop the look",
+        "button2_link": "",
+        "label_left": "SS26 · Collection 04",
+        "label_center": "Cut for bodies in motion",
+        "label_right": "Scroll to explore ↓",
+        "badge_text": "New season · Shop the drop",
+        "show_counter": true,
+        "interval": 3,
+        "color_scheme": "scheme-1",
+        "padding_top": "small",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "media_1": {
+          "type": "media",
+          "settings": {}
+        },
+        "media_2": {
+          "type": "media",
+          "settings": {}
+        },
+        "media_3": {
+          "type": "media",
+          "settings": {}
+        },
+        "product_4": {
+          "type": "product",
+          "settings": {
+            "fallback_title": "Oblique Trench"
+          }
+        },
+        "product_5": {
+          "type": "product",
+          "settings": {
+            "fallback_title": "Crescent Bag"
+          }
+        }
+      },
+      "block_order": [
+        "media_1",
+        "media_2",
+        "media_3",
+        "product_4",
+        "product_5"
+      ]
+    },
+    "categories": {
+      "type": "collection-list",
+      "settings": {
+        "layout": "columns",
+        "heading": "Shop by category",
+        "text": "",
+        "color_scheme": "scheme-2",
+        "padding_top": "small",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "column_1": {
+          "type": "collection",
+          "settings": {
+            "title": "Women",
+            "button_label": "Shop women",
+            "link": "/collections/all"
+          }
+        },
+        "column_2": {
+          "type": "collection",
+          "settings": {
+            "title": "Men",
+            "button_label": "Shop men",
+            "link": "/collections/all"
+          }
+        },
+        "column_3": {
+          "type": "collection",
+          "settings": {
+            "title": "Accessories",
+            "button_label": "Shop accessories",
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "column_1",
+        "column_2",
+        "column_3"
+      ]
+    },
+    "index": {
+      "type": "collection-list",
+      "settings": {
+        "heading": "Collection <em>index</em>",
+        "text": "Hover a row. Each collection opens like a contact sheet.",
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "none",
+        "layout": "index"
+      },
+      "blocks": {
+        "collection_1": {
+          "type": "collection",
+          "settings": {
+            "title": "Outerwear",
+            "description": "Trenches · shells · coats"
+          }
+        },
+        "collection_2": {
+          "type": "collection",
+          "settings": {
+            "title": "Knitwear",
+            "description": "Merino · cotton · rib"
+          }
+        },
+        "collection_3": {
+          "type": "collection",
+          "settings": {
+            "title": "Tailoring",
+            "description": "Soft blazers · trousers"
+          }
+        },
+        "collection_4": {
+          "type": "collection",
+          "settings": {
+            "title": "Denim",
+            "description": "Relaxed · straight · wide"
+          }
+        },
+        "collection_5": {
+          "type": "collection",
+          "settings": {
+            "title": "Accessories",
+            "description": "Bags · belts · knit caps"
+          }
+        }
+      },
+      "block_order": [
+        "collection_1",
+        "collection_2",
+        "collection_3",
+        "collection_4",
+        "collection_5"
+      ]
+    },
+    "edit": {
+      "type": "product-tabs",
+      "settings": {
+        "heading": "The edit <em>this week</em>",
+        "products_to_show": 4,
+        "columns": 4,
+        "quick_add": true,
+        "show_view_all": true,
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "tab_1": {
+          "type": "tab",
+          "settings": {
+            "label": "New in",
+            "collection": "frontpage"
+          }
+        },
+        "tab_2": {
+          "type": "tab",
+          "settings": {
+            "label": "Bestsellers"
+          }
+        },
+        "tab_3": {
+          "type": "tab",
+          "settings": {
+            "label": "Essentials"
+          }
+        }
+      },
+      "block_order": [
+        "tab_1",
+        "tab_2",
+        "tab_3"
+      ]
+    },
+    "explorer": {
+      "type": "feature-explorer",
+      "settings": {
+        "eyebrow": "Why us",
+        "heading": "Explore fabrics built for <em>motion.</em>",
+        "card_label": "Collection 04",
+        "card_text": "Pieces designed to move with you, on the bike, on the platform and on the long walk home.",
+        "card_heading": "Engineered everyday <em>wear</em>",
+        "button_label": "Shop the collection",
+        "button_link": "/collections/all",
+        "badge": "New season",
+        "color_scheme": "scheme-1",
+        "card_color_scheme": "scheme-5",
+        "padding_top": "large",
+        "padding_bottom": "none"
+      },
+      "blocks": {
+        "chip_1": {
+          "type": "chip",
+          "settings": {
+            "label": "Commute-ready"
+          }
+        },
+        "chip_2": {
+          "type": "chip",
+          "settings": {
+            "label": "Water-repellent"
+          }
+        },
+        "chip_3": {
+          "type": "chip",
+          "settings": {
+            "label": "Repair included"
+          }
+        },
+        "item_4": {
+          "type": "item",
+          "settings": {
+            "title": "Stretch wool",
+            "stat": "4-way stretch",
+            "text": "<p>A wool blend with mechanical stretch that recovers its shape after a full day of reaching, sitting and cycling.</p>"
+          }
+        },
+        "item_5": {
+          "type": "item",
+          "settings": {
+            "title": "Weatherproof shells",
+            "stat": "Water-repellent",
+            "text": "<p>Recycled shells with a water-repellent finish, cut long enough to cover a bike saddle.</p>"
+          }
+        },
+        "item_6": {
+          "type": "item",
+          "settings": {
+            "title": "Repair program",
+            "stat": "Repairs included",
+            "text": "<p>Send any piece back for mending. We patch, re-stitch and replace zips so it stays in rotation.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "chip_1",
+        "chip_2",
+        "chip_3",
+        "item_4",
+        "item_5",
+        "item_6"
+      ]
+    },
+    "manifesto": {
+      "type": "manifesto",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      },
+      "blocks": {
+        "text_1": {
+          "type": "text",
+          "settings": {
+            "text": "We cut garments for <em>bodies</em>"
+          }
+        },
+        "image_2": {
+          "type": "image",
+          "settings": {}
+        },
+        "text_3": {
+          "type": "text",
+          "settings": {
+            "text": "in motion, built to bend, stride and <em>carry</em> the city"
+          }
+        },
+        "image_4": {
+          "type": "image",
+          "settings": {}
+        },
+        "text_5": {
+          "type": "text",
+          "settings": {
+            "text": "on their back."
+          }
+        }
+      },
+      "block_order": [
+        "text_1",
+        "image_2",
+        "text_3",
+        "image_4",
+        "text_5"
+      ]
+    },
+    "journal": {
+      "type": "journal",
+      "settings": {
+        "heading": "Journal",
+        "limit": 4,
+        "button_label": "All stories",
+        "color_scheme": "scheme-1",
+        "padding_top": "small",
+        "padding_bottom": "large"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading_outline": "Stay in",
+        "heading": "Motion",
+        "text": "<p>Early access to new drops, styling notes from the studio, and nothing you didn't ask for.</p>",
+        "color_scheme": "scheme-2",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      }
+    },
+    "runway": {
+      "type": "runway",
+      "settings": {
+        "heading": "Run<em>way</em>",
+        "label": "Three looks · tap to shop",
+        "color_scheme": "scheme-2",
+        "padding_top": "large",
+        "padding_bottom": "large"
+      },
+      "blocks": {
+        "r1": {
+          "type": "clip",
+          "settings": {
+            "caption": "Look 01 · Soft suit",
+            "length": 8
+          }
+        },
+        "r2": {
+          "type": "clip",
+          "settings": {
+            "caption": "Look 02 · Field day",
+            "length": 8
+          }
+        },
+        "r3": {
+          "type": "clip",
+          "settings": {
+            "caption": "Look 03 · Weather",
+            "length": 8
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3"
+      ]
+    },
+    "spotlight": {
+      "type": "model-spotlight",
+      "settings": {
+        "label": "One piece, two bodies",
+        "heading": "See it <em>on you</em>",
+        "text": "<p>The same piece on models of different heights, each in the size they chose.</p>",
+        "product": "",
+        "color_scheme": "scheme-1",
+        "padding_top": "none",
+        "padding_bottom": "large"
+      },
+      "blocks": {
+        "m1": {
+          "type": "model",
+          "settings": {
+            "name": "Lena",
+            "height": "178 cm",
+            "size": "S",
+            "photo": 1
+          }
+        },
+        "m2": {
+          "type": "model",
+          "settings": {
+            "name": "Noor",
+            "height": "170 cm",
+            "size": "M",
+            "photo": 2
+          }
+        }
+      },
+      "block_order": [
+        "m1",
+        "m2"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "categories",
+    "index",
+    "edit",
+    "explorer",
+    "manifesto",
+    "spotlight",
+    "runway",
+    "journal",
+    "newsletter"
+  ]
+}
